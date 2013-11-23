@@ -18,7 +18,7 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package cromapp;
+package chronicapp;
 
 import java.io.IOException;
 import java.util.ArrayList;

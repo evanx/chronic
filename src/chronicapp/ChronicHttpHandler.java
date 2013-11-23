@@ -1,7 +1,7 @@
 /*
  * Source https://code.google.com/p/vellum by @evanxsummers
  */
-package cromapp;
+package chronicapp;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -15,13 +15,13 @@ import vellum.util.Streams;
  *
  * @author evan.summers
  */
-public class CromHttpHandler implements HttpHandler {
+public class ChronicHttpHandler implements HttpHandler {
     final static int contentLengthLimit = 4000;
     
-    Logger logger = LoggerFactory.getLogger(CromHttpHandler.class);
-    CromApp app;
+    Logger logger = LoggerFactory.getLogger(ChronicHttpHandler.class);
+    ChronicApp app;
     
-    public CromHttpHandler(CromApp app) {
+    public ChronicHttpHandler(ChronicApp app) {
         this.app = app;
     }
     

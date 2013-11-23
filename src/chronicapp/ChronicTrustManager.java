@@ -18,23 +18,42 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package cromapp;
+package chronicapp;
 
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author evan.summers
  */
-public class CromStorage {
-    Logger logger = LoggerFactory.getLogger(CromHttpHandler.class);
-    
-    public void init() {        
+public class ChronicTrustManager implements X509TrustManager {
+
+    Logger logger = LoggerFactory.getLogger(ChronicHttpHandler.class);
+    ChronicApp app;
+
+    public ChronicTrustManager(ChronicApp app) {
+        this.app = app;
     }
-    
-    public void store(String client, String source, String text) {
-        
+
+    @Override
+    public X509Certificate[] getAcceptedIssuers() {
+        return new X509Certificate[0];
     }
-    
+
+    @Override
+    public void checkClientTrusted(X509Certificate[] certs, String authType) 
+        throws CertificateException {
+        String dname = certs[0].getSubjectDN().getName();
+        logger.info("checkClientTrusted {}", dname);
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] certs, String authType) 
+        throws CertificateException {
+        throw new CertificateException();
+    }
 }

@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package cromapp;
+package chronicapp;
 
 import vellum.util.ExtendedProperties;
 import java.io.BufferedReader;
@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author evan.summers
  */
-public class CromConfig {
+public class ChronicConfig {
 
-    Logger logger = LoggerFactory.getLogger(CromHttpHandler.class);
+    Logger logger = LoggerFactory.getLogger(ChronicHttpHandler.class);
     ExtendedProperties systemProperties = new ExtendedProperties(System.getProperties());
-    String confFileName = systemProperties.getString("crom.conf", "conf/crom.conf");
+    String confFileName = systemProperties.getString("chronic.conf", "conf.json");
     ExtendedProperties appProperties = new ExtendedProperties(System.getProperties());
     Pattern pattern = Pattern.compile("\\s*(\\w+):\\s*[\"']*([/|\\w|.]+)[\"';,]*");
     

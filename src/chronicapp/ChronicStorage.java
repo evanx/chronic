@@ -18,7 +18,7 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package cromapp;
+package chronicapp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,30 +27,14 @@ import org.slf4j.LoggerFactory;
  * 
  * @author evan.summers
  */
-public class AlertRecord {
-    static Logger logger = LoggerFactory.getLogger(AlertRecord.class);
-    long timestamp = System.currentTimeMillis();
-    StatusRecord statusRecord;
-    String status;
+public class ChronicStorage {
+    Logger logger = LoggerFactory.getLogger(ChronicHttpHandler.class);
     
-    public AlertRecord(StatusRecord statusRecord) {
-        this.statusRecord = statusRecord;
+    public void init() {        
     }
     
-    public StatusRecord getStatusRecord() {
-        return statusRecord;
+    public void store(String client, String source, String text) {
+        
     }
-
-    public long getTimestamp() {
-        return timestamp;
-    }    
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getStatus() {
-        return status;
-    }        
+    
 }
-

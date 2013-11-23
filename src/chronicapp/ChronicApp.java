@@ -18,7 +18,7 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package cromapp;
+package chronicapp;
 
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -42,12 +42,12 @@ import vellum.util.Streams;
  *
  * @author evan.summers
  */
-public class CromApp implements Runnable {
+public class ChronicApp implements Runnable {
 
     Logger logger = LoggerFactory.getLogger(getClass());
-    CromConfig config = new CromConfig();
-    CromProperties properties = new CromProperties();
-    CromStorage storage = new CromStorage();
+    ChronicConfig config = new ChronicConfig();
+    ChronicProperties properties = new ChronicProperties();
+    ChronicStorage storage = new ChronicStorage();
     VellumHttpsServer httpsServer;
     Map<ComparableTuple, StatusRecord> recordMap = new HashMap();
     Map<ComparableTuple, AlertRecord> alertMap = new HashMap();
@@ -61,10 +61,10 @@ public class CromApp implements Runnable {
                 System.currentTimeMillis()).toCharArray();
         KeyStore keyStore = RsaKeyStores.createKeyStore("JKS", "crom", keyPassword, 365);
         SSLContext sslContext = SSLContexts.create(keyStore, keyPassword, 
-                new CromTrustManager(this));
+                new ChronicTrustManager(this));
         httpsServer = new VellumHttpsServer();
         httpsServer.start(config.getProperties("httpsServer"), sslContext, 
-                new CromHttpHandler(this));
+                new ChronicHttpHandler(this));
         logger.info("initialized");
     }
 
@@ -89,7 +89,7 @@ public class CromApp implements Runnable {
         executorService.shutdown();
     }
 
-    public CromStorage getStorage() {
+    public ChronicStorage getStorage() {
         return storage;
     }
     
@@ -155,7 +155,7 @@ public class CromApp implements Runnable {
     
     public static void main(String[] args) throws Exception {
         try {
-            CromApp app = new CromApp();
+            ChronicApp app = new ChronicApp();
             app.init();
             app.start();
         } catch (Exception e) {

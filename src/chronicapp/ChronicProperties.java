@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package cromapp;
+package chronicapp;
 
 import vellum.util.ExtendedProperties;
 
@@ -26,7 +26,7 @@ import vellum.util.ExtendedProperties;
  *
  * @author evan.summers
  */
-public class CromProperties {
+public class ChronicProperties {
     String alertScript = "scripts/alert.sh";
     int periodMinutes = 5;
     
