@@ -20,6 +20,7 @@
  */
 package chronicapp;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -148,6 +149,15 @@ public class StatusRecord {
             }
         }
         return false;
+    }
+    
+    public byte[] getContent() throws IOException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        for (String line : lineList) {
+            stream.write(line.getBytes());
+            stream.write('\n');
+        }
+        return stream.toByteArray();
     }
     
     @Override

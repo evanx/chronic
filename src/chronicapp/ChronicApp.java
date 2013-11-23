@@ -131,7 +131,7 @@ public class ChronicApp implements Runnable {
         logger.info("ALERT {}", statusRecord.toString());
         if (properties.getAlertScript() != null) {
             try {
-                exec(properties.getAlertScript(), 
+                exec(properties.getAlertScript(), statusRecord.getContent(),
                         "from=" + statusRecord.getFrom(),
                         "source=" + statusRecord.getSource(),
                         "status=" + statusRecord.getStatusType(),
@@ -145,12 +145,13 @@ public class ChronicApp implements Runnable {
     }
     
     
-    public void exec(String command, String ... envp) throws Exception {
+    public void exec(String command, byte[] data, String ... envp) throws Exception {
         Process process = Runtime.getRuntime().exec(command, envp);
-        logger.info("process started: " + command);
+        logger.info("process started {} {}", data.length, command);
+        process.getOutputStream().write(data);
+        logger.info("output\n{}\n", Streams.readString(process.getInputStream()));
         int exitCode = process.waitFor();
         logger.info("process completed {}", exitCode);
-        logger.info("output\n{}\n", Streams.readString(process.getInputStream()));
     }
     
     public static void main(String[] args) throws Exception {
