@@ -20,6 +20,7 @@
  */
 package chronicapp;
 
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -93,7 +94,7 @@ public class ChronicApp implements Runnable {
         return storage;
     }
     
-    synchronized void putRecord(StatusRecord statusRecord) {
+    protected synchronized void putRecord(StatusRecord statusRecord) {
         StatusRecord previousRecord = recordMap.put(statusRecord.getKey(), statusRecord);
         if (previousRecord == null) {
             alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
@@ -111,7 +112,7 @@ public class ChronicApp implements Runnable {
     }
     
     @Override
-    public void run() {
+    public synchronized void run() {
         for (StatusRecord statusRecord : recordMap.values()) {
             AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
             if (previousAlert != null && previousAlert.getStatusRecord() != statusRecord &&
@@ -127,7 +128,7 @@ public class ChronicApp implements Runnable {
         }
     }
     
-    synchronized void alert(StatusRecord statusRecord) {
+    private synchronized void alert(StatusRecord statusRecord) {
         logger.info("ALERT {}", statusRecord.toString());
         if (properties.getAlertScript() != null) {
             try {
@@ -150,6 +151,7 @@ public class ChronicApp implements Runnable {
         logger.info("process started {} {}", data.length, command);
         process.getOutputStream().write(data);
         logger.info("output\n{}\n", Streams.readString(process.getInputStream()));
+        logger.info("error\n{}\n", Streams.readString(process.getErrorStream()));
         int exitCode = process.waitFor();
         logger.info("process completed {}", exitCode);
     }
