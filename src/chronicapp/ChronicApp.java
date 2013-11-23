@@ -132,12 +132,7 @@ public class ChronicApp implements Runnable {
         if (properties.getAlertScript() != null) {
             try {
                 new Exec().exec(properties.getAlertScript(), statusRecord.getContent(),
-                        "from=" + statusRecord.getFrom(),
-                        "source=" + statusRecord.getSource(),
-                        "status=" + statusRecord.getStatusType(),
-                        "subject=" + statusRecord.getSubject(),
-                        "alert=" + statusRecord.getAlertString()
-                        );
+                        statusRecord.getAlertMap());
             } catch (Exception e) {
                 logger.warn(e.getMessage(), e);
             }

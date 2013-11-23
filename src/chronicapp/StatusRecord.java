@@ -24,7 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -248,6 +250,16 @@ public class StatusRecord {
 
     private void parsePeriod(String string) {
         periodMillis = Millis.parse(string);
+    }
+
+    public Map getAlertMap() {
+        Map map = new HashMap();
+        map.put("from", from);
+        map.put("source", source);
+        map.put("status", statusType);
+        map.put("subject", subject);
+        map.put("alert", alertString);
+        return map;
     }
 }
 
