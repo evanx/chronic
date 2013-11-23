@@ -20,7 +20,6 @@
  */
 package chronicapp;
 
-import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -36,8 +35,8 @@ import vellum.crypto.rsa.RsaKeyStores;
 import vellum.datatype.Millis;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.ssl.SSLContexts;
+import vellum.system.Exec;
 import vellum.type.ComparableTuple;
-import vellum.util.Streams;
 
 /**
  *
@@ -132,7 +131,7 @@ public class ChronicApp implements Runnable {
         logger.info("ALERT {}", statusRecord.toString());
         if (properties.getAlertScript() != null) {
             try {
-                exec(properties.getAlertScript(), statusRecord.getContent(),
+                new Exec().exec(properties.getAlertScript(), statusRecord.getContent(),
                         "from=" + statusRecord.getFrom(),
                         "source=" + statusRecord.getSource(),
                         "status=" + statusRecord.getStatusType(),
@@ -145,16 +144,6 @@ public class ChronicApp implements Runnable {
         }
     }
     
-    
-    public void exec(String command, byte[] data, String ... envp) throws Exception {
-        Process process = Runtime.getRuntime().exec(command, envp);
-        logger.info("process started {} {}", data.length, command);
-        process.getOutputStream().write(data);
-        logger.info("output\n{}\n", Streams.readString(process.getInputStream()));
-        logger.info("error\n{}\n", Streams.readString(process.getErrorStream()));
-        int exitCode = process.waitFor();
-        logger.info("process completed {}", exitCode);
-    }
     
     public static void main(String[] args) throws Exception {
         try {
