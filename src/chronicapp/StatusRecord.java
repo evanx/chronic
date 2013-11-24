@@ -294,11 +294,16 @@ public class StatusRecord {
 
     public String formatSubject() {
         if (isAlertable()) {
-            if (statusType == StatusType.ELAPSED) {
+            if (statusType == StatusType.ELAPSED || subject == null) {
                 return getSource() + ' ' + statusType;
             } else if (!subject.contains(statusType.name()))   {
                 return subject + ' ' + statusType;
+            } else {
+                return subject;
             }
+        }
+        if (subject == null) {
+            return getSource();
         }
         return subject;
     }
