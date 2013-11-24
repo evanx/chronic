@@ -33,7 +33,11 @@ public class ChronicStorage {
     public void init() {        
     }
     
-    public void store(String client, String source, String text) {
+    public void store(StatusRecord statusRecord) {
+        
+    }
+
+    public void store(AlertRecord alertRecord) {
         
     }
     

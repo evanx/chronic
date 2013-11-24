@@ -105,7 +105,7 @@ public class ChronicApp implements Runnable {
             if (previousAlert != null && previousAlert.getStatusRecord() != statusRecord
                     && statusRecord.getPeriodMillis() != 0) {
                 long period = Millis.elapsed(statusRecord.getTimestamp());
-                logger.info("run period {}, elapsed {}", statusRecord.getPeriodMillis(), period);
+                logger.info("run {} elapsed {}", statusRecord.getOrigin(), period);
                 if (period > statusRecord.getPeriodMillis()
                         && period - statusRecord.getPeriodMillis()
                         > Millis.fromMinutes(properties.getPeriodMinutes())) {

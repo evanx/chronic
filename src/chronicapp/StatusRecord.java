@@ -20,9 +20,7 @@
  */
 package chronicapp;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
 import vellum.type.ComparableTuple;
+import vellum.util.Args;
 
 /**
  * 
@@ -60,11 +59,11 @@ public class StatusRecord {
     String subject;
     String username; 
     String hostname; 
-    String source; 
+    String service; 
     String period; 
     
     public ComparableTuple getKey() {
-        return ComparableTuple.create(username, hostname, source);
+        return ComparableTuple.create(username, hostname, service);
     }
 
     public long getTimestamp() {
@@ -82,19 +81,23 @@ public class StatusRecord {
         return from;
     }
 
-    public String getSource() {
-        return source;
+    public String getService() {
+        return service;
     }
-    
+
+    public void setService(String service) {
+        this.service = service;
+    }
+            
     public void parseSubjectLine(String subjectLine) {
         this.subjectLine = subjectLine;
         Matcher matcher = subjectCronPattern.matcher(subjectLine);
         if (matcher.find()) {
             username = matcher.group(1);
             hostname = matcher.group(2);
-            source = matcher.group(3);
+            service = matcher.group(3);
             from = username + '@' + hostname;
-            subject = hostname + ' ' + username + ' ' + source;
+            subject = hostname + ' ' + username + ' ' + service;
         } else {
             subject = subjectLine.substring(9).trim();
         }
@@ -104,7 +107,7 @@ public class StatusRecord {
         Matcher matcher = statusPattern.matcher(line);
         if (matcher.find()) {
             parseStatusType(matcher.group(2));
-            source = matcher.group(1);
+            service = matcher.group(1);
             subject = line;
             logger.info("parseStatus [{}] {}", statusType, subject);
             return true;
@@ -169,7 +172,7 @@ public class StatusRecord {
     
     @Override
     public String toString() {
-        return Arrays.toString(new Object[] {username, hostname, source, subject, 
+        return Arrays.toString(new Object[] {username, hostname, service, subject, 
             statusType, alertType, alertString, Millis.format(periodMillis)});
     }    
     
@@ -196,6 +199,8 @@ public class StatusRecord {
                 record.parseContentTypeLine(line);
             } else if (line.startsWith("Status: ")) {
                 record.parseStatusType(line.substring(8));
+            } else if (line.startsWith("Service: ")) {
+                record.setService(line.substring(8));
             } else if (line.startsWith("Alert: ")) {
                 record.parseAlertType(line.substring(7));
             } else if (line.startsWith("Period: ")) {
@@ -270,10 +275,14 @@ public class StatusRecord {
         map.put("from", from);
         map.put("username", username);
         map.put("hostname", hostname);
-        map.put("source", source);
+        map.put("service", service);
         map.put("status", statusType);
         map.put("subject", subject);
         map.put("alert", alertString);
         return map;
+    }
+
+    public String getOrigin() {
+        return Args.format(hostname, username, service);
     }
 }
