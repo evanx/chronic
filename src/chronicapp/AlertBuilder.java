@@ -34,7 +34,7 @@ public class AlertBuilder {
     static Logger logger = LoggerFactory.getLogger(AlertBuilder.class);
     StringBuilder builder = new StringBuilder();
 
-    public String build(StatusRecord status, StatusRecord previousStatus, AlertRecord previousAlert)
+    public String build(StatusRecord status, StatusRecord previousStatus, StatusRecord previousAlert)
             throws IOException {
         logger.info("build {}", status);
         if (status.statusType == StatusType.ELAPSED) {
@@ -50,7 +50,7 @@ public class AlertBuilder {
             } else if (status.getAlertType() == AlertType.STATUS_CHANGED
                     && previousAlert != null) {
                 builder.append("\n<hr><b>Previous alert:</b>\n");
-                append(previousAlert.getStatusRecord());
+                append(previousAlert);
             }
         }
         builder.append("\n<hr>");

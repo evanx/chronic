@@ -35,10 +35,5 @@ public class ChronicStorage {
     
     public void store(StatusRecord statusRecord) {
         
-    }
-
-    public void store(AlertRecord alertRecord) {
-        
-    }
-    
+    }   
 }

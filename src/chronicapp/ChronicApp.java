@@ -45,7 +45,7 @@ public class ChronicApp implements Runnable {
     ChronicStorage storage = new ChronicStorage();
     VellumHttpsServer httpsServer;
     Map<ComparableTuple, StatusRecord> recordMap = new HashMap();
-    Map<ComparableTuple, AlertRecord> alertMap = new HashMap();
+    Map<ComparableTuple, StatusRecord> alertMap = new HashMap();
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
     public void init() throws Exception {
@@ -85,7 +85,7 @@ public class ChronicApp implements Runnable {
     protected synchronized void putRecord(StatusRecord statusRecord) {
         logger.info("putRecord {} [{}]", statusRecord.getStatusType(), statusRecord.getSubject());
         StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
-        AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
+        StatusRecord previousAlert = alertMap.get(statusRecord.getKey());
         if (previousStatus == null) {
             if (properties.isTesting()) {
                 alert(statusRecord, statusRecord, null);
@@ -94,7 +94,7 @@ public class ChronicApp implements Runnable {
             alert(statusRecord, previousStatus, previousAlert);
         } else if (previousAlert == null) {
             if (statusRecord.isAlertable()) {
-                alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
+                alertMap.put(statusRecord.getKey(), new StatusRecord(statusRecord));
             }
         }
     }
@@ -103,35 +103,36 @@ public class ChronicApp implements Runnable {
     public synchronized void run() {
         logger.info("run {}", properties.getPeriod());
         for (StatusRecord statusRecord : recordMap.values()) {
-            logger.info("run {}: elapsed {}", statusRecord.getSource(), 
-                    Millis.elapsed(statusRecord.getTimestamp()));
-            AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
-            if (previousAlert != null && previousAlert.getStatusRecord() != statusRecord
-                    && statusRecord.getPeriodMillis() != 0) {
-                long elapsed = Millis.elapsed(statusRecord.getTimestamp());
-                logger.info("run {} elapsed {}", statusRecord.getSource(), elapsed);
-                if (elapsed > statusRecord.getPeriodMillis()) {
-                    elapsed = elapsed - statusRecord.getPeriodMillis();
-                    logger.info("run {} elapsed {}", properties.getPeriod(), elapsed);
-                    if (elapsed > properties.getPeriod()) {
-                        StatusRecord elapsedRecord = new StatusRecord(statusRecord);
-                        elapsedRecord.setStatusType(StatusType.ELAPSED);
-                        alert(elapsedRecord, statusRecord, null);
-                    }
-                }
+            if (statusRecord.getPeriodMillis() != 0) {
+                checkElapsed(statusRecord);
+            }
+        }
+    }
+    
+    private void checkElapsed(StatusRecord previousStatus) {
+        long elapsed = Millis.elapsed(previousStatus.getTimestamp());
+        logger.info("checkElapsed {}: elapsed {}", previousStatus.getSource(), elapsed);
+        if (elapsed > previousStatus.getPeriodMillis() + properties.getPeriod()) {
+            StatusRecord previousAlert = alertMap.get(previousStatus.getKey());
+            logger.info("checkElapsed previousAlert {}", previousAlert);
+            if (previousAlert == null
+                    || previousAlert.getStatusType() != StatusType.ELAPSED) {
+                StatusRecord elapsedStatus = new StatusRecord(previousStatus);
+                elapsedStatus.setStatusType(StatusType.ELAPSED);
+                alert(elapsedStatus, previousStatus, previousAlert);
             }
         }
     }
 
-    private synchronized void alert(StatusRecord statusRecord,
-            StatusRecord previousStatusRecord, AlertRecord previousAlertRecord) {
-        logger.info("alert {}", statusRecord.toString());
-        alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
+    private synchronized void alert(StatusRecord status,
+            StatusRecord previousStatus, StatusRecord previousAlert) {
+        logger.info("alert {}", status.toString());
+        alertMap.put(status.getKey(), status);
         if (properties.getAlertScript() != null) {
             try {
                 new Exec().exec(properties.getAlertScript(), new AlertBuilder().build(
-                        statusRecord, previousStatusRecord, previousAlertRecord).getBytes(),
-                        statusRecord.getAlertMap());
+                        status, previousStatus, previousAlert).getBytes(),
+                        status.getAlertMap());
             } catch (Exception e) {
                 logger.warn(e.getMessage(), e);
             }

@@ -65,8 +65,8 @@ public class StatusRecord {
     }
 
     public StatusRecord(StatusRecord record) {
-        this.alertString = record.alertString;
         this.alertType = record.alertType;
+        this.alertString = record.alertString;
         this.periodMillis = record.periodMillis;
         this.from = record.from;
         this.subject = record.subject;
@@ -74,7 +74,7 @@ public class StatusRecord {
         this.username = record.username;
         this.service = record.service;
     }
-    
+
     public ComparableTuple getKey() {
         return ComparableTuple.create(username, hostname, service);
     }
@@ -264,11 +264,14 @@ public class StatusRecord {
     }
 
     public boolean isAlertable(StatusRecord previousStatus,
-            AlertRecord previousAlert) {
-        if (previousAlert == null) {            
-        } else if (previousAlert.getStatusRecord().getStatusType() == StatusType.ELAPSED &&
-                statusType != StatusType.ELAPSED) {
-            return true;
+            StatusRecord previousAlert) {
+        if (previousAlert == null) {
+        } else {
+            logger.info("isAlertable {} {} " + previousAlert, getSource(), statusType);
+            if (previousAlert.getStatusType() == StatusType.ELAPSED
+                    && statusType != StatusType.ELAPSED) {
+                return true;
+            }
         }
         if (alertType == AlertType.ALWAYS) {
             return true;
@@ -287,7 +290,7 @@ public class StatusRecord {
         } else if (alertType == AlertType.STATUS_CHANGED) {
             if (statusType == previousStatus.statusType) {
                 return statusType.isAlertable() && previousAlert != null
-                        && statusType != previousAlert.getStatusRecord().getStatusType();
+                        && statusType != previousAlert.getStatusType();
             }
         } else {
         }
@@ -310,7 +313,7 @@ public class StatusRecord {
         if (isAlertable()) {
             if (statusType == StatusType.ELAPSED || subject == null) {
                 return getSource() + ' ' + statusType;
-            } else if (!subject.contains(statusType.name()))   {
+            } else if (!subject.contains(statusType.name())) {
                 return subject + ' ' + statusType;
             } else {
                 return subject;
@@ -321,11 +324,14 @@ public class StatusRecord {
         }
         return subject;
     }
-    
+
     public String getSource() {
         if (username != null && hostname != null && service != null) {
             return String.format("%s@%s/%s", username, hostname, service);
         }
-        return Strings.joinNotNullArgs(hostname, username, service);
+        if (username != null && hostname != null) {
+            return String.format("%s@%s", username, hostname);
+        }
+        return Strings.joinNotNullArgs("/", username, hostname, service);
     }
 }
