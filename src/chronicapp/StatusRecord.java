@@ -166,33 +166,6 @@ public class StatusRecord {
         }
         return false;
     }
-
-    private void writeContent(OutputStream stream) throws IOException {
-        for (String line : lineList) {
-            stream.write(line.getBytes());
-            stream.write("\n".getBytes());
-        }
-    }
-    
-    public byte[] getContent() throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        writeContent(stream);
-        return stream.toByteArray();
-    }
-
-    public byte[] getContent(StatusRecord previousStatus, AlertRecord previousAlert) 
-            throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        writeContent(stream);
-        if (alertType == AlertType.CONTENT_CHANGED && previousStatus != null) {
-            stream.write("\n<hr><b>Previous:</b>\n".getBytes());
-            previousStatus.writeContent(stream);            
-        } else if (alertType == AlertType.STATUS_CHANGED && previousAlert != null) {
-            stream.write("\n<hr><b>Previous:</b>\n".getBytes());
-            previousAlert.getStatusRecord().writeContent(stream);            
-        }
-        return stream.toByteArray();
-    }
     
     @Override
     public String toString() {

@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import vellum.crypto.rsa.RsaKeyStores;
 import vellum.datatype.Millis;
 import vellum.httpserver.VellumHttpsServer;
+import vellum.json.JsonConfig;
 import vellum.ssl.SSLContexts;
 import vellum.system.Exec;
 import vellum.type.ComparableTuple;
@@ -45,7 +46,7 @@ import vellum.type.ComparableTuple;
 public class ChronicApp implements Runnable {
 
     Logger logger = LoggerFactory.getLogger(getClass());
-    ChronicConfig config = new ChronicConfig();
+    JsonConfig config = new JsonConfig();
     ChronicProperties properties = new ChronicProperties();
     ChronicStorage storage = new ChronicStorage();
     VellumHttpsServer httpsServer;
@@ -54,8 +55,8 @@ public class ChronicApp implements Runnable {
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     
     public void init() throws Exception {
-        config.init();
-        properties.init(config.getProperties());
+        config.init(getClass(), "chronic");
+        properties.init(config);
         storage.init();
         char[] keyPassword = Long.toString(new SecureRandom().nextLong() & 
                 System.currentTimeMillis()).toCharArray();
@@ -71,14 +72,12 @@ public class ChronicApp implements Runnable {
     public void start() throws Exception {
         executorService.schedule(this, 3, TimeUnit.MINUTES);
         logger.info("started");
-        if (config.systemProperties.getBoolean("crom.test")) {
+        if (properties.isTesting()) {
             test();
         }
     }
     
     public void test() throws Exception {
-        String pattern = "From: [a-z]+ \\(Cron Daemon\\)";
-        logger.info("matches {}", "From: root (Cron Daemon)".matches(pattern));
         
     }
 
@@ -96,16 +95,18 @@ public class ChronicApp implements Runnable {
     protected synchronized void putRecord(StatusRecord statusRecord) {
         StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
         if (previousStatus == null) {
-            alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
+            if (properties.isTesting()) {
+                alert(statusRecord, statusRecord, null);
+            } else {
+                alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
+            }
         } else {
             AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
             logger.info("putRecord {}", Arrays.toString(new Object[] {
                     previousAlert.getStatusRecord().getStatusType(), 
                     previousStatus.getStatusType(), statusRecord.getStatusType()}));
             if (statusRecord.isAlertable(previousStatus, previousAlert)) {
-                AlertRecord alertRecord = new AlertRecord(statusRecord);
                 alert(statusRecord, previousStatus, previousAlert);
-                alertMap.put(statusRecord.getKey(), alertRecord);
             }
         }
     }
@@ -127,20 +128,20 @@ public class ChronicApp implements Runnable {
         }
     }
     
-    private synchronized void alert(StatusRecord statusRecord, 
+    private synchronized void alert(StatusRecord statusRecord,
             StatusRecord previousStatusRecord, AlertRecord previousAlertRecord) {
         logger.info("ALERT {}", statusRecord.toString());
+        alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
         if (properties.getAlertScript() != null) {
             try {
-                new Exec().exec(properties.getAlertScript(), 
-                        statusRecord.getContent(previousStatusRecord, previousAlertRecord),
+                new Exec().exec(properties.getAlertScript(), new AlertBuilder().build(
+                        statusRecord, previousStatusRecord, previousAlertRecord).getBytes(),
                         statusRecord.getAlertMap());
             } catch (Exception e) {
                 logger.warn(e.getMessage(), e);
             }
         }
     }
-    
     
     public static void main(String[] args) throws Exception {
         try {
