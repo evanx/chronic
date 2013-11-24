@@ -61,6 +61,20 @@ public class StatusRecord {
     String service;
     String period;
 
+    public StatusRecord() {
+    }
+
+    public StatusRecord(StatusRecord record) {
+        this.alertString = record.alertString;
+        this.alertType = record.alertType;
+        this.periodMillis = record.periodMillis;
+        this.from = record.from;
+        this.subject = record.subject;
+        this.hostname = record.hostname;
+        this.username = record.username;
+        this.service = record.service;
+    }
+    
     public ComparableTuple getKey() {
         return ComparableTuple.create(username, hostname, service);
     }

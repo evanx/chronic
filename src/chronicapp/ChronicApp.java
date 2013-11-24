@@ -114,8 +114,9 @@ public class ChronicApp implements Runnable {
                     elapsed = elapsed - statusRecord.getPeriodMillis();
                     logger.info("run {} elapsed {}", properties.getPeriod(), elapsed);
                     if (elapsed > properties.getPeriod()) {
-                        statusRecord.setStatusType(StatusType.ELAPSED);
-                        alert(statusRecord, null, null);
+                        StatusRecord elapsedRecord = new StatusRecord(statusRecord);
+                        elapsedRecord.setStatusType(StatusType.ELAPSED);
+                        alert(elapsedRecord, statusRecord, null);
                     }
                 }
             }

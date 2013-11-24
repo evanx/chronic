@@ -23,6 +23,7 @@ package chronicapp;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.datatype.Millis;
 
 /**
  *
@@ -37,9 +38,9 @@ public class AlertBuilder {
             throws IOException {
         logger.info("build {}", status);
         if (status.statusType == StatusType.ELAPSED) {
-            builder.append(String.format("<b>%s</b>\n", status.formatSubject()));
+            builder.append(String.format("<b>%s <i>%s</i></b>\n", status.getSource(), status.statusType));
             builder.append("\n<hr><b>Previous:</b>\n");
-            append(status);
+            builder.append(buildContent(previousStatus));
         } else {
             append(status);
             if (status.getAlertType() == AlertType.CONTENT_CHANGED
@@ -48,7 +49,7 @@ public class AlertBuilder {
                 append(previousStatus);
             } else if (status.getAlertType() == AlertType.STATUS_CHANGED
                     && previousAlert != null) {
-                builder.append("\n<hr><b>Previous:</b>\n");
+                builder.append("\n<hr><b>Previous alert:</b>\n");
                 append(previousAlert.getStatusRecord());
             }
         }
@@ -57,12 +58,14 @@ public class AlertBuilder {
     }
 
     private void append(StatusRecord status) {
-        builder.append(String.format("<b>%s</b>\n", status.formatSubject()));
+        builder.append(String.format("<b>%s</b>\n", formatHtmlSubject(status)));
         builder.append(buildContent(status));
     }
 
     public static String buildContent(StatusRecord status) {
         StringBuilder builder = new StringBuilder();
+        builder.append(String.format("<i>%s</i>\n", 
+                Millis.formatTimestamp(status.getTimestamp())));
         for (String line : status.getLineList()) {
             if (!line.equals(status.getSubject())) {
                 if (builder.length() > 0) {
@@ -72,5 +75,21 @@ public class AlertBuilder {
             }
         }
         return builder.toString();
+    }
+    
+    public String formatHtmlSubject(StatusRecord status) {
+        if (status.isAlertable()) {
+            if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
+                return status.getSource() + " <i>" + status.getStatusType() + "</i>";
+            } else if (!status.getSubject().contains(status.getStatusType().name()))   {
+                return status.getSubject() + " <i>" + status.getStatusType() + "</i>";
+            } else {
+                return status.getSubject();
+            }
+        }
+        if (status.getSubject() == null) {
+            return status.getSource();
+        }
+        return status.getSubject();
     }
 }
