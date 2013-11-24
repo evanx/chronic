@@ -173,6 +173,15 @@ public class StatusRecord {
             statusType, alertType, alertString, Millis.format(periodMillis)});
     }    
     
+    public String buildContent() {
+        StringBuilder builder = new StringBuilder();
+        for (String line : lineList) {
+            builder.append(line);
+            builder.append('\n');
+        }
+        return builder.toString().trim();
+    }    
+    
     public static StatusRecord parse(String text) throws IOException {
         StatusRecord record = new StatusRecord();
         boolean inHeader = true;
@@ -207,6 +216,10 @@ public class StatusRecord {
         } catch (Exception e) {
             logger.warn("parseStatusType {}: {}", string, e.getMessage());
         }
+    }
+
+    private void parsePeriod(String string) {
+        periodMillis = Millis.parse(string);
     }
     
     private void parseAlertType(String string) {
@@ -251,10 +264,6 @@ public class StatusRecord {
         } else {            
         }
         return false;
-    }
-
-    private void parsePeriod(String string) {
-        periodMillis = Millis.parse(string);
     }
 
     public Map getAlertMap() {
