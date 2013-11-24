@@ -283,9 +283,17 @@ public class StatusRecord {
         map.put("hostname", hostname);
         map.put("service", service);
         map.put("status", statusType);
-        map.put("subject", subject);
+        map.put("subject", formatSubject());
         map.put("alert", alertString);
         return map;
+    }
+    
+    public String formatSubject() {
+        if (isAlertable() && !subject.contains(statusType.name())) {
+            return subject + ' ' + statusType;
+        } else {
+            return subject;
+        }        
     }
 
     public String getSource() {
