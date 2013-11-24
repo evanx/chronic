@@ -82,23 +82,6 @@ public class ChronicApp implements Runnable {
         return storage;
     }
 
-    protected synchronized void putRecord(StatusRecord statusRecord) {
-        logger.info("putRecord {} [{}]", statusRecord.getStatusType(), statusRecord.getSubject());
-        StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
-        StatusRecord previousAlert = alertMap.get(statusRecord.getKey());
-        if (previousStatus == null) {
-            if (properties.isTesting()) {
-                alert(statusRecord, statusRecord, null);
-            }
-        } else if (statusRecord.isAlertable(previousStatus, previousAlert)) {
-            alert(statusRecord, previousStatus, previousAlert);
-        } else if (previousAlert == null) {
-            if (statusRecord.isAlertable()) {
-                alertMap.put(statusRecord.getKey(), new StatusRecord(statusRecord));
-            }
-        }
-    }
-
     @Override
     public synchronized void run() {
         logger.info("run {}", properties.getPeriod());
@@ -111,15 +94,33 @@ public class ChronicApp implements Runnable {
     
     private void checkElapsed(StatusRecord previousStatus) {
         long elapsed = Millis.elapsed(previousStatus.getTimestamp());
-        logger.info("checkElapsed {}: elapsed {}", previousStatus.getSource(), elapsed);
+        logger.debug("checkElapsed {}: elapsed {}", previousStatus.getSource(), elapsed);
         if (elapsed > previousStatus.getPeriodMillis() + properties.getPeriod()) {
             StatusRecord previousAlert = alertMap.get(previousStatus.getKey());
-            logger.info("checkElapsed previousAlert {}", previousAlert);
             if (previousAlert == null
                     || previousAlert.getStatusType() != StatusType.ELAPSED) {
                 StatusRecord elapsedStatus = new StatusRecord(previousStatus);
                 elapsedStatus.setStatusType(StatusType.ELAPSED);
                 alert(elapsedStatus, previousStatus, previousAlert);
+            }
+        }
+    }
+    
+    protected synchronized void putRecord(StatusRecord statusRecord) {
+        logger.info("putRecord {} [{}]", statusRecord.getStatusType(), statusRecord.getSubject());
+        StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
+        StatusRecord previousAlert = alertMap.get(statusRecord.getKey());
+        if (previousStatus == null) {
+            logger.info("putRecord: no previous status");
+            if (properties.isTesting()) {
+                alert(statusRecord, statusRecord, null);
+            }
+        } else if (statusRecord.isAlertable(previousStatus, previousAlert)) {
+            alert(statusRecord, previousStatus, previousAlert);
+        } else if (previousAlert == null) {
+            logger.info("putRecord: no previous alert");
+            if (statusRecord.isAlertable()) {
+                alertMap.put(statusRecord.getKey(), new StatusRecord(statusRecord));
             }
         }
     }

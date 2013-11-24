@@ -37,23 +37,14 @@ public class AlertBuilder {
     public String build(StatusRecord status, StatusRecord previousStatus, StatusRecord previousAlert)
             throws IOException {
         logger.info("build {}", status);
-        if (status.statusType == StatusType.ELAPSED) {
-            builder.append(String.format("<b>%s <i>%s</i></b>\n", status.getSource(), status.statusType));
-            builder.append("\n<hr><b>Previous:</b>\n");
-            builder.append(buildContent(previousStatus));
-        } else {
-            append(status);
-            if (status.getAlertType() == AlertType.CONTENT_CHANGED
-                    && previousStatus != null && previousStatus != status) {
-                builder.append("\n<hr><b>Previous:</b>\n");
-                append(previousStatus);
-            } else if (status.getAlertType() == AlertType.STATUS_CHANGED
-                    && previousAlert != null) {
-                builder.append("\n<hr><b>Previous alert:</b>\n");
-                append(previousAlert);
-            }
+        append(status);
+        if (status.getAlertType() == AlertType.CONTENT_CHANGED
+                && previousStatus != null && previousStatus.getTimestamp() != status.getTimestamp()) {
+            appendPrevious(previousStatus);
+        } else if (status.getAlertType() == AlertType.STATUS_CHANGED
+                && previousAlert != null) {
+            appendPrevious(previousAlert);
         }
-        builder.append("\n<hr>");
         return builder.toString();
     }
 
@@ -62,10 +53,16 @@ public class AlertBuilder {
         builder.append(buildContent(status));
     }
 
-    public static String buildContent(StatusRecord status) {
-        StringBuilder builder = new StringBuilder();
+    private void appendPrevious(StatusRecord status) {
+            builder.append("\n<hr>Previous:\n");
+        builder.append(String.format("<b>%s</b>\n", formatHtmlSubject(status)));
         builder.append(String.format("<i>%s</i>\n", 
                 Millis.formatTimestamp(status.getTimestamp())));
+        builder.append(buildContent(status));
+    }
+
+    public static String buildContent(StatusRecord status) {
+        StringBuilder builder = new StringBuilder();
         for (String line : status.getLineList()) {
             if (!line.equals(status.getSubject())) {
                 if (builder.length() > 0) {
