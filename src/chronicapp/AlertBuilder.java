@@ -37,6 +37,7 @@ public class AlertBuilder {
             throws IOException {
         logger.info("build {}", status);
         if (status.statusType == StatusType.ELAPSED) {
+            builder.append(String.format("<b>%s</b>\n", status.formatSubject()));
             builder.append("\n<hr><b>Previous:</b>\n");
             append(status);
         } else {

@@ -251,6 +251,11 @@ public class StatusRecord {
 
     public boolean isAlertable(StatusRecord previousStatus,
             AlertRecord previousAlert) {
+        if (previousAlert == null) {            
+        } else if (previousAlert.getStatusRecord().getStatusType() == StatusType.ELAPSED &&
+                statusType != StatusType.ELAPSED) {
+            return true;
+        }
         if (alertType == AlertType.ALWAYS) {
             return true;
         }
