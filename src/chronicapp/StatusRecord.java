@@ -42,6 +42,7 @@ import vellum.type.ComparableTuple;
 public class StatusRecord {
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
     static Pattern subjectCronPattern = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)$");
+    static Pattern statusPattern = Pattern.compile("^(\\S+) (OK|CRITICAL) - (.*)$");
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
 
     List<String> lineList = new ArrayList();
@@ -99,6 +100,18 @@ public class StatusRecord {
         }
     }
 
+    public boolean parseStatus(String line) {
+        Matcher matcher = statusPattern.matcher(line);
+        if (matcher.find()) {
+            parseStatusType(matcher.group(2));
+            source = matcher.group(1);
+            subject = line;
+            logger.info("parseStatus {} {}", statusType, subject);
+            return true;
+        }
+        return false;
+    }
+    
     public void parseContentTypeLine(String contentTypeLine) {
         this.contentTypeLine = contentTypeLine;
         int index = contentTypeLine.indexOf(";");
@@ -202,6 +215,7 @@ public class StatusRecord {
             } else if (line.startsWith("Period: ")) {
                 record.parsePeriod(line.substring(8));
             } else if (!inHeader) {
+                record.parseStatus(line);
                 record.getLineList().add(line);
             } else if (line.length() == 0) {
                 inHeader = false;
