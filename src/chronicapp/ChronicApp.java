@@ -20,22 +20,17 @@
  */
 package chronicapp;
 
-import java.security.KeyStore;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.net.ssl.SSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.crypto.rsa.RsaKeyStores;
 import vellum.datatype.Millis;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.json.JsonConfig;
-import vellum.ssl.SSLContexts;
 import vellum.system.Exec;
 import vellum.type.ComparableTuple;
 
@@ -58,8 +53,6 @@ public class ChronicApp implements Runnable {
         config.init(getClass(), "chronic");
         properties.init(config);
         storage.init();
-        char[] keyPassword = Long.toString(new SecureRandom().nextLong()
-                & System.currentTimeMillis()).toCharArray();
         httpsServer = new VellumHttpsServer();
         httpsServer.start(config.getProperties("httpsServer"), new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
@@ -67,7 +60,7 @@ public class ChronicApp implements Runnable {
     }
 
     public void start() throws Exception {
-        executorService.schedule(this, 3, TimeUnit.MINUTES);
+        executorService.schedule(this, properties.getPeriodMinutes(), TimeUnit.MINUTES);
         logger.info("started");
         if (properties.isTesting()) {
             test();
@@ -112,6 +105,7 @@ public class ChronicApp implements Runnable {
             if (previousAlert != null && previousAlert.getStatusRecord() != statusRecord
                     && statusRecord.getPeriodMillis() != 0) {
                 long period = Millis.elapsed(statusRecord.getTimestamp());
+                logger.info("run period {}, elapsed {}", statusRecord.getPeriodMillis(), period);
                 if (period > statusRecord.getPeriodMillis()
                         && period - statusRecord.getPeriodMillis()
                         > Millis.fromMinutes(properties.getPeriodMinutes())) {

@@ -28,7 +28,7 @@ import vellum.json.JsonConfig;
  */
 public class ChronicProperties {
     String alertScript = "scripts/alert.sh";
-    int periodMinutes = 5;
+    int periodMinutes = 1;
     boolean testing = false;
     
     public void init(JsonConfig config) {

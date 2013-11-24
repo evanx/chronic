@@ -96,7 +96,7 @@ public class StatusRecord {
             from = username + '@' + hostname;
             subject = hostname + ' ' + username + ' ' + source;
         } else {
-            subject = subjectLine.substring(9);
+            subject = subjectLine.substring(9).trim();
         }
     }
 
