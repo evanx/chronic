@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
 import vellum.type.ComparableTuple;
-import vellum.util.Args;
 
 /**
  * 
@@ -41,7 +40,7 @@ import vellum.util.Args;
 public class StatusRecord {
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
     static Pattern subjectCronPattern = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)$");
-    static Pattern statusPattern = Pattern.compile("^(\\S+) (OK|CRITICAL) - (.*)$");
+    static Pattern nagiosStatusPattern = Pattern.compile("^(\\S+) (OK|CRITICAL) - (.*)$");
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
 
     List<String> lineList = new ArrayList();
@@ -97,19 +96,19 @@ public class StatusRecord {
             hostname = matcher.group(2);
             service = matcher.group(3);
             from = username + '@' + hostname;
-            subject = hostname + ' ' + username + ' ' + service;
         } else {
             subject = subjectLine.substring(9).trim();
         }
     }
 
     public boolean parseStatus(String line) {
-        Matcher matcher = statusPattern.matcher(line);
+        Matcher matcher = nagiosStatusPattern.matcher(line);
         if (matcher.find()) {
-            parseStatusType(matcher.group(2));
             service = matcher.group(1);
+            parseStatusType(matcher.group(2));
             subject = line;
-            logger.info("parseStatus [{}] {}", statusType, subject);
+            logger.debug("parseStatus {}", subject);
+            logger.info("parseStatus [{}] {}", statusType, service);
             return true;
         }
         return false;
@@ -174,7 +173,7 @@ public class StatusRecord {
     public String toString() {
         return Arrays.toString(new Object[] {username, hostname, service, subject, 
             statusType, alertType, alertString, Millis.format(periodMillis)});
-    }    
+    }
     
     public String buildContent() {
         StringBuilder builder = new StringBuilder();
@@ -200,7 +199,7 @@ public class StatusRecord {
             } else if (line.startsWith("Status: ")) {
                 record.parseStatusType(line.substring(8));
             } else if (line.startsWith("Service: ")) {
-                record.setService(line.substring(8));
+                record.setService(line.substring(9));
             } else if (line.startsWith("Alert: ")) {
                 record.parseAlertType(line.substring(7));
             } else if (line.startsWith("Period: ")) {
@@ -212,7 +211,14 @@ public class StatusRecord {
                 inHeader = false;
             }
         }
+        record.normalize();
         return record;
+    }
+    
+    private void normalize() {
+        if (subject == null && username != null && username != null && service != null) {
+            subject = getSource();
+        }
     }
     
     private void parseStatusType(String string) {
@@ -282,7 +288,7 @@ public class StatusRecord {
         return map;
     }
 
-    public String getOrigin() {
-        return Args.format(hostname, username, service);
+    public String getSource() {
+        return String.format("%s@%s/%s", username, hostname, service);
     }
 }

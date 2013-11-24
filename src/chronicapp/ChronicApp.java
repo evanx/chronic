@@ -60,7 +60,7 @@ public class ChronicApp implements Runnable {
     }
 
     public void start() throws Exception {
-        executorService.schedule(this, properties.getPeriodMinutes(), TimeUnit.MINUTES);
+        executorService.schedule(this, properties.getPeriod(), TimeUnit.MINUTES);
         logger.info("started");
         if (properties.isTesting()) {
             test();
@@ -104,13 +104,15 @@ public class ChronicApp implements Runnable {
             AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
             if (previousAlert != null && previousAlert.getStatusRecord() != statusRecord
                     && statusRecord.getPeriodMillis() != 0) {
-                long period = Millis.elapsed(statusRecord.getTimestamp());
-                logger.info("run {} elapsed {}", statusRecord.getOrigin(), period);
-                if (period > statusRecord.getPeriodMillis()
-                        && period - statusRecord.getPeriodMillis()
-                        > Millis.fromMinutes(properties.getPeriodMinutes())) {
-                    statusRecord.setStatusType(StatusType.ELAPSED);
-                    alert(statusRecord, null, null);
+                long elapsed = Millis.elapsed(statusRecord.getTimestamp());
+                logger.info("run {} elapsed {}", statusRecord.getSource(), elapsed);
+                if (elapsed > statusRecord.getPeriodMillis()) {
+                    elapsed = elapsed - statusRecord.getPeriodMillis();
+                    logger.info("run {} elapsed {}", properties.getPeriod(), elapsed);
+                    if (elapsed > properties.getPeriod()) {
+                        statusRecord.setStatusType(StatusType.ELAPSED);
+                        alert(statusRecord, null, null);
+                    }
                 }
             }
         }

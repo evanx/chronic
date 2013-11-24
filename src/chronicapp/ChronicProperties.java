@@ -20,6 +20,7 @@
  */
 package chronicapp;
 
+import vellum.datatype.Millis;
 import vellum.json.JsonConfig;
 
 /**
@@ -28,12 +29,12 @@ import vellum.json.JsonConfig;
  */
 public class ChronicProperties {
     String alertScript = "scripts/alert.sh";
-    int periodMinutes = 3;
+    long period = Millis.fromMinutes(3);
     boolean testing = false;
     
     public void init(JsonConfig config) {
         alertScript = config.getProperties().getString("alertScript", alertScript);
-        periodMinutes = config.getProperties().getInt("periodMinutes", periodMinutes);
+        period = config.getProperties().getMillis("period", period);
         testing = config.getProperties().getBoolean("testing", testing);
     }
 
@@ -41,8 +42,8 @@ public class ChronicProperties {
         return alertScript;
     }        
 
-    public int getPeriodMinutes() {
-        return periodMinutes;
+    public long getPeriod() {
+        return period;
     }        
 
     public boolean isTesting() {

@@ -42,9 +42,9 @@ public class ChronicHttpHandler implements HttpHandler {
             String contentString = new String(content);
             logger.trace("content {}", contentString);
             StatusRecord record = StatusRecord.parse(contentString);
-            logger.info("content lines {}: {}", record.getLineList().size(), 
+            logger.trace("content lines {}: {}", record.getLineList().size(), 
                     Strings.formatFirst(record.getLineList()));
-            logger.info("record {}", record);      
+            logger.debug("record {} {}", record.getSource(), record.getStatusType());
             app.putRecord(record);
             String responseString = "OK\n";
             byte[] responseBytes = responseString.getBytes();
