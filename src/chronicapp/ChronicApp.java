@@ -20,7 +20,6 @@
  */
 package chronicapp;
 
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -60,7 +59,9 @@ public class ChronicApp implements Runnable {
     }
 
     public void start() throws Exception {
-        executorService.schedule(this, properties.getPeriod(), TimeUnit.MILLISECONDS);
+        logger.info("schedule {}", properties.getPeriod());
+        executorService.scheduleAtFixedRate(this, properties.getPeriod(), 
+                properties.getPeriod(), TimeUnit.MILLISECONDS);
         logger.info("started");
         if (properties.isTesting()) {
             test();
@@ -100,7 +101,10 @@ public class ChronicApp implements Runnable {
 
     @Override
     public synchronized void run() {
+        logger.info("run {}", properties.getPeriod());
         for (StatusRecord statusRecord : recordMap.values()) {
+            logger.info("run {}: elapsed {}", statusRecord.getSource(), 
+                    Millis.elapsed(statusRecord.getTimestamp()));
             AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
             if (previousAlert != null && previousAlert.getStatusRecord() != statusRecord
                     && statusRecord.getPeriodMillis() != 0) {
