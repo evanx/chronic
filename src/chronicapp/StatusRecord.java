@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
 import vellum.type.ComparableTuple;
+import vellum.util.Strings;
 
 /**
  * 
@@ -171,8 +172,7 @@ public class StatusRecord {
     
     @Override
     public String toString() {
-        return Arrays.toString(new Object[] {username, hostname, service, 
-            alertType, alertString, statusType});
+        return Arrays.toString(new Object[] {getSource(), alertType, alertString, statusType});
     }
     
     public String buildContent() {
@@ -289,6 +289,9 @@ public class StatusRecord {
     }
 
     public String getSource() {
-        return String.format("%s@%s/%s", username, hostname, service);
+        if (username != null && hostname != null && service != null) {
+            return String.format("%s@%s/%s", username, hostname, service);
+        }
+        return Strings.joinNotNullArgs(hostname, username, service);
     }
 }
