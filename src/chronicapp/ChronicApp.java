@@ -60,11 +60,8 @@ public class ChronicApp implements Runnable {
         storage.init();
         char[] keyPassword = Long.toString(new SecureRandom().nextLong() & 
                 System.currentTimeMillis()).toCharArray();
-        KeyStore keyStore = RsaKeyStores.createKeyStore("JKS", "crom", keyPassword, 365);
-        SSLContext sslContext = SSLContexts.create(keyStore, keyPassword, 
-                new ChronicTrustManager(this));
         httpsServer = new VellumHttpsServer();
-        httpsServer.start(config.getProperties("httpsServer"), sslContext, 
+        httpsServer.start(config.getProperties("httpsServer"), new ChronicTrustManager(this), 
                 new ChronicHttpHandler(this));
         logger.info("initialized");
     }

@@ -34,7 +34,10 @@ public class AlertBuilder {
 
     public String build(StatusRecord status, StatusRecord previousStatus, AlertRecord previousAlert) 
             throws IOException {
-        builder.append(String.format("<b>%s</b>\n", status.getSubject().trim()));
+        logger.info("build {}", status);
+        if (status.getSubject() != null) {
+            builder.append(String.format("<b>%s</b>\n", status.getSubject().trim()));
+        }
         builder.append(status.buildContent());
         if (status.getAlertType() == AlertType.CONTENT_CHANGED && previousStatus != null) {
             builder.append("\n<hr><b>Previous:</b>\n");
