@@ -52,7 +52,13 @@ public class AlertBuilder {
 
     private void append(StatusRecord status) {
         if (status.getSubject() != null) {
-            builder.append(String.format("<b>%s</b>\n", status.getSubject()));
+            if (status.isAlertable() && 
+                    !status.getSubject().contains(status.getStatusType().name())) {
+                builder.append(String.format("<b>%s <i>%s</i></b>\n", 
+                        status.getSubject(), status.getStatusType().name()));
+            } else {
+                builder.append(String.format("<b>%s</b>\n", status.getSubject()));
+            }
         }
         builder.append(buildContent(status));
     }

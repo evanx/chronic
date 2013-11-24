@@ -17,6 +17,6 @@ public enum StatusType {
     ELAPSED;
 
     public boolean isAlertable() {
-        return (this == OK || this == CRITICAL);
+        return (this != UNKNOWN);
     }
 }
