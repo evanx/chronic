@@ -36,15 +36,20 @@ public class AlertBuilder {
     public String build(StatusRecord status, StatusRecord previousStatus, AlertRecord previousAlert)
             throws IOException {
         logger.info("build {}", status);
-        append(status);
-        if (status.getAlertType() == AlertType.CONTENT_CHANGED && 
-                previousStatus != null && previousStatus != status) {
+        if (status.statusType == StatusType.ELAPSED) {
             builder.append("\n<hr><b>Previous:</b>\n");
-            append(previousStatus);
-        } else if (status.getAlertType() == AlertType.STATUS_CHANGED && 
-                previousAlert != null) {
-            builder.append("\n<hr><b>Previous:</b>\n");
-            append(previousAlert.getStatusRecord());
+            append(status);
+        } else {
+            append(status);
+            if (status.getAlertType() == AlertType.CONTENT_CHANGED
+                    && previousStatus != null && previousStatus != status) {
+                builder.append("\n<hr><b>Previous:</b>\n");
+                append(previousStatus);
+            } else if (status.getAlertType() == AlertType.STATUS_CHANGED
+                    && previousAlert != null) {
+                builder.append("\n<hr><b>Previous:</b>\n");
+                append(previousAlert.getStatusRecord());
+            }
         }
         builder.append("\n<hr>");
         return builder.toString();

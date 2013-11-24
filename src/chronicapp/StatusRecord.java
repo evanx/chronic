@@ -1,22 +1,22 @@
 /*
  * Source https://code.google.com/p/vellum by @evanxsummers
 
-       Licensed to the Apache Software Foundation (ASF) under one
-       or more contributor license agreements. See the NOTICE file
-       distributed with this work for additional information
-       regarding copyright ownership.  The ASF licenses this file
-       to you under the Apache License, Version 2.0 (the
-       "License"); you may not use this file except in compliance
-       with the License.  You may obtain a copy of the License at
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements. See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
 
-         http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-       Unless required by applicable law or agreed to in writing,
-       software distributed under the License is distributed on an
-       "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-       KIND, either express or implied.  See the License for the
-       specific language governing permissions and limitations
-       under the License.  
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.  
  */
 package chronicapp;
 
@@ -35,33 +35,32 @@ import vellum.type.ComparableTuple;
 import vellum.util.Strings;
 
 /**
- * 
+ *
  * @author evan.summers
  */
 public class StatusRecord {
+
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
     static Pattern subjectCronPattern = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)$");
     static Pattern nagiosStatusPattern = Pattern.compile("^(\\S+) (OK|CRITICAL) - (.*)$");
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
-
     List<String> lineList = new ArrayList();
     AlertType alertType;
     String alertString;
     StatusType statusType = StatusType.UNKNOWN;
     long timestamp = System.currentTimeMillis();
     long periodMillis;
-    
     String fromLine;
     String subjectLine;
     String contentTypeLine;
     String contentType;
-    String from; 
+    String from;
     String subject;
-    String username; 
-    String hostname; 
-    String service; 
-    String period; 
-    
+    String username;
+    String hostname;
+    String service;
+    String period;
+
     public ComparableTuple getKey() {
         return ComparableTuple.create(username, hostname, service);
     }
@@ -76,7 +75,7 @@ public class StatusRecord {
         username = fromLine.replaceAll(fromCronPattern, "$1");
         from = username;
     }
-    
+
     public String getFrom() {
         return from;
     }
@@ -88,7 +87,7 @@ public class StatusRecord {
     public void setService(String service) {
         this.service = service;
     }
-            
+
     public void parseSubjectLine(String subjectLine) {
         this.subjectLine = subjectLine;
         Matcher matcher = subjectCronPattern.matcher(subjectLine);
@@ -114,7 +113,7 @@ public class StatusRecord {
         }
         return false;
     }
-    
+
     public void parseContentTypeLine(String contentTypeLine) {
         this.contentTypeLine = contentTypeLine;
         int index = contentTypeLine.indexOf(";");
@@ -122,13 +121,13 @@ public class StatusRecord {
             contentType = contentTypeLine.substring(14, index);
         } else {
             contentType = contentTypeLine.substring(14);
-        }        
+        }
     }
 
     public String getSubject() {
         return subject;
     }
-        
+
     public void setStatusType(StatusType statusType) {
         this.statusType = statusType;
     }
@@ -136,7 +135,7 @@ public class StatusRecord {
     public StatusType getStatusType() {
         return statusType;
     }
-    
+
     public void setAlertType(AlertType alertType) {
         this.alertType = alertType;
     }
@@ -152,7 +151,7 @@ public class StatusRecord {
     public long getPeriodMillis() {
         return periodMillis;
     }
-        
+
     public List<String> getLineList() {
         return lineList;
     }
@@ -169,12 +168,12 @@ public class StatusRecord {
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
-        return Arrays.toString(new Object[] {getSource(), alertType, alertString, statusType});
+        return Arrays.toString(new Object[]{getSource(), alertType, alertString, statusType});
     }
-    
+
     public String buildContent() {
         StringBuilder builder = new StringBuilder();
         for (String line : lineList) {
@@ -182,8 +181,8 @@ public class StatusRecord {
             builder.append('\n');
         }
         return builder.toString().trim();
-    }    
-    
+    }
+
     public static StatusRecord parse(String text) throws IOException {
         StatusRecord record = new StatusRecord();
         boolean inHeader = true;
@@ -214,13 +213,13 @@ public class StatusRecord {
         record.normalize();
         return record;
     }
-    
+
     private void normalize() {
         if (subject == null && username != null && username != null && service != null) {
             subject = getSource();
         }
     }
-    
+
     private void parseStatusType(String string) {
         try {
             statusType = StatusType.valueOf(string);
@@ -232,7 +231,7 @@ public class StatusRecord {
     private void parsePeriod(String string) {
         periodMillis = Millis.parse(string);
     }
-    
+
     private void parseAlertType(String string) {
         int index = string.indexOf(" ");
         if (index > 0) {
@@ -244,15 +243,15 @@ public class StatusRecord {
         } catch (Exception e) {
             logger.warn("parseAlertType {}: {}", string, e.getMessage());
         }
-    }       
+    }
 
     public boolean isAlertable() {
         return statusType != null && statusType.isAlertable();
     }
 
-    public boolean isAlertable(StatusRecord previousStatus, 
+    public boolean isAlertable(StatusRecord previousStatus,
             AlertRecord previousAlert) {
-        if (alertType == AlertType.ALWAYS) {            
+        if (alertType == AlertType.ALWAYS) {
             return true;
         }
         if (alertType == AlertType.PATTERN) {
@@ -268,10 +267,10 @@ public class StatusRecord {
             }
         } else if (alertType == AlertType.STATUS_CHANGED) {
             if (statusType == previousStatus.statusType) {
-                return statusType.isAlertable() && previousAlert != null && 
-                    statusType != previousAlert.getStatusRecord().getStatusType();
+                return statusType.isAlertable() && previousAlert != null
+                        && statusType != previousAlert.getStatusRecord().getStatusType();
             }
-        } else {            
+        } else {
         }
         return false;
     }
@@ -287,15 +286,18 @@ public class StatusRecord {
         map.put("alert", alertString);
         return map;
     }
-    
-    public String formatSubject() {
-        if (isAlertable() && !subject.contains(statusType.name())) {
-            return subject + ' ' + statusType;
-        } else {
-            return subject;
-        }        
-    }
 
+    public String formatSubject() {
+        if (isAlertable()) {
+            if (statusType == StatusType.ELAPSED) {
+                return getSource() + ' ' + statusType;
+            } else if (!subject.contains(statusType.name()))   {
+                return subject + ' ' + statusType;
+            }
+        }
+        return subject;
+    }
+    
     public String getSource() {
         if (username != null && hostname != null && service != null) {
             return String.format("%s@%s/%s", username, hostname, service);
