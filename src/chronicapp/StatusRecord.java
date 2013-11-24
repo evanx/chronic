@@ -171,8 +171,8 @@ public class StatusRecord {
     
     @Override
     public String toString() {
-        return Arrays.toString(new Object[] {username, hostname, service, subject, 
-            statusType, alertType, alertString, Millis.format(periodMillis)});
+        return Arrays.toString(new Object[] {username, hostname, service, 
+            alertType, alertString, statusType});
     }
     
     public String buildContent() {

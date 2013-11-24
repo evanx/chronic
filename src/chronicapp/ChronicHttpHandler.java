@@ -31,7 +31,7 @@ public class ChronicHttpHandler implements HttpHandler {
         logger.trace("path {}", path);
         int contentLength = Integer.parseInt(
                 httpExchange.getRequestHeaders().get("Content-length").get(0));
-        logger.info("content-length {}", contentLength);
+        logger.trace("content-length {}", contentLength);
         if (contentLength > contentLengthLimit) {
             httpExchange.close();
             return;

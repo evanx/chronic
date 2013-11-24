@@ -60,7 +60,7 @@ public class ChronicApp implements Runnable {
     }
 
     public void start() throws Exception {
-        executorService.schedule(this, properties.getPeriod(), TimeUnit.MINUTES);
+        executorService.schedule(this, properties.getPeriod(), TimeUnit.MILLISECONDS);
         logger.info("started");
         if (properties.isTesting()) {
             test();
@@ -82,7 +82,7 @@ public class ChronicApp implements Runnable {
     }
 
     protected synchronized void putRecord(StatusRecord statusRecord) {
-        logger.info("putRecord {} {}", statusRecord.getStatusType(), statusRecord.getSubject());
+        logger.info("putRecord {} [{}]", statusRecord.getStatusType(), statusRecord.getSubject());
         StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
         AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
         if (previousStatus == null) {
@@ -120,7 +120,7 @@ public class ChronicApp implements Runnable {
 
     private synchronized void alert(StatusRecord statusRecord,
             StatusRecord previousStatusRecord, AlertRecord previousAlertRecord) {
-        logger.info("ALERT {}", statusRecord.toString());
+        logger.info("alert {}", statusRecord.toString());
         alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
         if (properties.getAlertScript() != null) {
             try {
