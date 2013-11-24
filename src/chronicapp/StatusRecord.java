@@ -48,7 +48,7 @@ public class StatusRecord {
     List<String> lineList = new ArrayList();
     AlertType alertType;
     String alertString;
-    StatusType statusType;
+    StatusType statusType = StatusType.UNKNOWN;
     long timestamp = System.currentTimeMillis();
     long periodMillis;
     
@@ -235,6 +235,10 @@ public class StatusRecord {
         }
     }       
 
+    public boolean isAlertable() {
+        return statusType != null && statusType.isAlertable();
+    }
+
     public boolean isAlertable(StatusRecord previousStatus, 
             AlertRecord previousAlert) {
         if (alertType == AlertType.ALWAYS) {            
@@ -252,14 +256,9 @@ public class StatusRecord {
                 return true;
             }
         } else if (alertType == AlertType.STATUS_CHANGED) {
-            if (!statusType.isAlertable()) {
-                return false;
-            } else if (statusType != previousStatus.statusType) {
-                return false;
-            } else if (statusType == previousAlert.getStatusRecord().getStatusType()) {
-                return false;
-            } else {
-                return true;
+            if (statusType == previousStatus.statusType) {
+                return statusType.isAlertable() && previousAlert != null && 
+                    statusType != previousAlert.getStatusRecord().getStatusType();
             }
         } else {            
         }

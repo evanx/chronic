@@ -1,22 +1,22 @@
 /*
  * Source https://code.google.com/p/vellum by @evanxsummers
 
-       Licensed to the Apache Software Foundation (ASF) under one
-       or more contributor license agreements. See the NOTICE file
-       distributed with this work for additional information
-       regarding copyright ownership.  The ASF licenses this file
-       to you under the Apache License, Version 2.0 (the
-       "License"); you may not use this file except in compliance
-       with the License.  You may obtain a copy of the License at
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements. See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
 
-         http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-       Unless required by applicable law or agreed to in writing,
-       software distributed under the License is distributed on an
-       "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-       KIND, either express or implied.  See the License for the
-       specific language governing permissions and limitations
-       under the License.  
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.  
  */
 package chronicapp;
 
@@ -53,15 +53,15 @@ public class ChronicApp implements Runnable {
     Map<ComparableTuple, StatusRecord> recordMap = new HashMap();
     Map<ComparableTuple, AlertRecord> alertMap = new HashMap();
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    
+
     public void init() throws Exception {
         config.init(getClass(), "chronic");
         properties.init(config);
         storage.init();
-        char[] keyPassword = Long.toString(new SecureRandom().nextLong() & 
-                System.currentTimeMillis()).toCharArray();
+        char[] keyPassword = Long.toString(new SecureRandom().nextLong()
+                & System.currentTimeMillis()).toCharArray();
         httpsServer = new VellumHttpsServer();
-        httpsServer.start(config.getProperties("httpsServer"), new ChronicTrustManager(this), 
+        httpsServer.start(config.getProperties("httpsServer"), new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
         logger.info("initialized");
     }
@@ -73,9 +73,8 @@ public class ChronicApp implements Runnable {
             test();
         }
     }
-    
+
     public void test() throws Exception {
-        
     }
 
     public void stop() throws Exception {
@@ -88,43 +87,41 @@ public class ChronicApp implements Runnable {
     public ChronicStorage getStorage() {
         return storage;
     }
-    
+
     protected synchronized void putRecord(StatusRecord statusRecord) {
+        logger.info("putRecord {} {}", statusRecord.getStatusType(), statusRecord.getSubject());
         StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
+        AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
         if (previousStatus == null) {
             if (properties.isTesting()) {
                 alert(statusRecord, statusRecord, null);
-            } else {
-                alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
             }
-        } else {
-            AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
-            logger.info("putRecord {}", Arrays.toString(new Object[] {
-                    previousAlert.getStatusRecord().getStatusType(), 
-                    previousStatus.getStatusType(), statusRecord.getStatusType()}));
-            if (statusRecord.isAlertable(previousStatus, previousAlert)) {
-                alert(statusRecord, previousStatus, previousAlert);
+        } else if (statusRecord.isAlertable(previousStatus, previousAlert)) {
+            alert(statusRecord, previousStatus, previousAlert);
+        } else if (previousAlert == null) {
+            if (statusRecord.isAlertable()) {
+                alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
             }
         }
     }
-    
+
     @Override
     public synchronized void run() {
         for (StatusRecord statusRecord : recordMap.values()) {
             AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
-            if (previousAlert != null && previousAlert.getStatusRecord() != statusRecord &&
-                    statusRecord.getPeriodMillis() != 0) {
+            if (previousAlert != null && previousAlert.getStatusRecord() != statusRecord
+                    && statusRecord.getPeriodMillis() != 0) {
                 long period = Millis.elapsed(statusRecord.getTimestamp());
-                if (period > statusRecord.getPeriodMillis() && 
-                        period - statusRecord.getPeriodMillis() > 
-                        Millis.fromMinutes(properties.getPeriodMinutes())) {
-                        statusRecord.setStatusType(StatusType.ELAPSED);
-                        alert(statusRecord, null, null);
-                }                                    
+                if (period > statusRecord.getPeriodMillis()
+                        && period - statusRecord.getPeriodMillis()
+                        > Millis.fromMinutes(properties.getPeriodMinutes())) {
+                    statusRecord.setStatusType(StatusType.ELAPSED);
+                    alert(statusRecord, null, null);
+                }
             }
         }
     }
-    
+
     private synchronized void alert(StatusRecord statusRecord,
             StatusRecord previousStatusRecord, AlertRecord previousAlertRecord) {
         logger.info("ALERT {}", statusRecord.toString());
@@ -139,7 +136,7 @@ public class ChronicApp implements Runnable {
             }
         }
     }
-    
+
     public static void main(String[] args) throws Exception {
         try {
             ChronicApp app = new ChronicApp();
