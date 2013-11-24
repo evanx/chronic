@@ -185,10 +185,10 @@ public class StatusRecord {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         writeContent(stream);
         if (alertType == AlertType.CONTENT_CHANGED && previousStatus != null) {
-            stream.write("\n<h4>Previous</h4>".getBytes());
+            stream.write("\n<hr><b>Previous:</b>\n".getBytes());
             previousStatus.writeContent(stream);            
         } else if (alertType == AlertType.STATUS_CHANGED && previousAlert != null) {
-            stream.write("\n<h4>Previous</h4>\n".getBytes());
+            stream.write("\n<hr><b>Previous:</b>\n".getBytes());
             previousAlert.getStatusRecord().writeContent(stream);            
         }
         return stream.toByteArray();
