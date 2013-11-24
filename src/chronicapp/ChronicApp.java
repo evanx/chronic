@@ -104,7 +104,7 @@ public class ChronicApp implements Runnable {
                     previousRecord.getStatusType(), statusRecord.getStatusType()}));
             if (statusRecord.isAlertable(previousRecord, previousAlert)) {
                 AlertRecord alertRecord = new AlertRecord(statusRecord);
-                alert(statusRecord, previousRecord);
+                alert(statusRecord, previousRecord, previousAlert);
                 alertMap.put(statusRecord.getKey(), alertRecord);
             }
         }
@@ -121,18 +121,19 @@ public class ChronicApp implements Runnable {
                         period - statusRecord.getPeriodMillis() > 
                         Millis.fromMinutes(properties.getPeriodMinutes())) {
                         statusRecord.setStatusType(StatusType.ELAPSED);
-                        alert(statusRecord, null);
+                        alert(statusRecord, null, null);
                 }                                    
             }
         }
     }
     
-    private synchronized void alert(StatusRecord statusRecord, StatusRecord previousRecord) {
+    private synchronized void alert(StatusRecord statusRecord, 
+            StatusRecord previousRecord, AlertRecord alertRecord) {
         logger.info("ALERT {}", statusRecord.toString());
         if (properties.getAlertScript() != null) {
             try {
                 new Exec().exec(properties.getAlertScript(), 
-                        statusRecord.getContent(previousRecord),
+                        statusRecord.getContent(previousRecord, alertRecord),
                         statusRecord.getAlertMap());
             } catch (Exception e) {
                 logger.warn(e.getMessage(), e);

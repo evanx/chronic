@@ -180,12 +180,15 @@ public class StatusRecord {
         return stream.toByteArray();
     }
 
-    public byte[] getContent(StatusRecord previous) throws IOException {
+    public byte[] getContent(StatusRecord previous, AlertRecord alert) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         writeContent(stream);
-        if (previous != null) {
+        if (alertType == AlertType.CONTENT_CHANGED && previous != null) {
             stream.write("\n-- Previous:\n".getBytes());
             previous.writeContent(stream);            
+        } else if (alertType == AlertType.STATUS_CHANGED && alert != null) {
+            stream.write("\n-- Previous:\n".getBytes());
+            alert.getStatusRecord().writeContent(stream);            
         }
         return stream.toByteArray();
     }
