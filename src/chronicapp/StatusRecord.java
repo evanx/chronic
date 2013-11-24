@@ -115,7 +115,7 @@ public class StatusRecord {
         }
     }
 
-    public boolean parseStatus(String line) {
+    public boolean parseNagiosStatus(String line) {
         Matcher matcher = nagiosStatusPattern.matcher(line);
         if (matcher.find()) {
             service = matcher.group(1);
@@ -201,6 +201,7 @@ public class StatusRecord {
         StatusRecord record = new StatusRecord();
         boolean inHeader = true;
         String[] lines = text.split("\n");
+        boolean nagiosStatus = true;
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i].trim();
             if (line.startsWith("From: ")) {
@@ -213,12 +214,15 @@ public class StatusRecord {
                 record.parseStatusType(line.substring(8));
             } else if (line.startsWith("Service: ")) {
                 record.setService(line.substring(9));
+                nagiosStatus = false;
             } else if (line.startsWith("Alert: ")) {
                 record.parseAlertType(line.substring(7));
             } else if (line.startsWith("Period: ")) {
                 record.parsePeriod(line.substring(8));
             } else if (!inHeader) {
-                record.parseStatus(line);
+                if (nagiosStatus) {
+                    record.parseNagiosStatus(line);
+                }
                 record.getLineList().add(line);
             } else if (line.length() == 0) {
                 inHeader = false;
