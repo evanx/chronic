@@ -22,6 +22,7 @@ package chronicapp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -152,12 +153,26 @@ public class StatusRecord {
         }
         return false;
     }
+
+    private void writeContent(OutputStream stream) throws IOException {
+        for (String line : lineList) {
+            stream.write(line.getBytes());
+            stream.write("\n".getBytes());
+        }
+    }
     
     public byte[] getContent() throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        for (String line : lineList) {
-            stream.write(line.getBytes());
-            stream.write('\n');
+        writeContent(stream);
+        return stream.toByteArray();
+    }
+
+    public byte[] getContent(StatusRecord previous) throws IOException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        writeContent(stream);
+        if (previous != null) {
+            stream.write("\n-- Previous:\n".getBytes());
+            previous.writeContent(stream);            
         }
         return stream.toByteArray();
     }
@@ -228,9 +243,9 @@ public class StatusRecord {
         if (previousStatus == null) {
             return false;
         }
-        if (alertType == AlertType.OUTPUT_CHANGED) {
+        if (alertType == AlertType.CONTENT_CHANGED) {
             if (isLinesChanged(previousStatus)) {
-                statusType = StatusType.OUTPUT_CHANGED;
+                statusType = StatusType.CONTENT_CHANGED;
                 return true;
             }
         } else if (alertType == AlertType.STATUS_CHANGED) {

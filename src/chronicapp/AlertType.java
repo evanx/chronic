@@ -14,7 +14,7 @@ public enum AlertType {
     ERROR,
     PATTERN,
     STATUS_CHANGED,
-    OUTPUT_CHANGED,
+    CONTENT_CHANGED,
     ALWAYS;
     
     public static AlertType parse(String string) {
