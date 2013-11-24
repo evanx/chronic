@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.util.Strings;
 
 /**
  *
@@ -41,7 +42,8 @@ public class ChronicHttpHandler implements HttpHandler {
             String contentString = new String(content);
             logger.trace("content {}", contentString);
             StatusRecord record = StatusRecord.parse(contentString);
-            logger.trace("content lines {}", record.getLineList().size());
+            logger.info("content lines {}: {}", record.getLineList().size(), 
+                    Strings.formatFirst(record.getLineList()));
             logger.info("record {}", record);      
             app.putRecord(record);
             String responseString = "OK\n";

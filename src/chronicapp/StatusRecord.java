@@ -93,8 +93,8 @@ public class StatusRecord {
             username = matcher.group(1);
             hostname = matcher.group(2);
             source = matcher.group(3);
-            subject = source;
             from = username + '@' + hostname;
+            subject = hostname + ' ' + username + ' ' + source;
         } else {
             subject = subjectLine.substring(9);
         }
@@ -106,7 +106,7 @@ public class StatusRecord {
             parseStatusType(matcher.group(2));
             source = matcher.group(1);
             subject = line;
-            logger.info("parseStatus {} {}", statusType, subject);
+            logger.info("parseStatus [{}] {}", statusType, subject);
             return true;
         }
         return false;
@@ -185,10 +185,10 @@ public class StatusRecord {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         writeContent(stream);
         if (alertType == AlertType.CONTENT_CHANGED && previousStatus != null) {
-            stream.write("\n-- Previous:\n".getBytes());
+            stream.write("\n<h4>Previous</h4>".getBytes());
             previousStatus.writeContent(stream);            
         } else if (alertType == AlertType.STATUS_CHANGED && previousAlert != null) {
-            stream.write("\n-- Previous:\n".getBytes());
+            stream.write("\n<h4>Previous</h4>\n".getBytes());
             previousAlert.getStatusRecord().writeContent(stream);            
         }
         return stream.toByteArray();
@@ -252,10 +252,9 @@ public class StatusRecord {
     public boolean isAlertable(StatusRecord previousStatus, 
             AlertRecord previousAlert) {
         if (alertType == AlertType.ALWAYS) {            
-            return false;
+            return true;
         }
         if (alertType == AlertType.PATTERN) {
-        } else if (alertType == AlertType.NOT_OK) {
         } else if (alertType == AlertType.ERROR) {
         }
         if (previousStatus == null) {
@@ -288,6 +287,8 @@ public class StatusRecord {
     public Map getAlertMap() {
         Map map = new HashMap();
         map.put("from", from);
+        map.put("username", username);
+        map.put("hostname", hostname);
         map.put("source", source);
         map.put("status", statusType);
         map.put("subject", subject);
@@ -295,4 +296,3 @@ public class StatusRecord {
         return map;
     }
 }
-

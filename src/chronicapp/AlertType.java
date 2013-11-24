@@ -9,7 +9,6 @@ package chronicapp;
  * @author evan.summers
  */
 public enum AlertType {
-    NOT_OK,
     WARN,
     ERROR,
     PATTERN,

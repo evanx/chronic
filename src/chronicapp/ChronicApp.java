@@ -94,17 +94,17 @@ public class ChronicApp implements Runnable {
     }
     
     protected synchronized void putRecord(StatusRecord statusRecord) {
-        StatusRecord previousRecord = recordMap.put(statusRecord.getKey(), statusRecord);
-        if (previousRecord == null) {
+        StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
+        if (previousStatus == null) {
             alertMap.put(statusRecord.getKey(), new AlertRecord(statusRecord));
         } else {
             AlertRecord previousAlert = alertMap.get(statusRecord.getKey());
             logger.info("putRecord {}", Arrays.toString(new Object[] {
                     previousAlert.getStatusRecord().getStatusType(), 
-                    previousRecord.getStatusType(), statusRecord.getStatusType()}));
-            if (statusRecord.isAlertable(previousRecord, previousAlert)) {
+                    previousStatus.getStatusType(), statusRecord.getStatusType()}));
+            if (statusRecord.isAlertable(previousStatus, previousAlert)) {
                 AlertRecord alertRecord = new AlertRecord(statusRecord);
-                alert(statusRecord, previousRecord, previousAlert);
+                alert(statusRecord, previousStatus, previousAlert);
                 alertMap.put(statusRecord.getKey(), alertRecord);
             }
         }
@@ -128,12 +128,12 @@ public class ChronicApp implements Runnable {
     }
     
     private synchronized void alert(StatusRecord statusRecord, 
-            StatusRecord previousRecord, AlertRecord alertRecord) {
+            StatusRecord previousStatusRecord, AlertRecord previousAlertRecord) {
         logger.info("ALERT {}", statusRecord.toString());
         if (properties.getAlertScript() != null) {
             try {
                 new Exec().exec(properties.getAlertScript(), 
-                        statusRecord.getContent(previousRecord, alertRecord),
+                        statusRecord.getContent(previousStatusRecord, previousAlertRecord),
                         statusRecord.getAlertMap());
             } catch (Exception e) {
                 logger.warn(e.getMessage(), e);
