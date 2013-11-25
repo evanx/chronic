@@ -316,9 +316,9 @@ public class StatusRecord {
     public String formatSubject() {
         if (isAlertable()) {
             if (statusType == StatusType.ELAPSED || subject == null) {
-                return getSource() + ' ' + statusType;
+                return getSource() + ' ' + statusType.getLabel();
             } else if (!subject.contains(statusType.name())) {
-                return subject + ' ' + statusType;
+                return subject + ' ' + statusType.getLabel();
             } else {
                 return subject;
             }

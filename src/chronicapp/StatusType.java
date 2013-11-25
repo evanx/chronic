@@ -19,4 +19,9 @@ public enum StatusType {
     public boolean isAlertable() {
         return (this != UNKNOWN);
     }
+    
+    public String getLabel() {
+        return Bundle.get(StatusType.class).getString(name());
+    }
+    
 }

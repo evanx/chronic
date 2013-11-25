@@ -22,6 +22,7 @@ package chronicapp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +39,6 @@ import vellum.type.ComparableTuple;
  * @author evan.summers
  */
 public class ChronicApp implements Runnable {
-
     Logger logger = LoggerFactory.getLogger(getClass());
     JsonConfig config = new JsonConfig();
     ChronicProperties properties = new ChronicProperties();

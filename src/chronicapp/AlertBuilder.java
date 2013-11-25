@@ -77,9 +77,9 @@ public class AlertBuilder {
     public String formatHtmlSubject(StatusRecord status) {
         if (status.isAlertable()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
-                return status.getSource() + " <i>" + status.getStatusType() + "</i>";
+                return status.getSource() + " <i>" + status.getStatusType().getLabel() + "</i>";
             } else if (!status.getSubject().contains(status.getStatusType().name()))   {
-                return status.getSubject() + " <i>" + status.getStatusType() + "</i>";
+                return status.getSubject() + " <i>" + status.getStatusType().getLabel() + "</i>";
             } else {
                 return status.getSubject();
             }
