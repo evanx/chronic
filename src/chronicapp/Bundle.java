@@ -29,6 +29,6 @@ import java.util.ResourceBundle;
 public class Bundle {
         
     public static ResourceBundle get(Class classObject) {
-        return ResourceBundle.getBundle(classObject.getSimpleName());
+        return ResourceBundle.getBundle(classObject.getName());
     }
 }

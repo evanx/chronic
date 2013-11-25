@@ -75,6 +75,7 @@ public class AlertBuilder {
     }
     
     public String formatHtmlSubject(StatusRecord status) {
+        logger.info("formatHtmlSubject {} {}", status.getStatusType(), status.getStatusType().getLabel());            
         if (status.isAlertable()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
                 return status.getSource() + " <i>" + status.getStatusType().getLabel() + "</i>";
