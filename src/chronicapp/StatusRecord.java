@@ -42,7 +42,7 @@ public class StatusRecord {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
     static Pattern subjectCronPattern = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)$");
-    static Pattern nagiosStatusPattern = Pattern.compile("^(\\S+) (OK|CRITICAL) - (.*)$");
+    static Pattern nagiosStatusPattern = Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
     List<String> lineList = new ArrayList();
     AlertType alertType;
@@ -175,7 +175,19 @@ public class StatusRecord {
             return true;
         }
         for (int i = 0; i < lineList.size(); i++) {
-            if (!headPattern.matcher(lineList.get(i)).find()
+            Matcher matcher = nagiosStatusPattern.matcher(lineList.get(i));
+            if (matcher.find()) {
+                String nagiosService = matcher.group(1);
+                String nagiosStatus = matcher.group(2);
+                matcher = nagiosStatusPattern.matcher(other.lineList.get(i));
+                if (matcher.find()) {
+                    if (!nagiosService.equals(matcher.group(1))
+                            || !nagiosStatus.equals(matcher.group(2))) {
+                        return true;
+                    }
+                }
+
+            } else if (!headPattern.matcher(lineList.get(i)).find()
                     && !lineList.get(i).equals(other.lineList.get(i))) {
                 return true;
             }
