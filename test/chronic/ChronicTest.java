@@ -56,9 +56,11 @@ public class ChronicTest {
     @Test
     public void cronSubject() {
         Matcher matcher = StatusRecord.subjectCronPattern.matcher(
-                "Subject: Cron <root@client> (~/test.sh)");
+                "Subject: Cron <root@client> ~/scripts/test.sh");
         Assert.assertTrue(matcher.find());
-        Assert.assertEquals("test", matcher.group(3));
+        Assert.assertEquals("root", matcher.group(1));
+        Assert.assertEquals("client", matcher.group(2));
+        Assert.assertEquals("scripts/test", matcher.group(3));
     }
     
 }
