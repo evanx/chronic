@@ -42,7 +42,7 @@ public class StatusRecord {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
     public final static Pattern subjectCronPattern = 
-            Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> \\(~?/?(.*?)(\\.sh)?\\)$"); 
+            Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> ~?/?(.*?)(\\.sh)?$"); 
     public final static Pattern nagiosStatusPattern = 
             Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
@@ -123,8 +123,7 @@ public class StatusRecord {
             service = matcher.group(1);
             parseStatusType(matcher.group(2));
             subject = line;
-            logger.debug("parseStatus {}", subject);
-            logger.info("parseStatus [{}] {}", statusType, service);
+            logger.debug("parseNagiosStatus {} {}", statusType, service);
             return true;
         }
         return false;
@@ -285,7 +284,6 @@ public class StatusRecord {
             StatusRecord previousAlert) {
         if (previousAlert == null) {
         } else {
-            logger.info("isAlertable {} {} " + previousAlert, getSource(), statusType);
             if (previousAlert.getStatusType() == StatusType.ELAPSED
                     && statusType != StatusType.ELAPSED) {
                 return true;
