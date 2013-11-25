@@ -41,8 +41,10 @@ import vellum.util.Strings;
 public class StatusRecord {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
-    static Pattern subjectCronPattern = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)$");
-    static Pattern nagiosStatusPattern = Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
+    public final static Pattern subjectCronPattern = 
+            Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> \\(~?/?(.*?)(\\.sh)?\\)$"); 
+    public final static Pattern nagiosStatusPattern = 
+            Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
     List<String> lineList = new ArrayList();
     AlertType alertType;
@@ -343,7 +345,11 @@ public class StatusRecord {
 
     public String getSource() {
         if (username != null && hostname != null && service != null) {
-            return String.format("%s@%s/%s", username, hostname, service);
+            if (service.matches("\\s")) {
+                return String.format("%s@%s::(%s)", username, hostname, service);                
+            } else {
+                return String.format("%s@%s::%s", username, hostname, service);
+            }
         }
         if (username != null && hostname != null) {
             return String.format("%s@%s", username, hostname);
