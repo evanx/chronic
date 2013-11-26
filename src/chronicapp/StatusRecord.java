@@ -283,7 +283,7 @@ public class StatusRecord {
 
     private void parseAlertFormatType(String string) {
         try {
-            alertType = AlertType.valueOf(string);
+            alertFormatType = AlertFormatType.valueOf(string);
         } catch (Exception e) {
             logger.warn("parseAlertFormatType {}: {}", string, e.getMessage());
         }
