@@ -21,6 +21,7 @@
 package chronicapp;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
@@ -64,18 +65,29 @@ public class AlertBuilder {
     public static String buildContent(StatusRecord status) {
         StringBuilder builder = new StringBuilder();
         for (String line : status.getLineList()) {
-            if (!line.equals(status.getSubject())) {
-                if (builder.length() > 0) {
-                    builder.append('\n');
-                }
-                builder.append(line);
+            if (line.equals(status.getSubject())) {
+                continue;
             }
+            if (status.getAlertFormatType() == AlertFormatType.MINIMAL) {
+                Matcher matcher = StatusRecord.nagiosStatusPattern.matcher(line);
+                if (matcher.find()) {
+                    int index = line.indexOf(" - ");
+                    if (index > 0) {
+                        line = line.substring(0, index);
+                    }
+                }
+            }
+            if (builder.length() > 0) {
+                builder.append('\n');
+            }
+            builder.append(line);
         }
         return builder.toString();
     }
     
     public String formatHtmlSubject(StatusRecord status) {
-        logger.info("formatHtmlSubject {} {}", status.getStatusType(), status.getStatusType().getLabel());            
+        logger.info("formatHtmlSubject {} {}", status.getStatusType(), 
+                status.getStatusType().getLabel());            
         if (status.isAlertable()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
                 return status.getSource() + " <i>" + status.getStatusType().getLabel() + "</i>";

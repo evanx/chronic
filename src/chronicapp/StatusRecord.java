@@ -48,6 +48,7 @@ public class StatusRecord {
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
     List<String> lineList = new ArrayList();
     AlertType alertType;
+    AlertFormatType alertFormatType;
     String alertString;
     StatusType statusType = StatusType.UNKNOWN;
     long timestamp = System.currentTimeMillis();
@@ -68,6 +69,7 @@ public class StatusRecord {
 
     public StatusRecord(StatusRecord record) {
         this.alertType = record.alertType;
+        this.alertFormatType = record.alertFormatType;
         this.alertString = record.alertString;
         this.periodMillis = record.periodMillis;
         this.from = record.from;
@@ -163,6 +165,10 @@ public class StatusRecord {
         return alertString;
     }
 
+    public AlertFormatType getAlertFormatType() {
+        return alertFormatType;
+    }
+    
     public long getPeriodMillis() {
         return periodMillis;
     }
@@ -230,6 +236,8 @@ public class StatusRecord {
                 nagiosStatus = false;
             } else if (line.startsWith("Alert: ")) {
                 record.parseAlertType(line.substring(7));
+            } else if (line.startsWith("AlertFormat: ")) {
+                record.parseAlertFormatType(line.substring(13));
             } else if (line.startsWith("Period: ")) {
                 record.parsePeriod(line.substring(8));
             } else if (!inHeader) {
@@ -263,6 +271,14 @@ public class StatusRecord {
         periodMillis = Millis.parse(string);
     }
 
+    private void parseAlertFormatType(String string) {
+        try {
+            alertType = AlertType.valueOf(string);
+        } catch (Exception e) {
+            logger.warn("parseAlertFormatType {}: {}", string, e.getMessage());
+        }
+    }
+    
     private void parseAlertType(String string) {
         int index = string.indexOf(" ");
         if (index > 0) {
@@ -275,7 +291,7 @@ public class StatusRecord {
             logger.warn("parseAlertType {}: {}", string, e.getMessage());
         }
     }
-
+    
     public boolean isAlertable() {
         return statusType != null && statusType.isAlertable();
     }
