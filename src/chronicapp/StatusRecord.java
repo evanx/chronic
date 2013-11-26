@@ -42,7 +42,7 @@ public class StatusRecord {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
     public final static Pattern subjectCronPattern = 
-            Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> ~?/?(.*?)(\\.sh)?$"); 
+            Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)"); 
     public final static Pattern nagiosStatusPattern = 
             Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
@@ -254,7 +254,17 @@ public class StatusRecord {
     }
 
     private void normalize() {
-        if (subject == null && username != null && username != null && service != null) {
+        if (service != null) {
+            int index = service.lastIndexOf("/");
+            if (index >= 0) {
+                service = service.substring(index + 1);
+            }
+            index = service.lastIndexOf(".");
+            if (index > 0) {
+                service = service.substring(0, index);
+            }
+        }
+        if (subject == null && username != null && username != null && service != null) {            
             subject = getSource();
         }
     }
