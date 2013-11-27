@@ -76,6 +76,9 @@ public class ChronicApp implements Runnable {
         if (httpsServer != null) {
             httpsServer.shutdown();
         }
+        if (httpServer != null) {
+            httpServer.shutdown();
+        }
         executorService.shutdown();
     }
 
@@ -108,7 +111,8 @@ public class ChronicApp implements Runnable {
     }
     
     public synchronized void putRecord(StatusRecord statusRecord) {
-        logger.info("putRecord {} [{}]", statusRecord.getStatusType(), statusRecord.getSubject());
+        logger.info("putRecord {} [{}]", statusRecord.getStatusType(), 
+                statusRecord.getSubject());
         StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
         StatusRecord previousAlert = alertMap.get(statusRecord.getKey());
         if (previousStatus == null) {
