@@ -1,8 +1,10 @@
 /*
  * Source https://code.google.com/p/vellum by @evanxsummers
  */
-package chronicapp;
+package chronic.post;
 
+import chronic.ChronicApp;
+import chronic.StatusRecord;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -15,20 +17,19 @@ import vellum.util.Strings;
  *
  * @author evan.summers
  */
-public class ChronicHttpHandler implements HttpHandler {
+public class PostHttpHandler implements HttpHandler {
     final static int contentLengthLimit = 4000;
     
-    Logger logger = LoggerFactory.getLogger(ChronicHttpHandler.class);
+    Logger logger = LoggerFactory.getLogger(PostHttpHandler.class);
     ChronicApp app;
     
-    public ChronicHttpHandler(ChronicApp app) {
+    public PostHttpHandler(ChronicApp app) {
         this.app = app;
     }
     
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String path = httpExchange.getRequestURI().getPath();
-        logger.trace("path {}", path);
         int contentLength = Integer.parseInt(
                 httpExchange.getRequestHeaders().get("Content-length").get(0));
         logger.trace("content-length {}", contentLength);

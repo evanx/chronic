@@ -18,11 +18,10 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronicapp;
+package chronic;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +105,7 @@ public class ChronicApp implements Runnable {
         }
     }
     
-    protected synchronized void putRecord(StatusRecord statusRecord) {
+    public synchronized void putRecord(StatusRecord statusRecord) {
         logger.info("putRecord {} [{}]", statusRecord.getStatusType(), statusRecord.getSubject());
         StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
         StatusRecord previousAlert = alertMap.get(statusRecord.getKey());

@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronicapp;
+package chronic;
 
 import vellum.datatype.Millis;
 import vellum.json.JsonConfig;
