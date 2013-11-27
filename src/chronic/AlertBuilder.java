@@ -20,6 +20,9 @@
  */
 package chronic;
 
+import chronic.type.StatusType;
+import chronic.type.AlertFormatType;
+import chronic.type.AlertType;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;

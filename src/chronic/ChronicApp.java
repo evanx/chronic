@@ -20,6 +20,7 @@
  */
 package chronic;
 
+import chronic.type.StatusType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
