@@ -54,7 +54,7 @@ public class ChronicApp implements Runnable {
         config.init(getClass(), "chronic");
         properties.init(config);
         storage.init();
-        httpServer.start(config.getProperties("httpServer"), new ChronicHttpHandler(this)); 
+        //httpServer.start(config.getProperties("httpServer"), new ChronicHttpHandler(this)); 
         httpsServer.start(config.getProperties("httpsServer"), new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
         logger.info("initialized");

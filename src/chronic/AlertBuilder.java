@@ -38,12 +38,14 @@ public class AlertBuilder {
     static Logger logger = LoggerFactory.getLogger(AlertBuilder.class);
     StringBuilder builder = new StringBuilder();
 
-    public String build(StatusRecord status, StatusRecord previousStatus, StatusRecord previousAlert)
+    public String build(StatusRecord status, StatusRecord previousStatus, 
+            StatusRecord previousAlert)
             throws IOException {
         logger.info("build {}", status);
         append(status);
-        if (status.getAlertType() == AlertType.CONTENT_CHANGED
-                && previousStatus != null && previousStatus.getTimestamp() != status.getTimestamp()) {
+        if (status.getAlertType() == AlertType.CONTENT_CHANGED && 
+                previousStatus != null && 
+                previousStatus.getTimestamp() != status.getTimestamp()) {
             appendPrevious(previousStatus);
         } else if (status.getAlertType() == AlertType.STATUS_CHANGED
                 && previousAlert != null) {
@@ -77,13 +79,14 @@ public class AlertBuilder {
                     int index = line.indexOf(" - ");
                     if (index > 0) {
                         line = line.substring(0, index);
+                        builder.append(line);
+                        builder.append('\n');
                     }
                 }
-            }
-            if (builder.length() > 0) {
+            } else {
+                builder.append(line);
                 builder.append('\n');
             }
-            builder.append(line);
         }
         return builder.toString();
     }
