@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
+import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.json.JsonConfig;
 import vellum.system.Exec;
@@ -42,7 +43,8 @@ public class ChronicApp implements Runnable {
     JsonConfig config = new JsonConfig();
     ChronicProperties properties = new ChronicProperties();
     ChronicStorage storage = new ChronicStorage();
-    VellumHttpsServer httpsServer;
+    VellumHttpsServer httpsServer = new VellumHttpsServer();
+    VellumHttpServer httpServer = new VellumHttpServer();
     Map<ComparableTuple, StatusRecord> recordMap = new HashMap();
     Map<ComparableTuple, StatusRecord> alertMap = new HashMap();
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -51,7 +53,7 @@ public class ChronicApp implements Runnable {
         config.init(getClass(), "chronic");
         properties.init(config);
         storage.init();
-        httpsServer = new VellumHttpsServer();
+        httpServer.start(config.getProperties("httpServer"), new ChronicHttpHandler(this)); 
         httpsServer.start(config.getProperties("httpsServer"), new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
         logger.info("initialized");

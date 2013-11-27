@@ -4,7 +4,6 @@
  */
 package chronic;
 
-import chronicapp.StatusRecord;
 import java.util.regex.Matcher;
 import org.junit.After;
 import org.junit.AfterClass;
