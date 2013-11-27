@@ -50,14 +50,14 @@ public class AlertBuilder {
     }
 
     private void append(StatusRecord status) {
-        builder.append(String.format("<b>%s</b>\n", formatHtmlSubject(status)));
+        builder.append(String.format("<b>%s</b>\n\n", formatHtmlSubject(status)));
         builder.append(buildContent(status));
     }
 
     private void appendPrevious(StatusRecord status) {
             builder.append("\n<hr>Previous:\n");
         builder.append(String.format("<b>%s</b>\n", formatHtmlSubject(status)));
-        builder.append(String.format("<i>%s</i>\n", 
+        builder.append(String.format("<i>%s</i>\n\n", 
                 Millis.formatTimestamp(status.getTimestamp())));
         builder.append(buildContent(status));
     }
