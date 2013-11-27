@@ -91,6 +91,11 @@ public class AlertBuilder {
         return builder.toString();
     }
     
+    private void appendln(String string) {
+        builder.append(string);
+        builder.append('\n');
+    }   
+    
     public String formatHtmlSubject(StatusRecord status) {
         logger.info("formatHtmlSubject {} {}", status.getStatusType(), 
                 status.getStatusType().getLabel());            
