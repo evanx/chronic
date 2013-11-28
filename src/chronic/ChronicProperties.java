@@ -21,7 +21,9 @@
 package chronic;
 
 import vellum.datatype.Millis;
+import vellum.httpserver.HttpServerProperties;
 import vellum.json.JsonConfig;
+import vellum.util.ExtendedProperties;
 
 /**
  *
@@ -31,11 +33,16 @@ public class ChronicProperties {
     String alertScript = "scripts/alert.sh";
     long period = Millis.fromMinutes(3);
     boolean testing = false;
+    String redirectUrl = "https://localhost:8443";
+    HttpServerProperties httpServer = new HttpServerProperties(8080);
+    ExtendedProperties httpsServer;
     
     public void init(JsonConfig config) {
         alertScript = config.getProperties().getString("alertScript", alertScript);
         period = config.getProperties().getMillis("period", period);
         testing = config.getProperties().getBoolean("testing", testing);
+        redirectUrl = config.getProperties().getString("redirectUrl", redirectUrl);
+        httpsServer = config.getProperties("httpsServer");
     }
 
     public String getAlertScript() {
@@ -48,5 +55,17 @@ public class ChronicProperties {
 
     public boolean isTesting() {
         return testing;
+    }        
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public ExtendedProperties getHttpsServer() {
+        return httpsServer;
+    }
+
+    public HttpServerProperties getHttpServer() {
+        return httpServer;
     }        
 }

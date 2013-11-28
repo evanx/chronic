@@ -29,9 +29,11 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
+import vellum.httphandler.RedirectHttpHandler;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.json.JsonConfig;
+import vellum.ssl.SSLContexts;
 import vellum.system.Exec;
 import vellum.type.ComparableTuple;
 
@@ -54,8 +56,10 @@ public class ChronicApp implements Runnable {
         config.init(getClass(), "chronic");
         properties.init(config);
         storage.init();
-        //httpServer.start(config.getProperties("httpServer"), new ChronicHttpHandler(this)); 
-        httpsServer.start(config.getProperties("httpsServer"), new ChronicTrustManager(this),
+        httpServer.start(properties.getHttpServer(), 
+                new RedirectHttpHandler(properties.getRedirectUrl())); 
+        httpsServer.start(properties.getHttpsServer(), 
+                new ChronicTrustManager(this), 
                 new ChronicHttpHandler(this));
         logger.info("initialized");
     }
