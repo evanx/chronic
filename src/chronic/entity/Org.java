@@ -19,13 +19,12 @@ import vellum.validation.ValidationExceptionType;
 public final class Org extends AbstractEntity {
     Long id;
     String orgName;
-    String displayName;
+    String label;
     String url;
     String region;
     String locality;
     String country;
     boolean enabled = true;
-    Date updated;
             
     public Org() {
     }
@@ -45,15 +44,15 @@ public final class Org extends AbstractEntity {
     public void update(StringMap map) {
         url = map.get("url");
         orgName = map.get("orgName");
-        displayName = map.get("displayName");
+        label = map.get("label");
         region = map.get("region");
         locality = map.get("locality");
         country = map.get("country");
         if (orgName == null) {
             orgName = url;
         }
-        if (displayName == null) {
-            displayName = orgName;
+        if (label == null) {
+            label = orgName;
         }
     }
     
@@ -61,7 +60,7 @@ public final class Org extends AbstractEntity {
         StringMap map = new StringMap();
         map.put("orgId", id);
         map.put("orgName", orgName);
-        map.put("displayName", displayName);
+        map.put("label", label);
         map.put("url", url);
         map.put("region", region);
         map.put("locality", locality);
@@ -103,12 +102,12 @@ public final class Org extends AbstractEntity {
         this.region = region;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getLabel() {
+        return label;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public String getUrl() {
@@ -139,14 +138,6 @@ public final class Org extends AbstractEntity {
         return Certificates.formatDname(cn, ou, orgName, locality, region, country);
     }
     
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
     public void validate() throws ValidationException {
         if (!Patterns.matchesUrl(url)) {
             throw new ValidationException(ValidationExceptionType.INVALID_URL, url);

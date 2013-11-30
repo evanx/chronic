@@ -6,7 +6,6 @@ package chronic.entity;
 
 import vellum.logr.Logr;
 import vellum.logr.LogrFactory;
-import java.util.List;
 
 /**
  *

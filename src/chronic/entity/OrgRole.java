@@ -38,6 +38,5 @@ public class OrgRole extends AbstractIdEntity {
 
     public Org getOrg() {
         return org;
-    }
-    
+    }    
 }
