@@ -20,14 +20,39 @@
  */
 package chronic;
 
+import chronic.ChronicStorage;
 import chronic.storage.app.AdminUserStorage;
+import chronic.storage.temporary.TemporaryAdminUserStorage;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
+import org.h2.tools.Server;
+import vellum.storage.TemporaryStorage;
 
 /**
  *
  * @author evan.summers
  */
-public interface ChronicStorage {
-    public void init() throws Exception;
-    public void shutdown();
-    public AdminUserStorage getAdminUserStorage();
+public class TemporaryChronicStorage extends TemporaryStorage implements ChronicStorage {
+    Server h2Server;
+    AdminUserStorage adminUserStorage = new TemporaryAdminUserStorage();
+    Map<String, Connection> connectionMap = new HashMap();
+    
+    @Override
+    public void init() throws Exception {
+        h2Server = Server.createTcpServer().start();
+    }
+
+    @Override
+    public void shutdown() {
+        if (h2Server != null) {
+            h2Server.stop();
+        }
+    }
+
+    @Override
+    public AdminUserStorage getAdminUserStorage() {
+        return adminUserStorage;
+    }
+
 }

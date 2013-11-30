@@ -18,16 +18,15 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package chronic;
+package chronic.storage.app;
 
-import chronic.storage.app.AdminUserStorage;
+import chronic.entity.OrgRole;
+import vellum.storage.Storage;
 
 /**
- *
+ * 
  * @author evan.summers
  */
-public interface ChronicStorage {
-    public void init() throws Exception;
-    public void shutdown();
-    public AdminUserStorage getAdminUserStorage();
+public interface OrgRoleStorage extends Storage<OrgRole> {
+
 }

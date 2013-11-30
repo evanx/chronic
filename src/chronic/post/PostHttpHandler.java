@@ -57,7 +57,8 @@ public class PostHttpHandler implements HttpHandler {
             e.printStackTrace(System.err);
             String responseString = "ERROR: " + e.getClass() + ": " + e.getMessage() + "\n";
             byte[] responseBytes = responseString.getBytes();
-            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, responseBytes.length);
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 
+                    responseBytes.length);
             httpExchange.getResponseHeaders().set("Content-type", "text/plain");
             httpExchange.getResponseBody().write(responseBytes);
             httpExchange.close();

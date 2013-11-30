@@ -33,7 +33,7 @@ public class ChronicProperties {
     String alertScript = "scripts/alert.sh";
     long period = Millis.fromMinutes(3);
     boolean testing = false;
-    String redirectUrl = "https://localhost:8443";
+    String serverUrl = "https://localhost:8443";
     HttpServerProperties httpServer = new HttpServerProperties(8080);
     ExtendedProperties httpsServer;
     String adminEmail;
@@ -42,7 +42,7 @@ public class ChronicProperties {
         alertScript = config.getProperties().getString("alertScript", alertScript);
         period = config.getProperties().getMillis("period", period);
         testing = config.getProperties().getBoolean("testing", testing);
-        redirectUrl = config.getProperties().getString("redirectUrl", redirectUrl);
+        serverUrl = config.getProperties().getString("serverUrl", serverUrl);
         httpsServer = config.getProperties("httpsServer");
         adminEmail = config.getProperties().getString("adminEmail", null);
     }
@@ -59,10 +59,6 @@ public class ChronicProperties {
         return testing;
     }        
 
-    public String getRedirectUrl() {
-        return redirectUrl;
-    }
-
     public ExtendedProperties getHttpsServer() {
         return httpsServer;
     }
@@ -74,4 +70,8 @@ public class ChronicProperties {
     public String getAdminEmail() {
         return adminEmail;
     }        
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
 }

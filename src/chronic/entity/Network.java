@@ -6,12 +6,13 @@ package chronic.entity;
 
 import vellum.logr.Logr;
 import vellum.logr.LogrFactory;
+import vellum.storage.AbstractEntity;
 
 /**
  *
  * @author evan.summers
  */
-public class Network {
+public class Network extends AbstractEntity {
     static Logr logger = LogrFactory.getLogger(Network.class);
     
     String name;
@@ -26,6 +27,7 @@ public class Network {
         this.name = name;
     }
     
+    @Override
     public Comparable getKey() {
         return name;
     }

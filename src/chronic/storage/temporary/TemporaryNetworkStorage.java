@@ -18,16 +18,20 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package chronic;
+package chronic.storage.temporary;
 
-import chronic.storage.app.AdminUserStorage;
+import chronic.entity.Network;
+import chronic.storage.app.NetworkStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import vellum.storage.TemporaryStorage;
 
 /**
- *
+ * 
  * @author evan.summers
  */
-public interface ChronicStorage {
-    public void init() throws Exception;
-    public void shutdown();
-    public AdminUserStorage getAdminUserStorage();
+public class TemporaryNetworkStorage extends TemporaryStorage<Network> 
+        implements NetworkStorage {
+    static Logger logger = LoggerFactory.getLogger(TemporaryNetworkStorage.class);
+    
 }

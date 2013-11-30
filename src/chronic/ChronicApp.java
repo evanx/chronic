@@ -33,7 +33,6 @@ import vellum.httphandler.RedirectHttpHandler;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.json.JsonConfig;
-import vellum.system.Exec;
 import vellum.type.ComparableTuple;
 
 /**
@@ -44,7 +43,7 @@ public class ChronicApp implements Runnable {
     Logger logger = LoggerFactory.getLogger(getClass());
     JsonConfig config = new JsonConfig();
     ChronicProperties properties = new ChronicProperties();
-    ChronicStorage storage = new ChronicStorage();
+    ChronicStorage storage = new TemporaryChronicStorage();
     ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer httpsServer = new VellumHttpsServer();
     VellumHttpServer httpServer = new VellumHttpServer();
@@ -60,7 +59,7 @@ public class ChronicApp implements Runnable {
         properties.init(config);
         storage.init();
         httpServer.start(properties.getHttpServer(), 
-                new RedirectHttpHandler(properties.getRedirectUrl())); 
+                new RedirectHttpHandler(properties.getServerUrl())); 
         httpsServer.start(properties.getHttpsServer(), 
                 new ChronicTrustManager(this), 
                 new ChronicHttpHandler(this));
