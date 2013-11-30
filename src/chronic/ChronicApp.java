@@ -40,6 +40,7 @@ import vellum.type.ComparableTuple;
  * @author evan.summers
  */
 public class ChronicApp implements Runnable {
+
     Logger logger = LoggerFactory.getLogger(getClass());
     JsonConfig config = new JsonConfig();
     ChronicProperties properties = new ChronicProperties();
@@ -58,10 +59,10 @@ public class ChronicApp implements Runnable {
         config.init(getClass(), "chronic");
         properties.init(config);
         storage.init();
-        httpServer.start(properties.getHttpServer(), 
-                new RedirectHttpHandler(properties.getServerUrl())); 
-        httpsServer.start(properties.getHttpsServer(), 
-                new ChronicTrustManager(this), 
+        httpServer.start(properties.getHttpServer(),
+                new RedirectHttpHandler(properties.getServerUrl()));
+        httpsServer.start(properties.getHttpsServer(),
+                new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
         logger.info("initialized");
     }
@@ -69,10 +70,10 @@ public class ChronicApp implements Runnable {
     public ChronicProperties getProperties() {
         return properties;
     }
-        
+
     public void start() throws Exception {
         logger.info("schedule {}", properties.getPeriod());
-        executorService.scheduleAtFixedRate(this, properties.getPeriod(), 
+        executorService.scheduleAtFixedRate(this, properties.getPeriod(),
                 properties.getPeriod(), TimeUnit.MILLISECONDS);
         logger.info("started");
         if (properties.isTesting()) {
@@ -106,7 +107,7 @@ public class ChronicApp implements Runnable {
             }
         }
     }
-    
+
     private void checkElapsed(StatusRecord previousStatus) {
         long elapsed = Millis.elapsed(previousStatus.getTimestamp());
         logger.debug("checkElapsed {}: elapsed {}", previousStatus.getSource(), elapsed);
@@ -120,9 +121,9 @@ public class ChronicApp implements Runnable {
             }
         }
     }
-    
+
     public synchronized void putRecord(StatusRecord status) {
-        logger.info("putRecord {} [{}]", status.getStatusType(), 
+        logger.info("putRecord {} [{}]", status.getStatusType(),
                 status.getSubject());
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
         StatusRecord previousAlert = alertMap.get(status.getKey());
