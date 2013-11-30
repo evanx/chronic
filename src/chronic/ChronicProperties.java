@@ -36,6 +36,7 @@ public class ChronicProperties {
     String redirectUrl = "https://localhost:8443";
     HttpServerProperties httpServer = new HttpServerProperties(8080);
     ExtendedProperties httpsServer;
+    String adminEmail;
     
     public void init(JsonConfig config) {
         alertScript = config.getProperties().getString("alertScript", alertScript);
@@ -43,6 +44,7 @@ public class ChronicProperties {
         testing = config.getProperties().getBoolean("testing", testing);
         redirectUrl = config.getProperties().getString("redirectUrl", redirectUrl);
         httpsServer = config.getProperties("httpsServer");
+        adminEmail = config.getProperties().getString("adminEmail", null);
     }
 
     public String getAlertScript() {
@@ -67,5 +69,9 @@ public class ChronicProperties {
 
     public HttpServerProperties getHttpServer() {
         return httpServer;
+    }        
+
+    public String getAdminEmail() {
+        return adminEmail;
     }        
 }
