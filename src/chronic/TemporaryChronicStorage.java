@@ -20,9 +20,14 @@
  */
 package chronic;
 
-import chronic.ChronicStorage;
 import chronic.storage.app.AdminUserStorage;
+import chronic.storage.app.NetworkStorage;
+import chronic.storage.app.OrgRoleStorage;
+import chronic.storage.app.OrgStorage;
 import chronic.storage.temporary.TemporaryAdminUserStorage;
+import chronic.storage.temporary.TemporaryNetworkStorage;
+import chronic.storage.temporary.TemporaryOrgRoleStorage;
+import chronic.storage.temporary.TemporaryOrgStorage;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +41,9 @@ import vellum.storage.TemporaryStorage;
 public class TemporaryChronicStorage extends TemporaryStorage implements ChronicStorage {
     Server h2Server;
     AdminUserStorage adminUserStorage = new TemporaryAdminUserStorage();
+    OrgStorage orgStorage = new TemporaryOrgStorage();
+    OrgRoleStorage orgRoleStorage = new TemporaryOrgRoleStorage();
+    NetworkStorage networkStorage = new TemporaryNetworkStorage();
     Map<String, Connection> connectionMap = new HashMap();
     
     @Override
@@ -55,4 +63,15 @@ public class TemporaryChronicStorage extends TemporaryStorage implements Chronic
         return adminUserStorage;
     }
 
+    public OrgStorage getOrgStorage() {
+        return orgStorage;
+    }
+    
+    public OrgRoleStorage getOrgRoleStorage() {
+        return orgRoleStorage;
+    }
+
+    public NetworkStorage getNetworkStorage() {
+        return networkStorage;
+    }
 }

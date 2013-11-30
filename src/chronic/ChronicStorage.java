@@ -21,6 +21,9 @@
 package chronic;
 
 import chronic.storage.app.AdminUserStorage;
+import chronic.storage.app.NetworkStorage;
+import chronic.storage.app.OrgRoleStorage;
+import chronic.storage.app.OrgStorage;
 
 /**
  *
@@ -30,4 +33,8 @@ public interface ChronicStorage {
     public void init() throws Exception;
     public void shutdown();
     public AdminUserStorage getAdminUserStorage();
+    public OrgStorage getOrgStorage();
+    public OrgRoleStorage getOrgRoleStorage();
+    public NetworkStorage getNetworkStorage();
+    
 }
