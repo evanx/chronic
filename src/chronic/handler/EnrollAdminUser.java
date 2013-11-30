@@ -4,6 +4,7 @@
 package chronic.handler;
 
 import chronic.*;
+import chronic.entity.AdminUser;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ public class EnrollAdminUser {
     }
     
     public void handle(HttpExchange httpExchange) throws Exception {
+        AdminUser adminUser = new AdminUser();
     }
 
 }

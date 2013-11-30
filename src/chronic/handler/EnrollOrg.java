@@ -4,6 +4,7 @@
 package chronic.handler;
 
 import chronic.*;
+import chronic.entity.Org;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ public class EnrollOrg {
     }
     
     public void handle(HttpExchange httpExchange) throws Exception {
+        Org org = new Org();
+
     }
 
 }

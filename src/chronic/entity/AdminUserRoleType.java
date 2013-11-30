@@ -2,13 +2,13 @@
  * Source https://code.google.com/p/vellum by @evanxsummers
  * 
  */
-package chronic.storage;
+package chronic.entity;
 
 /**
  *
  * @author evan.summers
  */
-public enum AdminUserRole {
+public enum AdminUserRoleType {
     SUPER,    
     ADMIN,
     DEFAULT

@@ -2,13 +2,13 @@
  * Source https://code.google.com/p/vellum by @evanxsummers
  * 
  */
-package chronic.storage;
+package chronic.entity;
 
 import java.util.Date;
 import vellum.datatype.Patterns;
-import vellum.entity.AbstractIdEntity;
 import vellum.parameter.StringMap;
 import vellum.security.Certificates;
+import vellum.storage.AbstractEntity;
 import vellum.validation.ValidationException;
 import vellum.validation.ValidationExceptionType;
 
@@ -16,7 +16,7 @@ import vellum.validation.ValidationExceptionType;
  *
  * @author evan.summers
  */
-public final class Org extends AbstractIdEntity<Long> {
+public final class Org extends AbstractEntity {
     Long id;
     String orgName;
     String displayName;
@@ -71,7 +71,7 @@ public final class Org extends AbstractIdEntity<Long> {
     }
     
     @Override
-    public Long getId() {
+    public Long getKey() {
         return id;
     }
 

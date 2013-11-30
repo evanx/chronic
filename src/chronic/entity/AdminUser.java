@@ -2,20 +2,20 @@
  * Source https://code.google.com/p/vellum by @evanxsummers
  * 
  */
-package chronic.storage;
+package chronic.entity;
 
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import vellum.entity.AbstractIdEntity;
 import vellum.parameter.StringMap;
 import vellum.security.Certificates;
 import vellum.security.PemCerts;
+import vellum.storage.AbstractEntity;
 
 /**
  *
  * @author evan.summers
  */
-public class AdminUser extends AbstractIdEntity<Long> {
+public class AdminUser extends AbstractEntity {
     Long id;
     String userName;
     String displayName;
@@ -53,7 +53,7 @@ public class AdminUser extends AbstractIdEntity<Long> {
     }
 
     @Override
-    public Long getId() {
+    public Long getKey() {
         return id;
     }
 

@@ -2,33 +2,33 @@
  * Source https://code.google.com/p/vellum by @evanxsummers
  * 
  */
-package chronic.storage;
+package chronic.entity;
 
-import vellum.entity.LongIdEntity;
+import vellum.storage.AbstractIdEntity;
 
 /**
  *
  * @author evan.summers
  */
-public class OrgRole implements LongIdEntity {
+public class OrgRole extends AbstractIdEntity {
     Long id;
     AdminUser user; 
     Org org;
-    AdminUserRole role;
+    AdminUserRoleType role;
 
-    public OrgRole(AdminUser user, Org org, AdminUserRole role) {
+    public OrgRole(AdminUser user, Org org, AdminUserRoleType role) {
         this.user = user;
         this.org = org;
         this.role = role;
     }
         
     @Override
-    public void setId(Long id) {
+    public void setKey(Long id) {
         this.id = id;
     }
     
     @Override
-    public Long getId() {
+    public Long getKey() {
         return id;
     }
 
