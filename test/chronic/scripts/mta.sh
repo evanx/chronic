@@ -1,4 +1,6 @@
 
+cd ~/chronic/testclient
+
 domain=test.org
 commonName=`hostname -s`.$domain
 org=$domain
@@ -17,6 +19,7 @@ if [ ! -f server.pem ]
   openssl x509 -text -in server.pem | grep 'CN='
 fi
 
-tee ~/tmp/chronic.out | curl -cacerts server.pem --key key.pem \
+tee ~/tmp/chronic.out | curl --cacert server.pem --key key.pem \
   --data-binary @- -H 'Content-Type: text/plain' \
   https://localhost:8443/post
+
