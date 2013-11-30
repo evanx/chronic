@@ -57,10 +57,9 @@ public class PersonaLoginHandler implements HttpHandler {
         httpExchange.close();
     }
     
-    PersonaUserInfo userInfo;
-    
     private void handle() throws Exception {
-        userInfo = new PersonaApi(app.getProperties().getServerUrl()).getUserInfo(assertion);
+        PersonaUserInfo userInfo = new PersonaApi(app.getProperties().getServerUrl()).
+                getUserInfo(assertion);
         logger.info("userInfo", userInfo);
         AdminUser user = app.getStorage().getAdminUserStorage().select(userInfo.getEmail());
         if (user == null) {

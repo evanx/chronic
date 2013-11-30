@@ -20,7 +20,7 @@
                <a class="navbar-brand" href="#">Chronic</a>
             </div>
             <div class="navbar-collapse collapse">
-               <div id="nav-login" class="navbar-text croc-login-viewable hide">
+               <div id="nav-login-persona" class="navbar-text croc-login-viewable hide">
                   <a class="croc-login-clickable" href="#"><img src="images/persona-login.png"/></a>
                </div>
                <div id="nav-loggedin" class="navbar-text viewable-loggedin hide">
@@ -47,16 +47,10 @@
       <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
       <script src="app.js"></script>
       <script type="text/javascript">
-         if (window.location.protocol === "http:") {
-                var host = location.host;
-                var index = location.host.indexOf(':');
-                if (index > 0) {
-                    host = location.host.substring(0, index) + ':8443';
-                }
-                window.location = "https://" + host + location.pathname + 
-                        location.search + location.hash;
-                console.log(window.location);
-            }
+        $(document).ready(function() {    
+            console.log("ready");
+            initApp();
+        });            
       </script>
 
    </body>
