@@ -13,6 +13,7 @@ import vellum.storage.AbstractEntity;
  * @author evan.summers
  */
 public class AdminUser extends AbstractEntity {
+
     Long id;
     String email;
     String label;
@@ -21,7 +22,7 @@ public class AdminUser extends AbstractEntity {
     Date loginTime;
     Date logoutTime;
     boolean enabled = true;
-    
+
     public AdminUser() {
     }
 
@@ -33,7 +34,7 @@ public class AdminUser extends AbstractEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public String getLabel() {
         return label;
     }
@@ -57,7 +58,7 @@ public class AdminUser extends AbstractEntity {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-   
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -73,7 +74,7 @@ public class AdminUser extends AbstractEntity {
     public String getEmail() {
         return email;
     }
-    
+
     public Date getLoginTime() {
         return loginTime;
     }
@@ -89,7 +90,7 @@ public class AdminUser extends AbstractEntity {
     public void setLogoutTime(Date logoutTime) {
         this.logoutTime = logoutTime;
     }
-   
+
     public StringMap getStringMap() {
         StringMap map = new StringMap();
         map.put("id", id);
@@ -98,9 +99,9 @@ public class AdminUser extends AbstractEntity {
         map.put("enabled", enabled);
         return map;
     }
-    
+
     @Override
     public String toString() {
         return getStringMap().toJson();
-    }    
+    }
 }
