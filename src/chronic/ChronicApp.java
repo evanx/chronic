@@ -33,7 +33,6 @@ import vellum.httphandler.RedirectHttpHandler;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.json.JsonConfig;
-import vellum.ssl.SSLContexts;
 import vellum.system.Exec;
 import vellum.type.ComparableTuple;
 
@@ -46,11 +45,15 @@ public class ChronicApp implements Runnable {
     JsonConfig config = new JsonConfig();
     ChronicProperties properties = new ChronicProperties();
     ChronicStorage storage = new ChronicStorage();
+    ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer httpsServer = new VellumHttpsServer();
     VellumHttpServer httpServer = new VellumHttpServer();
     Map<ComparableTuple, StatusRecord> recordMap = new HashMap();
     Map<ComparableTuple, StatusRecord> alertMap = new HashMap();
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+    public ChronicApp() {
+    }
 
     public void init() throws Exception {
         config.init(getClass(), "chronic");
@@ -64,6 +67,10 @@ public class ChronicApp implements Runnable {
         logger.info("initialized");
     }
 
+    public ChronicProperties getProperties() {
+        return properties;
+    }
+        
     public void start() throws Exception {
         logger.info("schedule {}", properties.getPeriod());
         executorService.scheduleAtFixedRate(this, properties.getPeriod(), 
@@ -115,22 +122,22 @@ public class ChronicApp implements Runnable {
         }
     }
     
-    public synchronized void putRecord(StatusRecord statusRecord) {
-        logger.info("putRecord {} [{}]", statusRecord.getStatusType(), 
-                statusRecord.getSubject());
-        StatusRecord previousStatus = recordMap.put(statusRecord.getKey(), statusRecord);
-        StatusRecord previousAlert = alertMap.get(statusRecord.getKey());
+    public synchronized void putRecord(StatusRecord status) {
+        logger.info("putRecord {} [{}]", status.getStatusType(), 
+                status.getSubject());
+        StatusRecord previousStatus = recordMap.put(status.getKey(), status);
+        StatusRecord previousAlert = alertMap.get(status.getKey());
         if (previousStatus == null) {
             logger.info("putRecord: no previous status");
             if (properties.isTesting()) {
-                alert(statusRecord, statusRecord, null);
+                alert(status, status, null);
             }
-        } else if (statusRecord.isAlertable(previousStatus, previousAlert)) {
-            alert(statusRecord, previousStatus, previousAlert);
+        } else if (status.isAlertable(previousStatus, previousAlert)) {
+            alert(status, previousStatus, previousAlert);
         } else if (previousAlert == null) {
             logger.info("putRecord: no previous alert");
-            if (statusRecord.isAlertable()) {
-                alertMap.put(statusRecord.getKey(), new StatusRecord(statusRecord));
+            if (status.isAlertable()) {
+                alertMap.put(status.getKey(), new StatusRecord(status));
             }
         }
     }
@@ -139,15 +146,7 @@ public class ChronicApp implements Runnable {
             StatusRecord previousStatus, StatusRecord previousAlert) {
         logger.info("alert {}", status.toString());
         alertMap.put(status.getKey(), status);
-        if (properties.getAlertScript() != null) {
-            try {
-                new Exec().exec(properties.getAlertScript(), new AlertBuilder().build(
-                        status, previousStatus, previousAlert).getBytes(),
-                        status.getAlertMap());
-            } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
-            }
-        }
+        messenger.alert(status, previousStatus, previousAlert);
     }
 
     public static void main(String[] args) throws Exception {
