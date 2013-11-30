@@ -7,6 +7,8 @@ package chronic.webauth.persona;
 import chronic.ChronicApp;
 import chronic.entity.AdminUser;
 import chronic.webauth.ChronicCookie;
+import chronic.webauth.persona.PersonaApi;
+import chronic.webauth.persona.PersonaUserInfo;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import vellum.util.JsonStrings;
@@ -22,14 +24,14 @@ import vellum.parameter.StringMap;
  *
  * @author evan.summers
  */
-public class PersonaLoginHandler implements HttpHandler {
+public class PersonaLogin implements HttpHandler {
 
     Logr logger = LogrFactory.getLogger(getClass());
     ChronicApp app;
     HttpExchange httpExchange;
     Httpx httpExchangeInfo;
 
-    public PersonaLoginHandler(ChronicApp app) {
+    public PersonaLogin(ChronicApp app) {
         super();
         this.app = app;
     }

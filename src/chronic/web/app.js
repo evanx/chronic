@@ -42,7 +42,7 @@ function initPersona() {
             console.log("onlogin");
             $.ajax({ 
                 type: 'POST',    
-                url: '/loginPersona',
+                url: '/app/LoginPersona',
                 data: {
                     assertion: assertion
                 },
@@ -63,10 +63,10 @@ function initPersona() {
             state.currentUser = null;
             $.ajax({ 
                 type: 'POST',    
-                url: '/logoutPersona',
+                url: '/app/LogoutPersona',
                 success: function(res, status, xhr) {
                     console.log("success");
-                    processLogout(res);
+                    processLogoutPersonaRes(res);
                 },
                 error: function(xhr, status, err) {
                     console.log("error");

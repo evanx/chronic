@@ -9,15 +9,17 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.httphandler.WebHttpHandler;
 
 /**
  *
  * @author evan.summers
  */
 public class ChronicHttpHandler implements HttpHandler {
-    final static int contentLengthLimit = 4000;
+    private final static int contentLengthLimit = 4000;    
+    private final static Logger logger = LoggerFactory.getLogger(ChronicHttpHandler.class);
+    private final static WebHttpHandler webHandler = new WebHttpHandler("/chronic/web");
     
-    Logger logger = LoggerFactory.getLogger(ChronicHttpHandler.class);
     ChronicApp app;
     
     public ChronicHttpHandler(ChronicApp app) {
@@ -32,7 +34,7 @@ public class ChronicHttpHandler implements HttpHandler {
             if (path.equals("/post")) {                
                 new PostHttpHandler(app).handle(httpExchange);
             } else {
-                new PostHttpHandler(app).handle(httpExchange);
+                webHandler.handle(httpExchange);
             }
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);

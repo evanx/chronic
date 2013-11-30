@@ -20,7 +20,7 @@ import vellum.logr.LogrFactory;
  *
  * @author evan.summers
  */
-public class PersonaLogoutHandler implements HttpHandler {
+public class PersonaLogout implements HttpHandler {
 
     Logr logger = LogrFactory.getLogger(getClass());
     ChronicApp app;
@@ -28,7 +28,7 @@ public class PersonaLogoutHandler implements HttpHandler {
     Httpx httpExchangeInfo;
     ChronicCookie cookie;
 
-    public PersonaLogoutHandler(ChronicApp app) {
+    public PersonaLogout(ChronicApp app) {
         super();
         this.app = app;
     }
