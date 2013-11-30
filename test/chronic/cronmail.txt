@@ -1,8 +1,12 @@
 From: root (Cron Daemon)
 To: root
-Subject: Cron <root@bizadmin> scripts/nightly.sh
+Subject: Cron <root@hostx> ~/scripts/minutely.sh
 Content-Type: text/plain; charset=UTF-8
 Auto-Submitted: auto-generated
 X-Cron-Env: <SHELL=/bin/sh>
 
-test
+Alert: OUTPUT_CHANGED
+Period: 1m
+test info
+
+
