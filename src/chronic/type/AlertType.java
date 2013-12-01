@@ -4,14 +4,19 @@
  */
 package chronic.type;
 
+import chronic.Bundle;
+import vellum.format.Labelled;
+
 /**
  *
  * @author evan.summers
  */
-public enum AlertType {
-    WARN,
+public enum AlertType implements Labelled {
+    NONE,
+    WARNING,
     ERROR,
     PATTERN,
+    ELAPSED,
     STATUS_CHANGED,
     CONTENT_CHANGED,
     ALWAYS;
@@ -23,5 +28,10 @@ public enum AlertType {
             }            
         }        
         return null;
+    }
+    
+    @Override
+    public String getLabel() {
+        return Bundle.get(StatusType.class).getString(name());
     }
 }

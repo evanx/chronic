@@ -34,7 +34,9 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
+import vellum.jx.JMap;
 import vellum.type.ComparableTuple;
+import vellum.format.DisplayFormats;
 import vellum.util.Strings;
 
 /**
@@ -50,7 +52,7 @@ public class StatusRecord {
             Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
     List<String> lineList = new ArrayList();
-    AlertType alertType;
+    AlertType alertType = AlertType.NONE;
     AlertFormatType alertFormatType;
     String alertString;
     StatusType statusType = StatusType.UNKNOWN;
@@ -205,6 +207,16 @@ public class StatusRecord {
         return false;
     }
 
+    public JMap toMap() {
+        JMap map = new JMap();
+        map.put("source", getSource());
+        map.put("subject", getSubject());
+        map.put("timestampString", Millis.formatTimestamp(timestamp));
+        map.put("alertTypeLabel", DisplayFormats.toString(alertType));
+        map.put("statusTypeLabel", DisplayFormats.toString(statusType));
+        return map;
+    }
+    
     @Override
     public String toString() {
         return Arrays.toString(new Object[]{getSource(), alertType, alertString, statusType});

@@ -98,16 +98,21 @@ app.controller("personaController", ["$scope", "$location", "personaService",
    }]);
 
 app.controller("alertListController", ["$scope", "$http",
-   function($scope, $http) {
+   function($scope, $http) {      
       $scope.listAlerts = function() {
          console.log("listAlerts", $scope.persona.email);
          $http.post("/app/ListAlerts", {
             email: $scope.persona.email
          }).then(function(response) {
-            if (response.alertList) {
-               console.log("alertList", response.alertList.length());
+            console.log("listAlerts", response.data);
+            if (response.data.alertList) {
+               $scope.alertList = response.data.alertList;
+               console.log("alertList length", $scope.alertList.length);
+               if ($scope.alertList.length > 0) {
+                  console.log("alertList first", $scope.alertList[0]);
+               }
             } else {
-               console.warn("alertList");
+               console.warn("alertList", response);
             }
          });         
       };

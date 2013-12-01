@@ -26,25 +26,46 @@
                      <a href="#" ng-show="persona.email" 
                         ng-click="$broadcast('changeView', 'alerts')">Alerts</a></li>
                </ul>
-            <div class="navbar-collapse collapse pull-right">
-               <div class="navbar-text App-view-loggedout" ng-cloak ng-hide="persona.email">
-                  <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a>
-               </div>
-               <div class="navbar-text" ng-cloak ng-show="persona.email">
-                  <a ng-click="logout()" class="navbar-link" href="#">{{persona.email}}</a>
+               <div class="navbar-collapse collapse pull-right">
+                  <div class="navbar-text App-view-loggedout" ng-cloak ng-hide="persona.email">
+                     <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a>
+                  </div>
+                  <div class="navbar-text" ng-cloak ng-show="persona.email">
+                     <a ng-click="logout()" class="navbar-link" href="#">{{persona.email}}</a>
+                  </div>
                </div>
             </div>
          </div>
-      </div>
-         
-      <div class="container" ng-controller="alertListController" ng-cloak ng-show="persona.email">
-         <h2>Welcome {{ persona.email }}</h2>
-      </div>
 
-      <script src="js/jquery-1.10.2.min.js"></script>
-      <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
-      <script src="https://login.persona.org/include.js"></script>
-      <script src="app.js"></script>
+         <div class="container" ng-controller="alertListController" ng-cloak 
+              ng-show="persona.email">
+            <p ng-hide="alertList" ng-cloak>No alerts</p>
+            <div class="row" ng-show="alertList" ng-cloak>
+               <div class="col-lg-8">
+                  <table class="table table-striped table-bordered table-condensed">
+                     <thead>
+                        <tr>
+                           <th>From</th>
+                           <th>Time</th>
+                           <th>Status</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr ng-repeat="alert in alertList">
+                           <td>{{alert.source}}</td>
+                           <td>{{alert.timestampString}}</td>
+                           <td>{{alert.alertTypeLabel}}</td>
+                        </tr>
+                     </tbody>
+                  </table>    
+               </div>
+            </div>
+         </div>
+
+         <script src="js/jquery-1.10.2.min.js"></script>
+         <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
+         <script src="https://login.persona.org/include.js"></script>
+         <script src="app.js"></script>
 
    </body>
 
