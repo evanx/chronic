@@ -39,7 +39,6 @@ public class LoginPersona implements HttpHandler {
         this.httpExchange = httpExchange;
         httpExchangeInfo = new Httpx(httpExchange);
         assertion = httpExchangeInfo.getParameter("assertion");
-        logger.trace("handle assertion length {}", assertion.length());
         try {
             if (assertion != null) {
                 if (app.getProperties().isTesting() && 
@@ -77,5 +76,4 @@ public class LoginPersona implements HttpHandler {
         String json = new Gson().toJson(cookie.toMap());
         httpExchangeInfo.getPrintStream().println(json);
     }
-    
 }

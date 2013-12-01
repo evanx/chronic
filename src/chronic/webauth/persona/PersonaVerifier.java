@@ -28,6 +28,7 @@ public class PersonaVerifier {
     }
     
     public PersonaUserInfo getUserInfo(String assertion) throws Exception {
+        logger.trace("getUserInfo {}", assertion.length());
         URL url = new URL("https://verifier.login.persona.org/verify");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
