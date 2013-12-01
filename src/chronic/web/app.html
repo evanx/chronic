@@ -13,16 +13,18 @@
       <script src="js/angular-1.2.0.min.js"></script>
    </head>
 
-   <body>
+   <body ng-controller="personaController">
 
-      <div class="container" ng-controller="personaController">
+      <div class="container">
          <div class="navbar navbar-default" role="navigation">
             <div class="navbar-header">
                <a class="navbar-brand" href="#">Chronic</a>
             </div>
             <div class="navbar-collapse collapse">
                <ul class="nav navbar-nav">
-                  <li class="active nav-all"><a href="#" id="App-nav-status">Status</a></li>
+                  <li class="active nav-all">
+                     <a href="#" ng-show="persona.email" 
+                        ng-click="$broadcast('changeView', 'alerts')">Alerts</a></li>
                </ul>
             <div class="navbar-collapse collapse pull-right">
                <div class="navbar-text App-view-loggedout" ng-cloak ng-hide="persona.email">
@@ -35,7 +37,8 @@
          </div>
       </div>
          
-      <div class="container" ng-controller="statusController">
+      <div class="container" ng-controller="alertListController" ng-cloak ng-show="persona.email">
+         <h2>Welcome {{ persona.email }}</h2>
       </div>
 
       <script src="js/jquery-1.10.2.min.js"></script>

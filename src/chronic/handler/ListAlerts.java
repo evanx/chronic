@@ -18,16 +18,16 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class ListStatus {
-    
-    Logger logger = LoggerFactory.getLogger(ListStatus.class);
+public class ListAlerts {
+
+    Logger logger = LoggerFactory.getLogger(ListAlerts.class);
     ChronicApp app;
     Httpx httpx;
-    
-    public ListStatus(ChronicApp app) {
+
+    public ListAlerts(ChronicApp app) {
         this.app = app;
     }
-    
+
     public void handle(HttpExchange httpExchange) throws Exception {
         httpx = new Httpx(httpExchange);
         try {
@@ -35,14 +35,12 @@ public class ListStatus {
                 logger.trace("cookieMap {}", httpx.getCookieMap());
                 ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
                 logger.debug("cookie {}", cookie.getEmail());
-                  PersonaUserInfo userInfo = 
-                        app.getPersonaVerifier().getUserInfo(cookie.getAccessToken());
-                logger.debug("userInfo {}", userInfo);
-                      if (app.getProperties().isTesting()) {
-                    httpx.sendEmptyOkResponse();
-                } else {
-                    handle();
+                if (!app.getProperties().isTesting()) {
+                    PersonaUserInfo userInfo =
+                            app.getPersonaVerifier().getUserInfo(cookie.getAccessToken());
+                    logger.debug("userInfo {}", userInfo);
                 }
+                handle();
             } else {
                 httpx.sendEmptyOkResponse();
             }
@@ -57,8 +55,7 @@ public class ListStatus {
         for (StatusRecord status : app.getAlertList()) {
             statusList.add(status);
         }
-        logger.info("map", JMaps.create("statusList", statusList));
-        httpx.sendResponse(JMaps.create("statusList", statusList));
+        logger.info("map", JMaps.create("alertList", statusList));
+        httpx.sendResponse(JMaps.create("alertList", statusList));
     }
-    
 }

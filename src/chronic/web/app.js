@@ -1,5 +1,5 @@
 
-var app = angular.module('app', []);
+var app = angular.module("app", []);
 
 app.factory("personaService", ["$http", "$q", function($http, $q) {
       return {
@@ -33,8 +33,8 @@ app.factory("personaService", ["$http", "$q", function($http, $q) {
       };
    }]);
 
-app.controller('personaController', ['$scope', 'personaService',
-   function($scope, personaService) {
+app.controller("personaController", ["$scope", "$location", "personaService",
+   function($scope, $location, personaService) {
       $scope.login = function() {
          console.info("personaController login");
          navigator.id.request();
@@ -42,6 +42,10 @@ app.controller('personaController', ['$scope', 'personaService',
       $scope.logout = function() {
          console.info("personaController logout");
          navigator.id.logout();
+      };
+      $scope.changeView = function(view) {
+         console.info("personaController changeView", view);
+         $scope.$broadcast("changeView", view);
       };
       var persona = localStorage.getItem("persona");
       var loggedInUser = null;
@@ -56,7 +60,9 @@ app.controller('personaController', ['$scope', 'personaService',
                $scope.persona = persona;
                if (persona.email) {
                   localStorage.setItem("persona", JSON.stringify(persona));
+                  $scope.$broadcast("loggedOn", persona.email);
                } else {
+                  console.warn("login", persona);
                   localStorage.clear("persona");
                }
             });
@@ -67,17 +73,22 @@ app.controller('personaController', ['$scope', 'personaService',
       navigator.id.watch({
          loggedInUser: loggedInUser,
          onlogin: function(assertion) {
-            personaService.login(assertion).then(function(persona) {
-               $scope.persona = persona;
-               if (persona.email) {
-                  localStorage.setItem("persona", JSON.stringify($scope.persona));               
+            personaService.login(assertion).then(function(response) {
+               $scope.persona = response;
+               if (response.email) {
+                  localStorage.setItem("persona", JSON.stringify($scope.persona));
+                  $scope.$broadcast("loggedOn", response.email);
+               } else {
+                  console.warn("login", response);                  
                }
             });
          },
-         onlogout: function() {
+         onlogout: function(response) {
             if ($scope.persona) {
                if ($scope.persona.email) {
                   personaService.logout($scope.persona.email);
+               } else {
+                  console.warn("logout", response);
                }
                $scope.persona = {};
             }
@@ -86,3 +97,28 @@ app.controller('personaController', ['$scope', 'personaService',
       });
    }]);
 
+app.controller("alertListController", ["$scope", "$http",
+   function($scope, $http) {
+      $scope.listAlerts = function() {
+         console.log("listAlerts", $scope.persona.email);
+         $http.post("/app/ListAlerts", {
+            email: $scope.persona.email
+         }).then(function(response) {
+            if (response.alertList) {
+               console.log("alertList", response.alertList.length());
+            } else {
+               console.warn("alertList");
+            }
+         });         
+      };
+      $scope.$on("loggedOn", function(email) {
+         console.log("loggedOn", email);
+         $scope.listAlerts();
+      });
+      $scope.$on("changeView", function(event, view) {
+         console.log("changeView", view);
+         if (view === "alerts") {
+            $scope.listAlerts();
+         }
+      });
+   }]);

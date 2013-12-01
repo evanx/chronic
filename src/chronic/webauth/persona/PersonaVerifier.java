@@ -37,10 +37,10 @@ public class PersonaVerifier {
         StringBuilder builder = new StringBuilder();
         builder.append("assertion=").append(assertion);
         builder.append("&audience=").append(URLEncoder.encode(serverUrl, "UTF-8"));
-        logger.info("request", url, builder.toString());
+        logger.trace("request", url, builder.toString());
         connection.getOutputStream().write(builder.toString().getBytes());
         String json = Streams.readString(connection.getInputStream());
-        logger.info("json", json);
+        logger.trace("json", json);
         StringMap map = JsonStrings.getStringMap(json);
         String status = map.get("status");
         if (status != null && status.equals("okay")) {

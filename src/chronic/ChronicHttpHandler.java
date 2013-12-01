@@ -6,7 +6,7 @@ package chronic;
 import chronic.handler.EnrollAdminUser;
 import chronic.handler.EnrollNetwork;
 import chronic.handler.EnrollOrg;
-import chronic.handler.ListStatus;
+import chronic.handler.ListAlerts;
 import chronic.post.PostHttpHandler;
 import chronic.webauth.persona.LoginPersona;
 import chronic.webauth.persona.LogoutPersona;
@@ -23,7 +23,6 @@ import vellum.httphandler.WebHttpHandler;
  * @author evan.summers
  */
 public class ChronicHttpHandler implements HttpHandler {
-    private final static int contentLengthLimit = 4000;    
     private final static Logger logger = LoggerFactory.getLogger(ChronicHttpHandler.class);
     private final static WebHttpHandler webHandler = new WebHttpHandler("/chronic/web");
     
@@ -46,8 +45,8 @@ public class ChronicHttpHandler implements HttpHandler {
                 new EnrollOrg(app).handle(httpExchange);
             } else if (path.equals("/app/EnrollNetwork")) {
                 new EnrollNetwork(app).handle(httpExchange);
-            } else if (path.equals("/app/ListStatus")) {
-                new ListStatus(app).handle(httpExchange);
+            } else if (path.equals("/app/ListAlerts")) {
+                new ListAlerts(app).handle(httpExchange);
             } else if (path.equals("/app/LoginPersona")) {
                 new LoginPersona(app).handle(httpExchange);
             } else if (path.equals("/app/LogoutPersona")) {
