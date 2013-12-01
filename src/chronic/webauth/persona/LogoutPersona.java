@@ -23,7 +23,6 @@ public class LogoutPersona implements HttpHandler {
 
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicApp app;
-    HttpExchange httpExchange;
     Httpx httpExchangeInfo;
     ChronicCookie cookie;
 
@@ -34,14 +33,17 @@ public class LogoutPersona implements HttpHandler {
     
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        this.httpExchange = httpExchange;
         httpExchangeInfo = new Httpx(httpExchange);
         logger.info("handle", getClass().getSimpleName(), httpExchangeInfo.getPath());
         try {
+            String email = httpExchangeInfo.parseJsonMap().getString("email");
             if (ChronicCookie.matches(httpExchangeInfo.getCookieMap())) {
                 cookie = new ChronicCookie(httpExchangeInfo.getCookieMap());
-                httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
                 logger.debug("cookie {}", cookie.getEmail());
+                if (!cookie.getEmail().equals(email)) {
+                    logger.warn("email {}", email);
+                }
+                httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
                 if (app.getProperties().isTesting()) {
                     logger.info("testing mode: ignoring logout");
                     httpExchangeInfo.sendEmptyOkResponse();
@@ -49,6 +51,7 @@ public class LogoutPersona implements HttpHandler {
                     handle();
                 }
             } else {
+                httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
                 httpExchangeInfo.sendEmptyOkResponse();
             }
         } catch (Exception e) {

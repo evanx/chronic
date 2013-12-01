@@ -22,6 +22,7 @@ package chronic;
 
 import chronic.type.StatusType;
 import chronic.webauth.persona.PersonaVerifier;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -103,6 +104,10 @@ public class ChronicApp implements Runnable {
 
     public PersonaVerifier getPersonaVerifier() {
         return personaVerifier;
+    }
+
+    public Collection<StatusRecord> getAlertList() {
+        return alertMap.values();
     }
     
     @Override

@@ -25,24 +25,22 @@ public class LoginPersona implements HttpHandler {
 
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicApp app;
-    HttpExchange httpExchange;
-    Httpx httpExchangeInfo;    
+    Httpx httpExchangeInfo;
     String assertion;
 
     public LoginPersona(ChronicApp app) {
         super();
         this.app = app;
     }
-    
+
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        this.httpExchange = httpExchange;
         httpExchangeInfo = new Httpx(httpExchange);
-        assertion = httpExchangeInfo.parseJsonMap().get("assertion");
         try {
+            assertion = httpExchangeInfo.parseJsonMap().getString("assertion");
             if (assertion != null) {
-                if (app.getProperties().isTesting() && 
-                        app.getProperties().getAdminEmail() != null) {
+                if (app.getProperties().isTesting()
+                        && app.getProperties().getAdminEmail() != null) {
                     handleAdmin(app.getProperties().getAdminEmail());
                 } else {
                     handle(app.getPersonaVerifier().getUserInfo(assertion));
@@ -68,9 +66,9 @@ public class LoginPersona implements HttpHandler {
     private void handleAdmin(String adminEmail) throws Exception {
         handle(adminEmail, Emails.getUsername(adminEmail), System.currentTimeMillis());
     }
-    
+
     private void handle(String email, String label, long loginTime) throws Exception {
-        ChronicCookie cookie = new ChronicCookie(email, label, loginTime, assertion); 
+        ChronicCookie cookie = new ChronicCookie(email, label, loginTime, assertion);
         httpExchangeInfo.setCookie(cookie.toMap(), ChronicCookie.MAX_AGE_MILLIS);
         httpExchangeInfo.sendResponse("text/json", true);
         String json = new Gson().toJson(cookie.toMap());
