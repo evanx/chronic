@@ -6,6 +6,7 @@ package chronic;
 import chronic.handler.EnrollAdminUser;
 import chronic.handler.EnrollNetwork;
 import chronic.handler.EnrollOrg;
+import chronic.handler.GetStatus;
 import chronic.post.PostHttpHandler;
 import chronic.webauth.persona.LoginPersona;
 import chronic.webauth.persona.LogoutPersona;
@@ -45,6 +46,8 @@ public class ChronicHttpHandler implements HttpHandler {
                 new EnrollOrg(app).handle(httpExchange);
             } else if (path.equals("/app/EnrollNetwork")) {
                 new EnrollNetwork(app).handle(httpExchange);
+            } else if (path.equals("/app/GetStatus")) {
+                new GetStatus(app).handle(httpExchange);
             } else if (path.equals("/app/LoginPersona")) {
                 new LoginPersona(app).handle(httpExchange);
             } else if (path.equals("/app/LogoutPersona")) {

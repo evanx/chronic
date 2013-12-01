@@ -56,6 +56,7 @@ function initPersona() {
                   $('.App-view-loggedout').hide()
                   $('.App-view-loggedin').removeClass('hide');
                   $('.App-view-loggedin').show();
+                  loggedIn();
                }
             },
             error: function(xhr, status, err) {
@@ -79,6 +80,7 @@ function initPersona() {
                   $('.App-view-loggedin').hide()
                   $('.App-view-loggedout').removeClass('hide');
                   $('.App-view-loggedout').show();
+                  loggedIn();
                },
                error: function(xhr, status, err) {
                   console.log("onlogout error", err);
@@ -89,3 +91,17 @@ function initPersona() {
    });
 }
 
+function loggedIn() {
+   $.ajax({
+      type: 'POST',
+      url: '/app/GetStatus',
+      data: {
+      },
+      success: function(res, status, xhr) {
+         console.log("GetStatus success", res);
+      },
+      error: function(xhr, status, err) {
+         console.log("GetStatus error", err);
+      }
+   });
+}

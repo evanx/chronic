@@ -9,7 +9,6 @@ import chronic.entity.AdminUser;
 import chronic.webauth.ChronicCookie;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import vellum.util.JsonStrings;
 import vellum.httpserver.Httpx;
 import java.io.IOException;
 import java.util.Date;
@@ -40,15 +39,17 @@ public class LogoutPersona implements HttpHandler {
         logger.info("handle", getClass().getSimpleName(), httpExchangeInfo.getPath());
         try {
             if (ChronicCookie.matches(httpExchangeInfo.getCookieMap())) {
-                logger.trace("cookieMap {}", httpExchangeInfo.getCookieMap());
                 cookie = new ChronicCookie(httpExchangeInfo.getCookieMap());
-                logger.debug("cookie {}", cookie);
+                httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
+                logger.debug("cookie {}", cookie.getEmail());
                 if (app.getProperties().isTesting()) {
-                    logger.info("sendEmptyOkResponse");
+                    logger.info("testing mode: ignoring logout");
                     httpExchangeInfo.sendEmptyOkResponse();
                 } else {
                     handle();
                 }
+            } else {
+                httpExchangeInfo.sendEmptyOkResponse();
             }
         } catch (Exception e) {
             httpExchangeInfo.handleError(e);
@@ -57,7 +58,7 @@ public class LogoutPersona implements HttpHandler {
     }
 
     private void handle() throws Exception {
-        logger.info("cookie", cookie);
+        logger.info("cookie", cookie.getEmail());
         AdminUser user = app.getStorage().getAdminUserStorage().select(cookie.getEmail());
         user.setLogoutTime(new Date());
         app.getStorage().getAdminUserStorage().update(user);

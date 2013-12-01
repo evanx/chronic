@@ -16,7 +16,6 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Emails;
-import vellum.parameter.StringMap;
 
 /**
  *
@@ -27,21 +26,18 @@ public class LoginPersona implements HttpHandler {
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicApp app;
     HttpExchange httpExchange;
-    Httpx httpExchangeInfo;
-    PersonaUserInfo userInfo;
+    Httpx httpExchangeInfo;    
+    String assertion;
 
     public LoginPersona(ChronicApp app) {
         super();
         this.app = app;
     }
     
-    String assertion;
-    
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         this.httpExchange = httpExchange;
         httpExchangeInfo = new Httpx(httpExchange);
-        logger.trace("handle {} {}", httpExchangeInfo.getPath(), httpExchangeInfo.getParameterMap());
         assertion = httpExchangeInfo.getParameter("assertion");
         logger.trace("handle assertion length {}", assertion.length());
         try {
@@ -50,9 +46,10 @@ public class LoginPersona implements HttpHandler {
                         app.getProperties().getAdminEmail() != null) {
                     handleAdmin(app.getProperties().getAdminEmail());
                 } else {
-                    handle();
+                    handle(app.getPersonaVerifier().getUserInfo(assertion));
                 }
             } else {
+                httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
                 httpExchangeInfo.handleError("missing assertion");
             }
         } catch (Exception e) {
@@ -61,7 +58,7 @@ public class LoginPersona implements HttpHandler {
         httpExchange.close();
     }
 
-    private void handle() throws Exception {
+    private void handle(PersonaUserInfo userInfo) throws Exception {
         AdminUser user = app.getStorage().getAdminUserStorage().select(userInfo.getEmail());
         user.setEnabled(true);
         user.setLoginTime(new Date());
@@ -74,15 +71,10 @@ public class LoginPersona implements HttpHandler {
     }
     
     private void handle(String email, String label, long loginTime) throws Exception {
-        ChronicCookie cookie = new ChronicCookie(email, label, loginTime); 
+        ChronicCookie cookie = new ChronicCookie(email, label, loginTime, assertion); 
         httpExchangeInfo.setCookie(cookie.toMap(), ChronicCookie.MAX_AGE_MILLIS);
         httpExchangeInfo.sendResponse("text/json", true);
-        StringMap responseMap = new StringMap();
-        responseMap.put("email", email);
-        responseMap.put("label", label);
-        responseMap.put("authCode", cookie.getAuthCode());
-        String json = new Gson().toJson(responseMap);
-        logger.info(json);
+        String json = new Gson().toJson(cookie.toMap());
         httpExchangeInfo.getPrintStream().println(json);
     }
     

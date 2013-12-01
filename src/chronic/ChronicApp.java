@@ -21,6 +21,7 @@
 package chronic;
 
 import chronic.type.StatusType;
+import chronic.webauth.persona.PersonaVerifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -45,6 +46,7 @@ public class ChronicApp implements Runnable {
     JsonConfig config = new JsonConfig();
     ChronicProperties properties = new ChronicProperties();
     ChronicStorage storage = new TemporaryChronicStorage();
+    PersonaVerifier personaVerifier;
     ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer httpsServer = new VellumHttpsServer();
     VellumHttpServer httpServer = new VellumHttpServer();
@@ -58,6 +60,7 @@ public class ChronicApp implements Runnable {
     public void init() throws Exception {
         config.init(getClass(), "chronic");
         properties.init(config);
+        personaVerifier = new PersonaVerifier(properties.getServerUrl());
         storage.init();
         httpServer.start(properties.getHttpServer(),
                 new RedirectHttpHandler(properties.getServerUrl()));
@@ -98,6 +101,10 @@ public class ChronicApp implements Runnable {
         return storage;
     }
 
+    public PersonaVerifier getPersonaVerifier() {
+        return personaVerifier;
+    }
+    
     @Override
     public synchronized void run() {
         logger.info("run {}", properties.getPeriod());

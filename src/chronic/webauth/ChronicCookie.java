@@ -41,6 +41,7 @@ public class ChronicCookie {
     String email;
     String label;
     long loginMillis;
+    String accessToken;
     String authCode; 
             
     public ChronicCookie() {
@@ -55,14 +56,24 @@ public class ChronicCookie {
             this.email = map.get("email");
             this.label = map.get("label");
             this.loginMillis = map.getLong("loginMillis");
+            this.accessToken = map.get("accessToken");
             this.authCode = map.get("authCode");
         }
     }
 
-    public ChronicCookie(String email, String displayName, long loginMillis) {
+    public ChronicCookie(String email, String displayName, long loginMillis, String accessToken) {
         this.email = email;
         this.label = displayName;
         this.loginMillis = loginMillis;
+        this.accessToken = accessToken;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getAuthCode() {
+        return authCode;
     }
 
     public String getEmail() {
@@ -73,19 +84,11 @@ public class ChronicCookie {
         return label;
     }
 
-    public StringMap toMap() {
-        StringMap map = new StringMap();
-        map.put("email", email);
-        map.put("label", label);
-        map.put("loginMillis", Long.toString(loginMillis));
-        map.put("authCode", authCode);
-        return map;
+    public long getLoginMillis() {
+        return loginMillis;
     }
 
-    public String getAuthCode() {
-        return authCode;
-    }
-    
+       
     public void validateAuthCode(byte[] secret) throws Exception {
         String code = createAuthCode(secret, email, loginMillis);
         if (!code.equals(code)) {
@@ -102,10 +105,26 @@ public class ChronicCookie {
         return new Base32().encodeAsString(mac.doFinal(Bytes.toByteArray(value)));
     }
     
-    public long getLoginMillis() {
-        return loginMillis;
+    public StringMap toMap() {
+        StringMap map = new StringMap();
+        map.put("email", email);
+        map.put("label", label);
+        map.put("loginMillis", Long.toString(loginMillis));
+        map.put("accessToken", accessToken);
+        map.put("authCode", authCode);
+        return map;
     }
 
+    public static StringMap emptyMap() {
+        StringMap map = new StringMap();
+        map.put("email", "");
+        map.put("label", "");
+        map.put("loginMillis", 0);
+        map.put("authCode", "");
+        map.put("accessToken", "");
+        return map;        
+    }
+    
     @Override
     public String toString() {
         return toMap().toString();
@@ -115,12 +134,15 @@ public class ChronicCookie {
         return map.containsKey("email") && 
                 map.containsKey("label") &&
                 map.containsKey("loginMillis") &&
+                map.containsKey("accessToken") &&
                 map.containsKey("authCode");
     }
 
     public static Collection<String> names() {
         return Lists.asList(new String[] {
-            "email", "label", "loginMillis", "authCode"
+            "email", "label", "loginMillis", "accessToken", "authCode"
         });
     }    
+    
+    
 }

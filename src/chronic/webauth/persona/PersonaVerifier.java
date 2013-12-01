@@ -11,7 +11,6 @@ import javax.net.ssl.HttpsURLConnection;
 import vellum.logr.Logr;
 import vellum.logr.LogrFactory;
 import vellum.parameter.StringMap;
-import vellum.security.DefaultKeyStores;
 import vellum.util.Args;
 import vellum.util.Streams;
 
@@ -19,15 +18,15 @@ import vellum.util.Streams;
  *
  * @author evan.summers
  */
-public class PersonaApi {
+public class PersonaVerifier {
 
     Logr logger = LogrFactory.getLogger(getClass());
     String serverUrl;
 
-    public PersonaApi(String serverUrl) {
+    public PersonaVerifier(String serverUrl) {
         this.serverUrl = serverUrl;
     }
-
+    
     public PersonaUserInfo getUserInfo(String assertion) throws Exception {
         URL url = new URL("https://verifier.login.persona.org/verify");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
