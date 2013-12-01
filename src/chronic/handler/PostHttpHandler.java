@@ -34,6 +34,9 @@ public class PostHttpHandler implements HttpHandler {
                 app.getProperties().getRemoteAddress())) {
             logger.warn("remote hostname {}", 
                     httpExchange.getRemoteAddress().getAddress().getHostAddress());
+            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
+            httpExchange.close();
+            return;
         }
         String path = httpExchange.getRequestURI().getPath();
         int contentLength = Integer.parseInt(
