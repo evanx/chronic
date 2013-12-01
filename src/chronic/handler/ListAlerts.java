@@ -9,7 +9,9 @@ import chronic.webauth.ChronicCookie;
 import chronic.webauth.persona.PersonaUserInfo;
 import com.sun.net.httpserver.HttpExchange;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +55,17 @@ public class ListAlerts {
     }
 
     private void handle() throws Exception {
-        List alertList = new ArrayList();
-        for (StatusRecord status : app.getAlertList()) {
+        List alertList = new LinkedList();
+        for (StatusRecord status : 
+                descendingTimestamp(app.getAlertList())) {
             alertList.add(status.getAlertMap());
         }
-        Collections.sort(alertList, new StatusRecordDescendingTimestampComparator());
         httpx.sendResponse(JMaps.create("alertList", alertList));
     }
+        
+    public static Iterable<StatusRecord> descendingTimestamp(Collection<StatusRecord> list) {
+        LinkedList sortedList = new LinkedList(list);
+        Collections.sort(sortedList, new StatusRecordDescendingTimestampComparator());
+        return sortedList;
+    }       
 }
