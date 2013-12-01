@@ -53,7 +53,7 @@ public class StatusRecord {
     List<String> lineList = new ArrayList();
     AlertType alertType = AlertType.NONE;
     AlertFormatType alertFormatType;
-    String alertString;
+    String topic;
     StatusType statusType = StatusType.UNKNOWN;
     long timestamp = System.currentTimeMillis();
     long periodMillis;
@@ -74,7 +74,7 @@ public class StatusRecord {
     public StatusRecord(StatusRecord record) {
         this.alertType = record.alertType;
         this.alertFormatType = record.alertFormatType;
-        this.alertString = record.alertString;
+        this.topic = record.topic;
         this.periodMillis = record.periodMillis;
         this.from = record.from;
         this.subject = record.subject;
@@ -165,8 +165,8 @@ public class StatusRecord {
         return alertType;
     }
 
-    public String getAlertString() {
-        return alertString;
+    public String getTopic() {
+        return topic;
     }
 
     public AlertFormatType getAlertFormatType() {
@@ -206,26 +206,21 @@ public class StatusRecord {
         return false;
     }
 
-    public JMap toMap() {
-        JMap map = new JMap();
-        map.put("source", getSource());
-        map.put("subject", getSubject());
-        map.put("timestampString", Millis.formatTimestamp(timestamp));
+    public String formatAlertTypeLabel() {
         if (statusType != null && statusType.isAlertable()) {
-            map.put("alertTypeLabel", statusType.getLabel());
+            return statusType.getLabel();
         } else if (alertType == null && statusType != null) {
-            map.put("alertTypeLabel", statusType.getLabel());
+            return statusType.getLabel();
         } else if (alertType != null) {
-            map.put("alertTypeLabel", alertType.getLabel());
+            return alertType.getLabel();
         } else {
-            map.put("alertTypeLabel", StatusType.UNKNOWN.getLabel());
+            return StatusType.UNKNOWN.getLabel();
         }
-        return map;
     }
     
     @Override
     public String toString() {
-        return Arrays.toString(new Object[]{getSource(), alertType, alertString, statusType});
+        return Arrays.toString(new Object[]{getSource(), alertType, topic, statusType});
     }
 
     public String buildContent() {
@@ -252,6 +247,7 @@ public class StatusRecord {
             } else if (line.startsWith("Content-Type: ")) {
                 record.parseContentTypeLine(line);
             } else if (line.startsWith("Status: ")) {
+                nagiosStatus = false;
                 record.parseStatusType(line.substring(8));
             } else if (line.startsWith("Service: ")) {
                 record.setService(line.substring(9));
@@ -314,7 +310,7 @@ public class StatusRecord {
     private void parseAlertType(String string) {
         int index = string.indexOf(" ");
         if (index > 0) {
-            alertString = string.substring(index + 1);
+            topic = string.substring(index + 1);
             string = string.substring(0, index);
         }
         try {
@@ -369,7 +365,8 @@ public class StatusRecord {
         map.put("service", service);
         map.put("statusType", statusType);
         map.put("alertType", alertType);
-        map.put("alertString", alertString);
+        map.put("alertTypeLabel", formatAlertTypeLabel());
+        map.put("alertTopic", topic);
         map.put("timestamp", Millis.format(timestamp));
         map.put("source", getSource());
         map.put("subject", formatSubject());

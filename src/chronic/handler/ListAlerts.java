@@ -53,7 +53,7 @@ public class ListAlerts {
     private void handle() throws Exception {
         List alertList = new ArrayList();
         for (StatusRecord status : app.getAlertList()) {
-            alertList.add(status.toMap());
+            alertList.add(status.getAlertMap());
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
     }
