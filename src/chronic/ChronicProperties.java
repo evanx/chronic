@@ -20,9 +20,10 @@
  */
 package chronic;
 
+import chronic.util.JsonObjectWrapper;
+import java.io.IOException;
 import vellum.datatype.Millis;
 import vellum.httpserver.HttpServerProperties;
-import vellum.jsonconfig.JsonConfig;
 import vellum.util.ExtendedProperties;
 
 /**
@@ -30,36 +31,44 @@ import vellum.util.ExtendedProperties;
  * @author evan.summers
  */
 public class ChronicProperties {
-    String alertScript = "scripts/alert.sh";
-    long period = Millis.fromMinutes(3);
-    boolean testing = false;
-    String serverUrl = "https://localhost:8443";
-    HttpServerProperties httpServer = new HttpServerProperties(8080);
-    ExtendedProperties httpsServer;
-    String adminEmail;
-    String remoteAddress = "127.0.0.1";
-    
-    public void init(JsonConfig config) {
-        alertScript = config.getProperties().getString("alertScript", alertScript);
-        period = config.getProperties().getMillis("period", period);
-        testing = config.getProperties().getBoolean("testing", testing);
-        serverUrl = config.getProperties().getString("serverUrl", serverUrl);
-        httpsServer = config.getProperties("httpsServer");
-        adminEmail = config.getProperties().getString("adminEmail", null);
-        remoteAddress = config.getProperties().getString("remoteAddress", remoteAddress);
-    }
 
+    private String alertScript = "scripts/alert.sh";
+    private long period = Millis.fromMinutes(3);
+    private boolean testing = false;
+    private String serverUrl = "https://localhost:8443";
+    private HttpServerProperties httpServer = new HttpServerProperties(8080);
+    private ExtendedProperties httpsServer;
+    private String adminEmail;
+    private String remoteAddress = "127.0.0.1";
+    private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
+
+    public void init() throws IOException {
+        String confFileName = properties.getString("chronic.json", "chronic.json");
+        JsonObjectWrapper object = new JsonObjectWrapper(confFileName);
+        alertScript = object.getString("alertScript", alertScript);
+        period = object.getMillis("period", period);
+        testing = object.getBoolean("testing", testing);
+        serverUrl = object.getString("serverUrl", serverUrl);
+        adminEmail = object.getString("adminEmail", null);
+        remoteAddress = object.getString("remoteAddress", remoteAddress);
+        if (object.hasProperties("httpServer")) {
+            httpServer = new HttpServerProperties(
+                object.getProperties("httpServer"));
+        }
+        httpsServer = object.getProperties("httpsServer");
+    }
+    
     public String getAlertScript() {
         return alertScript;
-    }        
+    }
 
     public long getPeriod() {
         return period;
-    }        
+    }
 
     public boolean isTesting() {
         return testing;
-    }        
+    }
 
     public ExtendedProperties getHttpsServer() {
         return httpsServer;
@@ -67,11 +76,11 @@ public class ChronicProperties {
 
     public HttpServerProperties getHttpServer() {
         return httpServer;
-    }        
+    }
 
     public String getAdminEmail() {
         return adminEmail;
-    }        
+    }
 
     public String getServerUrl() {
         return serverUrl;
@@ -79,5 +88,5 @@ public class ChronicProperties {
 
     public String getRemoteAddress() {
         return remoteAddress;
-    }        
+    }
 }

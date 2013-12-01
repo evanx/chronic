@@ -44,7 +44,6 @@ import vellum.type.ComparableTuple;
 public class ChronicApp implements Runnable {
 
     Logger logger = LoggerFactory.getLogger(getClass());
-    JsonConfig config = new JsonConfig();
     ChronicProperties properties = new ChronicProperties();
     ChronicStorage storage = new TemporaryChronicStorage();
     PersonaVerifier personaVerifier;
@@ -58,9 +57,8 @@ public class ChronicApp implements Runnable {
     public ChronicApp() {
     }
 
-    public void init() throws Exception {
-        config.init(getClass(), "chronic");
-        properties.init(config);
+    public void init() throws Exception {        
+        properties.init();
         personaVerifier = new PersonaVerifier(properties.getServerUrl());
         storage.init();
         httpServer.start(properties.getHttpServer(),
