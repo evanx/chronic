@@ -26,15 +26,14 @@ import chronic.type.AlertType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
-import vellum.jx.JMap;
 import vellum.type.ComparableTuple;
 import vellum.util.Strings;
 
@@ -233,7 +232,7 @@ public class StatusRecord {
     }
 
     public static StatusRecord parse(String text) throws IOException {
-        logger.info("parse: {}", text);
+        logger.trace("parse: {}", text);
         StatusRecord record = new StatusRecord();
         boolean inHeader = true;
         String[] lines = text.split("\n");
@@ -358,7 +357,7 @@ public class StatusRecord {
     }
 
     public Map getAlertMap() {
-        Map map = new HashMap();
+        Map map = new TreeMap();
         map.put("from", from);
         map.put("username", username);
         map.put("hostname", hostname);
@@ -366,8 +365,9 @@ public class StatusRecord {
         map.put("statusType", statusType);
         map.put("alertType", alertType);
         map.put("alertTypeLabel", formatAlertTypeLabel());
-        map.put("alertTopic", topic);
-        map.put("timestamp", Millis.format(timestamp));
+        map.put("topic", topic);
+        map.put("timestamp", timestamp);
+        map.put("timestampLabel", Millis.formatTimestamp(timestamp));
         map.put("source", getSource());
         map.put("subject", formatSubject());
         return map;
