@@ -56,8 +56,8 @@
                      <tbody>
                         <tr ng-repeat="alert in alertList">
                            <td>{{alert.service}}</td>
-                           <td>{{alert.hostname}}</td>
-                           <td>{{alert.username}}</td>
+                           <td><tt>{{alert.hostname}}</tt></td>
+                           <td><tt>{{alert.username}}</tt></td>
                            <td><i>{{alert.timestampLabel}}</i></td>
                            <td>{{alert.alertTypeLabel}}</td>
                            <td>{{alert.subject}}</td>

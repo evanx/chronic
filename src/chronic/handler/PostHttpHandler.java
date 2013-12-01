@@ -18,22 +18,21 @@ import vellum.util.Strings;
  * @author evan.summers
  */
 public class PostHttpHandler implements HttpHandler {
+
     final static int contentLengthLimit = 4000;
-    
     Logger logger = LoggerFactory.getLogger(PostHttpHandler.class);
     ChronicApp app;
-    
+
     public PostHttpHandler(ChronicApp app) {
         this.app = app;
     }
-    
+
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String hostAddress = httpExchange.getRemoteAddress().getAddress().getHostAddress();
         if (!hostAddress.equals(app.getProperties().getRemoteAddress())) {
             logger.warn("remote hostname {}", hostAddress);
-            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
-            httpExchange.close();
+            writePlainResponse(httpExchange, "error: untrusted IP address: " + hostAddress);
             return;
         }
         String path = httpExchange.getRequestURI().getPath();
@@ -50,26 +49,26 @@ public class PostHttpHandler implements HttpHandler {
             String contentString = new String(content);
             logger.trace("content {}", contentString);
             StatusRecord record = StatusRecord.parse(contentString);
-            logger.trace("content lines {}: {}", record.getLineList().size(), 
+            logger.trace("content lines {}: {}", record.getLineList().size(),
                     Strings.formatFirst(record.getLineList()));
             logger.debug("record {} {}", record.getSource(), record.getStatusType());
             app.putRecord(record);
-            String responseString = "OK\n";
-            byte[] responseBytes = responseString.getBytes();
-            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, responseBytes.length);
-            httpExchange.getResponseHeaders().set("Content-type", "text/plain");
-            httpExchange.getResponseBody().write(responseBytes);
-            httpExchange.close();
+            writePlainResponse(httpExchange, "ok");
         } catch (Exception e) {
             e.printStackTrace(System.err);
-            String responseString = "ERROR: " + e.getClass() + ": " + e.getMessage() + "\n";
-            byte[] responseBytes = responseString.getBytes();
-            httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 
-                    responseBytes.length);
-            httpExchange.getResponseHeaders().set("Content-type", "text/plain");
-            httpExchange.getResponseBody().write(responseBytes);
-            httpExchange.close();
+            writePlainResponse(httpExchange, "error: %s: %s", e.getClass(), e.getMessage());
         }
     }
 
+    public static void writePlainResponse(HttpExchange httpExchange, String responseString,
+            Object ... args) 
+            throws IOException {
+        responseString = String.format(responseString, args) + "\n";
+        byte[] responseBytes = responseString.getBytes();
+        httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR,
+                responseBytes.length);
+        httpExchange.getResponseHeaders().set("Content-type", "text/plain");
+        httpExchange.getResponseBody().write(responseBytes);
+        httpExchange.close();
+    }
 }
