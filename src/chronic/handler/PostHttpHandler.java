@@ -29,11 +29,9 @@ public class PostHttpHandler implements HttpHandler {
     
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        if (app.getProperties().getRemoteAddress() != null &&
-                !httpExchange.getRemoteAddress().getAddress().getHostAddress().equals(
-                app.getProperties().getRemoteAddress())) {
-            logger.warn("remote hostname {}", 
-                    httpExchange.getRemoteAddress().getAddress().getHostAddress());
+        String hostAddress = httpExchange.getRemoteAddress().getAddress().getHostAddress();
+        if (!hostAddress.equals(app.getProperties().getRemoteAddress())) {
+            logger.warn("remote hostname {}", hostAddress);
             httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
             httpExchange.close();
             return;
