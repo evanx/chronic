@@ -25,7 +25,7 @@ app.factory("personaService", ["$http", "$q", function($http, $q) {
                if (response.errorMessage) {
                   console.warn("personaService logout", response.errorMessage);
                } else {
-                  console.info("personaService logout", response.data.email);
+                  console.info("personaService logout", response);
                }
                return response.data;
             });

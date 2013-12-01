@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
 import vellum.jx.JMap;
 import vellum.type.ComparableTuple;
-import vellum.format.DisplayFormats;
 import vellum.util.Strings;
 
 /**
@@ -212,8 +211,15 @@ public class StatusRecord {
         map.put("source", getSource());
         map.put("subject", getSubject());
         map.put("timestampString", Millis.formatTimestamp(timestamp));
-        map.put("alertTypeLabel", DisplayFormats.toString(alertType));
-        map.put("statusTypeLabel", DisplayFormats.toString(statusType));
+        if (statusType != null && statusType.isAlertable()) {
+            map.put("alertTypeLabel", statusType.getLabel());
+        } else if (alertType == null && statusType != null) {
+            map.put("alertTypeLabel", statusType.getLabel());
+        } else if (alertType != null) {
+            map.put("alertTypeLabel", alertType.getLabel());
+        } else {
+            map.put("alertTypeLabel", StatusType.UNKNOWN.getLabel());
+        }
         return map;
     }
     
@@ -232,6 +238,7 @@ public class StatusRecord {
     }
 
     public static StatusRecord parse(String text) throws IOException {
+        logger.info("parse: {}", text);
         StatusRecord record = new StatusRecord();
         boolean inHeader = true;
         String[] lines = text.split("\n");
@@ -360,9 +367,12 @@ public class StatusRecord {
         map.put("username", username);
         map.put("hostname", hostname);
         map.put("service", service);
-        map.put("status", statusType);
+        map.put("statusType", statusType);
+        map.put("alertType", alertType);
+        map.put("alertString", alertString);
+        map.put("timestamp", Millis.format(timestamp));
+        map.put("source", getSource());
         map.put("subject", formatSubject());
-        map.put("alert", alertString);
         return map;
     }
 
@@ -392,6 +402,9 @@ public class StatusRecord {
         }
         if (username != null && hostname != null) {
             return String.format("%s@%s", username, hostname);
+        }
+        if (username == null && hostname == null && service == null) {
+            return "//";
         }
         return Strings.joinNotNullArgs("/", username, hostname, service);
     }
