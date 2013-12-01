@@ -31,7 +31,6 @@ public class PersonaApi {
     public PersonaUserInfo getUserInfo(String assertion) throws Exception {
         URL url = new URL("https://verifier.login.persona.org/verify");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setSSLSocketFactory(DefaultKeyStores.createSSLSocketFactory());
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
         connection.setDoOutput(true);

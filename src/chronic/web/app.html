@@ -20,28 +20,15 @@
                <a class="navbar-brand" href="#">Chronic</a>
             </div>
             <div class="navbar-collapse collapse pull-right">
-               <div id="nav-login-persona" class="navbar-text login-viewable">
-                  <a class="link-login" href="#"><img src="images/persona-login.png"/></a>
+               <div class="navbar-text App-view-loggedout">
+                  <a id="App-nav-login" href="#"><img src="images/persona-login.png"/></a>
                </div>
-               <div id="nav-loggedin" class="navbar-text viewable-loggedin hide">
-                  <a id="nav-username" class="navbar-link" href="#">username</a>
+               <div class="navbar-text App-view-loggedin hide">
+                  <a id="App-nav-logout" class="navbar-link App-label-username" href="#">username</a>
                </div>
             </div>
          </div>
 
-         <div class="jumbotron page-all" id="page-login">
-            <div class="row">
-               <div class="col-lg-6">
-                  <div class="input-group">        
-                     <input type="text" class="form-control" 
-                            name="username" placeholder="Username">
-                     <input type="text" class="form-control" 
-                            name="password" placeholder="Password">
-                     <button type="button" class="btn" id="button-login">Login</button>
-                  </div>
-               </div>
-            </div>
-         </div>
       </div>
 
       <script src="js/jquery-1.10.2.min.js"></script>

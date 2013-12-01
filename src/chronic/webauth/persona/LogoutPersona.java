@@ -13,22 +13,22 @@ import vellum.util.JsonStrings;
 import vellum.httpserver.Httpx;
 import java.io.IOException;
 import java.util.Date;
-import vellum.logr.Logr;
-import vellum.logr.LogrFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author evan.summers
  */
-public class PersonaLogout implements HttpHandler {
+public class LogoutPersona implements HttpHandler {
 
-    Logr logger = LogrFactory.getLogger(getClass());
+    Logger logger = LoggerFactory.getLogger(getClass());
     ChronicApp app;
     HttpExchange httpExchange;
     Httpx httpExchangeInfo;
     ChronicCookie cookie;
 
-    public PersonaLogout(ChronicApp app) {
+    public LogoutPersona(ChronicApp app) {
         super();
         this.app = app;
     }
@@ -39,14 +39,16 @@ public class PersonaLogout implements HttpHandler {
         httpExchangeInfo = new Httpx(httpExchange);
         logger.info("handle", getClass().getSimpleName(), httpExchangeInfo.getPath());
         try {
-            cookie = new ChronicCookie(httpExchangeInfo.getCookieMap());
-            if (cookie.getEmail() == null) {
-                logger.warn("cookie", cookie);
-                if (false) {
-                    httpExchangeInfo.handleError("No username in cookie");
+            if (ChronicCookie.matches(httpExchangeInfo.getCookieMap())) {
+                logger.trace("cookieMap {}", httpExchangeInfo.getCookieMap());
+                cookie = new ChronicCookie(httpExchangeInfo.getCookieMap());
+                logger.debug("cookie {}", cookie);
+                if (app.getProperties().isTesting()) {
+                    logger.info("sendEmptyOkResponse");
+                    httpExchangeInfo.sendEmptyOkResponse();
+                } else {
+                    handle();
                 }
-            } else {
-                handle();
             }
         } catch (Exception e) {
             httpExchangeInfo.handleError(e);
@@ -59,10 +61,6 @@ public class PersonaLogout implements HttpHandler {
         AdminUser user = app.getStorage().getAdminUserStorage().select(cookie.getEmail());
         user.setLogoutTime(new Date());
         app.getStorage().getAdminUserStorage().update(user);
-        httpExchangeInfo.clearCookie(ChronicCookie.names());
-        httpExchangeInfo.sendResponse("text/json", true);
-        String json = JsonStrings.buildJson(cookie.toMap());
-        logger.info("json", json);
-        httpExchangeInfo.getPrintStream().print(json);
-    }
+        httpExchangeInfo.sendEmptyOkResponse();
+    } 
 }

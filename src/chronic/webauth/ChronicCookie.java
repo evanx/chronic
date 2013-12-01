@@ -20,6 +20,7 @@
  */
 package chronic.webauth;
 
+import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Map;
 import javax.crypto.Mac;
@@ -37,15 +38,8 @@ import vellum.util.Lists;
 public class ChronicCookie {
     public static final long MAX_AGE_MILLIS = Millis.fromHours(16);
 
-    public static Collection<String> names() {
-        return Lists.asList(new String[] {
-            "email", "label", "accesstoken", "loginMillis", "authCode"
-        });
-    }
-    
     String email;
     String label;
-    String accessToken;
     long loginMillis;
     String authCode; 
             
@@ -57,18 +51,18 @@ public class ChronicCookie {
     }
     
     public ChronicCookie(StringMap map) {
-        this.email = map.get("email");
-        this.label = map.get("label");
-        this.accessToken = map.get("accessToken");
-        this.loginMillis = map.getLong("loginMillis");
-        this.authCode = map.get("authCode");
+        if (matches(map)) {
+            this.email = map.get("email");
+            this.label = map.get("label");
+            this.loginMillis = map.getLong("loginMillis");
+            this.authCode = map.get("authCode");
+        }
     }
-    
-    public ChronicCookie(String email, String displayName, long loginMillis, String accessToken) {
+
+    public ChronicCookie(String email, String displayName, long loginMillis) {
         this.email = email;
         this.label = displayName;
         this.loginMillis = loginMillis;
-        this.accessToken = accessToken;
     }
 
     public String getEmail() {
@@ -85,7 +79,6 @@ public class ChronicCookie {
         map.put("label", label);
         map.put("loginMillis", Long.toString(loginMillis));
         map.put("authCode", authCode);
-        map.put("accessToken", accessToken);
         return map;
     }
 
@@ -94,13 +87,14 @@ public class ChronicCookie {
     }
     
     public void validateAuthCode(byte[] secret) throws Exception {
-        String code = createCode(secret, email, loginMillis);
-        if (!authCode.equals(code)) {
-            throw new Exception("INVALID_COOKIE");
+        String code = createAuthCode(secret, email, loginMillis);
+        if (!code.equals(code)) {
+            throw new Exception("invalid cookied");
         }
     }
 
-    public static String createCode(byte[] secret, String string, long value) throws Exception {
+    public static String createAuthCode(byte[] secret, String string, long value) 
+            throws GeneralSecurityException {
         Mac mac = Mac.getInstance("HmacSHA1");
         SecretKeySpec signKey = new SecretKeySpec(secret, "HmacSHA1");
         mac.init(signKey);
@@ -112,12 +106,21 @@ public class ChronicCookie {
         return loginMillis;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-    
     @Override
     public String toString() {
         return toMap().toString();
     }
+    
+    public static boolean matches(StringMap map) {
+        return map.containsKey("email") && 
+                map.containsKey("label") &&
+                map.containsKey("loginMillis") &&
+                map.containsKey("authCode");
+    }
+
+    public static Collection<String> names() {
+        return Lists.asList(new String[] {
+            "email", "label", "loginMillis", "authCode"
+        });
+    }    
 }
