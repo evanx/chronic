@@ -43,7 +43,7 @@ public class LoginPersona implements HttpHandler {
                         && app.getProperties().getAdminEmail() != null) {
                     handleAdmin(app.getProperties().getAdminEmail());
                 } else {
-                    handle(app.getPersonaVerifier().getUserInfo(assertion));
+                    handle();
                 }
             } else {
                 httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
@@ -55,16 +55,18 @@ public class LoginPersona implements HttpHandler {
         httpExchange.close();
     }
 
-    private void handle(PersonaUserInfo userInfo) throws Exception {
-        AdminUser user = app.getStorage().getAdminUserStorage().select(userInfo.getEmail());
-        user.setEnabled(true);
-        user.setLoginTime(new Date());
-        app.getStorage().getAdminUserStorage().update(user);
-        handle(user.getEmail(), user.getLabel(), user.getLoginTime().getTime());
+    private void handle() throws Exception {
+        PersonaUserInfo userInfo = app.getPersonaVerifier().getUserInfo(assertion);
+        AdminUser adminUser = app.getStorage().getAdminUserStorage().
+                select(userInfo.getEmail());
+        adminUser.setEnabled(true);
+        adminUser.setLoginTime(new Date());
+        app.getStorage().getAdminUserStorage().update(adminUser);
+        handle(adminUser.getEmail(), adminUser.getLabel(), adminUser.getLoginTime().getTime());
     }
 
-    private void handleAdmin(String adminEmail) throws Exception {
-        handle(adminEmail, Emails.getUsername(adminEmail), System.currentTimeMillis());
+    private void handleAdmin(String email) throws Exception {
+        handle(email, Emails.getUsername(email), System.currentTimeMillis());
     }
 
     private void handle(String email, String label, long loginTime) throws Exception {
