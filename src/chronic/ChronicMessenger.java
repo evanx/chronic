@@ -22,7 +22,7 @@ package chronic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.system.Exec;
+import vellum.system.Executor;
 
 /**
  *
@@ -45,10 +45,14 @@ public class ChronicMessenger {
         logger.info("alert {}", status.toString());
         if (app.getProperties().getAlertScript() != null) {
             try {
-                new Exec().exec(app.getProperties().getAlertScript(), 
+                Executor executor = new Executor();
+                executor.exec(app.getProperties().getAlertScript(), 
                         new AlertBuilder().build(
                         status, previousStatus, previousAlert).getBytes(),
                         status.getAlertMap());
+                if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
+                    logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
+                }
             } catch (Exception e) {
                 logger.warn(e.getMessage(), e);
             }

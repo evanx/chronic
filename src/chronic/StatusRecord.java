@@ -23,9 +23,13 @@ package chronic;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
+import chronic.util.StatusRecordDescendingTimestampComparator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,6 +53,7 @@ public class StatusRecord {
     public final static Pattern nagiosStatusPattern = 
             Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
     static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
+
     List<String> lineList = new ArrayList();
     AlertType alertType = AlertType.NONE;
     AlertFormatType alertFormatType;
