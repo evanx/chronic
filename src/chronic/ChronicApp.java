@@ -33,7 +33,7 @@ import vellum.datatype.Millis;
 import vellum.httphandler.RedirectHttpHandler;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
-import vellum.json.JsonConfig;
+import vellum.jsonconfig.JsonConfig;
 import vellum.type.ComparableTuple;
 
 /**

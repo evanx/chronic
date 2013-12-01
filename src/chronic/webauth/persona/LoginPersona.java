@@ -38,7 +38,7 @@ public class LoginPersona implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         this.httpExchange = httpExchange;
         httpExchangeInfo = new Httpx(httpExchange);
-        assertion = httpExchangeInfo.getParameter("assertion");
+        assertion = httpExchangeInfo.parseJsonMap().get("assertion");
         try {
             if (assertion != null) {
                 if (app.getProperties().isTesting() && 

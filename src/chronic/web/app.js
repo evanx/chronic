@@ -1,107 +1,88 @@
 
-var state = {};
+var app = angular.module('app', []);
 
-function initApp() {
-   console.log("initApp");
-   if (!redirectPage()) {
-      initPersona();
-      $('#App-nav-login').click(navLoginPersona);
-      $('#App-nav-logout').click(navLogoutPersona);
-   }
-}
-
-function redirectPage() {
-   console.log("redirectPage", window.location.origin);
-   if (window.location.protocol === "https:") {
-      return false;
-   }
-   var host = location.host;
-   var index = location.host.indexOf(':');
-   if (index > 0) {
-      host = location.host.substring(0, index) + ':8443';
-   }
-   window.location = "https://" + host + location.pathname + location.search + location.hash;
-   console.log(window.location);
-   return true;
-}
-
-function navLoginPersona() {
-   console.log("navLoginPersona");
-   navigator.id.request();
-}
-
-function navLogoutPersona() {
-   if (state.username !== null) {
-      console.log("navLogoutPersona", state.username);
-      navigator.id.logout();
-   }
-}
-
-function initPersona() {
-   navigator.id.watch({
-      loggedInUser: null,
-      onlogin: function(assertion) {
-         console.log("onlogin");
-         $.ajax({
-            type: 'POST',
-            url: '/app/LoginPersona',
-            data: {
+app.factory("personaService", ["$http", "$q", function($http, $q) {
+      return {
+         login: function(assertion) {
+            var deferred = $q.defer();
+            $http.post("/app/LoginPersona", {
                assertion: assertion
-            },
-            success: function(res, status, xhr) {
-               console.log("onlogin success", res);
-               if (res.email && res.label) {
-                  state.persona = res;
-                  $('.App-label-username').text(res.label);
-                  $('.App-view-loggedout').hide()
-                  $('.App-view-loggedin').removeClass('hide');
-                  $('.App-view-loggedin').show();
-                  loggedIn();
-               }
-            },
-            error: function(xhr, status, err) {
-               console.log("onlogin error", err);
-            }
-         });
-      },
-      onlogout: function() {
-         console.log("onlogout", state.persona);
-         if (state.persona && state.persona.email) {
-            $.ajax({
-               type: 'POST',
-               url: '/app/LogoutPersona',
-               data: {
-                  email: state.persona.email
-               },
-               success: function(res, status, xhr) {
-                  console.log("onlogout success", res);
-                  state.persona = null;
-                  $('.App-label-username').text('');
-                  $('.App-view-loggedin').hide()
-                  $('.App-view-loggedout').removeClass('hide');
-                  $('.App-view-loggedout').show();
-                  loggedIn();
-               },
-               error: function(xhr, status, err) {
-                  console.log("onlogout error", err);
+            }).then(function(response) {
+               if (response.errorMessage) {
+                  console.warn("personaService login", response.errorMessage);
+                  deferred.reject(response.errorMessage);
+               } else {
+                  console.info("personaService login", response.data.email);
+                  deferred.resolve(response.data);
                }
             });
+            return deferred.promise;
+         },
+         logout: function(email) {
+            return $http.post("/app/LogoutPersona", {
+               email: email
+            }).then(function(response) {
+               if (response.errorMessage) {
+                  console.warn("personaService logout", response.errorMessage);
+               } else {
+                  console.info("personaService logout", response.data.email);
+               }
+               return response.data;
+            });
+         }
+      };
+   }]);
+
+app.controller('personaController', ['$scope', 'personaService',
+   function($scope, personaService) {
+      $scope.login = function() {
+         console.info("personaController login");
+         navigator.id.request();
+      };
+      $scope.logout = function() {
+         console.info("personaController logout");
+         navigator.id.logout();
+      };
+      var persona = localStorage.getItem("persona");
+      var loggedInUser = null;
+      if (persona === null) {
+         $scope.persona = {};
+      } else {
+         try {
+            $scope.persona = JSON.parse(persona);
+            console.log("persona", $scope.persona.email, $scope.persona.accessToken.substring(0, 10));
+            loggedInUser = $scope.persona.email;
+            personaService.login($scope.persona.accessToken).then(function(persona) {
+               $scope.persona = persona;
+               if (persona.email) {
+                  localStorage.setItem("persona", JSON.stringify(persona));
+               } else {
+                  localStorage.clear("persona");
+               }
+            });
+         } catch (e) {
+            console.log(e);
          }
       }
-   });
-}
+      navigator.id.watch({
+         loggedInUser: loggedInUser,
+         onlogin: function(assertion) {
+            personaService.login(assertion).then(function(persona) {
+               $scope.persona = persona;
+               if (persona.email) {
+                  localStorage.setItem("persona", JSON.stringify($scope.persona));               
+               }
+            });
+         },
+         onlogout: function() {
+            if ($scope.persona) {
+               if ($scope.persona.email) {
+                  personaService.logout($scope.persona.email);
+               }
+               $scope.persona = {};
+            }
+            localStorage.clear("persona");
+         }
+      });
+   }]);
 
-function loggedIn() {
-   $.ajax({
-      type: 'POST',
-      url: '/app/GetStatus',
-      data: {
-      },
-      success: function(res, status, xhr) {
-         console.log("GetStatus success", res);
-      },
-      error: function(xhr, status, err) {
-         console.log("GetStatus error", err);
-      }
-   });
-}

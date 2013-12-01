@@ -22,7 +22,7 @@ package chronic;
 
 import vellum.datatype.Millis;
 import vellum.httpserver.HttpServerProperties;
-import vellum.json.JsonConfig;
+import vellum.jsonconfig.JsonConfig;
 import vellum.util.ExtendedProperties;
 
 /**

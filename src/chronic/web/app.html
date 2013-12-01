@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:ng="http://angularjs.org" ng-app="app">
    <head>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,21 +10,26 @@
       <title>Chronic</title>
       <link href="bootstrap-3.0.2/css/bootstrap.css" rel="stylesheet">
       <link href="navbar.css" rel="stylesheet">
+      <script src="js/angular-1.2.0.min.js"></script>
    </head>
 
    <body>
 
-      <div class="container">
+      <div class="container" ng-controller="personaController">
          <div class="navbar navbar-default" role="navigation">
             <div class="navbar-header">
                <a class="navbar-brand" href="#">Chronic</a>
             </div>
+            <div class="navbar-collapse collapse">
+               <ul class="nav navbar-nav">
+                  <li class="active nav-all"><a href="#" id="App-nav-status">Status</a></li>
+               </ul>
             <div class="navbar-collapse collapse pull-right">
-               <div class="navbar-text App-view-loggedout">
-                  <a id="App-nav-login" href="#"><img src="images/persona-login.png"/></a>
+               <div class="navbar-text App-view-loggedout" ng-cloak ng-hide="persona.email">
+                  <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a>
                </div>
-               <div class="navbar-text App-view-loggedin hide">
-                  <a id="App-nav-logout" class="navbar-link App-label-username" href="#">username</a>
+               <div class="navbar-text" ng-cloak ng-show="persona.email">
+                  <a ng-click="logout()" class="navbar-link" href="#">{{persona.email}}</a>
                </div>
             </div>
          </div>
@@ -35,12 +40,6 @@
       <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
       <script src="https://login.persona.org/include.js"></script>
       <script src="app.js"></script>
-      <script type="text/javascript">
-        $(document).ready(function() {    
-            console.log("ready");
-            initApp();
-        });            
-      </script>
 
    </body>
 
