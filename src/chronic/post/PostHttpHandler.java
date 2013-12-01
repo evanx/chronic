@@ -29,11 +29,11 @@ public class PostHttpHandler implements HttpHandler {
     
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        if (app.getProperties().getSourceAddress() != null &&
-                !httpExchange.getRemoteAddress().getHostName().equals(
-                app.getProperties().getSourceAddress())) {
+        if (app.getProperties().getRemoteAddress() != null &&
+                !httpExchange.getRemoteAddress().getAddress().getAddress().equals(
+                app.getProperties().getRemoteAddress())) {
             logger.warn("remote hostname {}", 
-                    httpExchange.getRemoteAddress().getHostName());
+                    httpExchange.getRemoteAddress().getAddress().getHostAddress());
         }
         String path = httpExchange.getRequestURI().getPath();
         int contentLength = Integer.parseInt(

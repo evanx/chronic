@@ -37,7 +37,7 @@ public class ChronicProperties {
     HttpServerProperties httpServer = new HttpServerProperties(8080);
     ExtendedProperties httpsServer;
     String adminEmail;
-    String sourceAddress = "localhost";
+    String remoteAddress = "127.0.0.1";
     
     public void init(JsonConfig config) {
         alertScript = config.getProperties().getString("alertScript", alertScript);
@@ -46,7 +46,7 @@ public class ChronicProperties {
         serverUrl = config.getProperties().getString("serverUrl", serverUrl);
         httpsServer = config.getProperties("httpsServer");
         adminEmail = config.getProperties().getString("adminEmail", null);
-        sourceAddress = config.getProperties().getString("sourceAddress", sourceAddress);
+        remoteAddress = config.getProperties().getString("remoteAddress", remoteAddress);
     }
 
     public String getAlertScript() {
@@ -77,7 +77,7 @@ public class ChronicProperties {
         return serverUrl;
     }
 
-    public String getSourceAddress() {
-        return sourceAddress;
+    public String getRemoteAddress() {
+        return remoteAddress;
     }        
 }
