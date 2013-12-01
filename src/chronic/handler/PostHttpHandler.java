@@ -1,7 +1,7 @@
 /*
  * Source https://code.google.com/p/vellum by @evanxsummers
  */
-package chronic.post;
+package chronic.handler;
 
 import chronic.ChronicApp;
 import chronic.StatusRecord;
@@ -30,7 +30,7 @@ public class PostHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         if (app.getProperties().getRemoteAddress() != null &&
-                !httpExchange.getRemoteAddress().getAddress().getAddress().equals(
+                !httpExchange.getRemoteAddress().getAddress().getHostAddress().equals(
                 app.getProperties().getRemoteAddress())) {
             logger.warn("remote hostname {}", 
                     httpExchange.getRemoteAddress().getAddress().getHostAddress());

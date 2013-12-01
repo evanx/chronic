@@ -7,7 +7,7 @@ import chronic.handler.EnrollAdminUser;
 import chronic.handler.EnrollNetwork;
 import chronic.handler.EnrollOrg;
 import chronic.handler.ListAlerts;
-import chronic.post.PostHttpHandler;
+import chronic.handler.PostHttpHandler;
 import chronic.webauth.persona.LoginPersona;
 import chronic.webauth.persona.LogoutPersona;
 import com.sun.net.httpserver.HttpExchange;
