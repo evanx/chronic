@@ -49,7 +49,7 @@ public class ChronicMessenger {
                 executor.exec(app.getProperties().getAlertScript(), 
                         new AlertBuilder().build(
                         status, previousStatus, previousAlert).getBytes(),
-                        status.getAlertMap());
+                        status.getAlertMap(true));
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
                 }

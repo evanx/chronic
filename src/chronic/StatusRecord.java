@@ -366,7 +366,7 @@ public class StatusRecord {
         return false;
     }
 
-    public Map getAlertMap() {
+    public Map getAlertMap(boolean detail) {
         Map map = new TreeMap();
         map.put("from", from);
         map.put("username", username);
@@ -381,6 +381,9 @@ public class StatusRecord {
         map.put("source", getSource());
         map.put("subject", formatSubject());
         map.put("subjectShort", Strings.truncate(formatSubject(), 48));
+        if (detail) {
+            map.put("content", buildContent());
+        }
         return map;
     }
 

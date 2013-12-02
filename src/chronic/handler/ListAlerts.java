@@ -28,7 +28,9 @@ public class ListAlerts {
     ChronicApp app;
     Httpx httpx;
     PersonaUserInfo userInfo;
-
+    String email;
+    boolean admin;
+    
     public ListAlerts(ChronicApp app) {
         this.app = app;
     }
@@ -51,6 +53,8 @@ public class ListAlerts {
                 } else if (!cookie.getEmail().equals(userInfo.getEmail())) {
                     httpx.handleError("invalid cookie");
                 } else {
+                    email = userInfo.getEmail();
+                    admin = app.isAdmin(email);
                     handle();
                 }
             } else {
@@ -65,28 +69,14 @@ public class ListAlerts {
     private void handle() throws Exception {
         List alertList = new LinkedList();
         for (StatusRecord status : descendingTimestamp(app.getAlertList())) {
-            if (include(status, userInfo.getEmail())) {
-                alertList.add(status.getAlertMap());
+            if (status.getService() != null) {
+                alertList.add(status.getAlertMap(admin));
+            } else {
+            logger.warn("exclude {} {}", status.getOrgName(), email);                
             }
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
     }
-
-    private boolean include(StatusRecord status, String email) {
-        if (status.getService() == null) {
-            return false;
-        } else if (email == null) {
-            return false;
-        } else if (app.isAdmin(email)) {
-            return true;
-        } else if (status.isAdmin(email)) {
-            return true;
-        } else {
-            logger.warn("exclude {} {}", status.getOrgName(), email);
-            return false;
-        }
-    }
-    
     public static Iterable<StatusRecord> descendingTimestamp(Collection<StatusRecord> list) {
         LinkedList sortedList = new LinkedList(list);
         Collections.sort(sortedList, new StatusRecordDescendingTimestampComparator());
