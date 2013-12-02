@@ -128,6 +128,7 @@ app.controller("alertListController", ["$scope", "$http",
       $scope.$on("changeView", function(event, view) {
          console.log("changeView", view);
          if (view === "alerts") {
+            $scope.alertList = undefined;
             $scope.listAlerts();
          }
       });
