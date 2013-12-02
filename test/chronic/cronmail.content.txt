@@ -1,6 +1,6 @@
 From: root (Cron Daemon)
 To: root
-Subject: Cron <root@hostx> ~/scripts/minutely.sh
+Subject: Cron <root@hostx> ~/scripts/checksys.sh
 Content-Type: text/plain; charset=UTF-8
 Auto-Submitted: auto-generated
 X-Cron-Env: <SHELL=/bin/sh>
@@ -8,3 +8,5 @@ X-Cron-Env: <SHELL=/bin/sh>
 Alert: CONTENT_CHANGED
 Period: 1m
 test info
+other info
+more info

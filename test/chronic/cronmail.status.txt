@@ -1,0 +1,20 @@
+From: root (Cron Daemon)
+To: root
+Subject: Cron <root@server> scripts/minutely.sh
+Content-Type: text/plain; charset=UTF-8
+Auto-Submitted: auto-generated
+X-Cron-Env: <SHELL=/bin/sh>
+
+test
+Subject: custom subject
+INFO info here 
+WARN a warning
+arb
+ERROR an error
+blah blah
+INFO more info 
+that's all folks
+Alert: STATUS_CHANGED support
+Period: 1m
+TestService OK - info
+TestService CRITICAL - info

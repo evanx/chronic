@@ -1,18 +1,13 @@
 
 cd ~/chronic/testclient
 
-cat cronmail.txt | grep -v OK | 
-  curl --cacert server.pem --data-binary @- --key key.pem \
-  https://localhost:8443/post
+c0curl() {
+  curl --cacert server.pem --cert cert.pem --key key.pem --data-binary @- --key key.pem https://localhost:8444/post
+}
 
-cat cronmail.txt | grep -v OK | 
-  curl --cacert server.pem --data-binary @- --key key.pem \
-  https://localhost:8443/post
-
-cat cronmail.txt | grep -v CRIT | 
-  curl --cacert server.pem --data-binary @- --key key.pem \
-  https://localhost:8443/post
-
-cat cronmail.txt | grep -v CRIT | 
-  curl --cacert server.pem --data-binary @- --key key.pem \
-  https://localhost:8443/post
+cat cronmail.content.txt | c0curl
+cat cronmail.content.txt | grep -v ^other | c0curl
+cat cronmail.status.txt | grep -v OK | c0curl
+cat cronmail.status.txt | grep -v OK | c0curl
+cat cronmail.status.txt | grep -v CRIT | c0curl
+cat cronmail.status.txt | grep -v CRIT | c0curl
