@@ -68,7 +68,7 @@ public class JsonObjectWrapper {
         ExtendedProperties properties = new ExtendedProperties();
         for (Entry<String, JsonElement> entry : object.entrySet()) {
             logger.info("get {} {}", entry.getKey(), 
-                    Strings.truncate(32, entry.getValue().getAsString()));
+                    Strings.truncate(entry.getValue().getAsString(), 32));
             properties.put(entry.getKey(), entry.getValue().getAsString());
         }
         return properties;
@@ -153,7 +153,9 @@ public class JsonObjectWrapper {
         Set<String> set = new HashSet();
         JsonArray array = get(key).getAsJsonArray();
         for (JsonElement element : array) {
-            set.add(element.getAsString());
+            String string = element.getAsString();
+            logger.info("getStringSet {}", string);
+            set.add(string);
         }
         return set;
     }

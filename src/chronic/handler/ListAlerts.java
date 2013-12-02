@@ -83,7 +83,7 @@ public class ListAlerts {
         } else if (app.getProperties().getAdminEmails().contains(userInfo.getEmail()) ||
             Strings.endsWith(userInfo.getEmail(), app.getProperties().getAdminDomains()) ||
             userInfo.getEmail().endsWith(status.getOrgName()) ||
-            userInfo.getEmail().contains(status.getTopic())) {
+            Strings.contains(userInfo.getEmail(), status.getTopic())) {
             return true;
         } else {
             logger.warn("include {} {}", status.getOrgName(), userInfo.getEmail());

@@ -23,13 +23,9 @@ package chronic;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
-import chronic.util.StatusRecordDescendingTimestampComparator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -384,6 +380,7 @@ public class StatusRecord {
         map.put("timestampLabel", Millis.formatTimestamp(timestamp));
         map.put("source", getSource());
         map.put("subject", formatSubject());
+        map.put("subjectShort", Strings.truncate(formatSubject(), 40));
         return map;
     }
 
