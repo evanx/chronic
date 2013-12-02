@@ -75,6 +75,7 @@ public class StatusRecord {
         this.hostname = record.hostname;
         this.username = record.username;
         this.service = record.service;
+        this.source = record.source;
     }
 
     public ComparableTuple getKey() {
