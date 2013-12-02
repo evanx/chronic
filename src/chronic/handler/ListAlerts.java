@@ -5,8 +5,8 @@ package chronic.handler;
 
 import chronic.*;
 import chronic.util.StatusRecordDescendingTimestampComparator;
-import chronic.webauth.ChronicCookie;
-import chronic.webauth.persona.PersonaUserInfo;
+import chronic.ChronicCookie;
+import chronic.persona.PersonaUserInfo;
 import com.sun.net.httpserver.HttpExchange;
 import java.util.Collection;
 import java.util.Collections;

@@ -2,7 +2,7 @@
  * Source https://code.google.com/p/vellum by @evanxsummers
  * 
  */
-package chronic.webauth.persona;
+package chronic.persona;
 
 import vellum.util.JsonStrings;
 import java.net.URL;

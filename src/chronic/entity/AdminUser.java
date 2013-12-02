@@ -5,6 +5,7 @@
 package chronic.entity;
 
 import java.util.Date;
+import vellum.datatype.Emails;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.parameter.StringMap;
@@ -23,11 +24,16 @@ public class AdminUser extends AbstractEntity {
     String lastName;
     Date loginTime;
     Date logoutTime;
-    boolean enabled = true;
+    boolean enabled = false;
 
     public AdminUser() {
     }
 
+    public AdminUser(String email) {
+        this.email = email;
+        this.label = Emails.getUsername(email);
+    }
+    
     public AdminUser(JMap map) throws JMapException {
         email = map.getString("email");
         label = map.getString("name");

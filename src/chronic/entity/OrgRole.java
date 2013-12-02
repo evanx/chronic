@@ -23,7 +23,7 @@ public class OrgRole extends AbstractIdEntity {
     }
         
     @Override
-    public void setKey(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
     

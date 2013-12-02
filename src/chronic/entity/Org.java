@@ -5,7 +5,8 @@
 package chronic.entity;
 
 import vellum.datatype.Patterns;
-import vellum.parameter.StringMap;
+import vellum.jx.JMap;
+import vellum.jx.JMapException;
 import vellum.security.Certificates;
 import vellum.storage.AbstractEntity;
 import vellum.validation.ValidationException;
@@ -32,21 +33,17 @@ public final class Org extends AbstractEntity {
         this.orgName = orgName;
     }
       
-    public Org(StringMap map) {
+    public Org(JMap map) throws JMapException {
         update(map);
     }
 
-    public void update(Org bean) {
-        update(bean.getStringMap());
-    }
-    
-    public void update(StringMap map) {
-        url = map.get("url");
-        orgName = map.get("orgName");
-        label = map.get("label");
-        region = map.get("region");
-        locality = map.get("locality");
-        country = map.get("country");
+    public void update(JMap map) throws JMapException {
+        url = map.getString("url");
+        orgName = map.getString("orgName");
+        label = map.getString("label");
+        region = map.getString("region");
+        locality = map.getString("locality");
+        country = map.getString("country");
         if (orgName == null) {
             orgName = url;
         }
@@ -55,8 +52,8 @@ public final class Org extends AbstractEntity {
         }
     }
     
-    public StringMap getStringMap() {
-        StringMap map = new StringMap();
+    public JMap getMap() {
+        JMap map = new JMap();
         map.put("orgId", id);
         map.put("orgName", orgName);
         map.put("label", label);
@@ -143,12 +140,8 @@ public final class Org extends AbstractEntity {
         }
     }
 
-    public String toJson() {
-        return getStringMap().toJson();
-    }
-    
     @Override
     public String toString() {
-        return getStringMap().toJson();
+        return getMap().toString();
     }
 }

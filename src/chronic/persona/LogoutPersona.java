@@ -2,11 +2,11 @@
  * Source https://code.google.com/p/vellum by @evanxsummers
  * 
  */
-package chronic.webauth.persona;
+package chronic.persona;
 
 import chronic.ChronicApp;
 import chronic.entity.AdminUser;
-import chronic.webauth.ChronicCookie;
+import chronic.ChronicCookie;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import vellum.httpserver.Httpx;

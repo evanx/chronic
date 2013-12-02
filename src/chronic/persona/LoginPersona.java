@@ -2,11 +2,11 @@
  * Source https://code.google.com/p/vellum by @evanxsummers
  * 
  */
-package chronic.webauth.persona;
+package chronic.persona;
 
 import chronic.ChronicApp;
 import chronic.entity.AdminUser;
-import chronic.webauth.ChronicCookie;
+import chronic.ChronicCookie;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -55,10 +55,18 @@ public class LoginPersona implements HttpHandler {
         httpExchange.close();
     }
 
+    AdminUser adminUser;
+    
     private void handle() throws Exception {
         PersonaUserInfo userInfo = app.getPersonaVerifier().getUserInfo(assertion);
-        AdminUser adminUser = app.getStorage().getAdminUserStorage().
-                select(userInfo.getEmail());
+        String email = userInfo.getEmail();
+        if (app.getStorage().getAdminUserStorage().containsKey(email)) {
+            adminUser = app.getStorage().getAdminUserStorage().select(email);
+        } else {
+            adminUser = new AdminUser(email);
+            app.getStorage().getAdminUserStorage().insert(adminUser);
+            logger.info("new email {}", email);
+        }
         adminUser.setEnabled(true);
         adminUser.setLoginTime(new Date());
         app.getStorage().getAdminUserStorage().update(adminUser);

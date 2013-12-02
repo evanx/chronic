@@ -15,31 +15,50 @@ import vellum.storage.AbstractEntity;
 public class Network extends AbstractEntity {
     static Logr logger = LogrFactory.getLogger(Network.class);
     
-    String name;
+    String networkName;
     String label;
     String description;
+    String address;
+    String orgName;
     boolean enabled = true;
     
     public Network() {
     }
 
-    public Network(String name) {
-        this.name = name;
+    public Network(String orgName, String name) {
+        this.orgName = orgName;
+        this.networkName = name;
     }
     
     @Override
     public Comparable getKey() {
-        return name;
+        return networkName;
     }
 
-    public String getName() {
-        return name;
+    public String getNetworkName() {
+        return networkName;
     }
     
-    public void setName(String name) {
-        this.name = name;
+    public void setNetworkName(String networkName) {
+        this.networkName = networkName;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
     
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+        
     public String getDescription() {
         return description;
     }

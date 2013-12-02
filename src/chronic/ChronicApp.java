@@ -21,7 +21,7 @@
 package chronic;
 
 import chronic.type.StatusType;
-import chronic.webauth.persona.PersonaVerifier;
+import chronic.persona.PersonaVerifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

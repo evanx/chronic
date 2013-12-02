@@ -18,7 +18,7 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package chronic.webauth;
+package chronic;
 
 import java.security.GeneralSecurityException;
 import java.util.Collection;

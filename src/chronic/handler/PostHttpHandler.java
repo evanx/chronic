@@ -5,6 +5,8 @@ package chronic.handler;
 
 import chronic.ChronicApp;
 import chronic.StatusRecord;
+import chronic.entity.Network;
+import chronic.entity.Org;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpsExchange;
@@ -25,11 +27,14 @@ public class PostHttpHandler implements HttpHandler {
     final static int contentLengthLimit = 4000;
     Logger logger = LoggerFactory.getLogger(PostHttpHandler.class);
     ChronicApp app;
-
+    
     public PostHttpHandler(ChronicApp app) {
         this.app = app;
     }
 
+    Org org;
+    Network network;
+    
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String hostAddress = httpExchange.getRemoteAddress().getAddress().getHostAddress();
@@ -41,11 +46,26 @@ public class PostHttpHandler implements HttpHandler {
         try {
             X509Certificate certificate = ((HttpsExchange) httpExchange).getSSLSession().
                     getPeerCertificateChain()[0];
-            String commonName = Certificates.getCommonName(certificate.getSubjectDN());
+            String hostName = Certificates.getCommonName(certificate.getSubjectDN());
             String orgName = Certificates.getCommonName(certificate.getSubjectDN());
-            String orgUnitName = Certificates.getCommonName(certificate.getSubjectDN());
-            logger.trace("certificate {} {}", commonName, orgName);
-            
+            String networkName = Certificates.getCommonName(certificate.getSubjectDN());
+            logger.trace("certificate {} {}", hostName, orgName);
+            if (!app.getStorage().getOrgStorage().containsKey(orgName)) {
+                org = new Org(orgName);
+                app.getStorage().getOrgStorage().insert(org);
+            } else {
+                org = app.getStorage().getOrgStorage().select(orgName);
+            }
+            if (!app.getStorage().getNetworkStorage().containsKey(networkName)) {
+                network = new Network(orgName, networkName);
+                network.setAddress(hostAddress);
+                app.getStorage().getNetworkStorage().insert(network);
+            } else {
+                network = app.getStorage().getNetworkStorage().select(networkName);
+                if (!network.getOrgName().equals(org.getOrgName())) {
+                    logger.warn("network orgName {}, {}", network.getOrgName(), org.getOrgName());
+                }                
+            }
             int contentLength = Integer.parseInt(
                     httpExchange.getRequestHeaders().get("Content-length").get(0));
             logger.trace("contentLength {}", contentLength);
