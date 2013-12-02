@@ -1,5 +1,5 @@
 
-var app = angular.module("app", []);
+var app = angular.module("app", ['ngSanitize']);
 
 app.factory("personaService", ["$http", "$q", function($http, $q) {
       return {

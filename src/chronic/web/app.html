@@ -11,6 +11,7 @@
       <link href="bootstrap-3.0.2/css/bootstrap.css" rel="stylesheet">
       <link href="navbar.css" rel="stylesheet">
       <script src="js/angular-1.2.0.min.js"></script>
+      <script src="js/angular-sanitize.min.js"></script>
    </head>
 
    <body ng-controller="personaController">
@@ -66,13 +67,15 @@
                </div>
             </div>
             <h4 ng-show="selected" ng-cloak>{{selected.subject}}</h4>
-            <pre ng-show="selected.content" ng-cloak>{{selected.content}}</pre>
+            <div ng-show="selected.content" ng-cloak ng-bind-html="selected.content"
+                 style="font-family: monospace"
+                 ></div>
          </div>
-
-         <script src="js/jquery-1.10.2.min.js"></script>
-         <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
+         
          <script src="https://login.persona.org/include.js"></script>
          <script src="app.js"></script>
+         <script src="js/jquery-1.10.2.min.js"></script>
+         <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
 
    </body>
 

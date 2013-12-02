@@ -223,11 +223,11 @@ public class StatusRecord {
         return Arrays.toString(new Object[]{getSource(), alertType, topic, statusType});
     }
 
-    public String buildContent() {
+    public String buildContent(String lineDelimiter) {
         StringBuilder builder = new StringBuilder();
         for (String line : lineList) {
             builder.append(line);
-            builder.append('\n');
+            builder.append(lineDelimiter);
         }
         return builder.toString().trim();
     }
@@ -285,7 +285,7 @@ public class StatusRecord {
         map.put("subject", formatSubject());
         map.put("subjectShort", Strings.truncate(formatSubject(), 48));
         if (detail) {
-            map.put("content", buildContent());
+            map.put("content", buildContent("<br>\n"));
         }
         return map;
     }
