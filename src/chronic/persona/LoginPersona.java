@@ -34,7 +34,6 @@ public class LoginPersona implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        logger.info("address {}", httpExchange.getLocalAddress().getHostString());
         httpExchangeInfo = new Httpx(httpExchange);
         try {
             assertion = httpExchangeInfo.parseJsonMap().getString("assertion");
@@ -53,8 +52,9 @@ public class LoginPersona implements HttpHandler {
     AdminUser adminUser;
     
     private void handle() throws Exception {
+        logger.info("address {}", httpExchangeInfo.getServerUrl());
         PersonaUserInfo userInfo = PersonaVerifier.getUserInfo(
-                httpExchangeInfo.getRemoteHostName(), 
+                httpExchangeInfo.getServerUrl(), 
                 assertion);
         String email = userInfo.getEmail();
         if (app.getStorage().getAdminUserStorage().containsKey(email)) {

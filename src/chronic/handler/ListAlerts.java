@@ -41,7 +41,7 @@ public class ListAlerts {
                 logger.trace("cookieMap {}", httpx.getCookieMap());
                 ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
                 logger.debug("cookie email {}", cookie.getEmail());
-                userInfo = PersonaVerifier.getUserInfo(httpx.getRemoteHostName(), 
+                userInfo = PersonaVerifier.getUserInfo(httpx.getServerUrl(), 
                         cookie.getAccessToken());
                 if (cookie.getEmail() == null) {
                     logger.warn("empty cookie");

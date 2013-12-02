@@ -53,7 +53,7 @@ public class ChronicProperties {
         alertScript = object.getString("alertScript", alertScript);
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
-        adminDomains = object.getStringSet("adminDomain");
+        adminDomains = object.getStringSet("adminDomains");
         adminEmails = object.getStringSet("adminEmails");
         allowedAddresses = object.getStringSet("allowedAddresses");
         allowedAddresses.add("127.0.0.1");

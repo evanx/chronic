@@ -34,9 +34,9 @@ public class ChronicHttpHandler implements HttpHandler {
     
     @Override
     public synchronized void handle(HttpExchange httpExchange) throws IOException {
-        String path = httpExchange.getRequestURI().getPath();
-        logger.trace("path {}", path);
         try {
+            String path = httpExchange.getRequestURI().getPath();
+            logger.info("handle {}", path);
             if (path.equals("/post")) {                
                 new PostHttpHandler(app).handle(httpExchange);
             } else if (path.equals("/app/EnrollAdminUser")) {
