@@ -44,13 +44,12 @@ public class ListAlerts {
                 userInfo = PersonaVerifier.getUserInfo(httpx.getServerUrl(), 
                         cookie.getAccessToken());
                 if (cookie.getEmail() == null) {
-                    logger.warn("empty cookie");
                     httpx.handleError("empty cookie");
                 } else if (userInfo == null) {
-                    logger.warn("user not verified: {}", cookie.getEmail());
                     httpx.handleError("user not verified");
+                } else if (userInfo.getEmail() == null) {
+                    httpx.handleError("no email");
                 } else if (!cookie.getEmail().equals(userInfo.getEmail())) {
-                    logger.warn("invalid cookie: {}", userInfo.getEmail());
                     httpx.handleError("invalid cookie");
                 } else {
                     handle();
@@ -78,6 +77,8 @@ public class ListAlerts {
         if (status.getService() == null) {
             return false;
         } else if (userInfo == null) {
+            return false;
+        } else if (userInfo.getEmail() == null) {
             return false;
         } else if (app.getProperties().getAdminEmails().contains(userInfo.getEmail()) ||
             Strings.endsWith(userInfo.getEmail(), app.getProperties().getAdminDomains()) ||
