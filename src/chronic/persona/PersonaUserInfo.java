@@ -9,7 +9,6 @@ import vellum.jx.JMapException;
 import vellum.logr.Logr;
 import vellum.logr.LogrFactory;
 import vellum.util.Args;
-import vellum.util.ExtendedProperties;
 
 /**
  *
@@ -20,6 +19,10 @@ public class PersonaUserInfo {
     String email;
     String issuer;
     long expires;
+
+    public PersonaUserInfo(String email) {
+        this.email = email;
+    }
     
     public PersonaUserInfo(JMap map) throws JMapException {
         email = map.getString("email");

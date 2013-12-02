@@ -53,9 +53,10 @@ public class LoginPersona implements HttpHandler {
     
     private void handle() throws Exception {
         logger.info("address {}", httpx.getServerUrl());
-        PersonaUserInfo userInfo = PersonaVerifier.getUserInfo(
+        PersonaUserInfo userInfo = new PersonaVerifier(app).getUserInfo(
                 httpx.getServerUrl(), 
                 assertion);
+        logger.info("persona {}", userInfo);
         String email = userInfo.getEmail();
         if (app.getStorage().getAdminUserStorage().containsKey(email)) {
             adminUser = app.getStorage().getAdminUserStorage().select(email);
@@ -70,6 +71,7 @@ public class LoginPersona implements HttpHandler {
         handle(adminUser.getEmail(), adminUser.getLabel(), adminUser.getLoginTime().getTime());
     }
 
+   
     private void handle(String email, String label, long loginTime) throws Exception {
         ChronicCookie cookie = new ChronicCookie(email, label, loginTime, assertion);
         JMap map = cookie.toMap();

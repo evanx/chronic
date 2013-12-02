@@ -4,6 +4,8 @@
  */
 package chronic.persona;
 
+import chronic.ChronicApp;
+import chronic.ChronicCookie;
 import chronic.util.JsonObjectWrapper;
 import java.io.IOException;
 import java.net.URL;
@@ -12,7 +14,6 @@ import javax.net.ssl.HttpsURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMapException;
-import vellum.util.Args;
 
 /**
  *
@@ -21,8 +22,20 @@ import vellum.util.Args;
 public class PersonaVerifier {
 
     static Logger logger = LoggerFactory.getLogger(PersonaVerifier.class);
+
+    ChronicApp app; 
+    ChronicCookie cookie;
     
-    public static PersonaUserInfo getUserInfo(String serverUrl, String assertion) 
+    public PersonaVerifier(ChronicApp app) {
+        this.app = app;
+    }
+
+    public PersonaVerifier(ChronicApp app, ChronicCookie cookie) {
+        this.app = app;
+        this.cookie = cookie;
+    }
+        
+    public PersonaUserInfo getUserInfo(String serverUrl, String assertion) 
             throws IOException, JMapException, PersonaException {
         logger.trace("getUserInfo {}", serverUrl);
         URL url = new URL("https://verifier.login.persona.org/verify");
@@ -39,10 +52,16 @@ public class PersonaVerifier {
         if (object.hasProperty("status")) {
             String status = object.getString("status");
             if (status.equals("okay")) {
+                logger.info("persona", object.getMap().toString());
                 return new PersonaUserInfo(object.getMap());
             } else {
                 String reason = object.getString("reason");
                 logger.warn("{}: {}", status, reason);
+                if (reason.equals("assertion has expired")) {
+                    if (app.getProperties().isTesting() && cookie != null) {
+                        return new PersonaUserInfo(cookie.getEmail());
+                    }
+                }
                 throw new PersonaException(status, reason);
             }
         } else {
