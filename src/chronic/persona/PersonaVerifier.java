@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import javax.net.ssl.HttpsURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.util.Args;
 
@@ -44,7 +45,7 @@ public class PersonaVerifier {
         if (object.hasProperty("status")) {
             String status = object.getString("status");
             if (status.equals("okay")) {
-                return new PersonaUserInfo(object.getProperties());
+                return new PersonaUserInfo(object.getMap());
             } else {
                 throw new PersonaException(object.toString());
             }

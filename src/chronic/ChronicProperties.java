@@ -23,6 +23,8 @@ package chronic;
 import chronic.util.JsonObjectWrapper;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import vellum.datatype.Millis;
 import vellum.httpserver.HttpServerProperties;
 import vellum.util.ExtendedProperties;
@@ -40,7 +42,7 @@ public class ChronicProperties {
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
     private ExtendedProperties appServer;
     private ExtendedProperties webServer;
-    private String adminEmail;
+    private Set<String> adminEmails;
     private String remoteAddress = "127.0.0.1";
     private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
 
@@ -51,7 +53,7 @@ public class ChronicProperties {
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
         serverUrl = object.getString("serverUrl", serverUrl);
-        adminEmail = object.getString("adminEmail", "admin@chronic.net");
+        adminEmails = object.getStringSet("adminEmails", "admin@chronic.net");
         remoteAddress = object.getString("remoteAddress", remoteAddress);
         if (object.hasProperties("httpRedirectServer")) {
             httpRedirectServer = new HttpServerProperties(

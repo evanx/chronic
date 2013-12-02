@@ -27,9 +27,6 @@ public class PersonaUserInfo {
         issuer = map.getString("issuer");
     }
 
-    public PersonaUserInfo(ExtendedProperties properties) {
-    }
-
     public String getEmail() {
         return email;
     }

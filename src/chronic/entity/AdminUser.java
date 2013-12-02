@@ -40,8 +40,8 @@ public class AdminUser extends AbstractEntity {
     }
     
     @Override
-    public Long getKey() {
-        return id;
+    public String getKey() {
+        return email;
     }
 
     public void setId(Long id) {

@@ -16,11 +16,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
+import vellum.jx.JMap;
 import vellum.jx.JMapException;
+import vellum.jx.JMaps;
 import vellum.util.ExtendedProperties;
+import vellum.util.Strings;
 
 /**
  *
@@ -54,9 +58,15 @@ public class JsonObjectWrapper {
         return object.get(key) != null && object.get(key).isJsonObject();
     }
 
+    public JMap getMap() {
+        return JMaps.parse(object);
+    }
+    
     public ExtendedProperties getProperties() {
         ExtendedProperties properties = new ExtendedProperties();
         for (Entry<String, JsonElement> entry : object.entrySet()) {
+            logger.info("get {} {}", entry.getKey(), 
+                    Strings.truncate(32, entry.getValue().getAsString()));
             properties.put(entry.getKey(), entry.getValue().getAsString());
         }
         return properties;
@@ -135,6 +145,10 @@ public class JsonObjectWrapper {
     @Override
     public String toString() {
         return object.getAsString();
+    }
+
+    public Set<String> getStringSet(String adminEmails, String adminchronicnet) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
