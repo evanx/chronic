@@ -5,6 +5,7 @@ package chronic.handler;
 
 import chronic.ChronicApp;
 import chronic.StatusRecord;
+import chronic.StatusRecordParser;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import com.sun.net.httpserver.HttpExchange;
@@ -77,7 +78,7 @@ public class PostHttpHandler implements HttpHandler {
             httpExchange.getRequestBody().read(content);
             String contentString = new String(content);
             logger.trace("content {}", contentString);
-            StatusRecord record = StatusRecord.parse(contentString);
+            StatusRecord record = new StatusRecordParser().parse(contentString);
             record.setOrgName(orgName);
             logger.trace("content lines {}: {}", record.getLineList().size(),
                     Strings.formatFirst(record.getLineList()));

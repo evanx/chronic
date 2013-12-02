@@ -57,9 +57,6 @@ public class StatusRecord {
     StatusType statusType = StatusType.UNKNOWN;
     long timestamp = System.currentTimeMillis();
     long periodMillis;
-    String fromLine;
-    String subjectLine;
-    String contentTypeLine;
     String contentType;
     String from;
     String subject;
@@ -68,6 +65,7 @@ public class StatusRecord {
     String service;
     String period;
     String orgName;
+    String source;
     
     public StatusRecord() {
     }
@@ -88,6 +86,26 @@ public class StatusRecord {
         return ComparableTuple.create(username, hostname, service);
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getSource() {
+        return source;
+    }
+    
     public long getTimestamp() {
         return timestamp;
     }
@@ -100,13 +118,6 @@ public class StatusRecord {
         return orgName;
     }
     
-    public void setFromLine(String fromLine) {
-        this.fromLine = fromLine;
-        String fromCronPattern = "^From: ([a-z]+) \\(Cron Daemon\\)$";
-        username = fromLine.replaceAll(fromCronPattern, "$1");
-        from = username;
-    }
-
     public String getFrom() {
         return from;
     }
@@ -118,42 +129,11 @@ public class StatusRecord {
     public void setService(String service) {
         this.service = service;
     }
-
-    public void parseSubjectLine(String subjectLine) {
-        this.subjectLine = subjectLine;
-        Matcher matcher = subjectCronPattern.matcher(subjectLine);
-        if (matcher.find()) {
-            username = matcher.group(1);
-            hostname = matcher.group(2);
-            service = matcher.group(3);
-            from = username + '@' + hostname;
-        } else {
-            subject = subjectLine.substring(9).trim();
-        }
+    
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
-
-    public boolean parseNagiosStatus(String line) {
-        Matcher matcher = nagiosStatusPattern.matcher(line);
-        if (matcher.find()) {
-            service = matcher.group(1);
-            parseStatusType(matcher.group(2));
-            subject = line;
-            logger.debug("parseNagiosStatus {} {}", statusType, service);
-            return true;
-        }
-        return false;
-    }
-
-    public void parseContentTypeLine(String contentTypeLine) {
-        this.contentTypeLine = contentTypeLine;
-        int index = contentTypeLine.indexOf(";");
-        if (index > 14) {
-            contentType = contentTypeLine.substring(14, index);
-        } else {
-            contentType = contentTypeLine.substring(14);
-        }
-    }
-
+    
     public String getSubject() {
         return subject;
     }
@@ -162,6 +142,10 @@ public class StatusRecord {
         this.statusType = statusType;
     }
 
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+    
     public StatusType getStatusType() {
         return statusType;
     }
@@ -174,12 +158,24 @@ public class StatusRecord {
         return alertType;
     }
 
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+    
     public String getTopic() {
         return topic;
     }
 
+    public void setAlertFormatType(AlertFormatType alertFormatType) {
+        this.alertFormatType = alertFormatType;
+    }
+    
     public AlertFormatType getAlertFormatType() {
         return alertFormatType;
+    }
+
+    public void setPeriodMillis(long periodMillis) {
+        this.periodMillis = periodMillis;
     }
     
     public long getPeriodMillis() {
@@ -241,94 +237,6 @@ public class StatusRecord {
         return builder.toString().trim();
     }
 
-    public static StatusRecord parse(String text) throws IOException {
-        logger.trace("parse: {}", text);
-        StatusRecord record = new StatusRecord();
-        boolean inHeader = true;
-        String[] lines = text.split("\n");
-        boolean nagiosStatus = true;
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i].trim();
-            if (line.startsWith("From: ")) {
-                record.setFromLine(line);
-            } else if (line.startsWith("Subject: ")) {
-                record.parseSubjectLine(line);
-            } else if (line.startsWith("Content-Type: ")) {
-                record.parseContentTypeLine(line);
-            } else if (line.startsWith("Status: ")) {
-                nagiosStatus = false;
-                record.parseStatusType(line.substring(8));
-            } else if (line.startsWith("Service: ")) {
-                record.setService(line.substring(9));
-                nagiosStatus = false;
-            } else if (line.startsWith("Alert: ")) {
-                record.parseAlertType(line.substring(7));
-            } else if (line.startsWith("AlertFormat: ")) {
-                record.parseAlertFormatType(line.substring(13));
-            } else if (line.startsWith("Period: ")) {
-                record.parsePeriod(line.substring(8));
-            } else if (!inHeader) {
-                if (nagiosStatus) {
-                    record.parseNagiosStatus(line);
-                }
-                record.getLineList().add(line);
-            } else if (line.length() == 0) {
-                inHeader = false;
-            }
-        }
-        record.normalize();
-        return record;
-    }
-
-    private void normalize() {
-        if (service != null) {
-            int index = service.lastIndexOf("/");
-            if (index >= 0) {
-                service = service.substring(index + 1);
-            }
-            index = service.lastIndexOf(".");
-            if (index > 0) {
-                service = service.substring(0, index);
-            }
-        }
-        if (subject == null && username != null && username != null && service != null) {            
-            subject = getSource();
-        }
-    }
-
-    private void parseStatusType(String string) {
-        try {
-            statusType = StatusType.valueOf(string);
-        } catch (Exception e) {
-            logger.warn("parseStatusType {}: {}", string, e.getMessage());
-        }
-    }
-
-    private void parsePeriod(String string) {
-        periodMillis = Millis.parse(string);
-    }
-
-    private void parseAlertFormatType(String string) {
-        try {
-            alertFormatType = AlertFormatType.valueOf(string);
-        } catch (Exception e) {
-            logger.warn("parseAlertFormatType {}: {}", string, e.getMessage());
-        }
-    }
-    
-    private void parseAlertType(String string) {
-        int index = string.indexOf(" ");
-        if (index > 0) {
-            topic = string.substring(index + 1);
-            string = string.substring(0, index);
-        }
-        try {
-            alertType = AlertType.valueOf(string);
-        } catch (Exception e) {
-            logger.warn("parseAlertType {}: {}", string, e.getMessage());
-        }
-    }
-    
     public boolean isAlertable() {
         return statusType != null && statusType.isAlertable();
     }
@@ -402,24 +310,7 @@ public class StatusRecord {
         }
         return subject;
     }
-
-    public String getSource() {
-        if (username != null && hostname != null && service != null) {
-            if (service.matches("\\s")) {
-                return String.format("%s@%s::(%s)", username, hostname, service);                
-            } else {
-                return String.format("%s@%s::%s", username, hostname, service);
-            }
-        }
-        if (username != null && hostname != null) {
-            return String.format("%s@%s", username, hostname);
-        }
-        if (username == null && hostname == null && service == null) {
-            return "//";
-        }
-        return Strings.joinNotNullArgs("/", username, hostname, service);
-    }
-
+    
     public boolean isAdmin(String email) {
         if (email != null) { 
             if (orgName != null && email.endsWith(orgName)) {
