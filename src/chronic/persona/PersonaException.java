@@ -2,11 +2,13 @@
  */
 package chronic.persona;
 
+import vellum.exception.DisplayException;
+
 /**
  *
  * @author evan.summers
  */
-public class PersonaException extends Exception {
+public class PersonaException extends DisplayException {
 
     public PersonaException(String message) {
         super(message);

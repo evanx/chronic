@@ -98,7 +98,7 @@ app.controller("personaController", ["$scope", "$location", "personaService",
    }]);
 
 app.controller("alertListController", ["$scope", "$http",
-   function($scope, $http) {      
+   function($scope, $http) {
       $scope.listAlerts = function() {
          console.log("listAlerts", $scope.persona.email);
          $http.post("/app/ListAlerts", {
@@ -115,12 +115,12 @@ app.controller("alertListController", ["$scope", "$http",
                console.warn("alertList", response);
                navigator.id.logout();
             }
-         });         
+         });
       };
       $scope.setSelected = function() {
-        $scope.selected = this.alert;
-        console.log($scope.selected);
-       };      
+         $scope.selected = this.alert;
+         console.log("selected", $scope.selected);
+      };
       $scope.$on("loggedOn", function(email) {
          console.log("loggedOn", email);
          $scope.listAlerts();
