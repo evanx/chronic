@@ -62,13 +62,13 @@ public class ListAlerts {
         List alertList = new LinkedList();
         for (StatusRecord status : descendingTimestamp(app.getAlertList())) {
             if (status.getService() != null) {
-                if (userInfo != null && userInfo.getEmail().endsWith(status.getOrgName())) {
-                    alertList.add(status.getAlertMap());
-                } else if (userInfo.getEmail().equals(app.getProperties().getAdminEmail()))  {
-                    alertList.add(status.getAlertMap());
+                if (userInfo != null &&
+                    !userInfo.getEmail().equals(app.getProperties().getAdminEmail()) &&
+                    !userInfo.getEmail().endsWith(status.getOrgName())) {
+                    logger.warn("omit {} {}", status.getSource(), status.getOrgName());
                 } else {
-                    alertList.add(status.getAlertMap());
                 }
+                alertList.add(status.getAlertMap());
             }
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
