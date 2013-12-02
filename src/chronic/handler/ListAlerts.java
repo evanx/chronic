@@ -60,11 +60,15 @@ public class ListAlerts {
 
     private void handle() throws Exception {
         List alertList = new LinkedList();
-        for (StatusRecord status
-                : descendingTimestamp(app.getAlertList())) {
-            if (status.getService() != null
-                    && userInfo != null && userInfo.getEmail().endsWith(status.getOrgName())) {
-                alertList.add(status.getAlertMap());
+        for (StatusRecord status : descendingTimestamp(app.getAlertList())) {
+            if (status.getService() != null) {
+                if (userInfo != null && userInfo.getEmail().endsWith(status.getOrgName())) {
+                    alertList.add(status.getAlertMap());
+                } else if (userInfo.getEmail().equals(app.getProperties().getAdminEmail()))  {
+                    alertList.add(status.getAlertMap());
+                } else {
+                    alertList.add(status.getAlertMap());
+                }
             }
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
