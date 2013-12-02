@@ -74,7 +74,7 @@ public class AlertBuilder {
                 continue;
             }
             if (status.getAlertFormatType() == AlertFormatType.MINIMAL) {
-                Matcher matcher = StatusRecord.nagiosStatusPattern.matcher(line);
+                Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(line);
                 if (matcher.find()) {
                     int index = line.indexOf(" - ");
                     if (index > 0) {

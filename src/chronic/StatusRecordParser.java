@@ -44,7 +44,8 @@ public class StatusRecordParser {
             Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)"); 
     public final static Pattern nagiosStatusPattern = 
             Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
-    static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
+    static Pattern headPattern = 
+            Pattern.compile("^[a-zA-Z]+: .*$");
     
     StatusRecord record = new StatusRecord();
     
@@ -118,7 +119,11 @@ public class StatusRecordParser {
                 if (nagiosStatus) {
                     parseNagiosStatus(line);
                 }
-                record.getLineList().add(line);
+                if (HtmlChecker.sanitary(line)) {
+                    record.getLineList().add(line);
+                } else {
+                    logger.warn("omit not sanitary: {}", line);
+                }
             } else if (line.length() == 0) {
                 inHeader = false;
             }
@@ -195,5 +200,5 @@ public class StatusRecordParser {
         }
         return Strings.joinNotNullArgs("/", record.username, record.hostname, record.service);
     }
-    
+
 }

@@ -44,11 +44,6 @@ import vellum.util.Strings;
 public class StatusRecord {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
-    public final static Pattern subjectCronPattern = 
-            Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)"); 
-    public final static Pattern nagiosStatusPattern = 
-            Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
-    static Pattern headPattern = Pattern.compile("^[a-zA-Z]+: .*$");
 
     List<String> lineList = new ArrayList();
     AlertType alertType = AlertType.NONE;
@@ -191,11 +186,11 @@ public class StatusRecord {
             return true;
         }
         for (int i = 0; i < lineList.size(); i++) {
-            Matcher matcher = nagiosStatusPattern.matcher(lineList.get(i));
+            Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(lineList.get(i));
             if (matcher.find()) {
                 String nagiosService = matcher.group(1);
                 String nagiosStatus = matcher.group(2);
-                matcher = nagiosStatusPattern.matcher(other.lineList.get(i));
+                matcher = StatusRecordParser.nagiosStatusPattern.matcher(other.lineList.get(i));
                 if (matcher.find()) {
                     if (!nagiosService.equals(matcher.group(1))
                             || !nagiosStatus.equals(matcher.group(2))) {
@@ -203,7 +198,7 @@ public class StatusRecord {
                     }
                 }
 
-            } else if (!headPattern.matcher(lineList.get(i)).find()
+            } else if (!StatusRecordParser.headPattern.matcher(lineList.get(i)).find()
                     && !lineList.get(i).equals(other.lineList.get(i))) {
                 return true;
             }
