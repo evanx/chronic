@@ -7,7 +7,6 @@ package chronic.persona;
 import chronic.ChronicApp;
 import chronic.entity.AdminUser;
 import chronic.ChronicCookie;
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import vellum.httpserver.Httpx;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.jx.JMap;
 
 /**
  *
@@ -24,7 +24,7 @@ public class LoginPersona implements HttpHandler {
 
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicApp app;
-    Httpx httpExchangeInfo;
+    Httpx httpx;
     String assertion;
 
     public LoginPersona(ChronicApp app) {
@@ -34,17 +34,17 @@ public class LoginPersona implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        httpExchangeInfo = new Httpx(httpExchange);
+        httpx = new Httpx(httpExchange);
         try {
-            assertion = httpExchangeInfo.parseJsonMap().getString("assertion");
+            assertion = httpx.parseJsonMap().getString("assertion");
             if (assertion != null) {
                 handle();
             } else {
-                httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
-                httpExchangeInfo.handleError("missing assertion");
+                httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
+                httpx.handleError("missing assertion");
             }
         } catch (Exception e) {
-            httpExchangeInfo.handleError(e);
+            httpx.handleError(e);
         }
         httpExchange.close();
     }
@@ -52,9 +52,9 @@ public class LoginPersona implements HttpHandler {
     AdminUser adminUser;
     
     private void handle() throws Exception {
-        logger.info("address {}", httpExchangeInfo.getServerUrl());
+        logger.info("address {}", httpx.getServerUrl());
         PersonaUserInfo userInfo = PersonaVerifier.getUserInfo(
-                httpExchangeInfo.getServerUrl(), 
+                httpx.getServerUrl(), 
                 assertion);
         String email = userInfo.getEmail();
         if (app.getStorage().getAdminUserStorage().containsKey(email)) {
@@ -72,9 +72,9 @@ public class LoginPersona implements HttpHandler {
 
     private void handle(String email, String label, long loginTime) throws Exception {
         ChronicCookie cookie = new ChronicCookie(email, label, loginTime, assertion);
-        httpExchangeInfo.setCookie(cookie.toMap(), ChronicCookie.MAX_AGE_MILLIS);
-        httpExchangeInfo.sendResponse("text/json", true);
-        String json = new Gson().toJson(cookie.toMap());
-        httpExchangeInfo.getPrintStream().println(json);
+        JMap map = cookie.toMap();
+        httpx.setCookie(map, ChronicCookie.MAX_AGE_MILLIS);
+        map.put("admin", app.isAdmin(email));
+        httpx.sendResponse(map);
     }
 }

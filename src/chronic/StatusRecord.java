@@ -416,4 +416,16 @@ public class StatusRecord {
         }
         return Strings.joinNotNullArgs("/", username, hostname, service);
     }
+
+    public boolean isAdmin(String email) {
+        if (email != null) { 
+            if (orgName != null && email.endsWith(orgName)) {
+                return true;
+            }
+            if (topic != null && email.contains(topic)) {
+                return true;
+            }
+        }
+        return true;
+    }
 }

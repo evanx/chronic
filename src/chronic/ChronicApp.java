@@ -34,6 +34,7 @@ import vellum.httphandler.RedirectPortHttpHandler;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.type.ComparableTuple;
+import vellum.util.Strings;
 
 /**
  *
@@ -155,6 +156,11 @@ public class ChronicApp implements Runnable {
         messenger.alert(status, previousStatus, previousAlert);
     }
 
+    public boolean isAdmin(String email) {
+        return email != null && properties.getAdminEmails().contains(email) ||
+            Strings.endsWith(email, properties.getAdminDomains());        
+    }    
+    
     public static void main(String[] args) throws Exception {
         try {
             ChronicApp app = new ChronicApp();

@@ -37,8 +37,7 @@
             </div>
          </div>
 
-         <div class="container" ng-controller="alertListController" ng-cloak 
-              ng-show="persona.email">
+         <div class="container" ng-controller="alertListController" ng-cloak ng-show="persona.email">
             <p ng-show="alertList && alertList.length == 0" ng-cloak>No alerts</p>
             <div class="row" ng-show="alertList" ng-cloak>
                <div class="col-lg-12">
@@ -66,7 +65,7 @@
                   </table>    
                </div>
             </div>
-            <p ng-show="selected" ng-cloak>{{alert.subject}}</p>
+            <p ng-show="selected" ng-cloak>{{selected.subject}}</p>
          </div>
 
          <script src="js/jquery-1.10.2.min.js"></script>

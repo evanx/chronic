@@ -27,6 +27,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base32;
 import vellum.datatype.Millis;
+import vellum.jx.JMap;
 import vellum.parameter.StringMap;
 import vellum.util.Bytes;
 import vellum.util.Lists;
@@ -105,18 +106,18 @@ public class ChronicCookie {
         return new Base32().encodeAsString(mac.doFinal(Bytes.toByteArray(value)));
     }
     
-    public StringMap toMap() {
-        StringMap map = new StringMap();
+    public JMap toMap() {
+        JMap map = new JMap();
         map.put("email", email);
         map.put("label", label);
-        map.put("loginMillis", Long.toString(loginMillis));
+        map.put("loginMillis", loginMillis);
         map.put("accessToken", accessToken);
         map.put("authCode", authCode);
         return map;
     }
 
-    public static StringMap emptyMap() {
-        StringMap map = new StringMap();
+    public static JMap emptyMap() {
+        JMap map = new JMap();
         map.put("email", "");
         map.put("label", "");
         map.put("loginMillis", 0);

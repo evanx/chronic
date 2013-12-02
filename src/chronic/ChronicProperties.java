@@ -100,4 +100,5 @@ public class ChronicProperties {
     public Set<String> getAllowedAddresses() {
         return allowedAddresses;
     }   
+
 }

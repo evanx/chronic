@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httpserver.Httpx;
 import vellum.jx.JMaps;
-import vellum.util.Strings;
 
 /**
  *
@@ -66,27 +65,24 @@ public class ListAlerts {
     private void handle() throws Exception {
         List alertList = new LinkedList();
         for (StatusRecord status : descendingTimestamp(app.getAlertList())) {
-            if (include(status)) {
+            if (include(status, userInfo.getEmail())) {
                 alertList.add(status.getAlertMap());
             }
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
     }
 
-    private boolean include(StatusRecord status) {
+    private boolean include(StatusRecord status, String email) {
         if (status.getService() == null) {
             return false;
-        } else if (userInfo == null) {
+        } else if (email == null) {
             return false;
-        } else if (userInfo.getEmail() == null) {
-            return false;
-        } else if (app.getProperties().getAdminEmails().contains(userInfo.getEmail()) ||
-            Strings.endsWith(userInfo.getEmail(), app.getProperties().getAdminDomains()) ||
-            userInfo.getEmail().endsWith(status.getOrgName()) ||
-            Strings.contains(userInfo.getEmail(), status.getTopic())) {
+        } else if (app.isAdmin(email)) {
+            return true;
+        } else if (status.isAdmin(email)) {
             return true;
         } else {
-            logger.warn("include {} {}", status.getOrgName(), userInfo.getEmail());
+            logger.warn("exclude {} {}", status.getOrgName(), email);
             return false;
         }
     }
