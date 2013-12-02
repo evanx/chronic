@@ -54,7 +54,7 @@ public class ChronicProperties {
         remoteAddress = object.getString("remoteAddress", remoteAddress);
         if (object.hasProperties("httpRedirectServer")) {
             httpRedirectServer = new HttpServerProperties(
-                object.getProperties("httpServer"));
+                object.getProperties("httpRedirectServer"));
         }
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
