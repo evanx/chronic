@@ -131,5 +131,10 @@ public class JsonObjectWrapper {
         logger.info("get {} {}", key, element);
         return element;
     }
+
+    @Override
+    public String toString() {
+        return object.getAsString();
+    }
     
 }

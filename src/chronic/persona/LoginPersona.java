@@ -39,12 +39,7 @@ public class LoginPersona implements HttpHandler {
         try {
             assertion = httpExchangeInfo.parseJsonMap().getString("assertion");
             if (assertion != null) {
-                if (app.getProperties().isTesting()
-                        && app.getProperties().getAdminEmail() != null) {
-                    handleAdmin(app.getProperties().getAdminEmail());
-                } else {
-                    handle();
-                }
+                handle();
             } else {
                 httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
                 httpExchangeInfo.handleError("missing assertion");
@@ -71,10 +66,6 @@ public class LoginPersona implements HttpHandler {
         adminUser.setLoginTime(new Date());
         app.getStorage().getAdminUserStorage().update(adminUser);
         handle(adminUser.getEmail(), adminUser.getLabel(), adminUser.getLoginTime().getTime());
-    }
-
-    private void handleAdmin(String email) throws Exception {
-        handle(email, Emails.getUsername(email), System.currentTimeMillis());
     }
 
     private void handle(String email, String label, long loginTime) throws Exception {

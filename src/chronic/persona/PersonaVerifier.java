@@ -5,11 +5,13 @@
 package chronic.persona;
 
 import chronic.util.JsonObjectWrapper;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
 import javax.net.ssl.HttpsURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.jx.JMapException;
 import vellum.util.Args;
 
 /**
@@ -25,7 +27,8 @@ public class PersonaVerifier {
         this.serverUrl = serverUrl;
     }
 
-    public PersonaUserInfo getUserInfo(String assertion) throws Exception {
+    public PersonaUserInfo getUserInfo(String assertion) 
+            throws IOException, JMapException, PersonaException {
         logger.trace("getUserInfo {}", assertion.length());
         URL url = new URL("https://verifier.login.persona.org/verify");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -43,12 +46,12 @@ public class PersonaVerifier {
             if (status.equals("okay")) {
                 return new PersonaUserInfo(object.getProperties());
             } else {
-                logger.warn("status {}: {}", status, object.getString("reason", null));
+                throw new PersonaException(object.toString());
             }
         } else {
             logger.warn("status {}", object.keySet());
+            throw new PersonaException("status not found");
         }
-        return null;
     }
 
     @Override

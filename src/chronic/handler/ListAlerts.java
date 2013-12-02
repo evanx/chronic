@@ -42,13 +42,16 @@ public class ListAlerts {
                 userInfo = app.getPersonaVerifier().getUserInfo(cookie.getAccessToken());
                 if (cookie.getEmail() == null) {
                     logger.warn("empty cookie");
+                    httpx.handleError("empty cookie");
                 } else if (userInfo == null) {
                     logger.warn("user not verified: {}", cookie.getEmail());
+                    httpx.handleError("user not verified");
                 } else if (!cookie.getEmail().equals(userInfo.getEmail())) {
-                    logger.warn("user not consistent with cookie: {}", userInfo.getEmail());
+                    logger.warn("invalid cookie: {}", userInfo.getEmail());
+                    httpx.handleError("invalid cookie");
                 } else {
+                    handle();
                 }
-                handle();
             } else {
                 httpx.sendEmptyOkResponse();
             }
@@ -61,19 +64,28 @@ public class ListAlerts {
     private void handle() throws Exception {
         List alertList = new LinkedList();
         for (StatusRecord status : descendingTimestamp(app.getAlertList())) {
-            if (status.getService() != null) {
-                if (userInfo == null) {
-                } else if (!userInfo.getEmail().equals(app.getProperties().getAdminEmail())) {
-                } else if (!userInfo.getEmail().endsWith(status.getOrgName())) {
-                    logger.warn("omit {} {}", status.getSource(), status.getOrgName());
-                } else {
-                }
+            if (include(status)) {
                 alertList.add(status.getAlertMap());
             }
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
     }
 
+    private boolean include(StatusRecord status) {
+        if (status.getService() == null) {
+            return false;
+        } else if (userInfo == null) {
+            return false;
+        } else if (userInfo.getEmail().equals(app.getProperties().getAdminEmail()) ||
+            userInfo.getEmail().endsWith(status.getOrgName()) ||
+            userInfo.getEmail().contains(status.getTopic())) {
+            return true;
+        } else {
+            logger.warn("include {} {}", status.getOrgName(), userInfo.getEmail());
+            return false;
+        }
+    }
+    
     public static Iterable<StatusRecord> descendingTimestamp(Collection<StatusRecord> list) {
         LinkedList sortedList = new LinkedList(list);
         Collections.sort(sortedList, new StatusRecordDescendingTimestampComparator());

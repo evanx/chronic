@@ -105,7 +105,7 @@ app.controller("alertListController", ["$scope", "$http",
             email: $scope.persona.email
          }).then(function(response) {
             console.log("listAlerts", response.data);
-            if (response.data.alertList) {
+            if (response.data && response.data.alertList) {
                $scope.alertList = response.data.alertList;
                console.log("alertList length", $scope.alertList.length);
                if ($scope.alertList.length > 0) {
@@ -113,6 +113,7 @@ app.controller("alertListController", ["$scope", "$http",
                }
             } else {
                console.warn("alertList", response);
+               navigator.id.logout();
             }
          });         
       };
