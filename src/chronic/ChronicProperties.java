@@ -36,8 +36,9 @@ public class ChronicProperties {
     private long period = Millis.fromMinutes(3);
     private boolean testing = false;
     private String serverUrl = "https://localhost:8443";
-    private HttpServerProperties httpServer = new HttpServerProperties(8080);
-    private ExtendedProperties httpsServer;
+    private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
+    private ExtendedProperties appServer;
+    private ExtendedProperties webServer;
     private String adminEmail;
     private String remoteAddress = "127.0.0.1";
     private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
@@ -51,11 +52,12 @@ public class ChronicProperties {
         serverUrl = object.getString("serverUrl", serverUrl);
         adminEmail = object.getString("adminEmail", "admin@chronic.net");
         remoteAddress = object.getString("remoteAddress", remoteAddress);
-        if (object.hasProperties("httpServer")) {
-            httpServer = new HttpServerProperties(
+        if (object.hasProperties("httpRedirectServer")) {
+            httpRedirectServer = new HttpServerProperties(
                 object.getProperties("httpServer"));
         }
-        httpsServer = object.getProperties("httpsServer");
+        appServer = object.getProperties("appServer");
+        webServer = object.getProperties("webServer");
     }
     
     public String getAlertScript() {
@@ -70,12 +72,16 @@ public class ChronicProperties {
         return testing;
     }
 
-    public ExtendedProperties getHttpsServer() {
-        return httpsServer;
+    public ExtendedProperties getAppServer() {
+        return appServer;
     }
 
-    public HttpServerProperties getHttpServer() {
-        return httpServer;
+    public ExtendedProperties getWebServer() {
+        return webServer;
+    }
+
+    public HttpServerProperties getHttpRedirectServer() {
+        return httpRedirectServer;
     }
 
     public String getAdminEmail() {

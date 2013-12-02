@@ -29,7 +29,8 @@ public final class Org extends AbstractEntity {
     public Org() {
     }
 
-    public Org(String orgName) {
+    public Org(String url, String orgName) {
+        this.url = url;
         this.orgName = orgName;
     }
       

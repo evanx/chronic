@@ -51,7 +51,7 @@ public class PostHttpHandler implements HttpHandler {
             String networkName = Certificates.getCommonName(certificate.getSubjectDN());
             logger.trace("certificate {} {}", hostName, orgName);
             if (!app.getStorage().getOrgStorage().containsKey(orgName)) {
-                org = new Org(orgName);
+                org = new Org(orgName, orgName);
                 app.getStorage().getOrgStorage().insert(org);
             } else {
                 org = app.getStorage().getOrgStorage().select(orgName);

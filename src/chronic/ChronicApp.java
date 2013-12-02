@@ -34,7 +34,6 @@ import vellum.datatype.Millis;
 import vellum.httphandler.RedirectHttpHandler;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
-import vellum.jsonconfig.JsonConfig;
 import vellum.type.ComparableTuple;
 
 /**
@@ -48,7 +47,8 @@ public class ChronicApp implements Runnable {
     ChronicStorage storage = new TemporaryChronicStorage();
     PersonaVerifier personaVerifier;
     ChronicMessenger messenger = new ChronicMessenger(this);
-    VellumHttpsServer httpsServer = new VellumHttpsServer();
+    VellumHttpsServer webServer = new VellumHttpsServer();
+    VellumHttpsServer appServer = new VellumHttpsServer();
     VellumHttpServer httpServer = new VellumHttpServer();
     Map<ComparableTuple, StatusRecord> recordMap = new HashMap();
     Map<ComparableTuple, StatusRecord> alertMap = new HashMap();
@@ -61,9 +61,12 @@ public class ChronicApp implements Runnable {
         properties.init();
         personaVerifier = new PersonaVerifier(properties.getServerUrl());
         storage.init();
-        httpServer.start(properties.getHttpServer(),
+        httpServer.start(properties.getHttpRedirectServer(),
                 new RedirectHttpHandler(properties.getServerUrl()));
-        httpsServer.start(properties.getHttpsServer(),
+        webServer.start(properties.getWebServer(), 
+                new ChronicTrustManager(this),
+                new ChronicHttpHandler(this));
+        appServer.start(properties.getAppServer(), 
                 new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
         logger.info("initialized");
@@ -87,8 +90,8 @@ public class ChronicApp implements Runnable {
     }
 
     public void stop() throws Exception {
-        if (httpsServer != null) {
-            httpsServer.shutdown();
+        if (webServer != null) {
+            webServer.shutdown();
         }
         if (httpServer != null) {
             httpServer.shutdown();
