@@ -57,7 +57,9 @@ public class ListAlerts {
         List alertList = new LinkedList();
         for (StatusRecord status : 
                 descendingTimestamp(app.getAlertList())) {
-            alertList.add(status.getAlertMap());
+            if (status.getService() != null) {
+                alertList.add(status.getAlertMap());
+            }
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
     }
