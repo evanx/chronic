@@ -8,6 +8,7 @@ import chronic.util.StatusRecordDescendingTimestampComparator;
 import chronic.ChronicCookie;
 import chronic.persona.PersonaUserInfo;
 import com.sun.net.httpserver.HttpExchange;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ public class ListAlerts {
     Logger logger = LoggerFactory.getLogger(ListAlerts.class);
     ChronicApp app;
     Httpx httpx;
+    PersonaUserInfo userInfo;
 
     public ListAlerts(ChronicApp app) {
         this.app = app;
@@ -38,10 +40,13 @@ public class ListAlerts {
                 logger.trace("cookieMap {}", httpx.getCookieMap());
                 ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
                 logger.debug("cookie {}", cookie.getEmail());
-                if (!app.getProperties().isTesting()) {
-                    PersonaUserInfo userInfo =
-                            app.getPersonaVerifier().getUserInfo(cookie.getAccessToken());
-                    logger.debug("userInfo {}", userInfo);
+                userInfo = app.getPersonaVerifier().getUserInfo(cookie.getAccessToken());
+                logger.debug("userInfo {}", userInfo);
+                if (userInfo == null) {
+                    logger.warn("user not verified {}", cookie.getEmail());
+                } else if (!cookie.getEmail().equals(userInfo.getEmail())) {
+                    logger.warn("user not consistent with cookie {}", userInfo.getEmail());
+                } else {
                 }
                 handle();
             } else {
@@ -55,18 +60,19 @@ public class ListAlerts {
 
     private void handle() throws Exception {
         List alertList = new LinkedList();
-        for (StatusRecord status : 
-                descendingTimestamp(app.getAlertList())) {
-            if (status.getService() != null) {
+        for (StatusRecord status
+                : descendingTimestamp(app.getAlertList())) {
+            if (status.getService() != null
+                    && userInfo != null && userInfo.getEmail().endsWith(status.getOrgName())) {
                 alertList.add(status.getAlertMap());
             }
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
     }
-        
+
     public static Iterable<StatusRecord> descendingTimestamp(Collection<StatusRecord> list) {
         LinkedList sortedList = new LinkedList(list);
         Collections.sort(sortedList, new StatusRecordDescendingTimestampComparator());
         return sortedList;
-    }       
+    }
 }

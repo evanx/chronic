@@ -71,7 +71,8 @@ public class StatusRecord {
     String hostname;
     String service;
     String period;
-
+    String orgName;
+    
     public StatusRecord() {
     }
 
@@ -95,6 +96,14 @@ public class StatusRecord {
         return timestamp;
     }
 
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+    
     public void setFromLine(String fromLine) {
         this.fromLine = fromLine;
         String fromCronPattern = "^From: ([a-z]+) \\(Cron Daemon\\)$";

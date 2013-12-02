@@ -78,6 +78,7 @@ public class PostHttpHandler implements HttpHandler {
             String contentString = new String(content);
             logger.trace("content {}", contentString);
             StatusRecord record = StatusRecord.parse(contentString);
+            record.setOrgName(orgName);
             logger.trace("content lines {}: {}", record.getLineList().size(),
                     Strings.formatFirst(record.getLineList()));
             logger.debug("record {} {}", record.getSource(), record.getStatusType());
