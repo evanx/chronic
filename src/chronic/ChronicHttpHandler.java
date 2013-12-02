@@ -33,7 +33,7 @@ public class ChronicHttpHandler implements HttpHandler {
     }
     
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
+    public synchronized void handle(HttpExchange httpExchange) throws IOException {
         String path = httpExchange.getRequestURI().getPath();
         logger.trace("path {}", path);
         try {

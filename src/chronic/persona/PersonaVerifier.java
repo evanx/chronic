@@ -8,8 +8,8 @@ import chronic.util.JsonObjectWrapper;
 import java.net.URL;
 import java.net.URLEncoder;
 import javax.net.ssl.HttpsURLConnection;
-import vellum.logr.Logr;
-import vellum.logr.LogrFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vellum.util.Args;
 
 /**
@@ -18,7 +18,7 @@ import vellum.util.Args;
  */
 public class PersonaVerifier {
 
-    Logr logger = LogrFactory.getLogger(getClass());
+    Logger logger = LoggerFactory.getLogger(getClass());
     String serverUrl;
 
     public PersonaVerifier(String serverUrl) {
@@ -43,7 +43,7 @@ public class PersonaVerifier {
             if (status.equals("okay")) {
                 return new PersonaUserInfo(object.getProperties());
             } else {
-                logger.warn("status {}", status);
+                logger.warn("status {}: {}", status, object.getString("reason", null));
             }
         } else {
             logger.warn("status {}", object.keySet());

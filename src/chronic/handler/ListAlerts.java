@@ -43,9 +43,9 @@ public class ListAlerts {
                 if (cookie.getEmail() == null) {
                     logger.warn("empty cookie");
                 } else if (userInfo == null) {
-                    logger.warn("user not verified {}", cookie.getEmail());
+                    logger.warn("user not verified: {}", cookie.getEmail());
                 } else if (!cookie.getEmail().equals(userInfo.getEmail())) {
-                    logger.warn("user not consistent with cookie {}", userInfo.getEmail());
+                    logger.warn("user not consistent with cookie: {}", userInfo.getEmail());
                 } else {
                 }
                 handle();
@@ -62,7 +62,6 @@ public class ListAlerts {
         List alertList = new LinkedList();
         for (StatusRecord status : descendingTimestamp(app.getAlertList())) {
             if (status.getService() != null) {
-                logger.info("");
                 if (userInfo == null) {
                 } else if (!userInfo.getEmail().equals(app.getProperties().getAdminEmail())) {
                 } else if (!userInfo.getEmail().endsWith(status.getOrgName())) {
