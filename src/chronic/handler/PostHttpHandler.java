@@ -38,9 +38,9 @@ public class PostHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String hostAddress = httpExchange.getRemoteAddress().getAddress().getHostAddress();
-        if (!hostAddress.equals(app.getProperties().getRemoteAddress())) {
-            logger.warn("remote hostname {}", hostAddress);
-            sendPlainResponse(httpExchange, "error: untrusted IP address: " + hostAddress);
+        if (!app.getProperties().getAllowedAddresses().contains(hostAddress)) {
+            logger.warn("remote hostAddress {}", hostAddress);
+            sendPlainResponse(httpExchange, "error: not allowed IP address: " + hostAddress);
             return;
         }
         try {

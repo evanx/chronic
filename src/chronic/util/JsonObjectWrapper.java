@@ -146,7 +146,7 @@ public class JsonObjectWrapper {
 
     @Override
     public String toString() {
-        return object.getAsString();
+        return object.toString();
     }
 
     public Set<String> getStringSet(String key) {

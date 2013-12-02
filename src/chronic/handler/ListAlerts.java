@@ -6,6 +6,7 @@ package chronic.handler;
 import chronic.*;
 import chronic.ChronicCookie;
 import chronic.persona.PersonaUserInfo;
+import chronic.persona.PersonaVerifier;
 import chronic.util.StatusRecordDescendingTimestampComparator;
 import com.sun.net.httpserver.HttpExchange;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httpserver.Httpx;
 import vellum.jx.JMaps;
+import vellum.util.Strings;
 
 /**
  *
@@ -39,7 +41,8 @@ public class ListAlerts {
                 logger.trace("cookieMap {}", httpx.getCookieMap());
                 ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
                 logger.debug("cookie email {}", cookie.getEmail());
-                userInfo = app.getPersonaVerifier().getUserInfo(cookie.getAccessToken());
+                userInfo = PersonaVerifier.getUserInfo(httpx.getRemoteHostName(), 
+                        cookie.getAccessToken());
                 if (cookie.getEmail() == null) {
                     logger.warn("empty cookie");
                     httpx.handleError("empty cookie");
@@ -77,6 +80,7 @@ public class ListAlerts {
         } else if (userInfo == null) {
             return false;
         } else if (app.getProperties().getAdminEmails().contains(userInfo.getEmail()) ||
+            Strings.endsWith(userInfo.getEmail(), app.getProperties().getAdminDomains()) ||
             userInfo.getEmail().endsWith(status.getOrgName()) ||
             userInfo.getEmail().contains(status.getTopic())) {
             return true;

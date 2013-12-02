@@ -24,6 +24,7 @@ import chronic.util.JsonObjectWrapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import vellum.datatype.Millis;
 import vellum.httpserver.HttpServerProperties;
@@ -38,12 +39,12 @@ public class ChronicProperties {
     private String alertScript = "scripts/alert.sh";
     private long period = Millis.fromMinutes(3);
     private boolean testing = false;
-    private String serverUrl = "https://localhost:8443";
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
     private ExtendedProperties appServer;
     private ExtendedProperties webServer;
+    private Set<String> adminDomains;
     private Set<String> adminEmails;
-    private String remoteAddress = "127.0.0.1";
+    private Set<String> allowedAddresses;
     private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
 
     public void init() throws IOException {
@@ -52,9 +53,10 @@ public class ChronicProperties {
         alertScript = object.getString("alertScript", alertScript);
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
-        serverUrl = object.getString("serverUrl", serverUrl);
+        adminDomains = object.getStringSet("adminDomain");
         adminEmails = object.getStringSet("adminEmails");
-        remoteAddress = object.getString("remoteAddress", remoteAddress);
+        allowedAddresses = object.getStringSet("allowedAddresses");
+        allowedAddresses.add("127.0.0.1");
         if (object.hasProperties("httpRedirectServer")) {
             httpRedirectServer = new HttpServerProperties(
                 object.getProperties("httpRedirectServer"));
@@ -87,15 +89,15 @@ public class ChronicProperties {
         return httpRedirectServer;
     }
 
+    public Set<String> getAdminDomains() {
+        return adminDomains;
+    }
+    
     public Collection<String> getAdminEmails() {
         return adminEmails;
     }
 
-    public String getServerUrl() {
-        return serverUrl;
-    }
-
-    public String getRemoteAddress() {
-        return remoteAddress;
-    }
+    public Set<String> getAllowedAddresses() {
+        return allowedAddresses;
+    }   
 }

@@ -21,7 +21,6 @@
 package chronic;
 
 import chronic.type.StatusType;
-import chronic.persona.PersonaVerifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
-import vellum.httphandler.RedirectHttpHandler;
+import vellum.httphandler.RedirectPortHttpHandler;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.type.ComparableTuple;
@@ -45,7 +44,6 @@ public class ChronicApp implements Runnable {
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicProperties properties = new ChronicProperties();
     ChronicStorage storage = new TemporaryChronicStorage();
-    PersonaVerifier personaVerifier;
     ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
@@ -59,10 +57,9 @@ public class ChronicApp implements Runnable {
 
     public void init() throws Exception {        
         properties.init();
-        personaVerifier = new PersonaVerifier(properties.getServerUrl());
         storage.init();
         httpServer.start(properties.getHttpRedirectServer(),
-                new RedirectHttpHandler(properties.getServerUrl()));
+                new RedirectPortHttpHandler(properties.getWebServer().getInt("port")));
         webServer.start(properties.getWebServer(), 
                 new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
@@ -101,10 +98,6 @@ public class ChronicApp implements Runnable {
 
     public ChronicStorage getStorage() {
         return storage;
-    }
-
-    public PersonaVerifier getPersonaVerifier() {
-        return personaVerifier;
     }
 
     public Collection<StatusRecord> getAlertList() {

@@ -11,7 +11,6 @@ import java.net.URLEncoder;
 import javax.net.ssl.HttpsURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.util.Args;
 
@@ -21,14 +20,9 @@ import vellum.util.Args;
  */
 public class PersonaVerifier {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
-    String serverUrl;
-
-    public PersonaVerifier(String serverUrl) {
-        this.serverUrl = serverUrl;
-    }
-
-    public PersonaUserInfo getUserInfo(String assertion) 
+    static Logger logger = LoggerFactory.getLogger(PersonaVerifier.class);
+    
+    public static PersonaUserInfo getUserInfo(String serverUrl, String assertion) 
             throws IOException, JMapException, PersonaException {
         logger.trace("getUserInfo {}", assertion.length());
         URL url = new URL("https://verifier.login.persona.org/verify");
@@ -53,10 +47,5 @@ public class PersonaVerifier {
             logger.warn("status {}", object.keySet());
             throw new PersonaException("status not found");
         }
-    }
-
-    @Override
-    public String toString() {
-        return Args.format(serverUrl);
     }
 }

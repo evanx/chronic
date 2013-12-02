@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.datatype.Emails;
 
 /**
  *
@@ -35,6 +34,7 @@ public class LoginPersona implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        logger.info("address {}", httpExchange.getLocalAddress().getHostString());
         httpExchangeInfo = new Httpx(httpExchange);
         try {
             assertion = httpExchangeInfo.parseJsonMap().getString("assertion");
@@ -53,7 +53,9 @@ public class LoginPersona implements HttpHandler {
     AdminUser adminUser;
     
     private void handle() throws Exception {
-        PersonaUserInfo userInfo = app.getPersonaVerifier().getUserInfo(assertion);
+        PersonaUserInfo userInfo = PersonaVerifier.getUserInfo(
+                httpExchangeInfo.getRemoteHostName(), 
+                assertion);
         String email = userInfo.getEmail();
         if (app.getStorage().getAdminUserStorage().containsKey(email)) {
             adminUser = app.getStorage().getAdminUserStorage().select(email);
