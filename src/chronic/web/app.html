@@ -54,13 +54,13 @@
                         </tr>
                      </thead>
                      <tbody>
-                        <tr ng-repeat="alert in alertList">
+                        <tr ng-repeat="alert in alertList" ng-click="setSelected()">
                            <td>{{alert.service}}</td>
                            <td><tt>{{alert.hostname}}</tt></td>
                            <td><tt>{{alert.username}}</tt></td>
                            <td><i>{{alert.timestampLabel}}</i></td>
                            <td>{{alert.alertTypeLabel}}</td>
-                           <td>{{alert.subjectShort}}</td>
+                           <td style="font-size: 90%">{{alert.subjectShort}}</td>
                         </tr>
                      </tbody>
                   </table>    

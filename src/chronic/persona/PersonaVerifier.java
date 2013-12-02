@@ -41,7 +41,9 @@ public class PersonaVerifier {
             if (status.equals("okay")) {
                 return new PersonaUserInfo(object.getMap());
             } else {
-                throw new PersonaException(object.toString());
+                String reason = object.getString("reason");
+                logger.warn("{}: {}", status, reason);
+                throw new PersonaException(status, reason);
             }
         } else {
             logger.warn("status {}", object.keySet());

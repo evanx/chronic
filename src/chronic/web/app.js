@@ -117,6 +117,10 @@ app.controller("alertListController", ["$scope", "$http",
             }
          });         
       };
+      $scope.setSelected = function() {
+        $scope.selected = this.alert;
+        console.log($scope.selected);
+       };      
       $scope.$on("loggedOn", function(email) {
          console.log("loggedOn", email);
          $scope.listAlerts();

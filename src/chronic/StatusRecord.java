@@ -380,7 +380,7 @@ public class StatusRecord {
         map.put("timestampLabel", Millis.formatTimestamp(timestamp));
         map.put("source", getSource());
         map.put("subject", formatSubject());
-        map.put("subjectShort", Strings.truncate(formatSubject(), 40));
+        map.put("subjectShort", Strings.truncate(formatSubject(), 48));
         return map;
     }
 
