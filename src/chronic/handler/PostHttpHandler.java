@@ -7,10 +7,13 @@ import chronic.ChronicApp;
 import chronic.StatusRecord;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpsExchange;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import javax.security.cert.X509Certificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.security.Certificates;
 import vellum.util.Strings;
 
 /**
@@ -32,20 +35,26 @@ public class PostHttpHandler implements HttpHandler {
         String hostAddress = httpExchange.getRemoteAddress().getAddress().getHostAddress();
         if (!hostAddress.equals(app.getProperties().getRemoteAddress())) {
             logger.warn("remote hostname {}", hostAddress);
-            writePlainResponse(httpExchange, "error: untrusted IP address: " + hostAddress);
+            sendPlainResponse(httpExchange, "error: untrusted IP address: " + hostAddress);
             return;
         }
-        String path = httpExchange.getRequestURI().getPath();
-        int contentLength = Integer.parseInt(
-                httpExchange.getRequestHeaders().get("Content-length").get(0));
-        logger.trace("content-length {}", contentLength);
-        if (contentLength > contentLengthLimit) {
-            httpExchange.close();
-            return;
-        }
-        byte[] content = new byte[contentLength];
-        httpExchange.getRequestBody().read(content);
         try {
+            X509Certificate certificate = ((HttpsExchange) httpExchange).getSSLSession().
+                    getPeerCertificateChain()[0];
+            String commonName = Certificates.getCommonName(certificate.getSubjectDN());
+            String orgName = Certificates.getCommonName(certificate.getSubjectDN());
+            String orgUnitName = Certificates.getCommonName(certificate.getSubjectDN());
+            logger.trace("certificate {} {}", commonName, orgName);
+            
+            int contentLength = Integer.parseInt(
+                    httpExchange.getRequestHeaders().get("Content-length").get(0));
+            logger.trace("contentLength {}", contentLength);
+            if (contentLength > contentLengthLimit) {
+                httpExchange.close();
+                return;
+            }
+            byte[] content = new byte[contentLength];
+            httpExchange.getRequestBody().read(content);
             String contentString = new String(content);
             logger.trace("content {}", contentString);
             StatusRecord record = StatusRecord.parse(contentString);
@@ -53,14 +62,14 @@ public class PostHttpHandler implements HttpHandler {
                     Strings.formatFirst(record.getLineList()));
             logger.debug("record {} {}", record.getSource(), record.getStatusType());
             app.putRecord(record);
-            writePlainResponse(httpExchange, "ok");
+            sendPlainResponse(httpExchange, "ok");
         } catch (Exception e) {
             e.printStackTrace(System.err);
-            writePlainResponse(httpExchange, "error: %s: %s", e.getClass(), e.getMessage());
+            sendPlainResponse(httpExchange, "error: %s: %s", e.getClass(), e.getMessage());
         }
     }
 
-    public static void writePlainResponse(HttpExchange httpExchange, String responseString,
+    public static void sendPlainResponse(HttpExchange httpExchange, String responseString,
             Object ... args) 
             throws IOException {
         responseString = String.format(responseString, args) + "\n";

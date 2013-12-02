@@ -4,7 +4,6 @@
  */
 package chronic.entity;
 
-import java.util.Date;
 import vellum.datatype.Patterns;
 import vellum.parameter.StringMap;
 import vellum.security.Certificates;
@@ -70,8 +69,8 @@ public final class Org extends AbstractEntity {
     }
     
     @Override
-    public Long getKey() {
-        return id;
+    public String getKey() {
+        return url;
     }
 
     public void setId(long id) {

@@ -17,6 +17,7 @@ import java.net.HttpURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httphandler.WebHttpHandler;
+import vellum.httpserver.Httpx;
 
 /**
  *
@@ -41,8 +42,6 @@ public class ChronicHttpHandler implements HttpHandler {
                 new PostHttpHandler(app).handle(httpExchange);
             } else if (path.equals("/app/EnrollAdminUser")) {
                 new EnrollAdminUser(app).handle(httpExchange);
-            } else if (path.equals("/app/EnrollOrg")) {
-                new EnrollOrg(app).handle(httpExchange);
             } else if (path.equals("/app/EnrollNetwork")) {
                 new EnrollNetwork(app).handle(httpExchange);
             } else if (path.equals("/app/ListAlerts")) {
@@ -52,10 +51,14 @@ public class ChronicHttpHandler implements HttpHandler {
             } else if (path.equals("/app/LogoutPersona")) {
                 new LogoutPersona(app).handle(httpExchange);
             } else if (path.startsWith("/app/")) {
-                logger.warn("Invalid request handler {}", path);
-                httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_IMPLEMENTED, 0);
-                httpExchange.getResponseBody().write(0);
-                httpExchange.close();
+                Httpx hx = new Httpx(httpExchange);
+                if (path.equals("/app/EnrollOrg")) {
+                    new EnrollOrg(app).handle(hx);
+                } else {
+                    logger.warn("Invalid request handler {}", path);
+                    hx.handleError("Invalid request handler");
+                    hx.close();
+                }
             } else {
                 webHandler.handle(httpExchange);
             }

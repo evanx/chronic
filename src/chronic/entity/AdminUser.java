@@ -5,6 +5,8 @@
 package chronic.entity;
 
 import java.util.Date;
+import vellum.jx.JMap;
+import vellum.jx.JMapException;
 import vellum.parameter.StringMap;
 import vellum.storage.AbstractEntity;
 
@@ -26,6 +28,11 @@ public class AdminUser extends AbstractEntity {
     public AdminUser() {
     }
 
+    public AdminUser(JMap map) throws JMapException {
+        email = map.getString("email");
+        label = map.getString("name");
+    }
+    
     @Override
     public Long getKey() {
         return id;

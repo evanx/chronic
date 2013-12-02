@@ -5,9 +5,9 @@ package chronic.handler;
 
 import chronic.*;
 import chronic.entity.Org;
-import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.httpserver.Httpx;
 
 /**
  *
@@ -17,12 +17,14 @@ public class EnrollOrg {
     
     Logger logger = LoggerFactory.getLogger(EnrollOrg.class);
     ChronicApp app;
-    
+    Httpx hx;
+ 
     public EnrollOrg(ChronicApp app) {
         this.app = app;
     }
     
-    public void handle(HttpExchange httpExchange) throws Exception {
+    public void handle(Httpx hx) throws Exception {
+        this.hx = hx;
         Org org = new Org();
 
     }

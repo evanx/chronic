@@ -8,7 +8,6 @@ import chronic.util.StatusRecordDescendingTimestampComparator;
 import chronic.webauth.ChronicCookie;
 import chronic.webauth.persona.PersonaUserInfo;
 import com.sun.net.httpserver.HttpExchange;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
