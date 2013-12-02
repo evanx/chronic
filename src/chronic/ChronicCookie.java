@@ -134,8 +134,8 @@ public class ChronicCookie {
         return map.containsKey("email") && 
                 map.containsKey("label") &&
                 map.containsKey("loginMillis") &&
-                map.containsKey("accessToken") &&
-                map.containsKey("authCode");
+                map.containsKey("authCode") &&
+                map.containsKey("accessToken");
     }
 
     public static Collection<String> names() {

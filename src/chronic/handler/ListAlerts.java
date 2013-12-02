@@ -8,7 +8,6 @@ import chronic.util.StatusRecordDescendingTimestampComparator;
 import chronic.ChronicCookie;
 import chronic.persona.PersonaUserInfo;
 import com.sun.net.httpserver.HttpExchange;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -39,9 +38,11 @@ public class ListAlerts {
             if (ChronicCookie.matches(httpx.getCookieMap())) {
                 logger.trace("cookieMap {}", httpx.getCookieMap());
                 ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
-                logger.debug("cookie {}", cookie.getEmail());
+                logger.debug("cookie email {}", cookie.getEmail());
                 userInfo = app.getPersonaVerifier().getUserInfo(cookie.getAccessToken());
-                if (userInfo == null) {
+                if (cookie.getEmail() == null) {
+                    logger.warn("empty cookie");
+                } else if (userInfo == null) {
                     logger.warn("user not verified {}", cookie.getEmail());
                 } else if (!cookie.getEmail().equals(userInfo.getEmail())) {
                     logger.warn("user not consistent with cookie {}", userInfo.getEmail());
@@ -61,9 +62,10 @@ public class ListAlerts {
         List alertList = new LinkedList();
         for (StatusRecord status : descendingTimestamp(app.getAlertList())) {
             if (status.getService() != null) {
-                if (userInfo != null &&
-                    !userInfo.getEmail().equals(app.getProperties().getAdminEmail()) &&
-                    !userInfo.getEmail().endsWith(status.getOrgName())) {
+                logger.info("");
+                if (userInfo == null) {
+                } else if (!userInfo.getEmail().equals(app.getProperties().getAdminEmail())) {
+                } else if (!userInfo.getEmail().endsWith(status.getOrgName())) {
                     logger.warn("omit {} {}", status.getSource(), status.getOrgName());
                 } else {
                 }
