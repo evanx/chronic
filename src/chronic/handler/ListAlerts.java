@@ -4,9 +4,9 @@
 package chronic.handler;
 
 import chronic.*;
-import chronic.util.StatusRecordDescendingTimestampComparator;
 import chronic.ChronicCookie;
 import chronic.persona.PersonaUserInfo;
+import chronic.util.StatusRecordDescendingTimestampComparator;
 import com.sun.net.httpserver.HttpExchange;
 import java.util.Collection;
 import java.util.Collections;
@@ -76,7 +76,7 @@ public class ListAlerts {
             return false;
         } else if (userInfo == null) {
             return false;
-        } else if (userInfo.getEmail().equals(app.getProperties().getAdminEmail()) ||
+        } else if (app.getProperties().getAdminEmails().contains(userInfo.getEmail()) ||
             userInfo.getEmail().endsWith(status.getOrgName()) ||
             userInfo.getEmail().contains(status.getTopic())) {
             return true;

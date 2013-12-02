@@ -3,6 +3,7 @@
  */
 package chronic.util;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -14,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -147,8 +149,13 @@ public class JsonObjectWrapper {
         return object.getAsString();
     }
 
-    public Set<String> getStringSet(String adminEmails, String adminchronicnet) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Set<String> getStringSet(String key) {
+        Set<String> set = new HashSet();
+        JsonArray array = get(key).getAsJsonArray();
+        for (JsonElement element : array) {
+            set.add(element.getAsString());
+        }
+        return set;
     }
     
 }
