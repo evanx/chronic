@@ -49,7 +49,7 @@ public class ChronicProperties {
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
         serverUrl = object.getString("serverUrl", serverUrl);
-        adminEmail = object.getString("adminEmail", null);
+        adminEmail = object.getString("adminEmail", "admin@chronic.net");
         remoteAddress = object.getString("remoteAddress", remoteAddress);
         if (object.hasProperties("httpServer")) {
             httpServer = new HttpServerProperties(
