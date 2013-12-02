@@ -66,10 +66,12 @@
                   </table>    
                </div>
             </div>
+            <div class="row">
             <h4 ng-show="selected" ng-cloak>{{selected.subject}}</h4>
             <div ng-show="selected.content" ng-cloak ng-bind-html="selected.content"
-                 style="font-family: monospace"
+                 style="font-family: monospace" class="well"
                  ></div>
+            </div>
          </div>
          
          <script src="https://login.persona.org/include.js"></script>
