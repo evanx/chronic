@@ -36,7 +36,6 @@ import vellum.util.Strings;
  */
 public class HtmlChecker {
 
-    private static Logger logger = LoggerFactory.getLogger(HtmlChecker.class);
     private static final String[] names = {"b", "i", "br", "hr",
         "h1", "h2", "h3", "h4", "h5", "h6"
     };
@@ -53,7 +52,6 @@ public class HtmlChecker {
                 if (string.charAt(0) == '/') {
                     string = string.substring(1);
                 }
-                logger.info(string);
                 if (!whitelist.contains(string)) {
                     return false;
                 }
