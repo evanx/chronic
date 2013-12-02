@@ -41,7 +41,6 @@ public class ListAlerts {
                 ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
                 logger.debug("cookie {}", cookie.getEmail());
                 userInfo = app.getPersonaVerifier().getUserInfo(cookie.getAccessToken());
-                logger.debug("userInfo {}", userInfo);
                 if (userInfo == null) {
                     logger.warn("user not verified {}", cookie.getEmail());
                 } else if (!cookie.getEmail().equals(userInfo.getEmail())) {

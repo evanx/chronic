@@ -4,10 +4,12 @@
  */
 package chronic.persona;
 
+import vellum.jx.JMap;
+import vellum.jx.JMapException;
 import vellum.logr.Logr;
 import vellum.logr.LogrFactory;
-import vellum.parameter.StringMap;
 import vellum.util.Args;
+import vellum.util.ExtendedProperties;
 
 /**
  *
@@ -19,10 +21,13 @@ public class PersonaUserInfo {
     String issuer;
     long expires;
     
-    public PersonaUserInfo(StringMap map) {
-        email = map.get("email");
+    public PersonaUserInfo(JMap map) throws JMapException {
+        email = map.getString("email");
         expires = map.getLong("expires");
-        issuer = map.get("issuer");
+        issuer = map.getString("issuer");
+    }
+
+    public PersonaUserInfo(ExtendedProperties properties) {
     }
 
     public String getEmail() {

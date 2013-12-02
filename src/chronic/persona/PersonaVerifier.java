@@ -4,15 +4,13 @@
  */
 package chronic.persona;
 
-import vellum.util.JsonStrings;
+import chronic.util.JsonObjectWrapper;
 import java.net.URL;
 import java.net.URLEncoder;
 import javax.net.ssl.HttpsURLConnection;
 import vellum.logr.Logr;
 import vellum.logr.LogrFactory;
-import vellum.parameter.StringMap;
 import vellum.util.Args;
-import vellum.util.Streams;
 
 /**
  *
@@ -26,7 +24,7 @@ public class PersonaVerifier {
     public PersonaVerifier(String serverUrl) {
         this.serverUrl = serverUrl;
     }
-    
+
     public PersonaUserInfo getUserInfo(String assertion) throws Exception {
         logger.trace("getUserInfo {}", assertion.length());
         URL url = new URL("https://verifier.login.persona.org/verify");
@@ -39,12 +37,16 @@ public class PersonaVerifier {
         builder.append("&audience=").append(URLEncoder.encode(serverUrl, "UTF-8"));
         logger.trace("request", url, builder.toString());
         connection.getOutputStream().write(builder.toString().getBytes());
-        String json = Streams.readString(connection.getInputStream());
-        logger.trace("json", json);
-        StringMap map = JsonStrings.getStringMap(json);
-        String status = map.get("status");
-        if (status != null && status.equals("okay")) {
-            return new PersonaUserInfo(map);
+        JsonObjectWrapper object = new JsonObjectWrapper(connection.getInputStream());
+        if (object.hasProperty("status")) {
+            String status = object.getString("status");
+            if (status.equals("okay")) {
+                return new PersonaUserInfo(object.getProperties());
+            } else {
+                logger.warn("status {}", status);
+            }
+        } else {
+            logger.warn("status {}", object.keySet());
         }
         return null;
     }

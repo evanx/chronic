@@ -21,6 +21,7 @@
 package chronic;
 
 import chronic.util.JsonObjectWrapper;
+import java.io.File;
 import java.io.IOException;
 import vellum.datatype.Millis;
 import vellum.httpserver.HttpServerProperties;
@@ -45,7 +46,7 @@ public class ChronicProperties {
 
     public void init() throws IOException {
         String confFileName = properties.getString("chronic.json", "chronic.json");
-        JsonObjectWrapper object = new JsonObjectWrapper(confFileName);
+        JsonObjectWrapper object = new JsonObjectWrapper(new File(confFileName));
         alertScript = object.getString("alertScript", alertScript);
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
