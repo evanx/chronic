@@ -50,10 +50,14 @@ public class LoginPersona implements HttpHandler {
     }
 
     AdminUser adminUser;
+    ChronicCookie cookie;
     
     private void handle() throws Exception {
         logger.info("address {}", httpx.getServerUrl());
-        PersonaUserInfo userInfo = new PersonaVerifier(app).getUserInfo(
+        if (ChronicCookie.matches(httpx.getCookieMap())) {
+            cookie = new ChronicCookie(httpx.getCookieMap());
+        }            
+        PersonaUserInfo userInfo = new PersonaVerifier(app, cookie).getUserInfo(
                 httpx.getServerUrl(), 
                 assertion);
         logger.info("persona {}", userInfo);
