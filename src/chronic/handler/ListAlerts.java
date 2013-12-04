@@ -78,6 +78,7 @@ public class ListAlerts {
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
     }
+
     public static Iterable<StatusRecord> descendingTimestamp(Collection<StatusRecord> list) {
         LinkedList sortedList = new LinkedList(list);
         Collections.sort(sortedList, new StatusRecordDescendingTimestampComparator());

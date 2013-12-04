@@ -19,7 +19,7 @@ public enum StatusType {
     ELAPSED;
 
     public boolean isAlertable() {
-        return (this != UNKNOWN);
+        return this != UNKNOWN;
     }
     
     public String getLabel() {

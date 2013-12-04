@@ -101,6 +101,8 @@ app.controller("alertListController", ["$scope", "$http",
    function($scope, $http) {
       $scope.listAlerts = function() {
          console.log("listAlerts", $scope.persona.email);
+         $scope.alertList = undefined;
+         $scope.selected = undefined;
          $http.post("/app/ListAlerts", {
             email: $scope.persona.email
          }).then(function(response) {
@@ -128,7 +130,6 @@ app.controller("alertListController", ["$scope", "$http",
       $scope.$on("changeView", function(event, view) {
          console.log("changeView", view);
          if (view === "alerts") {
-            $scope.alertList = undefined;
             $scope.listAlerts();
          }
       });

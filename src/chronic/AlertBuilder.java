@@ -38,14 +38,20 @@ public class AlertBuilder {
     static Logger logger = LoggerFactory.getLogger(AlertBuilder.class);
     StringBuilder builder = new StringBuilder();
 
-    public String build(StatusRecord status, StatusRecord previousStatus, 
+    public String build(StatusRecord status) {
+        logger.info("build {}", status);
+        append(status);
+        return builder.toString();
+    }
+
+    public String build(StatusRecord status, StatusRecord previousStatus,
             StatusRecord previousAlert)
             throws IOException {
         logger.info("build {}", status);
         append(status);
-        if (status.getAlertType() == AlertType.CONTENT_CHANGED && 
-                previousStatus != null && 
-                previousStatus.getTimestamp() != status.getTimestamp()) {
+        if (status.getAlertType() == AlertType.CONTENT_CHANGED
+                && previousStatus != null
+                && previousStatus.getTimestamp() != status.getTimestamp()) {
             appendPrevious(previousStatus);
         } else if (status.getAlertType() == AlertType.STATUS_CHANGED
                 && previousAlert != null) {
@@ -60,9 +66,9 @@ public class AlertBuilder {
     }
 
     private void appendPrevious(StatusRecord status) {
-            builder.append("\n<hr>Previous:\n");
+        builder.append("\n<hr>Previous:\n");
         builder.append(String.format("<b>%s</b>\n", formatHtmlSubject(status)));
-        builder.append(String.format("<i>%s</i>\n\n", 
+        builder.append(String.format("<i>%s</i>\n\n",
                 Millis.formatTimestamp(status.getTimestamp())));
         builder.append(buildContent(status));
     }
@@ -90,22 +96,22 @@ public class AlertBuilder {
         }
         return builder.toString();
     }
-    
+
     private void appendln(String string) {
         builder.append(string);
         builder.append('\n');
-    }   
-    
+    }
+
     public String formatHtmlSubject(StatusRecord status) {
-        logger.info("formatHtmlSubject {} {}", status.getStatusType(), 
-                status.getStatusType().getLabel());            
+        logger.info("formatHtmlSubject {} {}", status.getStatusType(),
+                status.getStatusType().getLabel());
         if (status.isAlertable()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
-                return status.getSource() + 
-                        " <i>" + status.getStatusType().getLabel() + "</i>";
-            } else if (!status.getSubject().contains(status.getStatusType().name()))   {
-                return status.getSubject() + 
-                        " <i>" + status.getStatusType().getLabel() + "</i>";
+                return status.getSource()
+                        + " <i>" + status.getStatusType().getLabel() + "</i>";
+            } else if (!status.getSubject().contains(status.getStatusType().name())) {
+                return status.getSubject()
+                        + " <i>" + status.getStatusType().getLabel() + "</i>";
             } else {
                 return status.getSubject();
             }

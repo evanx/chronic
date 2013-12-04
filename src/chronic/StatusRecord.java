@@ -23,14 +23,11 @@ package chronic;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
@@ -44,7 +41,6 @@ import vellum.util.Strings;
 public class StatusRecord {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
-
     List<String> lineList = new ArrayList();
     AlertType alertType = AlertType.NONE;
     AlertFormatType alertFormatType;
@@ -61,7 +57,7 @@ public class StatusRecord {
     String period;
     String orgName;
     String source;
-    
+
     public StatusRecord() {
     }
 
@@ -101,7 +97,7 @@ public class StatusRecord {
     public String getSource() {
         return source;
     }
-    
+
     public long getTimestamp() {
         return timestamp;
     }
@@ -113,7 +109,7 @@ public class StatusRecord {
     public String getOrgName() {
         return orgName;
     }
-    
+
     public String getFrom() {
         return from;
     }
@@ -125,11 +121,11 @@ public class StatusRecord {
     public void setService(String service) {
         this.service = service;
     }
-    
+
     public void setSubject(String subject) {
         this.subject = subject;
     }
-    
+
     public String getSubject() {
         return subject;
     }
@@ -141,7 +137,7 @@ public class StatusRecord {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
-    
+
     public StatusType getStatusType() {
         return statusType;
     }
@@ -157,7 +153,7 @@ public class StatusRecord {
     public void setTopic(String topic) {
         this.topic = topic;
     }
-    
+
     public String getTopic() {
         return topic;
     }
@@ -165,7 +161,7 @@ public class StatusRecord {
     public void setAlertFormatType(AlertFormatType alertFormatType) {
         this.alertFormatType = alertFormatType;
     }
-    
+
     public AlertFormatType getAlertFormatType() {
         return alertFormatType;
     }
@@ -173,7 +169,7 @@ public class StatusRecord {
     public void setPeriodMillis(long periodMillis) {
         this.periodMillis = periodMillis;
     }
-    
+
     public long getPeriodMillis() {
         return periodMillis;
     }
@@ -182,43 +178,6 @@ public class StatusRecord {
         return lineList;
     }
 
-    public boolean isLinesChanged(StatusRecord other) {
-        if (lineList.size() != other.lineList.size()) {
-            return true;
-        }
-        for (int i = 0; i < lineList.size(); i++) {
-            Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(lineList.get(i));
-            if (matcher.find()) {
-                String nagiosService = matcher.group(1);
-                String nagiosStatus = matcher.group(2);
-                matcher = StatusRecordParser.nagiosStatusPattern.matcher(other.lineList.get(i));
-                if (matcher.find()) {
-                    if (!nagiosService.equals(matcher.group(1))
-                            || !nagiosStatus.equals(matcher.group(2))) {
-                        return true;
-                    }
-                }
-
-            } else if (!StatusRecordParser.headPattern.matcher(lineList.get(i)).find()
-                    && !lineList.get(i).equals(other.lineList.get(i))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public String formatAlertTypeLabel() {
-        if (statusType != null && statusType.isAlertable()) {
-            return statusType.getLabel();
-        } else if (alertType == null && statusType != null) {
-            return statusType.getLabel();
-        } else if (alertType != null) {
-            return alertType.getLabel();
-        } else {
-            return StatusType.UNKNOWN.getLabel();
-        }
-    }
-    
     @Override
     public String toString() {
         return Arrays.toString(new Object[]{getSource(), alertType, topic, statusType});
@@ -237,40 +196,8 @@ public class StatusRecord {
         return statusType != null && statusType.isAlertable();
     }
 
-    public boolean isAlertable(StatusRecord previousStatus,
-            StatusRecord previousAlert) {
-        if (previousAlert == null) {
-        } else {
-            if (previousAlert.getStatusType() == StatusType.ELAPSED
-                    && statusType != StatusType.ELAPSED) {
-                return true;
-            }
-        }
-        if (alertType == AlertType.ALWAYS) {
-            return true;
-        }
-        if (alertType == AlertType.PATTERN) {
-        } else if (alertType == AlertType.ERROR) {
-        }
-        if (previousStatus == null) {
-            return false;
-        }
-        if (alertType == AlertType.CONTENT_CHANGED) {
-            if (isLinesChanged(previousStatus)) {
-                statusType = StatusType.CONTENT_CHANGED;
-                return true;
-            }
-        } else if (alertType == AlertType.STATUS_CHANGED) {
-            if (statusType == previousStatus.statusType) {
-                return statusType.isAlertable() && previousAlert != null
-                        && statusType != previousAlert.getStatusType();
-            }
-        } else {
-        }
-        return false;
-    }
-
     public Map getAlertMap(boolean detail) {
+        StatusRecordFormatter formatter = new StatusRecordFormatter(this);
         Map map = new TreeMap();
         map.put("from", from);
         map.put("username", username);
@@ -278,44 +205,16 @@ public class StatusRecord {
         map.put("service", service);
         map.put("statusType", statusType);
         map.put("alertType", alertType);
-        map.put("alertTypeLabel", formatAlertTypeLabel());
+        map.put("alertTypeLabel", formatter.formatAlertTypeLabel());
         map.put("topic", topic);
         map.put("timestamp", timestamp);
         map.put("timestampLabel", Millis.formatTimestamp(timestamp));
         map.put("source", getSource());
-        map.put("subject", formatSubject());
-        map.put("subjectShort", Strings.truncate(formatSubject(), 48));
+        map.put("subject", formatter.formatSubject());
+        map.put("subjectShort", Strings.truncate(formatter.formatSubject(), 48));
         if (detail) {
             map.put("content", buildContent("<br>\n"));
         }
         return map;
-    }
-
-    public String formatSubject() {
-        if (isAlertable()) {
-            if (statusType == StatusType.ELAPSED || subject == null) {
-                return getSource() + ' ' + statusType.getLabel();
-            } else if (!subject.contains(statusType.name())) {
-                return subject + ' ' + statusType.getLabel();
-            } else {
-                return subject;
-            }
-        }
-        if (subject == null) {
-            return getSource();
-        }
-        return subject;
-    }
-    
-    public boolean isAdmin(String email) {
-        if (email != null) { 
-            if (orgName != null && email.endsWith(orgName)) {
-                return true;
-            }
-            if (topic != null && email.contains(topic)) {
-                return true;
-            }
-        }
-        return true;
     }
 }
