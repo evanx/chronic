@@ -101,7 +101,11 @@ public class AlertRecord {
         map.put("subject", formatter.formatSubject());
         map.put("subjectShort", Strings.truncate(formatter.formatSubject(), 48));
         if (detail) {
-            map.put("content", status.buildContent("<br>\n"));
+            if (status.statusType == StatusType.CONTENT_CHANGED) {
+                map.put("content", Strings.join("<br>\n", status.buildChanged(previousStatus)));
+            } else {
+                map.put("content", Strings.join("<br>\n", status.lineList));
+            }
         }
         return map;
     }

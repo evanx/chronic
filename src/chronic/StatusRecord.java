@@ -185,15 +185,6 @@ public class StatusRecord {
         return Arrays.toString(new Object[]{getSource(), alertType, topic, statusType});
     }
 
-    public String buildContent(String lineDelimiter) {
-        StringBuilder builder = new StringBuilder();
-        for (String line : lineList) {
-            builder.append(line);
-            builder.append(lineDelimiter);
-        }
-        return builder.toString().trim();
-    }
-
     public boolean isAlertable() {
         return statusType != null && statusType.isAlertable();
     }
@@ -268,29 +259,5 @@ public class StatusRecord {
             }
         }
         return true;
-    }
-        
-    public Map getAlertMap(boolean detail) {
-        StatusRecordFormatter formatter = new StatusRecordFormatter(this);
-        Map map = new TreeMap();
-        map.put("from", from);
-        map.put("username", username);
-        map.put("hostname", hostname);
-        map.put("service", service);
-        map.put("statusType", statusType);
-        map.put("alertType", alertType);
-        map.put("alertTypeLabel", formatter.formatAlertTypeLabel());
-        map.put("topic", topic);
-        map.put("timestamp", timestamp);
-        map.put("timestampLabel", Millis.formatTimestamp(timestamp));
-        map.put("source", getSource());
-        map.put("subject", formatter.formatSubject());
-        map.put("subjectShort", Strings.truncate(formatter.formatSubject(), 48));
-        if (detail) {
-            map.put("content", buildContent("<br>\n"));
-        }
-        return map;
-    }
-    
-    
+    }    
 }
