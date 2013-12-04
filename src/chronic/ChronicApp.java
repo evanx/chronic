@@ -21,7 +21,6 @@
 package chronic;
 
 import chronic.type.StatusType;
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -50,7 +49,7 @@ public class ChronicApp implements Runnable {
     VellumHttpsServer appServer = new VellumHttpsServer();
     VellumHttpServer httpServer = new VellumHttpServer();
     Map<ComparableTuple, StatusRecord> recordMap = new ConcurrentHashMap();
-    Map<ComparableTuple, StatusRecord> alertMap = new ConcurrentHashMap();
+    Map<ComparableTuple, AlertRecord> alertMap = new ConcurrentHashMap();
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
     public ChronicApp() {
@@ -101,8 +100,8 @@ public class ChronicApp implements Runnable {
         return storage;
     }
 
-    public Collection<StatusRecord> getAlertList() {
-        return alertMap.values();
+    public Map<ComparableTuple, AlertRecord> getAlertMap() {
+        return alertMap;
     }
     
     @Override
@@ -115,41 +114,36 @@ public class ChronicApp implements Runnable {
         }
     }
 
-    private void checkElapsed(StatusRecord previousStatus) {
-        long elapsed = Millis.elapsed(previousStatus.getTimestamp());
-        logger.debug("checkElapsed {}: elapsed {}", previousStatus.getSource(), elapsed);
-        if (elapsed > previousStatus.getPeriodMillis() + properties.getPeriod()) {
-            StatusRecord previousAlert = alertMap.get(previousStatus.getKey());
+    private void checkElapsed(StatusRecord status) {
+        long elapsed = Millis.elapsed(status.getTimestamp());
+        logger.debug("checkElapsed {}: elapsed {}", status.getSource(), elapsed);
+        if (elapsed > status.getPeriodMillis() + properties.getPeriod()) {
+            AlertRecord previousAlert = alertMap.get(status.getKey());
             if (previousAlert == null || 
-                    previousAlert.getStatusType() != StatusType.ELAPSED) {
-                StatusRecord status = new StatusRecord(previousStatus);
+                    previousAlert.getStatus().getStatusType() != StatusType.ELAPSED) {
                 status.setStatusType(StatusType.ELAPSED);
-                alertMap.put(status.getKey(), status);
-                messenger.alert(status, previousStatus, previousAlert);
+                AlertRecord alert = new AlertRecord(status);
+                alertMap.put(status.getKey(), alert);
+                messenger.alert(alert);
             }
         }
     }
 
     public synchronized void putRecord(StatusRecord status) {
-        StatusRecordProcessor processor = new StatusRecordProcessor();
         logger.info("putRecord {} [{}]", status.getStatusType(),
                 status.getSubject());
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
-        StatusRecord previousAlert = alertMap.get(status.getKey());
         if (previousStatus == null) {
             logger.info("putRecord: no previous status");
             if (properties.isTesting()) {
-                alertMap.put(status.getKey(), status);
-                messenger.alert(status);
+                AlertRecord alert = new AlertRecord(status);
+                alertMap.put(status.getKey(), alert);
+                messenger.alert(alert);
             }
-        } else if (processor.isAlertable(status, previousStatus, previousAlert)) {
-            alertMap.put(status.getKey(), status);
-            messenger.alert(status, previousStatus, previousAlert);
-        } else if (previousAlert == null) {
-            logger.info("putRecord: no previous alert");
-            if (status.isAlertable()) {
-                alertMap.put(status.getKey(), new StatusRecord(status));
-            }
+        } else if (status.isAlertable(previousStatus)) {
+            AlertRecord alert = new AlertRecord(status, previousStatus);
+            alertMap.put(status.getKey(), alert);
+            messenger.alert(alert);
         }
     }
 

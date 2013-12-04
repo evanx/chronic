@@ -7,7 +7,7 @@ import chronic.*;
 import chronic.ChronicCookie;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
-import chronic.util.StatusRecordDescendingTimestampComparator;
+import chronic.util.AlertRecordDescendingTimestampComparator;
 import com.sun.net.httpserver.HttpExchange;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httpserver.Httpx;
 import vellum.jx.JMaps;
+import vellum.util.Lists;
 
 /**
  *
@@ -30,7 +31,7 @@ public class ListAlerts {
     PersonaUserInfo userInfo;
     String email;
     boolean admin;
-    
+
     public ListAlerts(ChronicApp app) {
         this.app = app;
     }
@@ -42,7 +43,7 @@ public class ListAlerts {
                 logger.trace("cookieMap {}", httpx.getCookieMap());
                 ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
                 logger.debug("cookie email {}", cookie.getEmail());
-                userInfo = new PersonaVerifier(app, cookie).getUserInfo(httpx.getServerUrl(), 
+                userInfo = new PersonaVerifier(app, cookie).getUserInfo(httpx.getServerUrl(),
                         cookie.getAccessToken());
                 logger.info("persona {}", userInfo);
                 if (cookie.getEmail() == null) {
@@ -69,19 +70,14 @@ public class ListAlerts {
 
     private void handle() throws Exception {
         List alertList = new LinkedList();
-        for (StatusRecord status : descendingTimestamp(app.getAlertList())) {
-            if (status.getService() != null) {
-                alertList.add(status.getAlertMap(admin));
+        for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
+                new AlertRecordDescendingTimestampComparator())) {
+            if (alert.getStatus().getService() != null) {
+                alertList.add(alert.getAlertMap(admin));
             } else {
-            logger.warn("exclude {} {}", status.getOrgName(), email);                
+                logger.warn("exclude {} {}", alert.getStatus().getOrgName(), email);
             }
         }
         httpx.sendResponse(JMaps.create("alertList", alertList));
-    }
-
-    public static Iterable<StatusRecord> descendingTimestamp(Collection<StatusRecord> list) {
-        LinkedList sortedList = new LinkedList(list);
-        Collections.sort(sortedList, new StatusRecordDescendingTimestampComparator());
-        return sortedList;
     }
 }

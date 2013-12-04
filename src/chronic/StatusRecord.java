@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
@@ -57,7 +58,8 @@ public class StatusRecord {
     String period;
     String orgName;
     String source;
-
+    List<String> changedLines;
+    
     public StatusRecord() {
     }
 
@@ -196,6 +198,78 @@ public class StatusRecord {
         return statusType != null && statusType.isAlertable();
     }
 
+    public boolean isAlertable(StatusRecord previous) {
+        if (alertType == AlertType.ALWAYS) {
+            return true;
+        }
+        if (alertType == AlertType.PATTERN) {
+        } else if (alertType == AlertType.ERROR) {
+        }
+        if (alertType == AlertType.CONTENT_CHANGED) {
+            if (equals(previous)) {
+                statusType = StatusType.CONTENT_CHANGED;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean equals(StatusRecord other) {
+        if (lineList.size() != other.lineList.size()) {
+            return false;
+        }
+        for (int i = 0; i < lineList.size(); i++) {
+            if (!equals(lineList.get(i), other.lineList.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<String> buildChanged(StatusRecord previous) {
+        List<String> list = new ArrayList();
+        for (String line : lineList) {
+            if (!contains(line)) {
+                list.add(line);
+            }
+        }
+        return list;
+    }
+    
+    public boolean contains(String other) {
+        for (String line : lineList) {
+            if (equals(line, other)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean equals(String line, String other) {
+        Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(line);
+        if (matcher.find()) {
+            Matcher otherMatcher = StatusRecordParser.nagiosStatusPattern.matcher(other);
+            return otherMatcher.find() && otherMatcher.group(1).equals(matcher.group(1)) &&
+                        otherMatcher.group(2).equals(matcher.group(2));
+
+        } else if (StatusRecordParser.headPattern.matcher(line).find()) {
+            return true;
+        }
+        return line.equals(other);
+    }
+    
+    public static boolean isAdmin(StatusRecord status, String email) {
+        if (email != null) { 
+            if (status.orgName != null && email.endsWith(status.orgName)) {
+                return true;
+            }
+            if (status.topic != null && email.contains(status.topic)) {
+                return true;
+            }
+        }
+        return true;
+    }
+        
     public Map getAlertMap(boolean detail) {
         StatusRecordFormatter formatter = new StatusRecordFormatter(this);
         Map map = new TreeMap();
@@ -217,4 +291,6 @@ public class StatusRecord {
         }
         return map;
     }
+    
+    
 }

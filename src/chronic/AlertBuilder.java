@@ -38,24 +38,15 @@ public class AlertBuilder {
     static Logger logger = LoggerFactory.getLogger(AlertBuilder.class);
     StringBuilder builder = new StringBuilder();
 
-    public String build(StatusRecord status) {
-        logger.info("build {}", status);
-        append(status);
-        return builder.toString();
-    }
-
-    public String build(StatusRecord status, StatusRecord previousStatus,
-            StatusRecord previousAlert)
+    public String build(AlertRecord alert)
             throws IOException {
-        logger.info("build {}", status);
-        append(status);
-        if (status.getAlertType() == AlertType.CONTENT_CHANGED
-                && previousStatus != null
-                && previousStatus.getTimestamp() != status.getTimestamp()) {
-            appendPrevious(previousStatus);
-        } else if (status.getAlertType() == AlertType.STATUS_CHANGED
-                && previousAlert != null) {
-            appendPrevious(previousAlert);
+        logger.info("build {}", alert.status);
+        append(alert.status);
+        if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED
+                && alert.previousStatus != null
+                && alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
+            appendPrevious(alert.previousStatus);
+        } else if (alert.status.getAlertType() == AlertType.STATUS_CHANGED) {
         }
         return builder.toString();
     }

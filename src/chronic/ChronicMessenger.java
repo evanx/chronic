@@ -40,33 +40,14 @@ public class ChronicMessenger {
         logger.info("initialized");
     }
 
-    public synchronized void alert(StatusRecord status) {
-        logger.info("alert {}", status.toString());
+    public synchronized void alert(AlertRecord alert) {
+        logger.info("alert {}", alert.toString());
         if (app.getProperties().getAlertScript() != null) {
             try {
                 Executor executor = new Executor();
                 executor.exec(app.getProperties().getAlertScript(), 
-                        new AlertBuilder().build(status).getBytes(),
-                        status.getAlertMap(true));
-                if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
-                    logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
-                }
-            } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
-            }
-        }
-    }    
-    
-    public synchronized void alert(StatusRecord status,
-            StatusRecord previousStatus, StatusRecord previousAlert) {
-        logger.info("alert {}", status.toString());
-        if (app.getProperties().getAlertScript() != null) {
-            try {
-                Executor executor = new Executor();
-                executor.exec(app.getProperties().getAlertScript(), 
-                        new AlertBuilder().build(
-                        status, previousStatus, previousAlert).getBytes(),
-                        status.getAlertMap(true));
+                        new AlertBuilder().build(alert).getBytes(),
+                        alert.getAlertMap(true));
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
                 }
