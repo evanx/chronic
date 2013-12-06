@@ -71,7 +71,7 @@ public class Mailer {
         if (logoBytes != null) {
             BodyPart dataPart = new MimeBodyPart();
             DataSource source = new ByteArrayDataSource(
-                    new ByteArrayInputStream(logoBytes), "image/jpg");
+                    new ByteArrayInputStream(logoBytes), "image/png");
             dataPart.setDataHandler(new DataHandler(source));
             dataPart.setHeader("Content-ID", "<image>");
             multipart.addBodyPart(dataPart);
@@ -84,7 +84,8 @@ public class Mailer {
         try {
             byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));
             Mailer mailer = new Mailer(bytes, "appcentral.info", "alerts@appcentral.info");
-            mailer.sendEmail("evan.summers@gmail.com", "test subject", "test body");
+            mailer.sendEmail("evan.summers@gmail.com", "test subject", 
+                    "test body <hr> <img src='cid:image'/>");
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }
