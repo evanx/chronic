@@ -60,7 +60,7 @@ public class AlertBuilder {
         builder.append("\n<hr>Previous:\n");
         builder.append(String.format("<b>%s</b>\n", formatSubject(status)));
         builder.append(String.format("<i>%s</i>\n\n",
-                Millis.formatTimestamp(status.getTimestamp())));
+                Millis.formatTime(status.getTimestamp())));
         builder.append(buildContent(status));
     }
 
