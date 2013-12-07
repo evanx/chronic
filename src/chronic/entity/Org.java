@@ -33,7 +33,12 @@ public final class Org extends AbstractEntity {
         this.url = url;
         this.orgName = orgName;
     }
+
+    public Org(String url) {
+        this(url, url);
+    }
       
+    
     public Org(JMap map) throws JMapException {
         update(map);
     }

@@ -20,15 +20,21 @@
  */
 package chronic;
 
+import chronic.entity.AdminUser;
+import chronic.entity.AdminUserRoleType;
+import chronic.entity.Org;
+import chronic.entity.OrgRole;
 import chronic.storage.app.AdminUserStorage;
 import chronic.storage.app.NetworkStorage;
 import chronic.storage.app.OrgRoleStorage;
 import chronic.storage.app.OrgStorage;
 import java.util.ArrayList;
 import java.util.List;
-import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.storage.StorageException;
+import vellum.type.ComparableTuple;
+import vellum.util.Comparables;
 
 /**
  *
@@ -66,8 +72,30 @@ public abstract class ChronicStorage {
         return new TemporaryChronicStorage(app);
     }
 
-    public void subscribe(String email, String orgName) {
-        logger.info("addAdmin {} {}", email, orgName);
+    public void subscribe(String email, String orgName) throws StorageException {
+        logger.info("subscribe {} {}", email, orgName);
+        AdminUser user;
+        if (getAdminUserStorage().containsKey(email)) {
+            user = getAdminUserStorage().select(email);
+        } else {
+            user = new AdminUser(email);
+        }
+        Org org;
+        if (getOrgStorage().containsKey(orgName)) {
+            org = getOrgStorage().select(orgName);
+        } else {
+            org = new Org(orgName);
+        }
+        ComparableTuple key = Comparables.tuple(email, orgName);
+        if (getOrgRoleStorage().containsKey(key)) {
+            OrgRole orgRole = getOrgRoleStorage().select(key);
+            if (orgRole.getRole() != AdminUserRoleType.ADMIN) {
+                logger.warn("subscribe exists role {}", orgRole);
+            }
+        } else {
+            OrgRole orgRole = new OrgRole(user, org, AdminUserRoleType.ADMIN);
+            getOrgRoleStorage().insert(orgRole);
+        }
     }
     
 }

@@ -5,6 +5,8 @@
 package chronic.entity;
 
 import vellum.storage.AbstractIdEntity;
+import vellum.util.Args;
+import vellum.util.Comparables;
 
 /**
  *
@@ -12,14 +14,19 @@ import vellum.storage.AbstractIdEntity;
  */
 public class OrgRole extends AbstractIdEntity {
     Long id;
-    AdminUser user; 
-    Org org;
-    AdminUserRoleType role;
-
+    AdminUserRoleType role;    
+    String email;
+    String orgName;
+            
+    transient AdminUser user; 
+    transient Org org;
+    
     public OrgRole(AdminUser user, Org org, AdminUserRoleType role) {
         this.user = user;
         this.org = org;
         this.role = role;
+        email = user.getEmail();
+        orgName = org.getOrgName();
     }
         
     @Override
@@ -28,10 +35,14 @@ public class OrgRole extends AbstractIdEntity {
     }
     
     @Override
-    public Long getKey() {
-        return id;
+    public Comparable getKey() {
+        return Comparables.tuple(email, orgName);
     }
 
+    public AdminUserRoleType getRole() {
+        return role;
+    }
+    
     public AdminUser getUser() {
         return user;
     }
@@ -39,4 +50,11 @@ public class OrgRole extends AbstractIdEntity {
     public Org getOrg() {
         return org;
     }    
+
+    @Override
+    public String toString() {
+        return Args.format(email, orgName, role);
+    }
+    
+    
 }

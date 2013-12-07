@@ -32,6 +32,7 @@ import vellum.datatype.Millis;
 import vellum.httphandler.RedirectPortHttpHandler;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
+import vellum.storage.StorageException;
 import vellum.type.ComparableTuple;
 import vellum.util.Strings;
 
@@ -131,7 +132,7 @@ public class ChronicApp implements Runnable {
         }
     }
 
-    public synchronized void putRecord(StatusRecord status) {
+    public synchronized void putRecord(StatusRecord status) throws StorageException {
         logger.info("putRecord {} [{}]", status.getStatusType(),
                 status.getSubject());
         if (status.getSubscribers() != null) {
