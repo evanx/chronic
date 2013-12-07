@@ -48,7 +48,7 @@ public class AlertBuilder {
             appendPrevious(alert.previousStatus);
         } else if (alert.status.getAlertType() == AlertType.STATUS_CHANGED) {
         }
-        builder.append("<hr> <img src='cid:image'/>");
+        builder.append("<hr><img src='cid:image'/>");
         return builder.toString();
     }
 

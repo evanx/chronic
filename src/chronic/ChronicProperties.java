@@ -72,10 +72,10 @@ public class ChronicProperties {
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
         if (serverAddress.contains("appcentral.info")) {
-            byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("av64.png"));
+            byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));
             mailerProperties = new MailerProperties(bytes, 
                     "appcentral.info", "alerts@appcentral.info");         
-            logger.info("mailer {}", mailerProperties);            
+            logger.info("mailer {}", mailerProperties);
         }
     }
 

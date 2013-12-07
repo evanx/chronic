@@ -25,17 +25,19 @@ public class MailerProperties {
     boolean enabled = true;
 
     public MailerProperties(ExtendedProperties properties) {
-        String logoImagePath = properties.getString("logo", null);
-        if (logoImagePath != null) {
-            logoBytes = Streams.readBytes(logoImagePath);
-        }
+        host = properties.getString("host", host);
+        port = properties.getInt("port", port);
+        username = properties.getString("username", null);
+        password = properties.getString("password", null);
         from = properties.getString("from");
         organisation = properties.getString("organisation", null);
         if (organisation == null) {
             organisation = Emails.getDomain(from);
         }
-        username = properties.getString("username", null);
-        password = properties.getString("password", null);
+        String logoImagePath = properties.getString("logo", null);
+        if (logoImagePath != null) {
+            logoBytes = Streams.readBytes(logoImagePath);
+        }
     }
     
     public MailerProperties(byte[] logoBytes, String organisation, String from) {

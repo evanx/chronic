@@ -40,7 +40,7 @@ public class Mailer {
         this.properties = properties;
     }
 
-    public synchronized void sendEmail(String recipient, String subject, String htmlContent) {
+    public void sendEmail(String recipient, String subject, String htmlContent) {
         if (properties != null && properties.isEnabled()) {
             try {
                 send(recipient, subject, htmlContent);
@@ -52,6 +52,7 @@ public class Mailer {
 
     private synchronized void send(String recipient, String subject, String htmlContent) 
             throws MessagingException, IOException {
+        logger.info("send {} [{}]", recipient, subject);
         Properties props = new Properties();
         props.put("mail.smtp.host", properties.getHost());
         props.put("mail.smtp.port", properties.getPort());

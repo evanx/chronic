@@ -21,8 +21,6 @@
 package chronic;
 
 import chronic.mail.Mailer;
-import java.io.IOException;
-import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.system.Executor;
@@ -39,11 +37,11 @@ public class ChronicMessenger {
 
     public ChronicMessenger(ChronicApp app) {
         this.app = app;
-        mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
     public void init() throws Exception {
         logger.info("initialized");
+        mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
     public synchronized void alert(AlertRecord alert) {
@@ -67,15 +65,25 @@ public class ChronicMessenger {
         }
     }
 
+    public void alertAdmins(String subject) {
+        alertAdmins(subject, null);
+    }
+    
     public void alertAdmins(String subject, String content) {
+        if (content == null) {
+            content = buildFooter();
+        } else {
+            content += buildFooter();
+        }
         for (String email : app.getProperties().getAdminEmails()) {
-            mailer.sendEmail(email, subject, content + buildFooter());
+            logger.info("alertAdmins email {}", email);
+            mailer.sendEmail(email, subject, content);
         }
     }
 
     public String buildFooter() {
         String style = "font-size: 12px; font-color: gray";
-        return String.format("<hr><a style='%s' href='%s'>%s</a>", style,
+        return String.format("<hr><a style='%s' href='%s'>%s<br><img src='cid:image'/></a>", style,
                 app.getProperties().getServerAddress(), app.getProperties().getServerAddress());
     }
 }
