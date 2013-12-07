@@ -13,23 +13,25 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpsExchange;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.security.Certificates;
+import vellum.storage.StorageException;
 import vellum.util.Strings;
 
 /**
  *
  * @author evan.summers
  */
-public class PostHttpHandler implements HttpHandler {
+public class Post implements HttpHandler {
 
     final static int contentLengthLimit = 4000;
-    Logger logger = LoggerFactory.getLogger(PostHttpHandler.class);
+    Logger logger = LoggerFactory.getLogger(Post.class);
     ChronicApp app;
     
-    public PostHttpHandler(ChronicApp app) {
+    public Post(ChronicApp app) {
         this.app = app;
     }
 
@@ -85,15 +87,14 @@ public class PostHttpHandler implements HttpHandler {
             logger.debug("record {} {}", record.getSource(), record.getStatusType());
             app.putRecord(record);
             sendPlainResponse(httpExchange, "ok");
-        } catch (Exception e) {
+        } catch (CertificateException | StorageException | NumberFormatException | IOException e) {
             e.printStackTrace(System.err);
             sendPlainResponse(httpExchange, "error: %s: %s", e.getClass(), e.getMessage());
         }
     }
 
     public static void sendPlainResponse(HttpExchange httpExchange, String responseString,
-            Object ... args) 
-            throws IOException {
+            Object ... args) throws IOException {
         responseString = String.format(responseString, args) + "\n";
         byte[] responseBytes = responseString.getBytes();
         httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR,

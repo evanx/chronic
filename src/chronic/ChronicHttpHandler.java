@@ -7,7 +7,8 @@ import chronic.handler.EnrollAdminUser;
 import chronic.handler.EnrollNetwork;
 import chronic.handler.EnrollOrg;
 import chronic.handler.ListAlerts;
-import chronic.handler.PostHttpHandler;
+import chronic.handler.Post;
+import chronic.handler.Subscribe;
 import chronic.persona.LoginPersona;
 import chronic.persona.LogoutPersona;
 import com.sun.net.httpserver.HttpExchange;
@@ -38,7 +39,9 @@ public class ChronicHttpHandler implements HttpHandler {
             String path = httpExchange.getRequestURI().getPath();
             logger.trace("handle {}", path);
             if (path.equals("/post")) {                
-                new PostHttpHandler(app).handle(httpExchange);
+                new Post(app).handle(httpExchange);
+            } else if (path.equals("/subscribe")) {
+                new Subscribe(app).handle(httpExchange);
             } else if (path.equals("/app/EnrollAdminUser")) {
                 new EnrollAdminUser(app).handle(httpExchange);
             } else if (path.equals("/app/EnrollNetwork")) {

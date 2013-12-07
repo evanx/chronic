@@ -194,7 +194,7 @@ public class StatusRecord {
         } else if (alertType == AlertType.ERROR) {
         }
         if (alertType == AlertType.CONTENT_CHANGED) {
-            if (equals(previous)) {
+            if (!equals(previous)) {
                 statusType = StatusType.CONTENT_CHANGED;
                 return true;
             }
@@ -258,4 +258,8 @@ public class StatusRecord {
     public void setSubcribers(String[] subscribers) {
         this.subscribers = subscribers;
     }
+
+    public String[] getSubscribers() {
+        return subscribers;
+    }        
 }

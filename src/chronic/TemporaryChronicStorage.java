@@ -37,7 +37,7 @@ import org.h2.tools.Server;
  *
  * @author evan.summers
  */
-public class TemporaryChronicStorage extends LogicalChronicStorage {
+public class TemporaryChronicStorage extends ChronicStorage {
     Server h2Server;
     AdminUserStorage adminUserStorage = new TemporaryAdminUserStorage();
     OrgStorage orgStorage = new TemporaryOrgStorage();

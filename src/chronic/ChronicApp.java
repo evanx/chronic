@@ -43,7 +43,7 @@ public class ChronicApp implements Runnable {
 
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicProperties properties = new ChronicProperties();
-    ChronicStorage storage = LogicalChronicStorage.create(this);
+    ChronicStorage storage = ChronicStorage.create(this);
     ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
@@ -134,6 +134,9 @@ public class ChronicApp implements Runnable {
     public synchronized void putRecord(StatusRecord status) {
         logger.info("putRecord {} [{}]", status.getStatusType(),
                 status.getSubject());
+        for (String subscriber : status.getSubscribers()) {
+            getStorage().subscribe(subscriber, status.getOrgName());    
+        }
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
         if (previousStatus == null) {
             logger.info("putRecord: no previous status");
