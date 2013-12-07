@@ -21,6 +21,7 @@
 package chronic;
 
 import chronic.transaction.SubscribeTransaction;
+import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -146,6 +147,7 @@ public class ChronicApp implements Runnable {
             logger.info("putRecord: no previous status");
             if (properties.isTesting()) {
                 AlertRecord alert = new AlertRecord(status);
+                status.setAlertType(AlertType.NEW_TOPIC);
                 alertMap.put(status.getKey(), alert);
                 messenger.alert(alert);
             }

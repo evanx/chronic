@@ -19,6 +19,8 @@ public enum AlertType implements Labelled {
     ELAPSED,
     STATUS_CHANGED,
     CONTENT_CHANGED,
+    SERVER_RESTARTED,
+    NEW_TOPIC,
     ALWAYS;
     
     public static AlertType parse(String string) {

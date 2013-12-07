@@ -38,7 +38,7 @@ public class AlertFormatter {
     public String formatAlertTypeLabel() {
         if (status.statusType != null && status.statusType.isAlertable()) {
             return status.statusType.getLabel();
-        } else if (status.alertType == null && status.statusType != null) {
+        } else if (status.statusType != null && status.alertType == null) {
             return status.statusType.getLabel();
         } else if (status.alertType != null) {
             return status.alertType.getLabel();
@@ -52,6 +52,6 @@ public class AlertFormatter {
     }
         
     public String formatSubject() {
-        return status.getTopic() + ' ' + formatAlertTypeLabel();
+        return status.getTopic() + ": " + formatAlertTypeLabel();
     }        
 }
