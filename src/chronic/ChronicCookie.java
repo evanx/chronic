@@ -22,13 +22,12 @@ package chronic;
 
 import java.security.GeneralSecurityException;
 import java.util.Collection;
-import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base32;
 import vellum.datatype.Millis;
 import vellum.jx.JMap;
-import vellum.parameter.StringMap;
+import vellum.jx.JMapException;
 import vellum.util.Bytes;
 import vellum.util.Lists;
 
@@ -48,17 +47,13 @@ public class ChronicCookie {
     public ChronicCookie() {
     }
 
-    public ChronicCookie(Map map) {
-        this(new StringMap(map));
-    }
-    
-    public ChronicCookie(StringMap map) {
+    public ChronicCookie(JMap map) throws JMapException {
         if (matches(map)) {
-            this.email = map.get("email");
-            this.label = map.get("label");
+            this.email = map.getString("email");
+            this.label = map.getString("label");
             this.loginMillis = map.getLong("loginMillis");
-            this.accessToken = map.get("accessToken");
-            this.authCode = map.get("authCode");
+            this.accessToken = map.getString("accessToken");
+            this.authCode = map.getString("authCode", null);
         }
     }
 
@@ -131,7 +126,7 @@ public class ChronicCookie {
         return toMap().toString();
     }
     
-    public static boolean matches(StringMap map) {
+    public static boolean matches(JMap map) {
         return map.containsKey("email") && 
                 map.containsKey("label") &&
                 map.containsKey("loginMillis") &&

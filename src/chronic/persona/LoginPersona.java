@@ -26,7 +26,8 @@ public class LoginPersona implements HttpHandler {
     ChronicApp app;
     Httpx httpx;
     String assertion;
-
+    String timezoneOffset;
+    
     public LoginPersona(ChronicApp app) {
         super();
         this.app = app;
@@ -36,7 +37,10 @@ public class LoginPersona implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         httpx = new Httpx(httpExchange);
         try {
-            assertion = httpx.parseJsonMap().getString("assertion");
+            JMap map = httpx.parseJsonMap();
+            timezoneOffset = map.getString("timezoneOffset");
+            logger.info("time {}", timezoneOffset);
+            assertion = map.getString("assertion");
             if (assertion != null) {
                 handle();
             } else {
