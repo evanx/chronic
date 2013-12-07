@@ -8,6 +8,7 @@ import chronic.handler.EnrollAdminUser;
 import chronic.handler.EnrollNetwork;
 import chronic.handler.EnrollOrg;
 import chronic.handler.ListAlerts;
+import chronic.handler.ListTopics;
 import chronic.handler.Post;
 import chronic.handler.Subscribe;
 import chronic.persona.LoginPersona;
@@ -50,7 +51,9 @@ public class ChronicHttpHandler implements HttpHandler {
             } else if (path.equals("/app/EnrollNetwork")) {
                 new EnrollNetwork(app).handle(httpExchange);
             } else if (path.equals("/app/ListAlerts")) {
-                new ListAlerts(app).handle(httpExchange);
+                handle(new ListAlerts(), new Httpx(httpExchange));
+            } else if (path.equals("/app/ListTopics")) {
+                handle(new ListTopics(), new Httpx(httpExchange));
             } else if (path.equals("/app/LoginPersona")) {
                 new LoginPersona(app).handle(httpExchange);
             } else if (path.equals("/app/LogoutPersona")) {
@@ -70,6 +73,15 @@ public class ChronicHttpHandler implements HttpHandler {
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
         }
+    }
+
+    private void handle(ChronicHandler handler, Httpx httpx) {
+        try {
+            handler.handle(app, httpx);
+        } catch (Exception e) {
+            httpx.handleError(e);
+        }
+        httpx.close();
     }
 
 }

@@ -15,34 +15,46 @@ import vellum.util.Comparables;
 public final class TopicSubscriber extends AbstractIdEntity {
     Long id;
     String orgUrl;
-    String topic;
+    String topicString;
     String email;
     boolean enabled = false;
             
     public TopicSubscriber() {
     }
 
-    public TopicSubscriber(String orgUrl, String topic, String email) {
-        this.topic = topic;
+    public TopicSubscriber(String orgUrl, String topicString, String email) {
+        this.topicString = topicString;
         this.orgUrl = orgUrl;
         this.email = email;
     }
 
     @Override
     public Comparable getKey() {
-        return Comparables.tuple(orgUrl, topic, email);
+        return Comparables.tuple(orgUrl, topicString, email);
     }
 
     @Override
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getOrgUrl() {
+        return orgUrl;
+    }
     
+    public String getTopicString() {
+        return topicString;
+    }
+        
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
         map.put("orgUrl", orgUrl);
-        map.put("topic", topic);
+        map.put("topicString", topicString);
         map.put("email", email);
         return map;
     }

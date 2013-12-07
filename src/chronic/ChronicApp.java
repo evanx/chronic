@@ -20,9 +20,13 @@
  */
 package chronic;
 
+import chronic.persona.PersonaException;
+import chronic.persona.PersonaUserInfo;
+import chronic.persona.PersonaVerifier;
 import chronic.transaction.SubscribeTransaction;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -32,11 +36,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
 import vellum.httphandler.RedirectPortHttpHandler;
+import vellum.httpserver.Httpx;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
+import vellum.jx.JMapException;
 import vellum.storage.StorageException;
 import vellum.type.ComparableTuple;
-import vellum.util.Strings;
 
 /**
  *
@@ -158,6 +163,21 @@ public class ChronicApp implements Runnable {
         }
     }
 
+    public String getEmail(Httpx httpx) throws JMapException, IOException, PersonaException {
+        if (ChronicCookie.matches(httpx.getCookieMap())) {
+            ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
+            if (cookie.getEmail() != null) {
+                PersonaUserInfo userInfo = 
+                        new PersonaVerifier(this, cookie).getUserInfo(httpx.getServerUrl(),
+                    cookie.getAccessToken());
+                if (cookie.getEmail().equals(userInfo.getEmail())) {
+                    return userInfo.getEmail();
+                }
+            }
+        }
+        throw new PersonaException("no verified email");
+    }
+    
     public static void main(String[] args) throws Exception {
         try {
             ChronicApp app = new ChronicApp();

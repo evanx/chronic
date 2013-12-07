@@ -31,6 +31,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.Storage;
+import vellum.storage.StorageException;
 
 /**
  *
@@ -61,7 +62,9 @@ public abstract class ChronicStorage {
     public abstract Storage<Topic> getTopicStorage();
     
     public abstract Storage<TopicSubscriber> getTopicSubscriberStorage();
-    
+
+    public abstract Iterable<Topic> listTopics(String email) throws StorageException;
+
     public Iterable<String> getEmails(AlertRecord alert) {
         List<String> list = new ArrayList();
         list.add(app.getProperties().getAdminEmails().iterator().next());
@@ -71,6 +74,4 @@ public abstract class ChronicStorage {
     public static ChronicStorage create(ChronicApp app) {
         return new TemporaryChronicStorage(app);
     }
-
-    
 }

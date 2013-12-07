@@ -29,9 +29,13 @@ import chronic.entity.TopicSubscriber;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import org.h2.tools.Server;
 import vellum.storage.Storage;
+import vellum.storage.StorageException;
 import vellum.storage.TemporaryStorage;
+import vellum.util.Comparables;
 
 /**
  *
@@ -91,6 +95,18 @@ public class TemporaryChronicStorage extends ChronicStorage {
     @Override
     public Storage<TopicSubscriber> getTopicSubscriberStorage() {
         return topicSubscriberStorage;
+    }
+
+    @Override
+    public Iterable<Topic> listTopics(String email) throws StorageException {
+        Set<Topic> topics = new TreeSet();
+        for (TopicSubscriber topicSubscriber : topicSubscriberStorage.selectCollection(null)) {
+            if (topicSubscriber.getEmail().equals(email)) {
+                topics.add(topicStorage.select(Comparables.tuple(
+                        topicSubscriber.getOrgUrl(), email)));
+            }            
+        }
+        return topics;
     }
     
 }
