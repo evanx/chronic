@@ -97,7 +97,7 @@ public class AlertRecord {
         map.put("topic", status.topic);
         map.put("timestamp", status.timestamp);
         map.put("timestampLabel", Millis.formatTimestamp(status.timestamp));
-        map.put("source", status.getSource());
+        map.put("topic", status.getTopic());
         map.put("subject", formatter.formatSubject());
         map.put("subjectShort", Strings.truncate(formatter.formatSubject(), 48));
         if (detail) {

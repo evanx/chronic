@@ -23,7 +23,6 @@ package chronic;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,13 +52,13 @@ public class AlertBuilder {
     }
 
     private void append(StatusRecord status) {
-        builder.append(String.format("<b>%s</b>\n\n", formatHtmlSubject(status)));
+        builder.append(String.format("<b>%s</b>\n\n", formatSubject(status)));
         builder.append(buildContent(status));
     }
 
     private void appendPrevious(StatusRecord status) {
         builder.append("\n<hr>Previous:\n");
-        builder.append(String.format("<b>%s</b>\n", formatHtmlSubject(status)));
+        builder.append(String.format("<b>%s</b>\n", formatSubject(status)));
         builder.append(String.format("<i>%s</i>\n\n",
                 Millis.formatTimestamp(status.getTimestamp())));
         builder.append(buildContent(status));
@@ -94,12 +93,12 @@ public class AlertBuilder {
         builder.append('\n');
     }
 
-    public String formatHtmlSubject(StatusRecord status) {
-        logger.info("formatHtmlSubject {} {}", status.getStatusType(),
+    public String formatSubject(StatusRecord status) {
+        logger.info("formatSubject {} {}", status.getStatusType(),
                 status.getStatusType().getLabel());
         if (status.isAlertable()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
-                return status.getSource()
+                return status.getTopic()
                         + " <i>" + status.getStatusType().getLabel() + "</i>";
             } else if (!status.getSubject().contains(status.getStatusType().name())) {
                 return status.getSubject()
@@ -109,7 +108,7 @@ public class AlertBuilder {
             }
         }
         if (status.getSubject() == null) {
-            return status.getSource();
+            return status.getTopic();
         }
         return status.getSubject();
     }

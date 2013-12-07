@@ -4,7 +4,7 @@
  */
 package chronic.type;
 
-import chronic.Bundle;
+import chronic.bundle.Bundle;
 
 /**
  *

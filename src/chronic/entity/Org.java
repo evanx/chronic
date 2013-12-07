@@ -128,7 +128,7 @@ public final class Org extends AbstractEntity {
         this.enabled = enabled;
     }
 
-    public String getOrgName() {
+    public String getOrgUrl() {
         return orgName;
     }
 

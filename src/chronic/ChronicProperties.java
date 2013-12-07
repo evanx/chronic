@@ -33,6 +33,7 @@ import vellum.datatype.Millis;
 import vellum.httpserver.HttpServerProperties;
 import vellum.util.ExtendedProperties;
 import vellum.util.Streams;
+import vellum.util.Strings;
 
 /**
  *
@@ -41,7 +42,7 @@ import vellum.util.Streams;
 public class ChronicProperties {
     static Logger logger = LoggerFactory.getLogger(ChronicProperties.class);
 
-    private String serverAddress = "https://appcentral.info";
+    private String serverAddress = "https://localhost:8443";
     private String alertScript = null;
     private long period = Millis.fromMinutes(3);
     private boolean testing = false;
@@ -52,7 +53,7 @@ public class ChronicProperties {
     private Set<String> adminEmails;
     private Set<String> allowedAddresses;
     private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
-    private MailerProperties mailerProperties;
+    private MailerProperties mailerProperties = new MailerProperties();
 
     public void init() throws IOException {
         String confFileName = properties.getString("chronic.json", "chronic.json");
@@ -122,4 +123,10 @@ public class ChronicProperties {
     public MailerProperties getMailerProperties() {
         return mailerProperties;
     }
+    
+    public boolean isAdmin(String email) {
+        return adminEmails.contains(email) || Strings.endsWith(email, adminDomains);
+    }    
+    
+    
 }

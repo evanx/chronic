@@ -49,7 +49,7 @@ public class StatusRecordFormatter {
     public String formatSubject() {
         if (status.isAlertable()) {
             if (status.statusType == StatusType.ELAPSED || status.subject == null) {
-                return status.getSource() + ' ' + status.statusType.getLabel();
+                return status.getTopic() + ' ' + status.statusType.getLabel();
             } else if (!status.subject.contains(status.statusType.name())) {
                 return status.subject + ' ' + status.statusType.getLabel();
             } else {
@@ -57,7 +57,7 @@ public class StatusRecordFormatter {
             }
         }
         if (status.subject == null) {
-            return status.getSource();
+            return status.getTopic();
         }
         return status.subject;
     }

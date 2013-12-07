@@ -9,8 +9,6 @@ import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
 import chronic.util.AlertRecordDescendingTimestampComparator;
 import com.sun.net.httpserver.HttpExchange;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -30,7 +28,6 @@ public class ListAlerts {
     Httpx httpx;
     PersonaUserInfo userInfo;
     String email;
-    boolean admin;
 
     public ListAlerts(ChronicApp app) {
         this.app = app;
@@ -56,7 +53,6 @@ public class ListAlerts {
                     httpx.handleError("invalid cookie");
                 } else {
                     email = userInfo.getEmail();
-                    admin = app.isAdmin(email);
                     handle();
                 }
             } else {
@@ -73,7 +69,7 @@ public class ListAlerts {
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 new AlertRecordDescendingTimestampComparator())) {
             if (alert.getStatus().getService() != null) {
-                alertList.add(alert.getAlertMap(admin));
+                alertList.add(alert.getAlertMap(app.getProperties().isAdmin(email)));
             } else {
                 logger.warn("exclude {} {}", alert.getStatus().getOrgName(), email);
             }

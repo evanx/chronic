@@ -50,23 +50,23 @@ public class Post implements HttpHandler {
             X509Certificate certificate = ((HttpsExchange) httpExchange).getSSLSession().
                     getPeerCertificateChain()[0];
             String hostName = Certificates.getCommonName(certificate.getSubjectDN());
-            String orgName = Certificates.getOrg(certificate.getSubjectDN());
+            String orgUrl = Certificates.getOrg(certificate.getSubjectDN());
             String networkName = Certificates.getOrgUnit(certificate.getSubjectDN());
-            logger.trace("certificate {} {}", hostName, orgName);
-            if (!app.getStorage().getOrgStorage().containsKey(orgName)) {
-                org = new Org(orgName, orgName);
+            logger.trace("certificate {} {}", hostName, orgUrl);
+            if (!app.getStorage().getOrgStorage().containsKey(orgUrl)) {
+                org = new Org(orgUrl);
                 app.getStorage().getOrgStorage().insert(org);
             } else {
-                org = app.getStorage().getOrgStorage().select(orgName);
+                org = app.getStorage().getOrgStorage().select(orgUrl);
             }
             if (!app.getStorage().getNetworkStorage().containsKey(networkName)) {
-                network = new Network(orgName, networkName);
+                network = new Network(orgUrl, networkName);
                 network.setAddress(hostAddress);
                 app.getStorage().getNetworkStorage().insert(network);
             } else {
                 network = app.getStorage().getNetworkStorage().select(networkName);
-                if (!network.getOrgName().equals(org.getOrgName())) {
-                    logger.warn("network orgName {}, {}", network.getOrgName(), org.getOrgName());
+                if (!network.getOrgName().equals(org.getOrgUrl())) {
+                    logger.warn("network orgName {}, {}", network.getOrgName(), org.getOrgUrl());
                 }                
             }
             int contentLength = Integer.parseInt(
@@ -81,10 +81,10 @@ public class Post implements HttpHandler {
             String contentString = new String(content);
             logger.trace("content {}", contentString);
             StatusRecord record = new StatusRecordParser().parse(contentString);
-            record.setOrgName(orgName);
+            record.setOrgName(orgUrl);
             logger.trace("content lines {}: {}", record.getLineList().size(),
                     Strings.formatFirst(record.getLineList()));
-            logger.debug("record {} {}", record.getSource(), record.getStatusType());
+            logger.debug("record {} {}", record);
             app.putRecord(record);
             sendPlainResponse(httpExchange, "ok");
         } catch (CertificateException | StorageException | NumberFormatException | IOException e) {

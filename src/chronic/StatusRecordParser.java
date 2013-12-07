@@ -20,6 +20,7 @@
  */
 package chronic;
 
+import chronic.bundle.Bundle;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
@@ -171,7 +172,6 @@ public class StatusRecordParser {
             }
         }
         normalize();
-        record.setSource(getSource());
         return record;
     }
 
@@ -186,13 +186,12 @@ public class StatusRecordParser {
                 record.service = record.service.substring(0, index);
             }
         }
-        if (record.subject == null && record.username != null && record.username != null && 
-                record.service != null) {            
-            record.subject = getSource();
+        if (record.topic == null) {
+            record.topic = buildSource();
         }
     }
 
-    public String getSource() {
+    public String buildSource() {
         if (record.username != null && record.hostname != null && record.service != null) {
             if (record.service.matches("\\s")) {
                 return String.format("%s@%s: %s", record.username, record.hostname, record.service);
@@ -204,7 +203,7 @@ public class StatusRecordParser {
             return String.format("%s@%s", record.username, record.hostname);
         }
         if (record.username == null && record.hostname == null && record.service == null) {
-            return "//";
+            return Bundle.get("unknown");
         }
         return Strings.joinNotNullArgs("/", record.username, record.hostname, record.service);
     }

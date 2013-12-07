@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package chronic.bundle;
 
 import java.util.ResourceBundle;
 
@@ -31,4 +31,9 @@ public class Bundle {
     public static ResourceBundle get(Class classObject) {
         return ResourceBundle.getBundle(classObject.getName());
     }
+    
+    public static String get(String name) {
+        return get(Bundle.class).getString(name);
+    }
+    
 }

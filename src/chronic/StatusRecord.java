@@ -53,7 +53,6 @@ public class StatusRecord {
     String service;
     String period;
     String orgName;
-    String source;
     String[] subscribers;
     List<String> changedLines;
     
@@ -70,7 +69,6 @@ public class StatusRecord {
         this.hostname = record.hostname;
         this.username = record.username;
         this.service = record.service;
-        this.source = record.source;
     }
 
     public ComparableTuple getKey() {
@@ -87,14 +85,6 @@ public class StatusRecord {
 
     public void setFrom(String from) {
         this.from = from;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getSource() {
-        return source;
     }
 
     public long getTimestamp() {
@@ -261,7 +251,7 @@ public class StatusRecord {
     
     @Override
     public String toString() {
-        return Arrays.toString(new Object[]{getSource(), alertType, topic, statusType});
+        return Arrays.toString(new Object[]{alertType, topic, statusType});
     }
     
 }

@@ -20,6 +20,7 @@
  */
 package chronic;
 
+import chronic.transaction.SubscribeTransaction;
 import chronic.type.StatusType;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -119,7 +120,7 @@ public class ChronicApp implements Runnable {
 
     private void checkElapsed(StatusRecord status) {
         long elapsed = Millis.elapsed(status.getTimestamp());
-        logger.debug("checkElapsed {}: elapsed {}", status.getSource(), elapsed);
+        logger.debug("checkElapsed {}: elapsed {}", status.getTopic(), elapsed);
         if (elapsed > status.getPeriodMillis() + properties.getPeriod()) {
             AlertRecord previousAlert = alertMap.get(status.getKey());
             if (previousAlert == null || 
@@ -137,7 +138,7 @@ public class ChronicApp implements Runnable {
                 status.getSubject());
         if (status.getSubscribers() != null) {
             for (String subscriber : status.getSubscribers()) {
-                getStorage().subscribe(subscriber, status.getOrgName());
+                new SubscribeTransaction(this).handle(status.getOrgName(), subscriber);
             }
         }
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
@@ -155,11 +156,6 @@ public class ChronicApp implements Runnable {
         }
     }
 
-    public boolean isAdmin(String email) {
-        return properties.getAdminEmails().contains(email) ||
-            Strings.endsWith(email, properties.getAdminDomains());        
-    }    
-    
     public static void main(String[] args) throws Exception {
         try {
             ChronicApp app = new ChronicApp();

@@ -14,31 +14,47 @@ import vellum.util.Comparables;
  */
 public class OrgRole extends AbstractIdEntity {
     Long id;
-    AdminUserRoleType role;    
+    String orgUrl;
     String email;
-    String orgName;
+    AdminUserRoleType role;    
             
-    transient AdminUser user; 
     transient Org org;
+    transient AdminUser user; 
     
     public OrgRole(AdminUser user, Org org, AdminUserRoleType role) {
-        this.user = user;
         this.org = org;
+        this.user = user;
         this.role = role;
+        orgUrl = org.getOrgUrl();
         email = user.getEmail();
-        orgName = org.getOrgName();
     }
         
+    @Override
+    public Comparable getKey() {
+        return Comparables.tuple(orgUrl, email);
+    }
+
     @Override
     public void setId(Long id) {
         this.id = id;
     }
-    
-    @Override
-    public Comparable getKey() {
-        return Comparables.tuple(email, orgName);
+
+    public void setOrgUrl(String orgUrl) {
+        this.orgUrl = orgUrl;
     }
 
+    public String getOrgUrl() {
+        return orgUrl;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    
     public AdminUserRoleType getRole() {
         return role;
     }
@@ -53,8 +69,6 @@ public class OrgRole extends AbstractIdEntity {
 
     @Override
     public String toString() {
-        return Args.format(email, orgName, role);
+        return Args.format(orgUrl, email, role);
     }
-    
-    
 }

@@ -77,10 +77,10 @@ public class LoginPersona implements HttpHandler {
 
    
     private void handle(String email, String label, long loginTime) throws Exception {
-        ChronicCookie cookie = new ChronicCookie(email, label, loginTime, assertion);
+        cookie = new ChronicCookie(email, label, loginTime, assertion);
         JMap map = cookie.toMap();
         httpx.setCookie(map, ChronicCookie.MAX_AGE_MILLIS);
-        map.put("admin", app.isAdmin(email));
+        map.put("admin", app.getProperties().isAdmin(email));
         httpx.sendResponse(map);
     }
 }

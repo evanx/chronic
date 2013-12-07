@@ -22,9 +22,13 @@ public class MailerProperties {
     String password;
     String host = "localhost";
     int port = 25;
-    boolean enabled = true;
+    boolean enabled;
 
+    public MailerProperties() {
+    }
+    
     public MailerProperties(ExtendedProperties properties) {
+        enabled = properties.getBoolean("enabled", true);
         host = properties.getString("host", host);
         port = properties.getInt("port", port);
         username = properties.getString("username", null);
