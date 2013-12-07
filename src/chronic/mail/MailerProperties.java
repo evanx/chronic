@@ -4,8 +4,10 @@
  */
 package chronic.mail;
 
+import vellum.datatype.Emails;
 import vellum.util.Args;
 import vellum.util.ExtendedProperties;
+import vellum.util.Streams;
 
 /**
  *
@@ -23,13 +25,24 @@ public class MailerProperties {
     boolean enabled = true;
 
     public MailerProperties(ExtendedProperties properties) {
-        
+        String logoImagePath = properties.getString("logo", null);
+        if (logoImagePath != null) {
+            logoBytes = Streams.readBytes(logoImagePath);
+        }
+        from = properties.getString("from");
+        organisation = properties.getString("organisation", null);
+        if (organisation == null) {
+            organisation = Emails.getDomain(from);
+        }
+        username = properties.getString("username", null);
+        password = properties.getString("password", null);
     }
     
     public MailerProperties(byte[] logoBytes, String organisation, String from) {
         this.logoBytes = logoBytes;
         this.organisation = organisation;
         this.from = from;
+        this.enabled = true;
     }
 
     public String getHost() {

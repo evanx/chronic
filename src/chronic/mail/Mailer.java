@@ -4,6 +4,7 @@
  */
 package chronic.mail;
 
+import chronic.ChronicMessenger;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -21,6 +22,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vellum.util.Streams;
 
 /**
@@ -28,6 +31,7 @@ import vellum.util.Streams;
  * @author evan.summers
  */
 public class Mailer {
+    static Logger logger = LoggerFactory.getLogger(Mailer.class);
 
     MailerProperties properties;
     Session session;
@@ -36,7 +40,17 @@ public class Mailer {
         this.properties = properties;
     }
 
-    public synchronized void sendEmail(String recipient, String subject, String htmlContent) 
+    public synchronized void sendEmail(String recipient, String subject, String htmlContent) {
+        if (properties != null && properties.isEnabled()) {
+            try {
+                send(recipient, subject, htmlContent);
+            } catch (MessagingException | IOException e) {
+                logger.warn(e.getMessage());
+            }
+        }
+    }
+
+    private synchronized void send(String recipient, String subject, String htmlContent) 
             throws MessagingException, IOException {
         Properties props = new Properties();
         props.put("mail.smtp.host", properties.getHost());
@@ -75,7 +89,7 @@ public class Mailer {
         message.setContent(multipart);
         Transport.send(message);
     }
-
+    
     public static void main(String[] args) {
         try {
             byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));

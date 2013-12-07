@@ -21,6 +21,8 @@
 package chronic;
 
 import chronic.mail.Mailer;
+import java.io.IOException;
+import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.system.Executor;
@@ -30,19 +32,18 @@ import vellum.system.Executor;
  * @author evan.summers
  */
 public class ChronicMessenger {
+
     static Logger logger = LoggerFactory.getLogger(ChronicMessenger.class);
     ChronicApp app;
     Mailer mailer;
-    
+
     public ChronicMessenger(ChronicApp app) {
         this.app = app;
+        mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
     public void init() throws Exception {
         logger.info("initialized");
-        if (app.getProperties().getMailerProperties().isEnabled()) {
-            mailer = new Mailer(app.getProperties().getMailerProperties());
-        }
     }
 
     public synchronized void alert(AlertRecord alert) {
@@ -57,15 +58,24 @@ public class ChronicMessenger {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
                 }
             }
-            if (mailer != null) {
-                for (String email : app.getStorage().getEmails(alert)) {
-                    logger.info("email {}", email);
-                    mailer.sendEmail(email,
-                            alert.getStatus().getSubject(), new AlertBuilder().build(alert));
-                }
-            }
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
         }
+        for (String email : app.getStorage().getEmails(alert)) {
+            mailer.sendEmail(email,
+                    alert.getStatus().getSubject(), new AlertBuilder().build(alert));
+        }
+    }
+
+    public void alertAdmins(String subject, String content) {
+        for (String email : app.getProperties().getAdminEmails()) {
+            mailer.sendEmail(email, subject, content + buildFooter());
+        }
+    }
+
+    public String buildFooter() {
+        String style = "font-size: 12px; font-color: gray";
+        return String.format("<hr><a style='%s' href='%s'>%s</a>", style,
+                app.getProperties().getServerAddress(), app.getProperties().getServerAddress());
     }
 }

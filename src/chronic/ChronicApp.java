@@ -58,6 +58,10 @@ public class ChronicApp implements Runnable {
     public void init() throws Exception {        
         properties.init();
         storage.init();
+        messenger.init();
+        if (messenger.mailer != null) {
+            messenger.alertAdmins("Chronic restarted", "");
+        }
         httpServer.start(properties.getHttpRedirectServer(),
                 new RedirectPortHttpHandler(properties.getWebServer().getInt("port")));
         webServer.start(properties.getWebServer(), 

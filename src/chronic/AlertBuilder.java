@@ -38,9 +38,9 @@ public class AlertBuilder {
     static Logger logger = LoggerFactory.getLogger(AlertBuilder.class);
     StringBuilder builder = new StringBuilder();
 
-    public String build(AlertRecord alert)
-            throws IOException {
+    public String build(AlertRecord alert) {
         logger.info("build {}", alert.status);
+        builder.append("<pre>\n");
         append(alert.status);
         if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED
                 && alert.previousStatus != null
@@ -48,6 +48,7 @@ public class AlertBuilder {
             appendPrevious(alert.previousStatus);
         } else if (alert.status.getAlertType() == AlertType.STATUS_CHANGED) {
         }
+        builder.append("<hr> <img src='cid:image'/>");
         return builder.toString();
     }
 
@@ -112,4 +113,5 @@ public class AlertBuilder {
         }
         return status.getSubject();
     }
+    
 }
