@@ -7,7 +7,7 @@ app.factory("personaService", ["$http", "$q", function($http, $q) {
             var deferred = $q.defer();
             $http.post("/app/LoginPersona", {
                assertion: assertion,
-               timezoneOffset: new Date().getTimezoneOffset()
+               timezoneOffset: (- new Date().getTimezoneOffset()/60)
             }).then(function(response) {
                if (response.errorMessage) {
                   console.warn("personaService login", response.errorMessage);
