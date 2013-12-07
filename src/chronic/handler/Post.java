@@ -50,8 +50,8 @@ public class Post implements HttpHandler {
             X509Certificate certificate = ((HttpsExchange) httpExchange).getSSLSession().
                     getPeerCertificateChain()[0];
             String hostName = Certificates.getCommonName(certificate.getSubjectDN());
-            String orgName = Certificates.getCommonName(certificate.getSubjectDN());
-            String networkName = Certificates.getCommonName(certificate.getSubjectDN());
+            String orgName = Certificates.getOrg(certificate.getSubjectDN());
+            String networkName = Certificates.getOrgUnit(certificate.getSubjectDN());
             logger.trace("certificate {} {}", hostName, orgName);
             if (!app.getStorage().getOrgStorage().containsKey(orgName)) {
                 org = new Org(orgName, orgName);
