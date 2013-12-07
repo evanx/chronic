@@ -31,7 +31,7 @@ public class ListAlerts implements ChronicHandler {
             if (alert.getStatus().getService() != null) {
                 alertList.add(alert.getAlertMap(app.getProperties().isAdmin(email)));
             } else {
-                logger.warn("exclude {} {}", alert.getStatus().getOrgName(), email);
+                logger.warn("exclude {} {}", alert.getStatus().getOrgUrl(), email);
             }
         }
         return JMaps.create("alertList", alertList);

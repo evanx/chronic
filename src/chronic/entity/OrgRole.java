@@ -4,7 +4,9 @@
  */
 package chronic.entity;
 
+import chronic.ChronicApp;
 import vellum.storage.AbstractIdEntity;
+import vellum.storage.StorageException;
 import vellum.util.Args;
 import vellum.util.Comparables;
 
@@ -17,11 +19,18 @@ public class OrgRole extends AbstractIdEntity {
     String orgUrl;
     String email;
     AdminUserRoleType role;    
-            
+    ChronicApp app; 
+    
     transient Org org;
     transient AdminUser user; 
+
+    public OrgRole(ChronicApp app, String orgUrl, String email) {
+        this.app = app;
+        this.orgUrl = orgUrl;
+        this.email = email;
+    }
     
-    public OrgRole(AdminUser user, Org org, AdminUserRoleType role) {
+    public OrgRole(Org org, AdminUser user, AdminUserRoleType role) {
         this.org = org;
         this.user = user;
         this.role = role;
@@ -39,6 +48,10 @@ public class OrgRole extends AbstractIdEntity {
         this.id = id;
     }
 
+    public Long getId() {
+        return id;
+    }
+    
     public void setOrgUrl(String orgUrl) {
         this.orgUrl = orgUrl;
     }
@@ -54,16 +67,22 @@ public class OrgRole extends AbstractIdEntity {
     public String getEmail() {
         return email;
     }
-    
+
     public AdminUserRoleType getRole() {
         return role;
     }
     
-    public AdminUser getUser() {
+    public AdminUser getUser() throws StorageException {
+        if (user == null && email != null) {
+            user = app.getStorage().getAdminUserStorage().find(email);
+        }
         return user;
     }
 
-    public Org getOrg() {
+    public Org getOrg() throws StorageException {
+        if (org == null && orgUrl != null) {
+            org = app.getStorage().getOrgStorage().find(orgUrl);
+        }
         return org;
     }    
 

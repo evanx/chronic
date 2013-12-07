@@ -38,6 +38,11 @@ public final class TopicSubscriber extends AbstractIdEntity {
         this.id = id;
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+    
     public String getEmail() {
         return email;
     }

@@ -67,7 +67,7 @@ public class LoginPersona implements HttpHandler {
         logger.info("persona {}", userInfo);
         String email = userInfo.getEmail();
         if (app.getStorage().getAdminUserStorage().containsKey(email)) {
-            adminUser = app.getStorage().getAdminUserStorage().select(email);
+            adminUser = app.getStorage().getAdminUserStorage().find(email);
         } else {
             adminUser = new AdminUser(email);
             app.getStorage().getAdminUserStorage().insert(adminUser);

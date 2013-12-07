@@ -144,7 +144,7 @@ public class ChronicApp implements Runnable {
                 status.getSubject());
         if (status.getSubscribers() != null) {
             for (String subscriber : status.getSubscribers()) {
-                new SubscribeTransaction(this).handle(status.getOrgName(), subscriber);
+                new SubscribeTransaction().handle(this, status.getOrgUrl(), subscriber);
             }
         }
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);

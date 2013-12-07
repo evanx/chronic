@@ -21,15 +21,21 @@
 package chronic;
 
 import chronic.entity.AdminUser;
+import chronic.entity.AdminUserRoleType;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.TopicSubscriber;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.storage.ChronicQueryType;
 import vellum.storage.Storage;
 import vellum.storage.StorageException;
 
@@ -63,8 +69,12 @@ public abstract class ChronicStorage {
     
     public abstract Storage<TopicSubscriber> getTopicSubscriberStorage();
 
+    public abstract Map<AdminUserRoleType, OrgRole> mapOrgRole(String url, String email);
+    
+    public abstract Collection<AdminUserRoleType> listOrgRoleType(String url, String email);
+    
     public abstract Iterable<Topic> listTopics(String email) throws StorageException;
-
+    
     public Iterable<String> getEmails(AlertRecord alert) {
         List<String> list = new ArrayList();
         list.add(app.getProperties().getAdminEmails().iterator().next());
@@ -74,4 +84,16 @@ public abstract class ChronicStorage {
     public static ChronicStorage create(ChronicApp app) {
         return new TemporaryChronicStorage(app);
     }
+
+    public Iterable<Topic> listTopics(Org org) {
+        Set<Topic> topics = new TreeSet();
+        for (Topic topic : getTopicStorage().selectCollection(
+                ChronicQueryType.TOPICS_org, org.getOrgUrl())) {
+            if (topic.getOrgUrl().equals(org.getOrgUrl())) {
+                topics.add(topic);
+            }
+        }
+        return topics;
+    }
+
 }

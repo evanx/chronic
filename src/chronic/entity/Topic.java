@@ -15,7 +15,7 @@ import vellum.util.Comparables;
 public final class Topic extends AbstractIdEntity {
     Long id;
     String orgUrl;
-    String topic;
+    String topicString;
     boolean enabled = true;
             
     public Topic() {
@@ -23,40 +23,41 @@ public final class Topic extends AbstractIdEntity {
 
     public Topic(String orgUrl, String topic) {
         this.orgUrl = orgUrl;
-        this.topic = topic;
+        this.topicString = topic;
     }
 
     @Override
     public Comparable getKey() {
-        return Comparables.tuple(orgUrl, topic);
+        return Comparables.tuple(orgUrl, topicString);
     }
 
     @Override
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public String getOrgName() {
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+        
+    public String getOrgUrl() {
         return orgUrl;
     }
 
-    public void setOrgName(String orgName) {
-        this.orgUrl = orgName;
+    public String getTopicString() {
+        return topicString;
     }
 
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setTopicString(String topicString) {
+        this.topicString = topicString;
     }
     
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
         map.put("orgUrl", orgUrl);
-        map.put("topic", topic);
+        map.put("topic", topicString);
         return map;
     }
     

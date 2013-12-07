@@ -31,7 +31,7 @@ public class Enroll {
         String email = hx.readString().trim();
         if (Emails.matchesEmail(email)) {            
             String orgUrl = Certificates.getOrg(hx.getSSLSession().getPeerPrincipal());
-            new EnrollTransaction(app).handle(orgUrl, email);
+            new EnrollTransaction().handle(app, orgUrl, email);
             hx.sendPlainResponse("ok %s %s", orgUrl, email);
         } else {
             hx.handleError("invalid email %s", email);

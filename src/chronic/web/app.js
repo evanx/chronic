@@ -132,6 +132,8 @@ app.controller("alertListController", ["$scope", "$http",
          console.log("changeView", view);
          if (view === "alerts") {
             $scope.listAlerts();
+         } else {
+            $scope.alertList = undefined;            
          }
       });
    }]);
@@ -166,6 +168,8 @@ app.controller("topicListController", ["$scope", "$http",
          console.log("changeView", view);
          if (view === "topics") {
             $scope.listTopics();
+         } else {
+            $scope.topicList = undefined;            
          }
       });
    }]);

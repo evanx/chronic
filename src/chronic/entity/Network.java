@@ -19,14 +19,14 @@ public class Network extends AbstractEntity {
     String label;
     String description;
     String address;
-    String orgName;
+    String orgUrl;
     boolean enabled = true;
     
     public Network() {
     }
 
     public Network(String orgName, String name) {
-        this.orgName = orgName;
+        this.orgUrl = orgName;
         this.networkName = name;
     }
     
@@ -43,12 +43,8 @@ public class Network extends AbstractEntity {
         this.networkName = networkName;
     }
 
-    public String getOrgName() {
-        return orgName;
-    }
-
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
+    public String getOrgUrl() {
+        return orgUrl;
     }
     
     public void setAddress(String address) {

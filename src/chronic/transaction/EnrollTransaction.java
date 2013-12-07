@@ -11,7 +11,6 @@ import chronic.entity.OrgRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.StorageException;
-import vellum.type.ComparableTuple;
 import vellum.util.Comparables;
 
 /**
@@ -21,39 +20,24 @@ import vellum.util.Comparables;
 public class EnrollTransaction {
     
     static Logger logger = LoggerFactory.getLogger(EnrollTransaction.class);
-    ChronicApp app;
-    Org org;
-    AdminUser user;
     
-    public EnrollTransaction(ChronicApp app) {
-        this.app = app;
-    }
-    
-    public void handle(String orgUrl, String email) throws StorageException {
+    public void handle(ChronicApp app, String orgUrl, String email) throws StorageException {
         logger.info("enroll {} {}", orgUrl, email);
-        ComparableTuple key = Comparables.tuple(orgUrl, email);
-        if (app.getStorage().getAdminUserStorage().containsKey(email)) {
-            user = app.getStorage().getAdminUserStorage().select(email);
-        } else {
-            user = new AdminUser(email);
-        }
-        if (app.getStorage().getOrgStorage().containsKey(orgUrl)) {
-            org = app.getStorage().getOrgStorage().select(orgUrl);
-            if (app.getStorage().getOrgRoleStorage().containsKey(key)) {
-                OrgRole orgRole = app.getStorage().getOrgRoleStorage().select(key);
-                if (orgRole.getRole() != AdminUserRoleType.ADMIN) {
-                    logger.warn("subscribe exists role {}", orgRole);
-                }
-            } else {
-                OrgRole orgRole = new OrgRole(user, org, AdminUserRoleType.ADMIN);
-                app.getStorage().getOrgRoleStorage().insert(orgRole);                
+        OrgRole orgRole = app.getStorage().getOrgRoleStorage().
+            select(Comparables.tuple(orgUrl, email, AdminUserRoleType.ADMIN));
+        if (orgRole == null) {
+            AdminUser user = app.getStorage().getAdminUserStorage().select(email);
+            if (user == null) {
+                user = new AdminUser(email);
+                app.getStorage().getAdminUserStorage().insert(user);
             }
-        } else {
-            org = new Org(orgUrl);
-            OrgRole orgRole = new OrgRole(user, org, AdminUserRoleType.ADMIN);
-            app.getStorage().getOrgStorage().insert(org);
+            Org org = app.getStorage().getOrgStorage().select(orgUrl);
+            if (org == null) {
+                org = new Org(orgUrl);
+                app.getStorage().getOrgStorage().insert(org);
+            }
+            orgRole = new OrgRole(org, user, AdminUserRoleType.ADMIN);
             app.getStorage().getOrgRoleStorage().insert(orgRole);
         }
     }
-        
 }

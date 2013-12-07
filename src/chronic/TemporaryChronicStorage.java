@@ -22,13 +22,17 @@ package chronic;
 
 import static chronic.ChronicStorage.logger;
 import chronic.entity.AdminUser;
+import chronic.entity.AdminUserRoleType;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.TopicSubscriber;
 import java.sql.Connection;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -44,12 +48,12 @@ import vellum.util.Comparables;
  */
 public class TemporaryChronicStorage extends ChronicStorage {
     Server h2Server;
-    Storage<AdminUser> adminUserStorage = new TemporaryStorage();
-    Storage<Org> orgStorage = new TemporaryStorage();
-    Storage<OrgRole> orgRoleStorage = new TemporaryStorage();
-    Storage<Network> networkStorage = new TemporaryStorage();
-    Storage<Topic> topicStorage = new TemporaryStorage();
-    Storage<TopicSubscriber> topicSubscriberStorage = new TemporaryStorage();
+    TemporaryStorage<AdminUser> adminUserStorage = new TemporaryStorage();
+    TemporaryStorage<Org> orgStorage = new TemporaryStorage();
+    TemporaryStorage<OrgRole> orgRoleStorage = new TemporaryStorage();
+    TemporaryStorage<Network> networkStorage = new TemporaryStorage();
+    TemporaryStorage<Topic> topicStorage = new TemporaryStorage();
+    TemporaryStorage<TopicSubscriber> topicSubscriberStorage = new TemporaryStorage();
     Map<String, Connection> connectionMap = new HashMap();
 
     public TemporaryChronicStorage(ChronicApp app) {
@@ -100,16 +104,40 @@ public class TemporaryChronicStorage extends ChronicStorage {
 
     @Override
     public Iterable<Topic> listTopics(String email) throws StorageException {
-        logger.info("listTopics {}", email);
+        logger.info("listTopics {} {}", email);
         Set<Topic> topics = new TreeSet();
         for (TopicSubscriber topicSubscriber : topicSubscriberStorage.selectCollection(null)) {
             logger.info("listTopics topicSubscriber {}", topicSubscriber);
             if (topicSubscriber.getEmail().equals(email)) {
-                topics.add(topicStorage.select(Comparables.tuple(
+                topics.add(topicStorage.find(Comparables.tuple(
                         topicSubscriber.getOrgUrl(), email)));
             }            
         }
         return topics;
+    }
+    
+    @Override
+    public Map<AdminUserRoleType, OrgRole> mapOrgRole(String url, String email) {
+        Map map = new HashMap();
+        for (OrgRole orgRole : orgRoleStorage.selectCollection(null)) {
+            if (orgRole.getOrgUrl().equals(url) && 
+                    orgRole.getEmail().equals(email)) {
+                map.put(orgRole.getRole(), orgRole);
+            }
+        }        
+        return map;
+    }
+
+    @Override
+    public Collection<AdminUserRoleType> listOrgRoleType(String url, String email) {
+        List<AdminUserRoleType> roleTypes = new LinkedList();
+        for (OrgRole orgRole : orgRoleStorage.selectCollection(null)) {
+            if (orgRole.getOrgUrl().equals(url) && 
+                    orgRole.getEmail().equals(email)) {
+                roleTypes.add(orgRole.getRole());
+            }
+        }        
+        return roleTypes;
     }
     
 }

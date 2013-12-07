@@ -52,7 +52,7 @@ public class StatusRecord {
     String hostname;
     String service;
     String period;
-    String orgName;
+    String orgUrl;
     String[] subscribers;
     List<String> changedLines;
     
@@ -91,12 +91,12 @@ public class StatusRecord {
         return timestamp;
     }
 
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
+    public void setOrgUrl(String orgUrl) {
+        this.orgUrl = orgUrl;
     }
 
-    public String getOrgName() {
-        return orgName;
+    public String getOrgUrl() {
+        return orgUrl;
     }
 
     public String getFrom() {
@@ -234,7 +234,7 @@ public class StatusRecord {
     
     public boolean isAdmin(String email) {
         if (email != null) { 
-            if (orgName != null && email.endsWith(orgName)) {
+            if (orgUrl != null && email.endsWith(orgUrl)) {
                 return true;
             }
         }

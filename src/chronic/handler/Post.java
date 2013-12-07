@@ -57,16 +57,16 @@ public class Post implements HttpHandler {
                 org = new Org(orgUrl);
                 app.getStorage().getOrgStorage().insert(org);
             } else {
-                org = app.getStorage().getOrgStorage().select(orgUrl);
+                org = app.getStorage().getOrgStorage().find(orgUrl);
             }
             if (!app.getStorage().getNetworkStorage().containsKey(networkName)) {
                 network = new Network(orgUrl, networkName);
                 network.setAddress(hostAddress);
                 app.getStorage().getNetworkStorage().insert(network);
             } else {
-                network = app.getStorage().getNetworkStorage().select(networkName);
-                if (!network.getOrgName().equals(org.getOrgUrl())) {
-                    logger.warn("network orgName {}, {}", network.getOrgName(), org.getOrgUrl());
+                network = app.getStorage().getNetworkStorage().find(networkName);
+                if (!network.getOrgUrl().equals(org.getOrgUrl())) {
+                    logger.warn("network orgName {}, {}", network.getOrgUrl(), org.getOrgUrl());
                 }                
             }
             int contentLength = Integer.parseInt(
@@ -81,7 +81,7 @@ public class Post implements HttpHandler {
             String contentString = new String(content);
             logger.trace("content {}", contentString);
             StatusRecord record = new StatusRecordParser().parse(contentString);
-            record.setOrgName(orgUrl);
+            record.setOrgUrl(orgUrl);
             logger.trace("content lines {}: {}", record.getLineList().size(),
                     Strings.formatFirst(record.getLineList()));
             logger.debug("record {} {}", record);
