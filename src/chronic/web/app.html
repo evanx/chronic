@@ -45,16 +45,14 @@
                   <table class="table table-striped table-bordered table-condensed">
                      <thead>
                         <tr>
-                           <th>Time</th>
-                           <th>Topic</th>
-                           <th>Message</th>
+                           <th>Alert</th>
                         </tr>
                      </thead>
                      <tbody>
                         <tr ng-repeat="alert in alertList" ng-click="setSelected()">
-                           <td><i>{{alert.timestampLabel}}</i></td>
-                           <td>{{alert.topic}}</td>
-                           <td>{{alert.message}}</td>
+                           <td><i>{{alert.timestampLabel}}</i>
+                           &nbsp; <b>{{alert.topic}}</b>
+                           &nbsp; {{alert.message}}</td>
                         </tr>
                      </tbody>
                   </table>    

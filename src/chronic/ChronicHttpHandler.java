@@ -3,6 +3,7 @@
  */
 package chronic;
 
+import chronic.handler.Enroll;
 import chronic.handler.EnrollAdminUser;
 import chronic.handler.EnrollNetwork;
 import chronic.handler.EnrollOrg;
@@ -40,6 +41,8 @@ public class ChronicHttpHandler implements HttpHandler {
             logger.trace("handle {}", path);
             if (path.equals("/post")) {                
                 new Post(app).handle(httpExchange);
+            } else if (path.equals("/enroll")) {
+                new Enroll(app).handle(httpExchange);
             } else if (path.equals("/subscribe")) {
                 new Subscribe(app).handle(httpExchange);
             } else if (path.equals("/app/EnrollAdminUser")) {
