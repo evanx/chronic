@@ -43,7 +43,7 @@ public class ChronicApp implements Runnable {
 
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicProperties properties = new ChronicProperties();
-    ChronicStorage storage = new TemporaryChronicStorage();
+    ChronicStorage storage = LogicalChronicStorage.create(this);
     ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();

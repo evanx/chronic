@@ -20,22 +20,30 @@
  */
 package chronic;
 
-import chronic.storage.app.AdminUserStorage;
-import chronic.storage.app.NetworkStorage;
-import chronic.storage.app.OrgRoleStorage;
-import chronic.storage.app.OrgStorage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author evan.summers
  */
-public interface ChronicStorage {
-    public void init() throws Exception;
-    public void shutdown();
-    public AdminUserStorage getAdminUserStorage();
-    public OrgStorage getOrgStorage();
-    public OrgRoleStorage getOrgRoleStorage();
-    public NetworkStorage getNetworkStorage();
-    public Iterable<String> getEmails(AlertRecord alert);
+public abstract class LogicalChronicStorage implements ChronicStorage {
+
+    ChronicApp app;
+    
+    public LogicalChronicStorage(ChronicApp app) {
+        this.app = app;
+    }
+        
+    @Override
+    public Iterable<String> getEmails(AlertRecord alert) {
+        List<String> list = new ArrayList();
+        list.add(app.getProperties().getAdminEmails().iterator().next());
+        return list;
+    }
+
+    public static ChronicStorage create(ChronicApp app) {
+        return new TemporaryChronicStorage(app);
+    }
     
 }

@@ -26,14 +26,10 @@ import chronic.type.AlertType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.datatype.Millis;
 import vellum.type.ComparableTuple;
-import vellum.util.Strings;
 
 /**
  *
@@ -58,6 +54,7 @@ public class StatusRecord {
     String period;
     String orgName;
     String source;
+    String[] subscribers;
     List<String> changedLines;
     
     public StatusRecord() {
@@ -249,15 +246,16 @@ public class StatusRecord {
         return line.equals(other);
     }
     
-    public static boolean isAdmin(StatusRecord status, String email) {
+    public boolean isAdmin(String email) {
         if (email != null) { 
-            if (status.orgName != null && email.endsWith(status.orgName)) {
-                return true;
-            }
-            if (status.topic != null && email.contains(status.topic)) {
+            if (orgName != null && email.endsWith(orgName)) {
                 return true;
             }
         }
         return true;
     }    
+
+    public void setSubcribers(String[] subscribers) {
+        this.subscribers = subscribers;
+    }
 }

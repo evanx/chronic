@@ -20,15 +20,17 @@
  */
 package chronic;
 
+import chronic.mail.Mailer;
+import chronic.mail.MailerProperties;
 import chronic.util.JsonObjectWrapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import vellum.datatype.Millis;
 import vellum.httpserver.HttpServerProperties;
 import vellum.util.ExtendedProperties;
+import vellum.util.Streams;
 
 /**
  *
@@ -46,6 +48,7 @@ public class ChronicProperties {
     private Set<String> adminEmails;
     private Set<String> allowedAddresses;
     private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
+    private MailerProperties mailer;
 
     public void init() throws IOException {
         String confFileName = properties.getString("chronic.json", "chronic.json");
@@ -63,6 +66,8 @@ public class ChronicProperties {
         }
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
+        byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));
+        mailer = new MailerProperties(bytes, "appcentral.info", "alerts@appcentral.info");        
     }
     
     public String getAlertScript() {
@@ -100,5 +105,8 @@ public class ChronicProperties {
     public Set<String> getAllowedAddresses() {
         return allowedAddresses;
     }   
-
+    
+    public MailerProperties getMailer() {
+        return mailer;
+    }
 }

@@ -20,6 +20,9 @@
  */
 package chronic;
 
+import chronic.mail.Mailer;
+import java.io.IOException;
+import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.system.Executor;
@@ -31,29 +34,39 @@ import vellum.system.Executor;
 public class ChronicMessenger {
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicApp app;
-
+    Mailer mailer;
+    
     public ChronicMessenger(ChronicApp app) {
         this.app = app;
+        if (app.getProperties().getMailer().isEnabled()) {
+            mailer = new Mailer(app.getProperties().getMailer());
+        }
     }
-    
+
     public void init() throws Exception {
         logger.info("initialized");
     }
 
     public synchronized void alert(AlertRecord alert) {
         logger.info("alert {}", alert.toString());
-        if (app.getProperties().getAlertScript() != null) {
-            try {
+        try {
+            if (app.getProperties().getAlertScript() != null) {
                 Executor executor = new Executor();
-                executor.exec(app.getProperties().getAlertScript(), 
+                executor.exec(app.getProperties().getAlertScript(),
                         new AlertBuilder().build(alert).getBytes(),
                         alert.getAlertMap(true));
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
                 }
-            } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
             }
+            if (mailer != null) {
+                for (String email : app.getStorage().getEmails(alert)) {
+                    mailer.sendEmail(email,
+                            alert.getStatus().getSubject(), new AlertBuilder().build(alert));
+                }
+            }
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
         }
-    }    
+    }
 }

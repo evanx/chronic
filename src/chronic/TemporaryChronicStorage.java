@@ -32,20 +32,23 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import org.h2.tools.Server;
-import vellum.storage.TemporaryStorage;
 
 /**
  *
  * @author evan.summers
  */
-public class TemporaryChronicStorage extends TemporaryStorage implements ChronicStorage {
+public class TemporaryChronicStorage extends LogicalChronicStorage {
     Server h2Server;
     AdminUserStorage adminUserStorage = new TemporaryAdminUserStorage();
     OrgStorage orgStorage = new TemporaryOrgStorage();
     OrgRoleStorage orgRoleStorage = new TemporaryOrgRoleStorage();
     NetworkStorage networkStorage = new TemporaryNetworkStorage();
     Map<String, Connection> connectionMap = new HashMap();
-    
+
+    public TemporaryChronicStorage(ChronicApp app) {
+        super(app);
+    }
+        
     @Override
     public void init() throws Exception {
         h2Server = Server.createTcpServer().start();
@@ -63,14 +66,17 @@ public class TemporaryChronicStorage extends TemporaryStorage implements Chronic
         return adminUserStorage;
     }
 
+    @Override
     public OrgStorage getOrgStorage() {
         return orgStorage;
     }
     
+    @Override
     public OrgRoleStorage getOrgRoleStorage() {
         return orgRoleStorage;
     }
 
+    @Override
     public NetworkStorage getNetworkStorage() {
         return networkStorage;
     }

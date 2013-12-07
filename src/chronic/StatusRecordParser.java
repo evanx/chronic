@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
+import vellum.enumtype.DelimiterType;
 import vellum.util.Strings;
 
 /**
@@ -48,6 +49,27 @@ public class StatusRecordParser {
             Pattern.compile("^[a-zA-Z]+: .*$");
     
     StatusRecord record = new StatusRecord();
+    
+    private void parseAlertFormatType(String string) {
+        try {
+            record.setAlertFormatType(AlertFormatType.valueOf(string));
+        } catch (Exception e) {
+            logger.warn("parseAlertFormatType {}: {}", string, e.getMessage());
+        }
+    }
+    
+    private void parseAlertType(String string) {
+        int index = string.indexOf(" ");
+        if (index > 0) {
+            record.setTopic(string.substring(index + 1));
+            string = string.substring(0, index);
+        }
+        try {
+            record.setAlertType(AlertType.valueOf(string));
+        } catch (Exception e) {
+            logger.warn("parseAlertType {}: {}", string, e.getMessage());
+        }
+    }
     
     public void parseFromLine(String fromLine) {
         Matcher matcher = fromCronPattern.matcher(fromLine);
@@ -89,6 +111,22 @@ public class StatusRecordParser {
             record.setContentType(contentTypeLine.substring(14));
         }
     }
+
+    private void parsePeriod(String string) {
+        record.setPeriodMillis(Millis.parse(string));
+    }
+
+    private void parseStatusType(String string) {
+        try {
+            record.setStatusType(StatusType.valueOf(string));
+        } catch (Exception e) {
+            logger.warn("parseStatusType {}: {}", string, e.getMessage());
+        }
+    }
+
+    private void parseSubscribe(String string) {
+        record.setSubcribers(Strings.split(string, DelimiterType.SPACE));
+    }
     
     public StatusRecord parse(String text) throws IOException {
         logger.trace("parse: {}", text);
@@ -103,18 +141,22 @@ public class StatusRecordParser {
                 parseSubjectLine(line);
             } else if (line.startsWith("Content-Type: ")) {
                 parseContentTypeLine(line);
-            } else if (line.startsWith("Status: ")) {
-                nagiosStatus = false;
-                parseStatusType(line.substring(8));
+            } else if (line.startsWith("Subscribe: ")) {
+                parseSubscribe(line.substring(11));
             } else if (line.startsWith("Service: ")) {
                 record.setService(line.substring(9));
                 nagiosStatus = false;
+            } else if (line.startsWith("Period: ")) {
+                parsePeriod(line.substring(8));
+            } else if (line.startsWith("Status: ")) {
+                nagiosStatus = false;
+                parseStatusType(line.substring(8));
+            } else if (line.startsWith("Topic: ")) {
+                record.setTopic(line.substring(7));
             } else if (line.startsWith("Alert: ")) {
                 parseAlertType(line.substring(7));
             } else if (line.startsWith("AlertFormat: ")) {
                 parseAlertFormatType(line.substring(13));
-            } else if (line.startsWith("Period: ")) {
-                parsePeriod(line.substring(8));
             } else if (!inHeader) {
                 if (nagiosStatus) {
                     parseNagiosStatus(line);
@@ -132,40 +174,6 @@ public class StatusRecordParser {
         record.setSource(getSource());
         return record;
     }
-
-    private void parsePeriod(String string) {
-        record.setPeriodMillis(Millis.parse(string));
-    }
-
-    private void parseStatusType(String string) {
-        try {
-            record.setStatusType(StatusType.valueOf(string));
-        } catch (Exception e) {
-            logger.warn("parseStatusType {}: {}", string, e.getMessage());
-        }
-    }
-
-    private void parseAlertFormatType(String string) {
-        try {
-            record.setAlertFormatType(AlertFormatType.valueOf(string));
-        } catch (Exception e) {
-            logger.warn("parseAlertFormatType {}: {}", string, e.getMessage());
-        }
-    }
-    
-    private void parseAlertType(String string) {
-        int index = string.indexOf(" ");
-        if (index > 0) {
-            record.setTopic(string.substring(index + 1));
-            string = string.substring(0, index);
-        }
-        try {
-            record.setAlertType(AlertType.valueOf(string));
-        } catch (Exception e) {
-            logger.warn("parseAlertType {}: {}", string, e.getMessage());
-        }
-    }
-
 
     private void normalize() {
         if (record.service != null) {

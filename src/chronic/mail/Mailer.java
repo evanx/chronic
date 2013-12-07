@@ -5,12 +5,14 @@
 package chronic.mail;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -27,31 +29,25 @@ import vellum.util.Streams;
  */
 public class Mailer {
 
-    byte[] logoBytes;
-    String organisation;
-    String from;
-    String username;
-    String password;
-    String host = "localhost";
-    int port = 25;
+    MailerProperties properties;
     Session session;
 
-    public Mailer(byte[] logoBytes, String organisation, String from) {
-        this.logoBytes = logoBytes;
-        this.organisation = organisation;
-        this.from = from;
+    public Mailer(MailerProperties properties) {
+        this.properties = properties;
     }
 
-    public void sendEmail(String recipient, String subject, String htmlContent) throws Exception {
+    public synchronized void sendEmail(String recipient, String subject, String htmlContent) 
+            throws MessagingException, IOException {
         Properties props = new Properties();
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
-        if (username != null) {
+        props.put("mail.smtp.host", properties.getHost());
+        props.put("mail.smtp.port", properties.getPort());
+        if (properties.getUsername() != null) {
             props.put("mail.smtp.auth", true);
             Authenticator auth = new Authenticator() {
                 @Override
                 public PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(username, password);
+                    return new PasswordAuthentication(properties.getUsername(), 
+                            properties.getPassword());
                 }
             };
             session = Session.getInstance(props, auth);
@@ -59,19 +55,19 @@ public class Mailer {
             session = Session.getInstance(props);
         }
         MimeMessage message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(from));
+        message.setFrom(new InternetAddress(properties.getFrom()));
         message.setSentDate(new Date());
         message.setSubject(subject);
         message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(recipient));
-        message.setHeader("Organization", organisation);
+        message.setHeader("Organization", properties.getOrganisation());
         BodyPart htmlPart = new MimeBodyPart();
         htmlPart.setContent(htmlContent, "text/html");
         MimeMultipart multipart = new MimeMultipart("related");
         multipart.addBodyPart(htmlPart);
-        if (logoBytes != null) {
+        if (properties.getLogoBytes() != null) {
             BodyPart dataPart = new MimeBodyPart();
             DataSource source = new ByteArrayDataSource(
-                    new ByteArrayInputStream(logoBytes), "image/png");
+                    new ByteArrayInputStream(properties.getLogoBytes()), "image/png");
             dataPart.setDataHandler(new DataHandler(source));
             dataPart.setHeader("Content-ID", "<image>");
             multipart.addBodyPart(dataPart);
@@ -83,7 +79,9 @@ public class Mailer {
     public static void main(String[] args) {
         try {
             byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));
-            Mailer mailer = new Mailer(bytes, "appcentral.info", "alerts@appcentral.info");
+            MailerProperties mailerProperties = new MailerProperties(bytes, 
+                    "appcentral.info", "alerts@appcentral.info");
+            Mailer mailer = new Mailer(mailerProperties);
             mailer.sendEmail("evan.summers@gmail.com", "test subject", 
                     "test body <hr> <img src='cid:image'/>");
         } catch (Exception e) {
