@@ -20,6 +20,7 @@
  */
 package chronic;
 
+import chronic.bundle.Bundle;
 import chronic.type.StatusType;
 
 /**
@@ -33,7 +34,7 @@ public class AlertFormatter {
     public AlertFormatter(StatusRecord status) {
         this.status = status;
     }
-    
+
     public String formatAlertTypeLabel() {
         if (status.statusType != null && status.statusType.isAlertable()) {
             return status.statusType.getLabel();
@@ -42,23 +43,15 @@ public class AlertFormatter {
         } else if (status.alertType != null) {
             return status.alertType.getLabel();
         } else {
-            return StatusType.UNKNOWN.getLabel();
+            return Bundle.get("unknown");
         }
     }
 
+    public String formatMessage() {
+        return formatAlertTypeLabel();
+    }
+        
     public String formatSubject() {
-        if (status.isAlertable()) {
-            if (status.statusType == StatusType.ELAPSED || status.subject == null) {
-                return status.getTopic() + ' ' + formatAlertTypeLabel();
-            } else if (!status.subject.contains(status.statusType.name())) {
-                return status.subject + ' ' + formatAlertTypeLabel();
-            } else {
-                return status.subject;
-            }
-        }
-        if (status.subject == null) {
-            return status.getTopic();
-        }
-        return status.subject;
+        return status.getTopic() + ' ' + formatAlertTypeLabel();
     }        
 }

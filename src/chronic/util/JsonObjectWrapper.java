@@ -154,7 +154,7 @@ public class JsonObjectWrapper {
         JsonArray array = get(key).getAsJsonArray();
         for (JsonElement element : array) {
             String string = element.getAsString();
-            logger.info("getStringSet {}", string);
+            logger.trace("getStringSet {}", string);
             set.add(string);
         }
         return set;

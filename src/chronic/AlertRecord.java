@@ -98,8 +98,7 @@ public class AlertRecord {
         map.put("timestamp", status.timestamp);
         map.put("timestampLabel", Millis.formatTimestamp(status.timestamp));
         map.put("topic", status.getTopic());
-        map.put("subject", formatter.formatSubject());
-        map.put("subjectShort", Strings.truncate(formatter.formatSubject(), 48));
+        map.put("message", formatter.formatMessage());
         if (detail) {
             if (status.statusType == StatusType.CONTENT_CHANGED) {
                 map.put("content", Strings.join("<br>\n", status.buildChanged(previousStatus)));
