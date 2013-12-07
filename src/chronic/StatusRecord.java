@@ -177,11 +177,6 @@ public class StatusRecord {
         return lineList;
     }
 
-    @Override
-    public String toString() {
-        return Arrays.toString(new Object[]{getSource(), alertType, topic, statusType});
-    }
-
     public boolean isAlertable() {
         return statusType != null && statusType.isAlertable();
     }
@@ -214,6 +209,19 @@ public class StatusRecord {
         return true;
     }
 
+    public static boolean equals(String line, String other) {
+        Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(line);
+        if (matcher.find()) {
+            Matcher otherMatcher = StatusRecordParser.nagiosStatusPattern.matcher(other);
+            return otherMatcher.find() && otherMatcher.group(1).equals(matcher.group(1)) &&
+                        otherMatcher.group(2).equals(matcher.group(2));
+
+        } else if (StatusRecordParser.headPattern.matcher(line).find()) {
+            return true;
+        }
+        return line.equals(other);
+    }
+        
     public List<String> buildChanged(StatusRecord previous) {
         List<String> list = new ArrayList();
         for (String line : lineList) {
@@ -232,19 +240,7 @@ public class StatusRecord {
         }
         return false;
     }
-    
-    public static boolean equals(String line, String other) {
-        Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(line);
-        if (matcher.find()) {
-            Matcher otherMatcher = StatusRecordParser.nagiosStatusPattern.matcher(other);
-            return otherMatcher.find() && otherMatcher.group(1).equals(matcher.group(1)) &&
-                        otherMatcher.group(2).equals(matcher.group(2));
 
-        } else if (StatusRecordParser.headPattern.matcher(line).find()) {
-            return true;
-        }
-        return line.equals(other);
-    }
     
     public boolean isAdmin(String email) {
         if (email != null) { 
@@ -262,4 +258,10 @@ public class StatusRecord {
     public String[] getSubscribers() {
         return subscribers;
     }        
+    
+    @Override
+    public String toString() {
+        return Arrays.toString(new Object[]{getSource(), alertType, topic, statusType});
+    }
+    
 }

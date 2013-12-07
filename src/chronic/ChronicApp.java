@@ -134,8 +134,10 @@ public class ChronicApp implements Runnable {
     public synchronized void putRecord(StatusRecord status) {
         logger.info("putRecord {} [{}]", status.getStatusType(),
                 status.getSubject());
-        for (String subscriber : status.getSubscribers()) {
-            getStorage().subscribe(subscriber, status.getOrgName());    
+        if (status.getSubscribers() != null) {
+            for (String subscriber : status.getSubscribers()) {
+                getStorage().subscribe(subscriber, status.getOrgName());
+            }
         }
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
         if (previousStatus == null) {
