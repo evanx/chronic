@@ -23,9 +23,14 @@
             </div>
             <div class="navbar-collapse collapse">
                <ul class="nav navbar-nav">
-                  <li class="active nav-all">
+                  <li class="active">
                      <a href="#" ng-show="persona.email" 
-                        ng-click="$broadcast('changeView', 'alerts')">Alerts</a></li>
+                        ng-click="$broadcast('changeView', 'alerts')">Alerts</a>
+                  </li>
+                  <li class="">
+                     <a href="#" ng-show="persona.email" 
+                        ng-click="$broadcast('changeView', 'topics')">Topics</a>
+                  </li>
                </ul>
                <div class="navbar-collapse collapse pull-right">
                   <div class="navbar-text App-view-loggedout" ng-cloak ng-hide="persona.email">

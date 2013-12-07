@@ -20,6 +20,7 @@
  */
 package chronic;
 
+import static chronic.ChronicStorage.logger;
 import chronic.entity.AdminUser;
 import chronic.entity.Network;
 import chronic.entity.Org;
@@ -99,8 +100,10 @@ public class TemporaryChronicStorage extends ChronicStorage {
 
     @Override
     public Iterable<Topic> listTopics(String email) throws StorageException {
+        logger.info("listTopics {}", email);
         Set<Topic> topics = new TreeSet();
         for (TopicSubscriber topicSubscriber : topicSubscriberStorage.selectCollection(null)) {
+            logger.info("listTopics topicSubscriber {}", topicSubscriber);
             if (topicSubscriber.getEmail().equals(email)) {
                 topics.add(topicStorage.select(Comparables.tuple(
                         topicSubscriber.getOrgUrl(), email)));

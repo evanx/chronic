@@ -24,10 +24,9 @@ public class ListTopics implements ChronicHandler {
   
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
-        String email = app.getEmail(httpx);
         List topicList = new LinkedList();
-        for (Topic topic : app.getStorage().listTopics(email)) {
-            topicList.add(topic);
+        for (Topic topic : app.getStorage().listTopics(app.getEmail(httpx))) {
+            topicList.add(topic.getMap());
         }
         return JMaps.create("topicList", topicList);
     }

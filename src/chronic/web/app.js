@@ -135,3 +135,37 @@ app.controller("alertListController", ["$scope", "$http",
          }
       });
    }]);
+
+app.controller("topicListController", ["$scope", "$http",
+   function($scope, $http) {
+      $scope.listTopics = function() {
+         console.log("listTopics", $scope.persona.email);
+         $scope.topicList = undefined;
+         $scope.selected = undefined;
+         $http.post("/app/ListTopics", {
+            email: $scope.persona.email
+         }).then(function(response) {
+            console.log("listTopics", response.data);
+            if (response.data && response.data.topicList) {
+               $scope.topicList = response.data.topicList;
+               console.log("topicList length", $scope.topicList.length);
+               if ($scope.topicList.length > 0) {
+                  console.log("topicList first", $scope.topicList[0]);
+               }
+            } else {
+               console.warn("topicList", response);
+               navigator.id.logout();
+            }
+         });
+      };
+      $scope.setSelected = function() {
+         $scope.selected = this.topic;
+         console.log("selected", $scope.selected);
+      };
+      $scope.$on("changeView", function(event, view) {
+         console.log("changeView", view);
+         if (view === "topics") {
+            $scope.listTopics();
+         }
+      });
+   }]);

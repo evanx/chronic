@@ -167,6 +167,7 @@ public class ChronicApp implements Runnable {
         if (ChronicCookie.matches(httpx.getCookieMap())) {
             ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
             if (cookie.getEmail() != null) {
+                logger.info("getEmail cookie {}", cookie.getEmail());
                 PersonaUserInfo userInfo = 
                         new PersonaVerifier(this, cookie).getUserInfo(httpx.getServerUrl(),
                     cookie.getAccessToken());

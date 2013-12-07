@@ -4,8 +4,6 @@
 package chronic;
 
 import chronic.handler.Enroll;
-import chronic.handler.EnrollAdminUser;
-import chronic.handler.EnrollNetwork;
 import chronic.handler.EnrollOrg;
 import chronic.handler.ListAlerts;
 import chronic.handler.ListTopics;
@@ -46,10 +44,8 @@ public class ChronicHttpHandler implements HttpHandler {
                 new Enroll(app).handle(httpExchange);
             } else if (path.equals("/subscribe")) {
                 new Subscribe(app).handle(httpExchange);
-            } else if (path.equals("/app/EnrollAdminUser")) {
-                new EnrollAdminUser(app).handle(httpExchange);
-            } else if (path.equals("/app/EnrollNetwork")) {
-                new EnrollNetwork(app).handle(httpExchange);
+            } else if (path.equals("/app/EnrollOrg")) {
+                handle(new EnrollOrg(), new Httpx(httpExchange));
             } else if (path.equals("/app/ListAlerts")) {
                 handle(new ListAlerts(), new Httpx(httpExchange));
             } else if (path.equals("/app/ListTopics")) {
@@ -59,14 +55,6 @@ public class ChronicHttpHandler implements HttpHandler {
             } else if (path.equals("/app/LogoutPersona")) {
                 new LogoutPersona(app).handle(httpExchange);
             } else if (path.startsWith("/app/")) {
-                Httpx hx = new Httpx(httpExchange);
-                if (path.equals("/app/EnrollOrg")) {
-                    new EnrollOrg(app).handle(hx);
-                } else {
-                    logger.warn("Invalid request handler {}", path);
-                    hx.handleError("Invalid request handler");
-                    hx.close();
-                }
             } else {
                 webHandler.handle(httpExchange);
             }
@@ -77,8 +65,9 @@ public class ChronicHttpHandler implements HttpHandler {
 
     private void handle(ChronicHandler handler, Httpx httpx) {
         try {
-            handler.handle(app, httpx);
+            httpx.sendResponse(handler.handle(app, httpx));
         } catch (Exception e) {
+            e.printStackTrace(System.err);
             httpx.handleError(e);
         }
         httpx.close();
