@@ -88,7 +88,7 @@ public class Post implements HttpHandler {
             app.putRecord(record);
             sendPlainResponse(httpExchange, "ok");
         } catch (CertificateException | StorageException | NumberFormatException | IOException e) {
-            e.printStackTrace(System.err);
+            logger.warn(e.getMessage());
             sendPlainResponse(httpExchange, "error: %s: %s", e.getClass(), e.getMessage());
         }
     }
