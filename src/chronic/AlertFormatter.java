@@ -26,11 +26,11 @@ import chronic.type.StatusType;
  *
  * @author evan.summers
  */
-public class StatusRecordFormatter {
+public class AlertFormatter {
 
     StatusRecord status = new StatusRecord();
 
-    public StatusRecordFormatter(StatusRecord status) {
+    public AlertFormatter(StatusRecord status) {
         this.status = status;
     }
     
@@ -49,9 +49,9 @@ public class StatusRecordFormatter {
     public String formatSubject() {
         if (status.isAlertable()) {
             if (status.statusType == StatusType.ELAPSED || status.subject == null) {
-                return status.getTopic() + ' ' + status.statusType.getLabel();
+                return status.getTopic() + ' ' + formatAlertTypeLabel();
             } else if (!status.subject.contains(status.statusType.name())) {
-                return status.subject + ' ' + status.statusType.getLabel();
+                return status.subject + ' ' + formatAlertTypeLabel();
             } else {
                 return status.subject;
             }
@@ -60,7 +60,5 @@ public class StatusRecordFormatter {
             return status.getTopic();
         }
         return status.subject;
-    }
-    
-    
+    }        
 }

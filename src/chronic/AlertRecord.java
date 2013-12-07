@@ -85,7 +85,7 @@ public class AlertRecord {
     }
     
     public Map getAlertMap(boolean detail) {
-        StatusRecordFormatter formatter = new StatusRecordFormatter(status);
+        AlertFormatter formatter = new AlertFormatter(status);
         Map map = new TreeMap();
         map.put("from", status.from);
         map.put("username", status.username);

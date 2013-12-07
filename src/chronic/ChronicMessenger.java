@@ -61,7 +61,8 @@ public class ChronicMessenger {
         }
         for (String email : app.getStorage().getEmails(alert)) {
             mailer.sendEmail(email,
-                    alert.getStatus().getSubject(), new AlertBuilder().build(alert));
+                    new AlertFormatter(alert.getStatus()).formatSubject(),
+                    new AlertBuilder().build(alert));
         }
     }
 
