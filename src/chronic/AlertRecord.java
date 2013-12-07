@@ -109,6 +109,12 @@ public class AlertRecord {
         }
         return map;
     }
-        
+
+    @Override
+    public String toString() {
+        return status.toString();
+    }
+    
+    
     
 }

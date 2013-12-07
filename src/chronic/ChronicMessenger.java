@@ -21,8 +21,6 @@
 package chronic;
 
 import chronic.mail.Mailer;
-import java.io.IOException;
-import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.system.Executor;
@@ -32,19 +30,19 @@ import vellum.system.Executor;
  * @author evan.summers
  */
 public class ChronicMessenger {
-    Logger logger = LoggerFactory.getLogger(getClass());
+    static Logger logger = LoggerFactory.getLogger(ChronicMessenger.class);
     ChronicApp app;
     Mailer mailer;
     
     public ChronicMessenger(ChronicApp app) {
         this.app = app;
-        if (app.getProperties().getMailer().isEnabled()) {
-            mailer = new Mailer(app.getProperties().getMailer());
-        }
     }
 
     public void init() throws Exception {
         logger.info("initialized");
+        if (app.getProperties().getMailerProperties().isEnabled()) {
+            mailer = new Mailer(app.getProperties().getMailerProperties());
+        }
     }
 
     public synchronized void alert(AlertRecord alert) {
@@ -61,6 +59,7 @@ public class ChronicMessenger {
             }
             if (mailer != null) {
                 for (String email : app.getStorage().getEmails(alert)) {
+                    logger.info("email {}", email);
                     mailer.sendEmail(email,
                             alert.getStatus().getSubject(), new AlertBuilder().build(alert));
                 }

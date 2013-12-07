@@ -148,7 +148,7 @@ public class ChronicApp implements Runnable {
     }
 
     public boolean isAdmin(String email) {
-        return email != null && properties.getAdminEmails().contains(email) ||
+        return properties.getAdminEmails().contains(email) ||
             Strings.endsWith(email, properties.getAdminDomains());        
     }    
     

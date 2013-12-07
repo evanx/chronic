@@ -4,6 +4,9 @@
  */
 package chronic.mail;
 
+import vellum.util.Args;
+import vellum.util.ExtendedProperties;
+
 /**
  *
  * @author evan.summers
@@ -18,6 +21,10 @@ public class MailerProperties {
     String host = "localhost";
     int port = 25;
     boolean enabled = true;
+
+    public MailerProperties(ExtendedProperties properties) {
+        
+    }
     
     public MailerProperties(byte[] logoBytes, String organisation, String from) {
         this.logoBytes = logoBytes;
@@ -56,5 +63,11 @@ public class MailerProperties {
     public boolean isEnabled() {
         return enabled;
     }
-       
+
+    @Override
+    public String toString() {
+        return Args.format(organisation, from, logoBytes.length);
+    }
+    
+    
 }

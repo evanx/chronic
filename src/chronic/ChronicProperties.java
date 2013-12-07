@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
 import vellum.httpserver.HttpServerProperties;
 import vellum.util.ExtendedProperties;
@@ -37,8 +39,10 @@ import vellum.util.Streams;
  * @author evan.summers
  */
 public class ChronicProperties {
+    static Logger logger = LoggerFactory.getLogger(ChronicProperties.class);
 
-    private String alertScript = "scripts/alert.sh";
+    private String serverAddress = "https://appcentral.info";
+    private String alertScript = null;
     private long period = Millis.fromMinutes(3);
     private boolean testing = false;
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
@@ -48,11 +52,12 @@ public class ChronicProperties {
     private Set<String> adminEmails;
     private Set<String> allowedAddresses;
     private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
-    private MailerProperties mailer;
+    private MailerProperties mailerProperties;
 
     public void init() throws IOException {
         String confFileName = properties.getString("chronic.json", "chronic.json");
         JsonObjectWrapper object = new JsonObjectWrapper(new File(confFileName));
+        serverAddress = object.getString("serverAddress", serverAddress);
         alertScript = object.getString("alertScript", alertScript);
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
@@ -66,10 +71,18 @@ public class ChronicProperties {
         }
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
-        byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));
-        mailer = new MailerProperties(bytes, "appcentral.info", "alerts@appcentral.info");        
+        if (serverAddress.contains("appcentral.info")) {
+            byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));
+            mailerProperties = new MailerProperties(bytes, 
+                    "appcentral.info", "alerts@appcentral.info");         
+            logger.info("mailer {}", mailerProperties);
+        }
     }
-    
+
+    public String getServerAddress() {
+        return serverAddress;
+    }
+        
     public String getAlertScript() {
         return alertScript;
     }
@@ -106,7 +119,7 @@ public class ChronicProperties {
         return allowedAddresses;
     }   
     
-    public MailerProperties getMailer() {
-        return mailer;
+    public MailerProperties getMailerProperties() {
+        return mailerProperties;
     }
 }

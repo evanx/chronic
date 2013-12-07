@@ -195,9 +195,9 @@ public class StatusRecordParser {
     public String getSource() {
         if (record.username != null && record.hostname != null && record.service != null) {
             if (record.service.matches("\\s")) {
-                return String.format("%s@%s::(%s)", record.username, record.hostname, record.service);
+                return String.format("%s@%s: %s", record.username, record.hostname, record.service);
             } else {
-                return String.format("%s@%s::%s", record.username, record.hostname, record.service);
+                return String.format("%s@%s/%s", record.username, record.hostname, record.service);
             }
         }
         if (record.username != null && record.hostname != null) {
