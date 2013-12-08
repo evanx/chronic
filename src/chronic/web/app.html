@@ -15,7 +15,6 @@
    </head>
 
    <body ng-controller="personaController">
-
       <div class="container">
          <div class="navbar navbar-default" role="navigation">
             <div class="navbar-header">
@@ -49,6 +48,7 @@
 
          <div class="container" ng-controller="alertsController" ng-cloak 
               ng-show="persona.email && view === 'alerts'">
+            <p ng-show="loading" ng-cloak>Loading...</p>
             <p ng-show="alerts && alerts.length == 0" ng-cloak>No alerts</p>
             <div class="row" ng-show="alerts.length > 0" ng-cloak>
                <div class="col-lg-12">
@@ -86,6 +86,7 @@
 
          <div class="container" ng-controller="topicsController" ng-cloak 
               ng-show="persona.email  && view === 'topics'">
+            <p ng-show="loading" ng-cloak>Loading...</p>
             <p ng-show="topics && topics.length == 0" ng-cloak>No topics</p>
             <div class="row" ng-show="topics.length > 0" ng-cloak>
                <div class="col-lg-12">
@@ -127,6 +128,7 @@
 
          <div class="container" ng-controller="subscribersController" ng-cloak 
               ng-show="persona.email  && view === 'subscribers'">
+            <p ng-show="loading" ng-cloak>Loading...</p>
             <p ng-show="subscribers && subscribers.length == 0" ng-cloak>No subscribers</p>
             <div class="row" ng-show="subscribers.length > 0" ng-cloak>
                <div class="col-lg-12">
@@ -162,6 +164,7 @@
          
          <div class="container" ng-controller="rolesController" ng-cloak 
               ng-show="persona.email  && view === 'roles'">
+            <p ng-show="loading" ng-cloak>Loading...</p>
             <p ng-show="roles && roles.length == 0" ng-cloak>No roles</p>
             <div class="row" ng-show="roles.length > 0" ng-cloak>
                <div class="col-lg-12">

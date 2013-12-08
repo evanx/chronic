@@ -8,14 +8,13 @@ import java.util.Date;
 import vellum.datatype.Emails;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
-import vellum.parameter.StringMap;
 import vellum.storage.AbstractEntity;
 
 /**
  *
  * @author evan.summers
  */
-public class AdminUser extends AbstractEntity {
+public class User extends AbstractEntity {
 
     Long id;
     String email;
@@ -26,15 +25,15 @@ public class AdminUser extends AbstractEntity {
     Date logoutTime;
     boolean enabled = false;
 
-    public AdminUser() {
+    public User() {
     }
 
-    public AdminUser(String email) {
+    public User(String email) {
         this.email = email;
         this.label = Emails.getUsername(email);
     }
     
-    public AdminUser(JMap map) throws JMapException {
+    public User(JMap map) throws JMapException {
         email = map.getString("email");
         label = map.getString("name");
     }
@@ -104,8 +103,8 @@ public class AdminUser extends AbstractEntity {
         this.logoutTime = logoutTime;
     }
 
-    public StringMap getStringMap() {
-        StringMap map = new StringMap();
+    public JMap getMap() {
+        JMap map = new JMap();
         map.put("id", id);
         map.put("email", email);
         map.put("label", label);
@@ -115,6 +114,6 @@ public class AdminUser extends AbstractEntity {
 
     @Override
     public String toString() {
-        return getStringMap().toJson();
+        return getMap().toJson();
     }
 }

@@ -5,7 +5,7 @@
 package chronic.persona;
 
 import chronic.ChronicApp;
-import chronic.entity.AdminUser;
+import chronic.entity.User;
 import chronic.ChronicCookie;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -59,17 +59,17 @@ public class LoginPersona implements HttpHandler {
                 httpx.getServerUrl(), assertion);
         logger.info("persona {}", userInfo);
         String email = userInfo.getEmail();
-        AdminUser user = app.getStorage().getAdminUserStorage().select(email);
+        User user = app.getStorage().getUserStorage().select(email);
         if (user == null) {
-            user = new AdminUser(email);
+            user = new User(email);
             user.setEnabled(true);
             user.setLoginTime(new Date());
-            app.getStorage().getAdminUserStorage().insert(user);
+            app.getStorage().getUserStorage().insert(user);
             logger.info("insert user {}", email);
         } else {
             user.setEnabled(true);
             user.setLoginTime(new Date());
-            app.getStorage().getAdminUserStorage().update(user);
+            app.getStorage().getUserStorage().update(user);
         }
         cookie = new ChronicCookie(user.getEmail(), user.getLabel(), 
                 user.getLoginTime().getTime(), assertion);

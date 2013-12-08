@@ -4,8 +4,8 @@
 package chronic.transaction;
 
 import chronic.*;
-import chronic.entity.AdminUser;
-import chronic.entity.AdminUserRoleType;
+import chronic.entity.User;
+import chronic.entity.UserRoleType;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
@@ -28,10 +28,10 @@ public class SubscribeTransaction {
     public void handle(ChronicApp app, String orgUrl, String email) throws StorageException {
         logger.info("handle {} {}", orgUrl, email);
         ComparableTuple key = Comparables.tuple(orgUrl, email);
-        AdminUser user = app.getStorage().getAdminUserStorage().select(email);
+        User user = app.getStorage().getUserStorage().select(email);
         if (user == null) {
-            user = new AdminUser(email);
-            app.getStorage().getAdminUserStorage().insert(user);
+            user = new User(email);
+            app.getStorage().getUserStorage().insert(user);
         }
         Org org = app.getStorage().getOrgStorage().select(orgUrl);
         if (org == null) {
@@ -39,11 +39,11 @@ public class SubscribeTransaction {
             app.getStorage().getOrgStorage().insert(org);
         }
         for (Topic topic : app.getStorage().listTopics(org)) {
-            TopicSubscriber subscriber = app.getStorage().getTopicSubscriberStorage().
+            TopicSubscriber subscriber = app.getStorage().getSubscriberStorage().
                     select(Comparables.tuple(org.getUrl(), topic.getTopicString(), email));
             if (subscriber == null) {
                 subscriber = new TopicSubscriber(orgUrl, topic.getTopicString(), email);
-                app.getStorage().getTopicSubscriberStorage().insert(subscriber);                
+                app.getStorage().getSubscriberStorage().insert(subscriber);                
             }
         }
         

@@ -5,8 +5,8 @@ package chronic.handler;
 
 import chronic.transaction.SubscribeTransaction;
 import chronic.*;
-import chronic.entity.AdminUser;
-import chronic.entity.AdminUserRoleType;
+import chronic.entity.User;
+import chronic.entity.UserRoleType;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import com.sun.net.httpserver.HttpExchange;

@@ -5,7 +5,7 @@
 package chronic.persona;
 
 import chronic.ChronicApp;
-import chronic.entity.AdminUser;
+import chronic.entity.User;
 import chronic.ChronicCookie;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -62,9 +62,9 @@ public class LogoutPersona implements HttpHandler {
 
     private void handle() throws Exception {
         logger.info("cookie", cookie.getEmail());
-        AdminUser user = app.getStorage().getAdminUserStorage().find(cookie.getEmail());
+        User user = app.getStorage().getUserStorage().find(cookie.getEmail());
         user.setLogoutTime(new Date());
-        app.getStorage().getAdminUserStorage().update(user);
+        app.getStorage().getUserStorage().update(user);
         httpExchangeInfo.sendEmptyOkResponse();
     } 
 }

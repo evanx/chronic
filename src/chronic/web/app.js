@@ -113,9 +113,11 @@ app.controller("alertsController", ["$scope", "$http",
          console.log("alerts", $scope.persona.email);
          $scope.alerts = undefined;
          $scope.selected = undefined;
+         $scope.loading = true;
          $http.post("/chronicapp/alertList", {
             email: $scope.persona.email
          }).then(function(response) {
+            $scope.loading = false;
             console.log("alerts", response.data);
             if (response.data && response.data.alerts) {
                $scope.alerts = response.data.alerts;
@@ -149,9 +151,11 @@ app.controller("topicsController", ["$scope", "$http",
          console.log("topics", $scope.persona.email);
          $scope.topics = undefined;
          $scope.selected = undefined;
+         $scope.loading = true;
          $http.post("/chronicapp/topicList", {
             email: $scope.persona.email
          }).then(function(response) {
+            $scope.loading = false;
             console.log("topics", response.data);
             if (response.data && response.data.topics) {
                $scope.topics = response.data.topics;
@@ -181,9 +185,11 @@ app.controller("subscribersController", ["$scope", "$http",
          console.log("subscribers", $scope.persona.email);
          $scope.subscribers = undefined;
          $scope.selected = undefined;
+         $scope.loading = true;
          $http.post("/chronicapp/subscriberList", {
             email: $scope.persona.email
          }).then(function(response) {
+            $scope.loading = false;
             console.log("subscribers", response.data);
             if (response.data && response.data.subscribers) {
                $scope.subscribers = response.data.subscribers;
@@ -213,9 +219,11 @@ app.controller("rolesController", ["$scope", "$http",
          console.log("roles", $scope.persona.email);
          $scope.roles = undefined;
          $scope.selected = undefined;
+         $scope.loading = true;
          $http.post("/chronicapp/roleList", {
             email: $scope.persona.email
          }).then(function(response) {
+            $scope.loading = false;
             console.log("roles", response.data);
             if (response.data && response.data.roles) {
                $scope.roles = response.data.roles;

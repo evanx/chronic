@@ -20,8 +20,8 @@
  */
 package chronic;
 
-import chronic.entity.AdminUser;
-import chronic.entity.AdminUserRoleType;
+import chronic.entity.User;
+import chronic.entity.UserRoleType;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
@@ -29,6 +29,8 @@ import chronic.entity.Topic;
 import chronic.entity.TopicSubscriber;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import vellum.storage.ChronicQueryType;
 import vellum.storage.Storage;
 import vellum.storage.StorageException;
+import vellum.util.Comparables;
 
 /**
  *
@@ -57,7 +60,7 @@ public abstract class ChronicStorage {
 
     public abstract void shutdown();
     
-    public abstract Storage<AdminUser> getAdminUserStorage();
+    public abstract Storage<User> getUserStorage();
     
     public abstract Storage<Org> getOrgStorage();
     
@@ -67,13 +70,7 @@ public abstract class ChronicStorage {
 
     public abstract Storage<Topic> getTopicStorage();
     
-    public abstract Storage<TopicSubscriber> getTopicSubscriberStorage();
-
-    public abstract Map<AdminUserRoleType, OrgRole> mapOrgRole(String url, String email);
-    
-    public abstract Collection<AdminUserRoleType> listOrgRoleType(String url, String email);
-    
-    public abstract Iterable<Topic> listTopics(String email) throws StorageException;
+    public abstract Storage<TopicSubscriber> getSubscriberStorage();
     
     public Iterable<String> getEmails(AlertRecord alert) {
         List<String> list = new ArrayList();
@@ -96,4 +93,49 @@ public abstract class ChronicStorage {
         return topics;
     }
 
+    public Iterable<Topic> listTopics(String email) throws StorageException {
+        logger.info("listTopics {} {}", email);
+        Set<Topic> topics = new TreeSet();
+        for (TopicSubscriber topicSubscriber : getSubscriberStorage().selectCollection(null)) {
+            logger.info("listTopics topicSubscriber {}", topicSubscriber);
+            if (topicSubscriber.getEmail().equals(email)) {
+                topics.add(getTopicStorage().find(Comparables.tuple(
+                        topicSubscriber.getOrgUrl(), topicSubscriber.getTopicString())));
+            }            
+        }
+        return topics;
+    }
+    
+    public Map<UserRoleType, OrgRole> mapOrgRole(String url, String email) {
+        Map map = new HashMap();
+        for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
+            if (orgRole.getOrgUrl().equals(url) && 
+                    orgRole.getEmail().equals(email)) {
+                map.put(orgRole.getRole(), orgRole);
+            }
+        }        
+        return map;
+    }
+
+    public Collection<UserRoleType> listOrgRoleType(String url, String email) {
+        List<UserRoleType> roleTypes = new LinkedList();
+        for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
+            if (orgRole.getOrgUrl().equals(url) && 
+                    orgRole.getEmail().equals(email)) {
+                roleTypes.add(orgRole.getRole());
+            }
+        }        
+        return roleTypes;
+    }
+
+    public Iterable<User> listUsers(String verifiedEmail) {
+        List list = new LinkedList();
+        return list;
+    }
+
+    public Iterable<TopicSubscriber> listSubscribers(String verifiedEmail) {
+        List list = new LinkedList();
+        return list;
+    }
+        
 }

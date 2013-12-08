@@ -18,11 +18,11 @@ public class OrgRole extends AbstractIdEntity {
     Long id;
     String orgUrl;
     String email;
-    AdminUserRoleType role;    
+    UserRoleType role;    
     ChronicApp app; 
     
     transient Org org;
-    transient AdminUser user; 
+    transient User user; 
 
     public OrgRole(ChronicApp app, String orgUrl, String email) {
         this.app = app;
@@ -30,7 +30,7 @@ public class OrgRole extends AbstractIdEntity {
         this.email = email;
     }
     
-    public OrgRole(Org org, AdminUser user, AdminUserRoleType role) {
+    public OrgRole(Org org, User user, UserRoleType role) {
         this.org = org;
         this.user = user;
         this.role = role;
@@ -68,13 +68,13 @@ public class OrgRole extends AbstractIdEntity {
         return email;
     }
 
-    public AdminUserRoleType getRole() {
+    public UserRoleType getRole() {
         return role;
     }
     
-    public AdminUser getUser() throws StorageException {
+    public User getUser() throws StorageException {
         if (user == null && email != null) {
-            user = app.getStorage().getAdminUserStorage().find(email);
+            user = app.getStorage().getUserStorage().find(email);
         }
         return user;
     }

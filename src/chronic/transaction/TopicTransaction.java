@@ -4,7 +4,7 @@
 package chronic.transaction;
 
 import chronic.*;
-import chronic.entity.AdminUser;
+import chronic.entity.User;
 import chronic.entity.Org;
 import chronic.entity.Topic;
 import chronic.entity.TopicSubscriber;

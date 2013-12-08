@@ -8,9 +8,9 @@ package chronic.entity;
  *
  * @author evan.summers
  */
-public enum AdminUserRoleType {
+public enum UserRoleType {
     SUPER,    
     ADMIN,
-    DEFAULT
+    SUBSCRIBER
         
 }
