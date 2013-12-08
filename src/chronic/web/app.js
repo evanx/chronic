@@ -5,7 +5,7 @@ app.factory("personaService", ["$http", "$q", function($http, $q) {
       return {
          login: function(assertion) {
             var deferred = $q.defer();
-            $http.post("/persona/login", {
+            $http.post("/chronicapp/personaLogin", {
                assertion: assertion,
                timezoneOffset: (- new Date().getTimezoneOffset()/60)
             }).then(function(response) {
@@ -20,7 +20,7 @@ app.factory("personaService", ["$http", "$q", function($http, $q) {
             return deferred.promise;
          },
          logout: function(email) {
-            return $http.post("/persona/logout", {
+            return $http.post("/chronicapp/personaLogout", {
                email: email
             }).then(function(response) {
                if (response.errorMessage) {
@@ -47,11 +47,10 @@ app.controller("personaController", ["$scope", "$location", "personaService",
       $scope.changeView = function(view) {
          console.log("persona changeView", view);
          $scope.view = view;
-         $location.path("/" + view);
+         //$location.path("/" + view);
          $scope.$broadcast("changeView", view);
       };
       $scope.getClass = function(path) {
-         console.log("getClass", $location.path());
          if ($scope.view === path) {
             return "active";
          } else {
@@ -114,7 +113,7 @@ app.controller("alertsController", ["$scope", "$http",
          console.log("alerts", $scope.persona.email);
          $scope.alerts = undefined;
          $scope.selected = undefined;
-         $http.post("/alert/list", {
+         $http.post("/chronicapp/alertList", {
             email: $scope.persona.email
          }).then(function(response) {
             console.log("alerts", response.data);
@@ -150,7 +149,7 @@ app.controller("topicsController", ["$scope", "$http",
          console.log("topics", $scope.persona.email);
          $scope.topics = undefined;
          $scope.selected = undefined;
-         $http.post("/topic/list", {
+         $http.post("/chronicapp/topicList", {
             email: $scope.persona.email
          }).then(function(response) {
             console.log("topics", response.data);
@@ -182,7 +181,7 @@ app.controller("subscribersController", ["$scope", "$http",
          console.log("subscribers", $scope.persona.email);
          $scope.subscribers = undefined;
          $scope.selected = undefined;
-         $http.post("/subscriber/list", {
+         $http.post("/chronicapp/subscriberList", {
             email: $scope.persona.email
          }).then(function(response) {
             console.log("subscribers", response.data);
@@ -214,7 +213,7 @@ app.controller("rolesController", ["$scope", "$http",
          console.log("roles", $scope.persona.email);
          $scope.roles = undefined;
          $scope.selected = undefined;
-         $http.post("/role/list", {
+         $http.post("/chronicapp/roleList", {
             email: $scope.persona.email
          }).then(function(response) {
             console.log("roles", response.data);

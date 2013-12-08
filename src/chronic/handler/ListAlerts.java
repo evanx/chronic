@@ -24,16 +24,16 @@ public class ListAlerts implements ChronicHandler {
     
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
-        String email = app.getEmail(httpx);
-        List alertList = new LinkedList();
+        String email = app.getVerifiedEmail(httpx);
+        List alerts = new LinkedList();
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 new AlertRecordDescendingTimestampComparator())) {
             if (alert.getStatus().getService() != null) {
-                alertList.add(alert.getAlertMap(app.getProperties().isAdmin(email)));
+                alerts.add(alert.getAlertMap(app.getProperties().isAdmin(email)));
             } else {
                 logger.warn("exclude {} {}", alert.getStatus().getOrgUrl(), email);
             }
         }
-        return JMaps.create("alertList", alertList);
+        return JMaps.create("alerts", alerts);
     }
 }

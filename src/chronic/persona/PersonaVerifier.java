@@ -44,9 +44,9 @@ public class PersonaVerifier {
         connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
         connection.setDoOutput(true);
         StringBuilder builder = new StringBuilder();
-        builder.append("assertion=").append(assertion);
+        builder.append("assertion=").append(URLEncoder.encode(assertion, "UTF-8"));
         builder.append("&audience=").append(URLEncoder.encode(serverUrl, "UTF-8"));
-        logger.trace("request", url, builder.toString());
+        logger.info("persona {} {}", url, builder.toString());
         connection.getOutputStream().write(builder.toString().getBytes());
         JsonObjectWrapper object = new JsonObjectWrapper(connection.getInputStream());
         if (object.hasProperty("status")) {

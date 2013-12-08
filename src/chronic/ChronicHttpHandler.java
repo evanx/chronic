@@ -38,24 +38,31 @@ public class ChronicHttpHandler implements HttpHandler {
         try {
             String path = httpExchange.getRequestURI().getPath();
             logger.trace("handle {}", path);
-            if (path.equals("/post")) {                
+            if (path.equals("/post")) {
                 new Post(app).handle(httpExchange);
             } else if (path.equals("/enroll")) {
                 new Enroll(app).handle(httpExchange);
             } else if (path.equals("/subscribe")) {
                 new Subscribe(app).handle(httpExchange);
-            } else if (path.equals("/org/enroll")) {
-                handle(new EnrollOrg(), new Httpx(httpExchange));
-            } else if (path.equals("/alert/list")) {
-                handle(new ListAlerts(), new Httpx(httpExchange));
-            } else if (path.equals("/topic/list")) {
-                handle(new ListTopics(), new Httpx(httpExchange));
-            } else if (path.equals("/persona/login")) {
-                new LoginPersona(app).handle(httpExchange);
-            } else if (path.equals("/persona/login")) {
-                new LogoutPersona(app).handle(httpExchange);
-            } else if (path.equals("/subscriber/list")) {
-            } else if (path.equals("/role/list")) {
+            } else if (path.startsWith("/chronicapp/")) {
+                logger.info("path {}", path);
+                if (path.equals("/chronicapp/personaLogin")) {
+                    new LoginPersona(app).handle(httpExchange);
+                } else if (path.equals("/chronicapp/personaLogout")) {
+                    new LogoutPersona(app).handle(httpExchange);
+                } else if (path.equals("/chronicapp/orgEnroll")) {
+                    handle(new EnrollOrg(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/alertList")) {
+                    handle(new ListAlerts(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/topicList")) {
+                    handle(new ListTopics(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/subscriberList")) {
+                    logger.warn("handle {}", path);
+                } else if (path.equals("/chronicapp/roleList")) {
+                    logger.warn("handle {}", path);
+                } else {
+                    logger.warn("handle {}", path);
+                }
             } else {
                 webHandler.handle(httpExchange);
             }

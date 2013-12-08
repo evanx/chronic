@@ -66,7 +66,7 @@
                               <i>{{alert.timestampLabel}}</i>
                            </td>
                            <td>
-                              <b>{{alert.person}}</b>
+                              <b>{{alert.topicString}}</b>
                            </td>
                            <td style='width: 80%'>
                               {{alert.message}}
@@ -85,7 +85,7 @@
          </div>
 
          <div class="container" ng-controller="topicsController" ng-cloak 
-              ng-show="topica.email  && view === 'topics'">
+              ng-show="persona.email  && view === 'topics'">
             <p ng-show="topics && topics.length == 0" ng-cloak>No topics</p>
             <div class="row" ng-show="topics.length > 0" ng-cloak>
                <div class="col-lg-12">

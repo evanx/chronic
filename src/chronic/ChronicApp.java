@@ -23,8 +23,6 @@ package chronic;
 import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
-import chronic.transaction.SubscribeTransaction;
-import chronic.transaction.TopicTransaction;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.io.IOException;
@@ -159,19 +157,19 @@ public class ChronicApp implements Runnable {
         }
     }
 
-    public String getEmail(Httpx httpx) throws JMapException, IOException, PersonaException {
+    public String getVerifiedEmail(Httpx httpx) throws JMapException, IOException, PersonaException {
         if (ChronicCookie.matches(httpx.getCookieMap())) {
             ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
             if (cookie.getEmail() != null) {
-                logger.info("getEmail cookie {}", cookie.getEmail());
                 PersonaUserInfo userInfo = 
                         new PersonaVerifier(this, cookie).getUserInfo(httpx.getServerUrl(),
-                    cookie.getAccessToken());
+                    cookie.getAssertion());
                 if (cookie.getEmail().equals(userInfo.getEmail())) {
                     return userInfo.getEmail();
                 }
             }
         }
+        logger.warn("getVerifiedEmail cookie {}", httpx.getCookieMap());
         httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);                
         throw new PersonaException("no verified email");
     }

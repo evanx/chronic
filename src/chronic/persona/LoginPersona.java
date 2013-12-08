@@ -41,19 +41,13 @@ public class LoginPersona implements HttpHandler {
             timezoneOffset = map.getString("timezoneOffset");
             logger.info("timezoneOffset {}", timezoneOffset);
             assertion = map.getString("assertion");
-            if (assertion != null) {
-                handle();
-            } else {
-                httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
-                httpx.handleError("missing assertion");
-            }
+            handle();
         } catch (Exception e) {
             httpx.handleError(e);
         }
         httpExchange.close();
     }
 
-    AdminUser adminUser;
     ChronicCookie cookie;
     
     private void handle() throws Exception {
@@ -62,29 +56,26 @@ public class LoginPersona implements HttpHandler {
             cookie = new ChronicCookie(httpx.getCookieMap());
         }            
         PersonaUserInfo userInfo = new PersonaVerifier(app, cookie).getUserInfo(
-                httpx.getServerUrl(), 
-                assertion);
+                httpx.getServerUrl(), assertion);
         logger.info("persona {}", userInfo);
         String email = userInfo.getEmail();
-        if (app.getStorage().getAdminUserStorage().containsKey(email)) {
-            adminUser = app.getStorage().getAdminUserStorage().find(email);
+        AdminUser user = app.getStorage().getAdminUserStorage().select(email);
+        if (user == null) {
+            user = new AdminUser(email);
+            user.setEnabled(true);
+            user.setLoginTime(new Date());
+            app.getStorage().getAdminUserStorage().insert(user);
+            logger.info("insert user {}", email);
         } else {
-            adminUser = new AdminUser(email);
-            app.getStorage().getAdminUserStorage().insert(adminUser);
-            logger.info("new email {}", email);
+            user.setEnabled(true);
+            user.setLoginTime(new Date());
+            app.getStorage().getAdminUserStorage().update(user);
         }
-        adminUser.setEnabled(true);
-        adminUser.setLoginTime(new Date());
-        app.getStorage().getAdminUserStorage().update(adminUser);
-        handle(adminUser.getEmail(), adminUser.getLabel(), adminUser.getLoginTime().getTime());
-    }
-
-   
-    private void handle(String email, String label, long loginTime) throws Exception {
-        cookie = new ChronicCookie(email, label, loginTime, assertion);
-        JMap map = cookie.toMap();
-        httpx.setCookie(map, ChronicCookie.MAX_AGE_MILLIS);
-        map.put("admin", app.getProperties().isAdmin(email));
-        httpx.sendResponse(map);
+        cookie = new ChronicCookie(user.getEmail(), user.getLabel(), 
+                user.getLoginTime().getTime(), assertion);
+        JMap cookieMap = cookie.toMap();
+        logger.info("cookie {}", cookieMap);
+        httpx.setCookie(cookieMap, ChronicCookie.MAX_AGE_MILLIS);
+        httpx.sendResponse(cookieMap);
     }
 }

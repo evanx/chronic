@@ -21,7 +21,6 @@
 package chronic;
 
 import java.security.GeneralSecurityException;
-import java.util.Collection;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base32;
@@ -29,7 +28,6 @@ import vellum.datatype.Millis;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.util.Bytes;
-import vellum.util.Lists;
 
 /**
  *
@@ -37,12 +35,15 @@ import vellum.util.Lists;
  */
 public class ChronicCookie {
     public static final long MAX_AGE_MILLIS = Millis.fromHours(16);
-
-    String email;
-    String label;
-    long loginMillis;
-    String accessToken;
-    String authCode; 
+    
+    private final static String path = "/chronicapp";
+    private final static String version = "1";
+    
+    private String email;
+    private String label;
+    private long loginMillis;
+    private String assertion;
+    private String authCode; 
             
     public ChronicCookie() {
     }
@@ -52,20 +53,20 @@ public class ChronicCookie {
             this.email = map.getString("email");
             this.label = map.getString("label");
             this.loginMillis = map.getLong("loginMillis");
-            this.accessToken = map.getString("accessToken");
+            this.assertion = map.getString("assertion");
             this.authCode = map.getString("authCode", null);
         }
     }
 
-    public ChronicCookie(String email, String displayName, long loginMillis, String accessToken) {
+    public ChronicCookie(String email, String displayName, long loginMillis, String assertion) {
         this.email = email;
         this.label = displayName;
         this.loginMillis = loginMillis;
-        this.accessToken = accessToken;
+        this.assertion = assertion;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getAssertion() {
+        return assertion;
     }
 
     public String getAuthCode() {
@@ -106,7 +107,7 @@ public class ChronicCookie {
         map.put("email", email);
         map.put("label", label);
         map.put("loginMillis", loginMillis);
-        map.put("accessToken", accessToken);
+        map.put("assertion", assertion);
         map.put("authCode", authCode);
         return map;
     }
@@ -117,7 +118,7 @@ public class ChronicCookie {
         map.put("label", "");
         map.put("loginMillis", 0);
         map.put("authCode", "");
-        map.put("accessToken", "");
+        map.put("assertion", "");
         return map;        
     }
     
@@ -127,18 +128,6 @@ public class ChronicCookie {
     }
     
     public static boolean matches(JMap map) {
-        return map.containsKey("email") && 
-                map.containsKey("label") &&
-                map.containsKey("loginMillis") &&
-                map.containsKey("authCode") &&
-                map.containsKey("accessToken");
+        return !map.isEmpty("email", "label", "loginMillis", "authCode", "assertion");
     }
-
-    public static Collection<String> names() {
-        return Lists.asList(new String[] {
-            "email", "label", "loginMillis", "accessToken", "authCode"
-        });
-    }    
-    
-    
 }

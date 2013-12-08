@@ -60,11 +60,6 @@ public class StatusRecordParser {
     }
     
     private void parseAlertType(String string) {
-        int index = string.indexOf(" ");
-        if (index > 0) {
-            record.setTopicString(string.substring(index + 1));
-            string = string.substring(0, index);
-        }
         try {
             record.setAlertType(AlertType.valueOf(string));
         } catch (Exception e) {
@@ -143,21 +138,21 @@ public class StatusRecordParser {
             } else if (line.startsWith("Content-Type: ")) {
                 parseContentTypeLine(line);
             } else if (line.startsWith("Subscribe: ")) {
-                parseSubscribe(line.substring(11));
+                parseSubscribe(line.substring(11).trim());
             } else if (line.startsWith("Service: ")) {
-                record.setService(line.substring(9));
+                record.setService(line.substring(9).trim());
                 nagiosStatus = false;
             } else if (line.startsWith("Period: ")) {
-                parsePeriod(line.substring(8));
+                parsePeriod(line.substring(8).trim());
             } else if (line.startsWith("Status: ")) {
                 nagiosStatus = false;
-                parseStatusType(line.substring(8));
+                parseStatusType(line.substring(8).trim());
             } else if (line.startsWith("Topic: ")) {
-                record.setTopicString(line.substring(7));
+                record.setTopicString(line.substring(7).trim());
             } else if (line.startsWith("Alert: ")) {
-                parseAlertType(line.substring(7));
+                parseAlertType(line.substring(7).trim());
             } else if (line.startsWith("AlertFormat: ")) {
-                parseAlertFormatType(line.substring(13));
+                parseAlertFormatType(line.substring(13).trim());
             } else if (!inHeader) {
                 if (nagiosStatus) {
                     parseNagiosStatus(line);
