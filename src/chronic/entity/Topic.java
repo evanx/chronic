@@ -15,14 +15,18 @@ import vellum.util.Comparables;
 public final class Topic extends AbstractIdEntity {
     Long id;
     String orgUrl;
+    String networkName;
+    String hostName;
     String topicString;
     boolean enabled = true;
             
     public Topic() {
     }
 
-    public Topic(String orgUrl, String topicString) {
+    public Topic(String orgUrl, String networkName, String hostName, String topicString) {
         this.orgUrl = orgUrl;
+        this.networkName = networkName;
+        this.hostName = hostName;
         this.topicString = topicString;
     }
 
@@ -57,6 +61,8 @@ public final class Topic extends AbstractIdEntity {
         JMap map = new JMap();
         map.put("id", id);
         map.put("orgUrl", orgUrl);
+        map.put("networkName", networkName);
+        map.put("hostName", hostName);
         map.put("topicString", topicString);
         return map;
     }

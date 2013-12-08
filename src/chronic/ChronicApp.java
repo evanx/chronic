@@ -172,6 +172,7 @@ public class ChronicApp implements Runnable {
                 }
             }
         }
+        httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);                
         throw new PersonaException("no verified email");
     }
     

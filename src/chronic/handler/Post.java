@@ -87,7 +87,8 @@ public class Post implements HttpHandler {
             logger.trace("content lines {}: {}", status.getLineList().size(),
                     Strings.formatFirst(status.getLineList()));
             logger.debug("status {}", status);
-            new TopicTransaction().handle(app, status.getOrgUrl(), status.getTopicString());
+            new TopicTransaction().handle(app, status.getOrgUrl(), networkName, hostName, 
+                    status.getTopicString());
             if (status.getSubscribers() != null) {
                 for (String subscriber : status.getSubscribers()) {
                     new SubscribeTransaction().handle(app, status.getOrgUrl(), subscriber);

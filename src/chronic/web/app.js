@@ -5,7 +5,7 @@ app.factory("personaService", ["$http", "$q", function($http, $q) {
       return {
          login: function(assertion) {
             var deferred = $q.defer();
-            $http.post("/app/LoginPersona", {
+            $http.post("/persona/login", {
                assertion: assertion,
                timezoneOffset: (- new Date().getTimezoneOffset()/60)
             }).then(function(response) {
@@ -13,20 +13,20 @@ app.factory("personaService", ["$http", "$q", function($http, $q) {
                   console.warn("personaService login", response.errorMessage);
                   deferred.reject(response.errorMessage);
                } else {
-                  console.info("personaService login", response.data.email);
+                  console.log("personaService login", response.data.email);
                   deferred.resolve(response.data);
                }
             });
             return deferred.promise;
          },
          logout: function(email) {
-            return $http.post("/app/LogoutPersona", {
+            return $http.post("/persona/logout", {
                email: email
             }).then(function(response) {
                if (response.errorMessage) {
                   console.warn("personaService logout", response.errorMessage);
                } else {
-                  console.info("personaService logout", response);
+                  console.log("personaService logout", response);
                }
                return response.data;
             });
@@ -37,16 +37,26 @@ app.factory("personaService", ["$http", "$q", function($http, $q) {
 app.controller("personaController", ["$scope", "$location", "personaService",
    function($scope, $location, personaService) {
       $scope.login = function() {
-         console.info("personaController login");
+         console.log("persona login");
          navigator.id.request();
       };
       $scope.logout = function() {
-         console.info("personaController logout");
+         console.log("persona logout");
          navigator.id.logout();
       };
       $scope.changeView = function(view) {
-         console.info("personaController changeView", view);
+         console.log("persona changeView", view);
+         $scope.view = view;
+         $location.path("/" + view);
          $scope.$broadcast("changeView", view);
+      };
+      $scope.getClass = function(path) {
+         console.log("getClass", $location.path());
+         if ($scope.view === path) {
+            return "active";
+         } else {
+            return "";
+         }
       };
       var persona = localStorage.getItem("persona");
       var loggedInUser = null;
@@ -98,24 +108,20 @@ app.controller("personaController", ["$scope", "$location", "personaService",
       });
    }]);
 
-app.controller("alertListController", ["$scope", "$http",
+app.controller("alertsController", ["$scope", "$http",
    function($scope, $http) {
-      $scope.listAlerts = function() {
-         console.log("listAlerts", $scope.persona.email);
-         $scope.alertList = undefined;
+      $scope.alertsList = function() {
+         console.log("alerts", $scope.persona.email);
+         $scope.alerts = undefined;
          $scope.selected = undefined;
-         $http.post("/app/ListAlerts", {
+         $http.post("/alert/list", {
             email: $scope.persona.email
          }).then(function(response) {
-            console.log("listAlerts", response.data);
-            if (response.data && response.data.alertList) {
-               $scope.alertList = response.data.alertList;
-               console.log("alertList length", $scope.alertList.length);
-               if ($scope.alertList.length > 0) {
-                  console.log("alertList first", $scope.alertList[0]);
-               }
+            console.log("alerts", response.data);
+            if (response.data && response.data.alerts) {
+               $scope.alerts = response.data.alerts;
             } else {
-               console.warn("alertList", response);
+               console.warn("alerts", response);
                navigator.id.logout();
             }
          });
@@ -126,36 +132,32 @@ app.controller("alertListController", ["$scope", "$http",
       };
       $scope.$on("loggedOn", function(email) {
          console.log("loggedOn", email);
-         $scope.listAlerts();
+         $scope.changeView('alerts');
       });
       $scope.$on("changeView", function(event, view) {
-         console.log("changeView", view);
+         console.log("alerts changeView", view);
          if (view === "alerts") {
-            $scope.listAlerts();
+            $scope.alertsList();
          } else {
-            $scope.alertList = undefined;            
+            $scope.alerts = undefined;            
          }
       });
    }]);
 
-app.controller("topicListController", ["$scope", "$http",
+app.controller("topicsController", ["$scope", "$http",
    function($scope, $http) {
-      $scope.listTopics = function() {
-         console.log("listTopics", $scope.persona.email);
-         $scope.topicList = undefined;
+      $scope.topicsList = function() {
+         console.log("topics", $scope.persona.email);
+         $scope.topics = undefined;
          $scope.selected = undefined;
-         $http.post("/app/ListTopics", {
+         $http.post("/topic/list", {
             email: $scope.persona.email
          }).then(function(response) {
-            console.log("listTopics", response.data);
-            if (response.data && response.data.topicList) {
-               $scope.topicList = response.data.topicList;
-               console.log("topicList length", $scope.topicList.length);
-               if ($scope.topicList.length > 0) {
-                  console.log("topicList first", $scope.topicList[0]);
-               }
+            console.log("topics", response.data);
+            if (response.data && response.data.topics) {
+               $scope.topics = response.data.topics;
             } else {
-               console.warn("topicList", response);
+               console.warn("topics", response);
                navigator.id.logout();
             }
          });
@@ -165,11 +167,75 @@ app.controller("topicListController", ["$scope", "$http",
          console.log("selected", $scope.selected);
       };
       $scope.$on("changeView", function(event, view) {
-         console.log("changeView", view);
+         console.log("topics changeView", view);
          if (view === "topics") {
-            $scope.listTopics();
+            $scope.topicsList();
          } else {
-            $scope.topicList = undefined;            
+            $scope.topics = undefined;            
+         }
+      });
+   }]);
+
+app.controller("subscribersController", ["$scope", "$http",
+   function($scope, $http) {
+      $scope.subscribersList = function() {
+         console.log("subscribers", $scope.persona.email);
+         $scope.subscribers = undefined;
+         $scope.selected = undefined;
+         $http.post("/subscriber/list", {
+            email: $scope.persona.email
+         }).then(function(response) {
+            console.log("subscribers", response.data);
+            if (response.data && response.data.subscribers) {
+               $scope.subscribers = response.data.subscribers;
+            } else {
+               console.warn("subscribers", response);
+               //navigator.id.logout();
+            }
+         });
+      };
+      $scope.setSelected = function() {
+         $scope.selected = this.subscriber;
+         console.log("selected", $scope.selected);
+      };
+      $scope.$on("changeView", function(event, view) {
+         console.log("subscribers changeView", view);
+         if (view === "subscribers") {
+            $scope.subscribersList();
+         } else {
+            $scope.subscribers = undefined;            
+         }
+      });
+   }]);
+
+app.controller("rolesController", ["$scope", "$http",
+   function($scope, $http) {
+      $scope.rolesList = function() {
+         console.log("roles", $scope.persona.email);
+         $scope.roles = undefined;
+         $scope.selected = undefined;
+         $http.post("/role/list", {
+            email: $scope.persona.email
+         }).then(function(response) {
+            console.log("roles", response.data);
+            if (response.data && response.data.roles) {
+               $scope.roles = response.data.roles;
+            } else {
+               console.warn("roles", response);
+               //navigator.id.logout();
+            }
+         });
+      };
+      $scope.setSelected = function() {
+         $scope.selected = this.role;
+         console.log("selected", $scope.selected);
+      };
+      $scope.$on("changeView", function(event, view) {
+         console.log("roles changeView", view);
+         if (view === "roles") {
+            $scope.rolesList();
+         } else {
+            $scope.roles = undefined;            
          }
       });
    }]);

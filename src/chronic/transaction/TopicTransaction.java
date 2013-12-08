@@ -22,12 +22,13 @@ public class TopicTransaction {
     
     static Logger logger = LoggerFactory.getLogger(TopicTransaction.class);
     
-    public void handle(ChronicApp app, String orgUrl, String topicString) throws StorageException {
+    public void handle(ChronicApp app, String orgUrl, String networkName, String hostName, 
+            String topicString) throws StorageException {
         logger.info("handle {} {}", orgUrl, topicString);
         ComparableTuple key = Comparables.tuple(orgUrl, topicString);
         Topic topic = app.getStorage().getTopicStorage().select(key);
         if (topic == null) {
-            topic = new Topic(orgUrl, topicString);
+            topic = new Topic(orgUrl, networkName, hostName, topicString);
             app.getStorage().getTopicStorage().insert(topic);
         }        
     }

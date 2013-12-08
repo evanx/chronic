@@ -39,7 +39,7 @@ public class LoginPersona implements HttpHandler {
         try {
             JMap map = httpx.parseJsonMap();
             timezoneOffset = map.getString("timezoneOffset");
-            logger.info("time {}", timezoneOffset);
+            logger.info("timezoneOffset {}", timezoneOffset);
             assertion = map.getString("assertion");
             if (assertion != null) {
                 handle();

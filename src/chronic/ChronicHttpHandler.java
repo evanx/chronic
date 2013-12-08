@@ -44,17 +44,18 @@ public class ChronicHttpHandler implements HttpHandler {
                 new Enroll(app).handle(httpExchange);
             } else if (path.equals("/subscribe")) {
                 new Subscribe(app).handle(httpExchange);
-            } else if (path.equals("/app/EnrollOrg")) {
+            } else if (path.equals("/org/enroll")) {
                 handle(new EnrollOrg(), new Httpx(httpExchange));
-            } else if (path.equals("/app/ListAlerts")) {
+            } else if (path.equals("/alert/list")) {
                 handle(new ListAlerts(), new Httpx(httpExchange));
-            } else if (path.equals("/app/ListTopics")) {
+            } else if (path.equals("/topic/list")) {
                 handle(new ListTopics(), new Httpx(httpExchange));
-            } else if (path.equals("/app/LoginPersona")) {
+            } else if (path.equals("/persona/login")) {
                 new LoginPersona(app).handle(httpExchange);
-            } else if (path.equals("/app/LogoutPersona")) {
+            } else if (path.equals("/persona/login")) {
                 new LogoutPersona(app).handle(httpExchange);
-            } else if (path.startsWith("/app/")) {
+            } else if (path.equals("/subscriber/list")) {
+            } else if (path.equals("/role/list")) {
             } else {
                 webHandler.handle(httpExchange);
             }
