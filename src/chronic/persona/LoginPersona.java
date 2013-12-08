@@ -39,7 +39,7 @@ public class LoginPersona implements HttpHandler {
         try {
             JMap map = httpx.parseJsonMap();
             timezoneOffset = map.getString("timezoneOffset");
-            logger.info("timezoneOffset {}", timezoneOffset);
+            logger.trace("timezoneOffset {}", timezoneOffset);
             assertion = map.getString("assertion");
             handle();
         } catch (Exception e) {
@@ -57,7 +57,7 @@ public class LoginPersona implements HttpHandler {
         }            
         PersonaUserInfo userInfo = new PersonaVerifier(app, cookie).getUserInfo(
                 httpx.getServerUrl(), assertion);
-        logger.info("persona {}", userInfo);
+        logger.trace("persona {}", userInfo);
         String email = userInfo.getEmail();
         User user = app.getStorage().getUserStorage().select(email);
         if (user == null) {
@@ -74,7 +74,7 @@ public class LoginPersona implements HttpHandler {
         cookie = new ChronicCookie(user.getEmail(), user.getLabel(), 
                 user.getLoginTime().getTime(), assertion);
         JMap cookieMap = cookie.toMap();
-        logger.info("cookie {}", cookieMap);
+        logger.trace("cookie {}", cookieMap);
         httpx.setCookie(cookieMap, ChronicCookie.MAX_AGE_MILLIS);
         httpx.sendResponse(cookieMap);
     }

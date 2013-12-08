@@ -46,17 +46,17 @@ public class PersonaVerifier {
         StringBuilder builder = new StringBuilder();
         builder.append("assertion=").append(URLEncoder.encode(assertion, "UTF-8"));
         builder.append("&audience=").append(URLEncoder.encode(serverUrl, "UTF-8"));
-        logger.info("persona {} {}", url, builder.toString());
+        logger.trace("persona {} {}", url, builder.toString());
         connection.getOutputStream().write(builder.toString().getBytes());
         JsonObjectWrapper object = new JsonObjectWrapper(connection.getInputStream());
         if (object.hasProperty("status")) {
             String status = object.getString("status");
             if (status.equals("okay")) {
-                logger.info("persona", object.getMap().toString());
+                logger.trace("persona", object.getMap().toString());
                 return new PersonaUserInfo(object.getMap());
             } else {
                 String reason = object.getString("reason");
-                logger.warn("{}: {}", status, reason);
+                logger.debug("{}: {}", status, reason);
                 if (reason.equals("assertion has expired")) {
                     if (app.getProperties().isTesting() && cookie != null) {
                         return new PersonaUserInfo(cookie.getEmail());

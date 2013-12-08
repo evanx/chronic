@@ -68,23 +68,6 @@ public class AlertRecord {
         this.previousStatus = previous;
     }
 
-    public boolean isAlertable(StatusRecord status, StatusRecord previousStatus,
-            StatusRecord previousAlert) {
-        if (previousAlert.getStatusType() == StatusType.ELAPSED
-                && status.statusType != StatusType.ELAPSED) {
-            return true;
-        }
-        if (status.isAlertable(previousAlert)) {
-            return true;
-        }
-        if (status.alertType == AlertType.STATUS_CHANGED) {
-            return status.isAlertable() &&
-                    status.statusType == previousStatus.statusType &&
-                    status.statusType != previousAlert.getStatusType();
-            }
-        return false;
-    }
-    
     public Map getAlertMap(boolean detail) {
         AlertFormatter formatter = new AlertFormatter(status);
         Map map = new TreeMap();

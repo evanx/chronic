@@ -55,7 +55,7 @@ public class StatusRecord {
     String orgUrl;
     String[] subscribers;
     List<String> changedLines;
-    
+
     public StatusRecord() {
     }
 
@@ -171,7 +171,11 @@ public class StatusRecord {
         return statusType != null && statusType.isAlertable();
     }
 
-    public boolean isAlertable(StatusRecord previous) {
+    public boolean isAlertable(StatusRecord previous, AlertRecord alert) {
+        if (previous.statusType == StatusType.ELAPSED) {
+            statusType = StatusType.RESUMED;
+            return true;
+        }
         if (alertType == AlertType.ALWAYS) {
             return true;
         }
@@ -184,9 +188,14 @@ public class StatusRecord {
                 return true;
             }
         }
+        if (alertType == AlertType.STATUS_CHANGED) {
+            return isAlertable()
+                    && statusType == previous.statusType
+                    && statusType != alert.getStatus().getStatusType();
+        }
         return false;
     }
-    
+
     public boolean equals(StatusRecord other) {
         if (lineList.size() != other.lineList.size()) {
             return false;
@@ -203,15 +212,15 @@ public class StatusRecord {
         Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(line);
         if (matcher.find()) {
             Matcher otherMatcher = StatusRecordParser.nagiosStatusPattern.matcher(other);
-            return otherMatcher.find() && otherMatcher.group(1).equals(matcher.group(1)) &&
-                        otherMatcher.group(2).equals(matcher.group(2));
+            return otherMatcher.find() && otherMatcher.group(1).equals(matcher.group(1))
+                    && otherMatcher.group(2).equals(matcher.group(2));
 
         } else if (StatusRecordParser.headPattern.matcher(line).find()) {
             return true;
         }
         return line.equals(other);
     }
-        
+
     public List<String> buildChanged(StatusRecord previous) {
         List<String> list = new ArrayList();
         for (String line : lineList) {
@@ -221,7 +230,7 @@ public class StatusRecord {
         }
         return list;
     }
-    
+
     public boolean contains(String other) {
         for (String line : lineList) {
             if (equals(line, other)) {
@@ -231,15 +240,14 @@ public class StatusRecord {
         return false;
     }
 
-    
     public boolean isAdmin(String email) {
-        if (email != null) { 
+        if (email != null) {
             if (orgUrl != null && email.endsWith(orgUrl)) {
                 return true;
             }
         }
         return true;
-    }    
+    }
 
     public void setSubcribers(String[] subscribers) {
         this.subscribers = subscribers;
@@ -247,11 +255,10 @@ public class StatusRecord {
 
     public String[] getSubscribers() {
         return subscribers;
-    }        
-    
+    }
+
     @Override
     public String toString() {
         return Args.format(alertType, orgUrl, topicString, statusType);
     }
-    
 }
