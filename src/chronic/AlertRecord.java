@@ -94,10 +94,10 @@ public class AlertRecord {
         map.put("statusType", status.statusType);
         map.put("alertType", status.alertType);
         map.put("alertTypeLabel", formatter.formatAlertTypeLabel());
-        map.put("topic", status.topic);
+        map.put("topic", status.topicString);
         map.put("timestamp", status.timestamp);
         map.put("timestampLabel", Millis.formatTime(status.timestamp));
-        map.put("topic", status.getTopic());
+        map.put("topic", status.getTopicString());
         map.put("message", formatter.formatMessage());
         if (detail) {
             if (status.statusType == StatusType.CONTENT_CHANGED) {

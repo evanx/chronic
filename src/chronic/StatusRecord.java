@@ -24,12 +24,12 @@ import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.type.ComparableTuple;
+import vellum.util.Args;
 
 /**
  *
@@ -41,7 +41,7 @@ public class StatusRecord {
     List<String> lineList = new ArrayList();
     AlertType alertType = AlertType.NONE;
     AlertFormatType alertFormatType;
-    String topic;
+    String topicString;
     StatusType statusType = StatusType.UNKNOWN;
     long timestamp = System.currentTimeMillis();
     long periodMillis;
@@ -62,7 +62,7 @@ public class StatusRecord {
     public StatusRecord(StatusRecord record) {
         this.alertType = record.alertType;
         this.alertFormatType = record.alertFormatType;
-        this.topic = record.topic;
+        this.topicString = record.topicString;
         this.periodMillis = record.periodMillis;
         this.from = record.from;
         this.subject = record.subject;
@@ -139,12 +139,12 @@ public class StatusRecord {
         return alertType;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setTopicString(String topicString) {
+        this.topicString = topicString;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getTopicString() {
+        return topicString;
     }
 
     public void setAlertFormatType(AlertFormatType alertFormatType) {
@@ -251,7 +251,7 @@ public class StatusRecord {
     
     @Override
     public String toString() {
-        return Arrays.toString(new Object[]{alertType, topic, statusType});
+        return Args.format(alertType, orgUrl, topicString, statusType);
     }
     
 }

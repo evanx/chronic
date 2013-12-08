@@ -98,7 +98,7 @@ public class AlertBuilder {
                 status.getStatusType().getLabel());
         if (status.isAlertable()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
-                return status.getTopic()
+                return status.getTopicString()
                         + " <i>" + status.getStatusType().getLabel() + "</i>";
             } else if (!status.getSubject().contains(status.getStatusType().name())) {
                 return status.getSubject()
@@ -108,7 +108,7 @@ public class AlertBuilder {
             }
         }
         if (status.getSubject() == null) {
-            return status.getTopic();
+            return status.getTopicString();
         }
         return status.getSubject();
     }

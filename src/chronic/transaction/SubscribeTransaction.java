@@ -40,7 +40,7 @@ public class SubscribeTransaction {
         }
         for (Topic topic : app.getStorage().listTopics(org)) {
             TopicSubscriber subscriber = app.getStorage().getTopicSubscriberStorage().
-                    select(Comparables.tuple(org.getUrl(), email));
+                    select(Comparables.tuple(org.getUrl(), topic.getTopicString(), email));
             if (subscriber == null) {
                 subscriber = new TopicSubscriber(orgUrl, topic.getTopicString(), email);
                 app.getStorage().getTopicSubscriberStorage().insert(subscriber);                

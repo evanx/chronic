@@ -110,7 +110,7 @@ public class TemporaryChronicStorage extends ChronicStorage {
             logger.info("listTopics topicSubscriber {}", topicSubscriber);
             if (topicSubscriber.getEmail().equals(email)) {
                 topics.add(topicStorage.find(Comparables.tuple(
-                        topicSubscriber.getOrgUrl(), email)));
+                        topicSubscriber.getOrgUrl(), topicSubscriber.getTopicString())));
             }            
         }
         return topics;

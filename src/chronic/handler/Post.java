@@ -8,6 +8,8 @@ import chronic.StatusRecord;
 import chronic.StatusRecordParser;
 import chronic.entity.Network;
 import chronic.entity.Org;
+import chronic.transaction.SubscribeTransaction;
+import chronic.transaction.TopicTransaction;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpsExchange;
@@ -80,15 +82,21 @@ public class Post implements HttpHandler {
             httpExchange.getRequestBody().read(content);
             String contentString = new String(content);
             logger.trace("content {}", contentString);
-            StatusRecord record = new StatusRecordParser().parse(contentString);
-            record.setOrgUrl(orgUrl);
-            logger.trace("content lines {}: {}", record.getLineList().size(),
-                    Strings.formatFirst(record.getLineList()));
-            logger.debug("record {} {}", record);
-            app.putRecord(record);
+            StatusRecord status = new StatusRecordParser().parse(contentString);
+            status.setOrgUrl(orgUrl);
+            logger.trace("content lines {}: {}", status.getLineList().size(),
+                    Strings.formatFirst(status.getLineList()));
+            logger.debug("status {}", status);
+            new TopicTransaction().handle(app, status.getOrgUrl(), status.getTopicString());
+            if (status.getSubscribers() != null) {
+                for (String subscriber : status.getSubscribers()) {
+                    new SubscribeTransaction().handle(app, status.getOrgUrl(), subscriber);
+                }
+            }
+            app.putRecord(status);
             sendPlainResponse(httpExchange, "ok");
         } catch (CertificateException | StorageException | NumberFormatException | IOException e) {
-            logger.warn(e.getMessage());
+            logger.warn(e.getMessage(), e);
             sendPlainResponse(httpExchange, "error: %s: %s", e.getClass(), e.getMessage());
         }
     }

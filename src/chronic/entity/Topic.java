@@ -21,9 +21,9 @@ public final class Topic extends AbstractIdEntity {
     public Topic() {
     }
 
-    public Topic(String orgUrl, String topic) {
+    public Topic(String orgUrl, String topicString) {
         this.orgUrl = orgUrl;
-        this.topicString = topic;
+        this.topicString = topicString;
     }
 
     @Override
@@ -57,7 +57,7 @@ public final class Topic extends AbstractIdEntity {
         JMap map = new JMap();
         map.put("id", id);
         map.put("orgUrl", orgUrl);
-        map.put("topic", topicString);
+        map.put("topicString", topicString);
         return map;
     }
     

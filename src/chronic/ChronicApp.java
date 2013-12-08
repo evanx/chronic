@@ -24,6 +24,7 @@ import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
 import chronic.transaction.SubscribeTransaction;
+import chronic.transaction.TopicTransaction;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.io.IOException;
@@ -126,7 +127,7 @@ public class ChronicApp implements Runnable {
 
     private void checkElapsed(StatusRecord status) {
         long elapsed = Millis.elapsed(status.getTimestamp());
-        logger.debug("checkElapsed {}: elapsed {}", status.getTopic(), elapsed);
+        logger.debug("checkElapsed {}: elapsed {}", status.getTopicString(), elapsed);
         if (elapsed > status.getPeriodMillis() + properties.getPeriod()) {
             AlertRecord previousAlert = alertMap.get(status.getKey());
             if (previousAlert == null || 
@@ -142,11 +143,6 @@ public class ChronicApp implements Runnable {
     public synchronized void putRecord(StatusRecord status) throws StorageException {
         logger.info("putRecord {} [{}]", status.getStatusType(),
                 status.getSubject());
-        if (status.getSubscribers() != null) {
-            for (String subscriber : status.getSubscribers()) {
-                new SubscribeTransaction().handle(this, status.getOrgUrl(), subscriber);
-            }
-        }
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
         if (previousStatus == null) {
             logger.info("putRecord: no previous status");

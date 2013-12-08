@@ -40,7 +40,7 @@ public class OrgRole extends AbstractIdEntity {
         
     @Override
     public Comparable getKey() {
-        return Comparables.tuple(orgUrl, email);
+        return Comparables.tuple(orgUrl, email, role);
     }
 
     @Override

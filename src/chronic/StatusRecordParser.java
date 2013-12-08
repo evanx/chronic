@@ -62,7 +62,7 @@ public class StatusRecordParser {
     private void parseAlertType(String string) {
         int index = string.indexOf(" ");
         if (index > 0) {
-            record.setTopic(string.substring(index + 1));
+            record.setTopicString(string.substring(index + 1));
             string = string.substring(0, index);
         }
         try {
@@ -153,7 +153,7 @@ public class StatusRecordParser {
                 nagiosStatus = false;
                 parseStatusType(line.substring(8));
             } else if (line.startsWith("Topic: ")) {
-                record.setTopic(line.substring(7));
+                record.setTopicString(line.substring(7));
             } else if (line.startsWith("Alert: ")) {
                 parseAlertType(line.substring(7));
             } else if (line.startsWith("AlertFormat: ")) {
@@ -186,8 +186,8 @@ public class StatusRecordParser {
                 record.service = record.service.substring(0, index);
             }
         }
-        if (record.topic == null) {
-            record.topic = buildSource();
+        if (record.topicString == null) {
+            record.topicString = buildSource();
         }
     }
 

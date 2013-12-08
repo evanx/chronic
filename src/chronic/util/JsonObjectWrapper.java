@@ -140,7 +140,7 @@ public class JsonObjectWrapper {
     
     private JsonElement get(String key) {
         JsonElement element = object.get(key);
-        logger.info("get {} {}", key, element);
+        logger.trace("get {} {}", key, element);
         return element;
     }
 

@@ -52,6 +52,6 @@ public class AlertFormatter {
     }
         
     public String formatSubject() {
-        return status.getTopic() + ": " + formatAlertTypeLabel();
+        return status.getTopicString() + ": " + formatAlertTypeLabel();
     }        
 }
