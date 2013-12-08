@@ -39,7 +39,7 @@ public class StatusRecord {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
     List<String> lineList = new ArrayList();
-    AlertType alertType = AlertType.NONE;
+    AlertType alertType;
     AlertFormatType alertFormatType;
     String topicString;
     StatusType statusType = StatusType.UNKNOWN;
@@ -172,6 +172,12 @@ public class StatusRecord {
     }
 
     public boolean isAlertable(StatusRecord previous, AlertRecord alert) {
+        logger.info("isAlertable {}", Args.format(topicString, alertType, 
+                statusType, previous.getStatusType(), equals(previous),
+                alert.getStatus().getStatusType()));
+        if (alertType == AlertType.NEVER) {
+            return false;
+        }
         if (previous.statusType == StatusType.ELAPSED) {
             statusType = StatusType.RESUMED;
             return true;

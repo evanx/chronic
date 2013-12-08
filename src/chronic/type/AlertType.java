@@ -12,7 +12,7 @@ import vellum.format.Labelled;
  * @author evan.summers
  */
 public enum AlertType implements Labelled {
-    NONE,
+    NEVER,
     WARNING,
     ERROR,
     PATTERN,
