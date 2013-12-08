@@ -22,6 +22,7 @@ package chronic;
  */
 
 
+import chronic.entitytype.TopicAction;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.util.List;

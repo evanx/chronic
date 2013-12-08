@@ -4,6 +4,7 @@
  */
 package chronic.entity;
 
+import chronic.entitytype.TopicAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.util.Comparables;
@@ -13,13 +14,14 @@ import vellum.util.Comparables;
  * @author evan.summers
  */
 public final class Topic extends AbstractIdEntity {
+
     Long id;
     String orgUrl;
     String networkName;
     String hostName;
     String topicString;
     boolean enabled = true;
-            
+
     public Topic() {
     }
 
@@ -44,7 +46,7 @@ public final class Topic extends AbstractIdEntity {
     public Long getId() {
         return id;
     }
-        
+
     public String getOrgUrl() {
         return orgUrl;
     }
@@ -56,17 +58,23 @@ public final class Topic extends AbstractIdEntity {
     public void setTopicString(String topicString) {
         this.topicString = topicString;
     }
-    
+
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
         map.put("orgUrl", orgUrl);
         map.put("networkName", networkName);
         map.put("hostName", hostName);
+        map.put("action", getAction());
+        map.put("actionLabel", getAction().getLabel());
         map.put("topicString", topicString);
         return map;
     }
-    
+
+    private TopicAction getAction() {
+        return enabled ? TopicAction.UNSUBSCRIBE : TopicAction.SUBSCRIBE;
+    }
+
     @Override
     public String toString() {
         return getMap().toString();

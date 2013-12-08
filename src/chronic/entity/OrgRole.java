@@ -4,7 +4,9 @@
  */
 package chronic.entity;
 
+import chronic.entitytype.UserRoleType;
 import chronic.ChronicApp;
+import chronic.entitytype.OrgRoleAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.storage.StorageException;
@@ -21,6 +23,7 @@ public class OrgRole extends AbstractIdEntity {
     String email;
     UserRoleType role;    
     ChronicApp app; 
+    boolean enabled = false;
     
     transient Org org;
     transient User user; 
@@ -39,11 +42,26 @@ public class OrgRole extends AbstractIdEntity {
         email = user.getEmail();
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
     public JMap getMap() throws StorageException {
         return new JMap(
                 JMap.entry("orgName", getOrg().getOrgName()),
                 JMap.entry("email", email),
-                JMap.entry("role", role));
+                JMap.entry("role", role),
+                JMap.entry("action", getAction()),
+                JMap.entry("actionLabel", getAction().getLabel()),
+                JMap.entry("roleLabel", role.getLabel()));
+    }
+    
+    private OrgRoleAction getAction() {
+        return enabled ? OrgRoleAction.REVOKE : OrgRoleAction.CONFIRM;
     }
     
     @Override

@@ -61,22 +61,18 @@
                            <th>Time</th>
                            <th>Topic</th>
                            <th>Message</th>
-                           <th>Subscribe</th>
                         </tr>
                      </thead>
                      <tbody>
-                        <tr ng-repeat="alert in alerts" ng-click="setSelected()">
+                        <tr ng-repeat="alert in alerts">
                            <td>
                               <i>{{alert.timestampLabel}}</i>
                            </td>
                            <td>
                               <b>{{alert.topicString}}</b>
                            </td>
-                           <td>
+                           <td ng-click="setSelected()">
                               {{alert.message}}
-                           </td>
-                           <td>
-                              <input type='checkbox'>
                            </td>
                         </tr>
                      </tbody>
@@ -104,12 +100,12 @@
                            <th>Host</th>
                            <th>Network</th>
                            <th>Organisation</th>
-                           <th>Subscribe</th>
+                           <th></th>
                         </tr>
                      </thead>
                      <tbody>
-                        <tr ng-repeat="topic in topics" ng-click="setSelected()">
-                           <td>
+                        <tr ng-repeat="topic in topics">
+                           <td ng-click="setSelected()">
                               {{topic.topicString}}
                            </td>
                            <td>
@@ -122,7 +118,7 @@
                               {{topic.orgUrl}}
                            </td>
                            <td>
-                              <input type='checkbox'>
+                              <input type="button" value="{{topic.actionLabel}}" ng-click="action()">
                            </td>
                         </tr>
                      </tbody>
@@ -149,12 +145,12 @@
                            <th>Organisation</th>
                            <th>Topic</th>
                            <th>Subscriber</th>
-                           <th>Confirm</th>
+                           <th></th>
                         </tr>
                      </thead>
                      <tbody>
-                        <tr ng-repeat="subscriber in subscribers" ng-click="setSelected()">
-                           <td>
+                        <tr ng-repeat="subscriber in subscribers">
+                           <td ng-click="setSelected()">
                               {{subscriber.orgName}}
                            </td>
                            <td>
@@ -164,7 +160,8 @@
                               {{subscriber.email}}
                            </td>
                            <td>
-                              <input type='checkbox'>
+                              <input type="button" value="{{subscriber.actionLabel}}" 
+                                     ng-click="action()">
                            </td>
                         </tr>
                      </tbody>
@@ -185,12 +182,12 @@
                            <th>Organisation</th>
                            <th>Person</th>
                            <th>Role</th>
-                           <th>Confirm</th>
+                           <th></th>
                         </tr>
                      </thead>
                      <tbody>
-                        <tr ng-repeat="role in roles" ng-click="setSelected()">
-                           <td>
+                        <tr ng-repeat="role in roles">
+                           <td ng-click="setSelected()">
                               {{role.orgName}}
                            </td>
                            <td>
@@ -200,7 +197,7 @@
                               {{role.roleLabel}}
                            </td>
                            <td>
-                              <input type='checkbox'>
+                              <input type="button" value="{{role.actionLabel}}" ng-click="action()">
                            </td>
                         </tr>
                      </tbody>

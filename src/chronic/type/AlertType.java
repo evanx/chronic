@@ -34,6 +34,6 @@ public enum AlertType implements Labelled {
     
     @Override
     public String getLabel() {
-        return Bundle.get(AlertType.class).getString(name());
+        return Bundle.get(getClass()).getString(name());
     }
 }

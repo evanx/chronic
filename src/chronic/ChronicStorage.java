@@ -21,7 +21,7 @@
 package chronic;
 
 import chronic.entity.User;
-import chronic.entity.UserRoleType;
+import chronic.entitytype.UserRoleType;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;

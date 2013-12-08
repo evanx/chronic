@@ -4,6 +4,7 @@
  */
 package chronic.entity;
 
+import chronic.entitytype.TopicAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.util.Comparables;
@@ -60,8 +61,14 @@ public final class TopicSubscriber extends AbstractIdEntity {
         map.put("id", id);
         map.put("orgName", orgUrl);
         map.put("topicString", topicString);
+        map.put("action", getAction());
+        map.put("actionLabel", getAction().getLabel());
         map.put("email", email);
         return map;
+    }
+
+    private TopicAction getAction() {
+        return enabled ? TopicAction.UNSUBSCRIBE : TopicAction.SUBSCRIBE;
     }
     
     @Override

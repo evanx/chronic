@@ -5,7 +5,7 @@ package chronic.transaction;
 
 import chronic.*;
 import chronic.entity.User;
-import chronic.entity.UserRoleType;
+import chronic.entitytype.UserRoleType;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import org.slf4j.Logger;
