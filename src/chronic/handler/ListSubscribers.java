@@ -29,7 +29,7 @@ public class ListSubscribers implements ChronicHandler {
                 app.getVerifiedEmail(httpx))) {
             subscribers.add(subscriber.getMap());
         }
-        return JMaps.create("topics", subscribers);
+        return JMaps.create("subscribers", subscribers);
     }
     
 }

@@ -36,10 +36,13 @@
                   </li>
                </ul>
                <div class="navbar-collapse collapse pull-right">
-                  <div class="navbar-text" ng-cloak ng-hide="persona.email">
+                  <div class="navbar-text" ng-cloak ng-hide="persona.email || loggingIn">
                      <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a>
                   </div>
-                  <div class="navbar-text" ng-cloak ng-show="persona.email">
+                  <div class="navbar-text" ng-show="loggingIn">
+                     <span>Verify...</span>
+                  </div>
+                  <div class="navbar-text" ng-cloak ng-show="persona.email && !loggingIn">
                      <a ng-click="logout()" class="navbar-link" href="#">{{persona.email}}</a>
                   </div>
                </div>
@@ -58,6 +61,7 @@
                            <th>Time</th>
                            <th>Topic</th>
                            <th>Message</th>
+                           <th>Subscribe</th>
                         </tr>
                      </thead>
                      <tbody>
@@ -68,8 +72,11 @@
                            <td>
                               <b>{{alert.topicString}}</b>
                            </td>
-                           <td style='width: 80%'>
+                           <td>
                               {{alert.message}}
+                           </td>
+                           <td>
+                              <input type='checkbox'>
                            </td>
                         </tr>
                      </tbody>
@@ -97,11 +104,12 @@
                            <th>Host</th>
                            <th>Network</th>
                            <th>Organisation</th>
+                           <th>Subscribe</th>
                         </tr>
                      </thead>
                      <tbody>
                         <tr ng-repeat="topic in topics" ng-click="setSelected()">
-                           <td style='width: 60%'>
+                           <td>
                               {{topic.topicString}}
                            </td>
                            <td>
@@ -112,6 +120,9 @@
                            </td>
                            <td>
                               {{topic.orgUrl}}
+                           </td>
+                           <td>
+                              <input type='checkbox'>
                            </td>
                         </tr>
                      </tbody>
@@ -136,9 +147,9 @@
                      <thead>
                         <tr>
                            <th>Organisation</th>
-                           <th>Person</th>
-                           <th>Role</th>
-                           <th>Enabled</th>
+                           <th>Topic</th>
+                           <th>Subscriber</th>
+                           <th>Confirm</th>
                         </tr>
                      </thead>
                      <tbody>
@@ -147,10 +158,10 @@
                               {{subscriber.orgName}}
                            </td>
                            <td>
-                              {{subscriber.email}}
+                              {{subscriber.topicString}}
                            </td>
                            <td>
-                              {{subscriber.subscriberLabel}}
+                              {{subscriber.email}}
                            </td>
                            <td>
                               <input type='checkbox'>
@@ -174,7 +185,7 @@
                            <th>Organisation</th>
                            <th>Person</th>
                            <th>Role</th>
-                           <th>Enabled</th>
+                           <th>Confirm</th>
                         </tr>
                      </thead>
                      <tbody>

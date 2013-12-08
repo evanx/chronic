@@ -5,6 +5,7 @@
 package chronic.entity;
 
 import chronic.ChronicApp;
+import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.storage.StorageException;
 import vellum.util.Args;
@@ -37,7 +38,14 @@ public class OrgRole extends AbstractIdEntity {
         orgUrl = org.getOrgUrl();
         email = user.getEmail();
     }
-        
+
+    public JMap getMap() throws StorageException {
+        return new JMap(
+                JMap.entry("orgName", getOrg().getOrgName()),
+                JMap.entry("email", email),
+                JMap.entry("role", role));
+    }
+    
     @Override
     public Comparable getKey() {
         return Comparables.tuple(orgUrl, email, role);

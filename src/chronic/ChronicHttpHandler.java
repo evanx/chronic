@@ -6,7 +6,9 @@ package chronic;
 import chronic.handler.Enroll;
 import chronic.handler.EnrollOrg;
 import chronic.handler.ListAlerts;
+import chronic.handler.ListSubscribers;
 import chronic.handler.ListTopics;
+import chronic.handler.ListRoles;
 import chronic.handler.Post;
 import chronic.handler.Subscribe;
 import chronic.persona.LoginPersona;
@@ -57,9 +59,9 @@ public class ChronicHttpHandler implements HttpHandler {
                 } else if (path.equals("/chronicapp/topicList")) {
                     handle(new ListTopics(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/subscriberList")) {
-                    logger.warn("handle {}", path);
+                    handle(new ListSubscribers(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/roleList")) {
-                    logger.warn("handle {}", path);
+                    handle(new ListRoles(), new Httpx(httpExchange));
                 } else {
                     logger.warn("handle {}", path);
                 }

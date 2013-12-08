@@ -79,6 +79,10 @@ public final class Org extends AbstractEntity {
     public void setId(long id) {
         this.id = id;
     }
+
+    public String getOrgName() {
+        return orgName;
+    }
     
     public String getLocality() {
         return locality;

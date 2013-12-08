@@ -5,7 +5,7 @@ package chronic.handler;
 
 import chronic.ChronicApp;
 import chronic.ChronicHandler;
-import chronic.entity.User;
+import chronic.entity.OrgRole;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -18,17 +18,17 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class ListUsers implements ChronicHandler {
+public class ListRoles implements ChronicHandler {
 
-    Logger logger = LoggerFactory.getLogger(ListUsers.class);
+    Logger logger = LoggerFactory.getLogger(ListRoles.class);
   
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
-        List topics = new LinkedList();
-        for (User user : app.getStorage().listUsers(app.getVerifiedEmail(httpx))) {
-            topics.add(user.getMap());
+        List roles = new LinkedList();
+        for (OrgRole role : app.getStorage().listRoles(app.getVerifiedEmail(httpx))) {
+            roles.add(role.getMap());
         }
-        return JMaps.create("topics", topics);
+        return JMaps.create("roles", roles);
     }
     
 }

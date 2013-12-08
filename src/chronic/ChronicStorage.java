@@ -128,14 +128,29 @@ public abstract class ChronicStorage {
         return roleTypes;
     }
 
-    public Iterable<User> listUsers(String verifiedEmail) {
+    public Iterable<User> listUsers(String email) {
         List list = new LinkedList();
         return list;
     }
 
-    public Iterable<TopicSubscriber> listSubscribers(String verifiedEmail) {
+    public Iterable<TopicSubscriber> listSubscribers(String email) {
         List list = new LinkedList();
+        for (TopicSubscriber subscriber : getSubscriberStorage().selectCollection(null)) {
+            logger.info("listTopics topicSubscriber {}", subscriber);
+            if (subscriber.getEmail().equals(email)) {
+                list.add(subscriber);
+            }            
+        }
         return list;
     }
-        
+
+    public Iterable<OrgRole> listRoles(String email) {
+        List list = new LinkedList();
+        for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
+            if (orgRole.getEmail().equals(email)) {
+                list.add(orgRole);
+            }
+        }        
+        return list;
+    }        
 }

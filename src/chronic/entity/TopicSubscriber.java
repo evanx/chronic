@@ -58,7 +58,7 @@ public final class TopicSubscriber extends AbstractIdEntity {
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
-        map.put("orgUrl", orgUrl);
+        map.put("orgName", orgUrl);
         map.put("topicString", topicString);
         map.put("email", email);
         return map;

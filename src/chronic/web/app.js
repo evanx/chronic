@@ -83,7 +83,9 @@ app.controller("personaController", ["$scope", "$location", "personaService",
       navigator.id.watch({
          loggedInUser: loggedInUser,
          onlogin: function(assertion) {
+            $scope.loggingIn = true;
             personaService.login(assertion).then(function(response) {
+               $scope.loggingIn = false;
                $scope.persona = response;
                if (response.email) {
                   localStorage.setItem("persona", JSON.stringify($scope.persona));
