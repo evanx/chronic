@@ -60,6 +60,7 @@ public class StatusRecordParser {
     }
     
     private void parseAlertType(String string) {
+        logger.warn("parseAlertType {}", string);
         try {
             record.setAlertType(AlertType.valueOf(string));
         } catch (Exception e) {
@@ -125,7 +126,7 @@ public class StatusRecordParser {
     }
     
     public StatusRecord parse(String text) throws IOException {
-        logger.trace("parse: {}", text);
+        logger.info("parse: {}", text);
         boolean inHeader = true;
         String[] lines = text.split("\n");
         boolean nagiosStatus = true;
