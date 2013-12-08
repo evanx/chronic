@@ -121,7 +121,7 @@ public class StatusRecordParser {
     }
 
     private void parseSubscribe(String string) {
-        record.setSubcribers(Strings.split(string, DelimiterType.SPACE));
+        record.setSubcribers(Strings.split(string, DelimiterType.COMMA_OR_SPACE));
     }
     
     public StatusRecord parse(String text) throws IOException {

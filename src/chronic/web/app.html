@@ -64,7 +64,7 @@
                         </tr>
                      </thead>
                      <tbody>
-                        <tr ng-repeat="alert in alerts">
+                        <tr ng-repeat="alert in alerts" ng-click="setSelected()">
                            <td>
                               <i>{{alert.timestampLabel}}</i>
                            </td>
