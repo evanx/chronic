@@ -144,10 +144,10 @@ public class ChronicApp implements Runnable {
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
         if (previousStatus == null) {
             logger.info("putRecord: no previous status");
+            AlertRecord alert = new AlertRecord(status);
+            status.setAlertType(AlertType.INITIAL);
+            alertMap.put(status.getKey(), alert);
             if (properties.isTesting()) {
-                AlertRecord alert = new AlertRecord(status);
-                status.setAlertType(AlertType.NEW_TOPIC);
-                alertMap.put(status.getKey(), alert);
                 messenger.alert(alert);
             }
         } else if (status.isAlertable(previousStatus, alertMap.get(status.getKey()))) {

@@ -20,7 +20,7 @@ public enum AlertType implements Labelled {
     STATUS_CHANGED,
     CONTENT_CHANGED,
     SERVER_RESTARTED,
-    NEW_TOPIC,
+    INITIAL,
     ALWAYS;
     
     public static AlertType parse(String string) {

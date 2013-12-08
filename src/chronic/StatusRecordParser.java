@@ -171,6 +171,9 @@ public class StatusRecordParser {
     }
 
     private void normalize() {
+        if (record.alertType == null) {
+            record.alertType = AlertType.CONTENT_CHANGED;
+        }
         if (record.service != null) {
             int index = record.service.lastIndexOf("/");
             if (index >= 0) {

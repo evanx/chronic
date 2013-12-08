@@ -46,8 +46,8 @@ public class ChronicMessenger {
 
     public synchronized void alert(AlertRecord alert) {
         logger.info("alert {}", alert.toString());
-        try {
-            if (app.getProperties().getAlertScript() != null) {
+        if (app.getProperties().getAlertScript() != null) {
+            try {
                 Executor executor = new Executor();
                 executor.exec(app.getProperties().getAlertScript(),
                         new AlertBuilder().build(alert).getBytes(),
@@ -55,9 +55,9 @@ public class ChronicMessenger {
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
                 }
+            } catch (Exception e) {
+                logger.warn(e.getMessage(), e);
             }
-        } catch (Exception e) {
-            logger.warn(e.getMessage(), e);
         }
         for (String email : app.getStorage().getEmails(alert)) {
             mailer.sendEmail(email,
