@@ -20,11 +20,14 @@
  */
 package chronic;
 
+import chronic.check.OpenPortChecker;
 import chronic.bundle.Bundle;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -124,6 +127,14 @@ public class StatusRecordParser {
     private void parseSubscribe(String string) {
         record.setSubcribers(Strings.split(string, DelimiterType.COMMA_OR_SPACE));
     }
+
+    private void parsePort(String string) {
+        try {
+            record.getChecks().add(OpenPortChecker.parse(string));
+        } catch (Exception e) {
+            logger.warn("parsePort {}: {}", string, e.getMessage());
+        }
+    }
     
     public StatusRecord parse(String text) throws IOException {
         logger.trace("parse: {}", text);
@@ -138,6 +149,8 @@ public class StatusRecordParser {
                 parseSubjectLine(line);
             } else if (line.startsWith("Content-Type: ")) {
                 parseContentTypeLine(line);
+            } else if (line.startsWith("AlertFormat: ")) {
+                parseAlertFormatType(line.substring(13).trim());
             } else if (line.startsWith("Subscribe: ")) {
                 parseSubscribe(line.substring(11).trim());
             } else if (line.startsWith("Service: ")) {
@@ -152,8 +165,8 @@ public class StatusRecordParser {
                 record.setTopicString(line.substring(7).trim());
             } else if (line.startsWith("Alert: ")) {
                 parseAlertType(line.substring(7).trim());
-            } else if (line.startsWith("AlertFormat: ")) {
-                parseAlertFormatType(line.substring(13).trim());
+            } else if (line.startsWith("Port: ")) {
+                parsePort(line.substring(6).trim());
             } else if (!inHeader) {
                 if (nagiosStatus) {
                     parseNagiosStatus(line);

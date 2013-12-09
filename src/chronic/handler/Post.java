@@ -6,6 +6,7 @@ package chronic.handler;
 import chronic.ChronicApp;
 import chronic.StatusRecord;
 import chronic.StatusRecordParser;
+import chronic.check.StatusCheck;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.transaction.EnrollTransaction;
@@ -97,6 +98,9 @@ public class Post implements HttpHandler {
                         new EnrollTransaction().handle(app, orgUrl, subscriber);
                     }
                 }
+            }
+            for (StatusCheck check : status.getChecks()) {
+                status.getLineList().add(check.check());
             }
             app.putRecord(status);
             sendPlainResponse(httpExchange, "ok");

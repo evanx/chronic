@@ -20,10 +20,13 @@
  */
 package chronic;
 
+import chronic.check.StatusCheck;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;
@@ -56,6 +59,8 @@ public class StatusRecord {
     String[] subscribers;
     List<String> changedLines;
 
+    transient Collection<StatusCheck> checks = new LinkedList();
+    
     public StatusRecord() {
     }
 
@@ -263,6 +268,10 @@ public class StatusRecord {
         return subscribers;
     }
 
+    public Collection<StatusCheck> getChecks() {
+        return checks;
+    }
+    
     @Override
     public String toString() {
         return Args.format(alertType, orgUrl, topicString, statusType);
