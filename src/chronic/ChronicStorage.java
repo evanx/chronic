@@ -156,7 +156,7 @@ public abstract class ChronicStorage {
         List list = new LinkedList();
         for (Subscriber subscriber : getSubscriberStorage().selectCollection(null)) {
             logger.info("listTopics topicSubscriber {}", subscriber);
-            if (subscriber.getEmail().equals(email)) {
+            if (subscriber.getEmail().equals(email) || app.getProperties().isAdmin(email)) {
                 list.add(subscriber);
             }            
         }
@@ -166,7 +166,7 @@ public abstract class ChronicStorage {
     public Iterable<OrgRole> listRoles(String email) {
         List list = new LinkedList();
         for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
-            if (orgRole.getEmail().equals(email)) {
+            if (orgRole.getEmail().equals(email) || app.getProperties().isAdmin(email)) {
                 list.add(orgRole);
             }
         }        
