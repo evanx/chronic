@@ -13,25 +13,29 @@ import vellum.util.Comparables;
  *
  * @author evan.summers
  */
-public final class TopicSubscriber extends AbstractIdEntity {
+public final class Subscriber extends AbstractIdEntity {
     Long id;
     String orgUrl;
     String topicString;
     String email;
     boolean enabled = false;
             
-    public TopicSubscriber() {
+    public Subscriber() {
     }
 
-    public TopicSubscriber(String orgUrl, String topicString, String email) {
+    public Subscriber(String orgUrl, String topicString, String email) {
         this.topicString = topicString;
         this.orgUrl = orgUrl;
         this.email = email;
     }
 
+    public static Comparable key(String orgUrl, String topicString, String email) {
+        return Comparables.tuple(orgUrl, topicString, email);
+    }
+        
     @Override
     public Comparable getKey() {
-        return Comparables.tuple(orgUrl, topicString, email);
+        return key(orgUrl, topicString, email);
     }
 
     @Override
@@ -75,4 +79,5 @@ public final class TopicSubscriber extends AbstractIdEntity {
     public String toString() {
         return getMap().toString();
     }
+    
 }

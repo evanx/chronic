@@ -11,7 +11,7 @@ import vellum.format.Labelled;
  *
  * @author evan.summers
  */
-public enum UserRoleType implements Labelled {
+public enum OrgRoleType implements Labelled {
     SUPER,    
     ADMIN,
     SUBSCRIBER;

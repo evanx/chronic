@@ -5,7 +5,7 @@ package chronic.handler;
 
 import chronic.ChronicApp;
 import chronic.ChronicHandler;
-import chronic.entity.TopicSubscriber;
+import chronic.entity.Subscriber;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class ListSubscribers implements ChronicHandler {
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         List subscribers = new LinkedList();
-        for (TopicSubscriber subscriber : app.getStorage().listSubscribers(
+        for (Subscriber subscriber : app.getStorage().listSubscribers(
                 app.getVerifiedEmail(httpx))) {
             subscribers.add(subscriber.getMap());
         }

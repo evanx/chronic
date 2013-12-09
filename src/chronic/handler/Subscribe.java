@@ -5,19 +5,12 @@ package chronic.handler;
 
 import chronic.transaction.SubscribeTransaction;
 import chronic.*;
-import chronic.entity.User;
-import chronic.entitytype.UserRoleType;
-import chronic.entity.Org;
-import chronic.entity.OrgRole;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Emails;
 import vellum.httpserver.Httpx;
 import vellum.security.Certificates;
-import vellum.storage.StorageException;
-import vellum.type.ComparableTuple;
-import vellum.util.Comparables;
 
 /**
  *

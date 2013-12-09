@@ -4,7 +4,7 @@
  */
 package chronic.entity;
 
-import chronic.entitytype.UserRoleType;
+import chronic.entitytype.OrgRoleType;
 import chronic.ChronicApp;
 import chronic.entitytype.OrgRoleAction;
 import vellum.jx.JMap;
@@ -21,7 +21,7 @@ public class OrgRole extends AbstractIdEntity {
     Long id;
     String orgUrl;
     String email;
-    UserRoleType role;    
+    OrgRoleType roleType;
     ChronicApp app; 
     boolean enabled = false;
     
@@ -34,10 +34,10 @@ public class OrgRole extends AbstractIdEntity {
         this.email = email;
     }
     
-    public OrgRole(Org org, User user, UserRoleType role) {
+    public OrgRole(Org org, User user, OrgRoleType roleType) {
         this.org = org;
         this.user = user;
-        this.role = role;
+        this.roleType = roleType;
         orgUrl = org.getOrgUrl();
         email = user.getEmail();
     }
@@ -54,10 +54,10 @@ public class OrgRole extends AbstractIdEntity {
         return new JMap(
                 JMap.entry("orgName", getOrg().getOrgName()),
                 JMap.entry("email", email),
-                JMap.entry("role", role),
+                JMap.entry("role", roleType),
                 JMap.entry("action", getAction()),
                 JMap.entry("actionLabel", getAction().getLabel()),
-                JMap.entry("roleLabel", role.getLabel()));
+                JMap.entry("roleLabel", roleType.getLabel()));
     }
     
     private OrgRoleAction getAction() {
@@ -66,7 +66,7 @@ public class OrgRole extends AbstractIdEntity {
     
     @Override
     public Comparable getKey() {
-        return Comparables.tuple(orgUrl, email, role);
+        return Comparables.tuple(orgUrl, email, roleType);
     }
 
     @Override
@@ -94,8 +94,8 @@ public class OrgRole extends AbstractIdEntity {
         return email;
     }
 
-    public UserRoleType getRole() {
-        return role;
+    public OrgRoleType getRoleType() {
+        return roleType;
     }
     
     public User getUser() throws StorageException {
@@ -114,6 +114,10 @@ public class OrgRole extends AbstractIdEntity {
 
     @Override
     public String toString() {
-        return Args.format(orgUrl, email, role);
+        return Args.format(orgUrl, email, roleType);
+    }
+    
+    public static Comparable key(String orgUrl, String email, OrgRoleType roleType) {
+        return Comparables.tuple(orgUrl, email, roleType);
     }
 }

@@ -56,12 +56,14 @@ public class AlertBuilder {
     }
 
     private void append(StatusRecord status) {
-        builder.append(String.format("<b>%s</b>\n\n", formatSubject(status)));
+        builder.append(String.format("<b>%s</b>\n", formatSubject(status)));
+        builder.append(String.format("<i>%s</i>\n\n",
+                Millis.formatTime(status.getTimestamp())));
         builder.append(buildContent(status));
     }
 
     private void appendPrevious(StatusRecord status) {
-        builder.append("\n<hr><b>Previous:</b>\n");
+        builder.append("\n<hr><b>Previously:</b>\n");
         builder.append(String.format("<b><i>%s</i></b>\n", formatSubject(status)));
         builder.append(String.format("<i>%s</i>\n\n",
                 Millis.formatTime(status.getTimestamp())));

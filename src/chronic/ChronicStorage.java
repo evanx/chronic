@@ -21,12 +21,12 @@
 package chronic;
 
 import chronic.entity.User;
-import chronic.entitytype.UserRoleType;
+import chronic.entitytype.OrgRoleType;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
-import chronic.entity.TopicSubscriber;
+import chronic.entity.Subscriber;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -70,7 +70,7 @@ public abstract class ChronicStorage {
 
     public abstract Storage<Topic> getTopicStorage();
     
-    public abstract Storage<TopicSubscriber> getSubscriberStorage();
+    public abstract Storage<Subscriber> getSubscriberStorage();
     
     public Iterable<String> getEmails(AlertRecord alert) {
         List<String> list = new ArrayList();
@@ -96,7 +96,7 @@ public abstract class ChronicStorage {
     public Iterable<Topic> listTopics(String email) throws StorageException {
         logger.info("listTopics {} {}", email);
         Set<Topic> topics = new TreeSet();
-        for (TopicSubscriber topicSubscriber : getSubscriberStorage().selectCollection(null)) {
+        for (Subscriber topicSubscriber : getSubscriberStorage().selectCollection(null)) {
             logger.info("listTopics topicSubscriber {}", topicSubscriber);
             if (topicSubscriber.getEmail().equals(email)) {
                 topics.add(getTopicStorage().find(Comparables.tuple(
@@ -106,36 +106,55 @@ public abstract class ChronicStorage {
         return topics;
     }
     
-    public Map<UserRoleType, OrgRole> mapOrgRole(String url, String email) {
+    public Map<OrgRoleType, OrgRole> mapOrgRole(String url, String email) {
         Map map = new HashMap();
         for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
             if (orgRole.getOrgUrl().equals(url) && 
                     orgRole.getEmail().equals(email)) {
-                map.put(orgRole.getRole(), orgRole);
+                map.put(orgRole.getRoleType(), orgRole);
             }
         }        
         return map;
     }
 
-    public Collection<UserRoleType> listOrgRoleType(String url, String email) {
-        List<UserRoleType> roleTypes = new LinkedList();
+    public Collection<OrgRoleType> listOrgRoleType(String url, String email) {
+        List<OrgRoleType> roleTypes = new LinkedList();
         for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
             if (orgRole.getOrgUrl().equals(url) && 
                     orgRole.getEmail().equals(email)) {
-                roleTypes.add(orgRole.getRole());
+                roleTypes.add(orgRole.getRoleType());
             }
         }        
         return roleTypes;
     }
 
+    public boolean isOrgRoleType(String orgUrl, OrgRoleType roleType) {
+        for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
+            if (orgRole.getOrgUrl().equals(orgUrl) && orgRole.getRoleType() == roleType) {
+                return true;
+            }
+        }        
+        return false;
+    }
+    
+    public Iterable<OrgRole> listOrgRole(String orgUrl) {
+        List list = new LinkedList();
+        for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
+            if (orgRole.getOrgUrl().equals(orgUrl)) {
+                list.add(orgRole);
+            }
+        }        
+        return list;
+    }
+    
     public Iterable<User> listUsers(String email) {
         List list = new LinkedList();
         return list;
     }
 
-    public Iterable<TopicSubscriber> listSubscribers(String email) {
+    public Iterable<Subscriber> listSubscribers(String email) {
         List list = new LinkedList();
-        for (TopicSubscriber subscriber : getSubscriberStorage().selectCollection(null)) {
+        for (Subscriber subscriber : getSubscriberStorage().selectCollection(null)) {
             logger.info("listTopics topicSubscriber {}", subscriber);
             if (subscriber.getEmail().equals(email)) {
                 list.add(subscriber);
@@ -153,4 +172,5 @@ public abstract class ChronicStorage {
         }        
         return list;
     }        
+
 }

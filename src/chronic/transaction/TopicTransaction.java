@@ -7,7 +7,7 @@ import chronic.*;
 import chronic.entity.User;
 import chronic.entity.Org;
 import chronic.entity.Topic;
-import chronic.entity.TopicSubscriber;
+import chronic.entity.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.StorageException;

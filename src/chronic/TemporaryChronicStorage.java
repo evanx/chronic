@@ -22,12 +22,12 @@ package chronic;
 
 import static chronic.ChronicStorage.logger;
 import chronic.entity.User;
-import chronic.entitytype.UserRoleType;
+import chronic.entitytype.OrgRoleType;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
-import chronic.entity.TopicSubscriber;
+import chronic.entity.Subscriber;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,7 +53,7 @@ public class TemporaryChronicStorage extends ChronicStorage {
     TemporaryStorage<OrgRole> orgRoleStorage = new TemporaryStorage();
     TemporaryStorage<Network> networkStorage = new TemporaryStorage();
     TemporaryStorage<Topic> topicStorage = new TemporaryStorage();
-    TemporaryStorage<TopicSubscriber> subscriberStorage = new TemporaryStorage();
+    TemporaryStorage<Subscriber> subscriberStorage = new TemporaryStorage();
     Map<String, Connection> connectionMap = new HashMap();
 
     public TemporaryChronicStorage(ChronicApp app) {
@@ -98,7 +98,7 @@ public class TemporaryChronicStorage extends ChronicStorage {
     }
 
     @Override
-    public Storage<TopicSubscriber> getSubscriberStorage() {
+    public Storage<Subscriber> getSubscriberStorage() {
         return subscriberStorage;
     }
 }
