@@ -8,6 +8,7 @@ import chronic.StatusRecord;
 import chronic.StatusRecordParser;
 import chronic.entity.Network;
 import chronic.entity.Org;
+import chronic.transaction.EnrollTransaction;
 import chronic.transaction.SubscribeTransaction;
 import chronic.transaction.TopicTransaction;
 import com.sun.net.httpserver.HttpExchange;
@@ -90,8 +91,11 @@ public class Post implements HttpHandler {
             new TopicTransaction().handle(app, status.getOrgUrl(), networkName, hostName, 
                     status.getTopicString());
             if (status.getSubscribers() != null) {
-                for (String subscriber : status.getSubscribers()) {
-                    new SubscribeTransaction().handle(app, status.getOrgUrl(), subscriber);
+                if (status.getSubscribers().length > 0) {
+                    for (String subscriber : status.getSubscribers()) {
+                        new SubscribeTransaction().handle(app, status.getOrgUrl(), subscriber);
+                        new EnrollTransaction().handle(app, orgUrl, subscriber);
+                    }
                 }
             }
             app.putRecord(status);
