@@ -36,4 +36,6 @@ public enum AlertType implements Labelled {
     public String getLabel() {
         return Bundle.get(getClass()).getString(name());
     }
+    
+    
 }

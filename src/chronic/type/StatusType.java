@@ -5,12 +5,15 @@
 package chronic.type;
 
 import chronic.bundle.Bundle;
+import java.util.MissingResourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author evan.summers
  */
-public enum StatusType {
+public enum StatusType {            
     OK,
     WARNING,
     CRITICAL,
@@ -26,5 +29,6 @@ public enum StatusType {
     public String getLabel() {
         return Bundle.get(StatusType.class).getString(name());
     }
+    
     
 }

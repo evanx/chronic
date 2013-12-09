@@ -20,6 +20,7 @@
  */
 package chronic;
 
+import chronic.bundle.Bundle;
 import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;

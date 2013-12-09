@@ -27,13 +27,12 @@ import java.util.ResourceBundle;
  * @author evan.summers
  */
 public class Bundle {
-        
+
     public static ResourceBundle get(Class classObject) {
         return ResourceBundle.getBundle(classObject.getName());
     }
     
     public static String get(String name) {
         return get(Bundle.class).getString(name);
-    }
-    
+    }    
 }
