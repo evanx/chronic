@@ -8,6 +8,7 @@ import chronic.entity.User;
 import chronic.entity.Org;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
+import chronic.entity.SubscriberKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.StorageException;
@@ -35,10 +36,10 @@ public class SubscribeTransaction {
             app.getStorage().getOrgStorage().insert(org);
         }
         for (Topic topic : app.getStorage().listTopics(org)) {
-            Comparable key = Subscriber.key(org.getUrl(), topic.getTopicString(), email);
+            SubscriberKey key = new SubscriberKey(org.getUrl(), topic.getTopicString(), email);
             Subscriber subscriber = app.getStorage().getSubscriberStorage().select(key);
             if (subscriber == null) {
-                subscriber = new Subscriber(orgUrl, topic.getTopicString(), email);
+                subscriber = new Subscriber(key);
                 app.getStorage().getSubscriberStorage().insert(subscriber);                
             }
         }

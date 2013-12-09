@@ -7,7 +7,6 @@ package chronic.entity;
 import chronic.entitytype.TopicAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
-import vellum.util.Comparables;
 
 /**
  *
@@ -23,19 +22,21 @@ public final class Subscriber extends AbstractIdEntity {
     public Subscriber() {
     }
 
+    public Subscriber(SubscriberKey key) {
+        this.orgUrl = key.getOrgUrl();
+        this.topicString = key.getTopicString();
+        this.email = key.getEmail();
+    }
+    
     public Subscriber(String orgUrl, String topicString, String email) {
         this.topicString = topicString;
         this.orgUrl = orgUrl;
         this.email = email;
     }
 
-    public static Comparable key(String orgUrl, String topicString, String email) {
-        return Comparables.tuple(orgUrl, topicString, email);
-    }
-        
     @Override
     public Comparable getKey() {
-        return key(orgUrl, topicString, email);
+        return new SubscriberKey(orgUrl, topicString, email);
     }
 
     @Override

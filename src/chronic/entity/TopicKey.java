@@ -10,16 +10,14 @@ import vellum.type.ComparableTuple;
  *
  * @author evan.summers
  */
-public final class SubscriberKey extends ComparableTuple {
+public final class TopicKey extends ComparableTuple {
     String orgUrl;
     String topicString;
-    String email;
             
-    public SubscriberKey(String orgUrl, String topicString, String email) {
-        super(orgUrl, topicString, email);
+    public TopicKey(String orgUrl, String topicString) {
+        super(orgUrl, topicString);
         this.orgUrl = orgUrl;
         this.topicString = topicString;
-        this.email = email;
     }
 
     public String getOrgUrl() {
@@ -30,7 +28,4 @@ public final class SubscriberKey extends ComparableTuple {
         return topicString;
     }
 
-    public String getEmail() {
-        return email;
-    }
 }
