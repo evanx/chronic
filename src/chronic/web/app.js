@@ -64,9 +64,9 @@ app.controller("personaController", ["$scope", "$location", "personaService",
       } else {
          try {
             $scope.persona = JSON.parse(persona);
-            console.log("persona", $scope.persona.email, $scope.persona.accessToken.substring(0, 10));
+            console.log("persona", $scope.persona.email, $scope.persona.assertion.substring(0, 10));
             loggedInUser = $scope.persona.email;
-            personaService.login($scope.persona.accessToken).then(function(persona) {
+            personaService.login($scope.persona.assertion).then(function(persona) {
                $scope.persona = persona;
                if (persona.email) {
                   localStorage.setItem("persona", JSON.stringify(persona));

@@ -69,7 +69,8 @@ public class ChronicHttpHandler implements HttpHandler {
                 webHandler.handle(httpExchange);
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage(), e);
+            logger.warn(e.getMessage());
+            
         }
     }
 
@@ -77,7 +78,6 @@ public class ChronicHttpHandler implements HttpHandler {
         try {
             httpx.sendResponse(handler.handle(app, httpx));
         } catch (Exception e) {
-            e.printStackTrace(System.err);
             httpx.handleError(e);
         }
         httpx.close();
