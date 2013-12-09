@@ -230,7 +230,7 @@ public class StatusRecord {
     public List<String> buildChanged(StatusRecord previous) {
         List<String> list = new ArrayList();
         for (String line : lineList) {
-            if (!previous.contains(line)) {
+            if (!line.isEmpty() && !previous.contains(line)) {
                 list.add(line);
             }
         }

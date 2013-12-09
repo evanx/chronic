@@ -70,7 +70,10 @@ public class AlertBuilder {
     
     public static String buildContent(StatusRecord status) {
         StringBuilder builder = new StringBuilder();
-        for (String line : status.getLineList()) {
+        for (String line : Strings.trimLines(status.getLineList())) {
+            if (line.trim().isEmpty() && builder.length() == 0) {
+                continue;
+            }
             if (line.equals(status.getSubject())) {
                 continue;
             }
