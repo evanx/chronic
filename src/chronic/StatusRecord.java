@@ -230,16 +230,16 @@ public class StatusRecord {
     public List<String> buildChanged(StatusRecord previous) {
         List<String> list = new ArrayList();
         for (String line : lineList) {
-            if (!contains(line)) {
+            if (!previous.contains(line)) {
                 list.add(line);
             }
         }
         return list;
     }
 
-    public boolean contains(String other) {
+    public boolean contains(String otherLine) {
         for (String line : lineList) {
-            if (equals(line, other)) {
+            if (line.equals(otherLine)) {
                 return true;
             }
         }

@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
+import vellum.util.Strings;
 
 /**
  *
@@ -45,6 +46,9 @@ public class AlertBuilder {
                 && alert.previousStatus != null
                 && alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
             appendPrevious(alert.previousStatus);
+            builder.append("\n<hr><b>Changed:</b>\n\n");
+            builder.append(Strings.join("\n", alert.status.buildChanged(alert.previousStatus)));
+            builder.append('\n');
         } else if (alert.status.getAlertType() == AlertType.STATUS_CHANGED) {
         }
         builder.append("<hr><img src='cid:image'/>");
@@ -57,13 +61,13 @@ public class AlertBuilder {
     }
 
     private void appendPrevious(StatusRecord status) {
-        builder.append("\n<hr>Previous:\n");
-        builder.append(String.format("<b>%s</b>\n", formatSubject(status)));
+        builder.append("\n<hr><b>Previous:</b>\n");
+        builder.append(String.format("<b><i>%s</i></b>\n", formatSubject(status)));
         builder.append(String.format("<i>%s</i>\n\n",
                 Millis.formatTime(status.getTimestamp())));
         builder.append(buildContent(status));
     }
-
+    
     public static String buildContent(StatusRecord status) {
         StringBuilder builder = new StringBuilder();
         for (String line : status.getLineList()) {
