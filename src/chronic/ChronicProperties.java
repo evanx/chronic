@@ -56,8 +56,8 @@ public class ChronicProperties {
     private MailerProperties mailerProperties = new MailerProperties();
 
     public void init() throws IOException {
-        String confFileName = properties.getString("chronic.json", "chronic.json");
-        JsonObjectWrapper object = new JsonObjectWrapper(new File(confFileName));
+        String jsonConfigFileName = properties.getString("config.json", "config.json");
+        JsonObjectWrapper object = new JsonObjectWrapper(new File(jsonConfigFileName));
         serverAddress = object.getString("serverAddress", serverAddress);
         alertScript = object.getString("alertScript", alertScript);
         period = object.getMillis("period", period);
