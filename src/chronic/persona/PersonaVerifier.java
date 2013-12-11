@@ -6,7 +6,7 @@ package chronic.persona;
 
 import chronic.ChronicApp;
 import chronic.ChronicCookie;
-import chronic.util.JsonObjectWrapper;
+import chronic.util.JsonObjectDelegate;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -48,7 +48,7 @@ public class PersonaVerifier {
         builder.append("&audience=").append(URLEncoder.encode(serverUrl, "UTF-8"));
         logger.trace("persona {} {}", url, builder.toString());
         connection.getOutputStream().write(builder.toString().getBytes());
-        JsonObjectWrapper object = new JsonObjectWrapper(connection.getInputStream());
+        JsonObjectDelegate object = new JsonObjectDelegate(connection.getInputStream());
         if (object.hasProperty("status")) {
             String status = object.getString("status");
             if (status.equals("okay")) {

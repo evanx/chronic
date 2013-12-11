@@ -22,7 +22,7 @@ package chronic;
 
 import chronic.mail.Mailer;
 import chronic.mail.MailerProperties;
-import chronic.util.JsonObjectWrapper;
+import chronic.util.JsonObjectDelegate;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -58,7 +58,7 @@ public class ChronicProperties {
 
     public void init() throws IOException {
         String jsonConfigFileName = properties.getString("config.json", "config.json");
-        JsonObjectWrapper object = new JsonObjectWrapper(new File(jsonConfigFileName));
+        JsonObjectDelegate object = new JsonObjectDelegate(new File(jsonConfigFileName));
         serverAddress = object.getString("serverAddress", serverAddress);
         alertScript = object.getString("alertScript", alertScript);
         period = object.getMillis("period", period);

@@ -32,23 +32,23 @@ import vellum.util.Strings;
  *
  * @author evan.summers
  */
-public class JsonObjectWrapper {
+public class JsonObjectDelegate {
     private JsonObject object;
-    private static final Logger logger = LoggerFactory.getLogger(JsonObjectWrapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonObjectDelegate.class);
 
-    public JsonObjectWrapper(JsonObject object) {
+    public JsonObjectDelegate(JsonObject object) {
         this.object = object;
     }
 
-    public JsonObjectWrapper(Reader reader) throws FileNotFoundException {
+    public JsonObjectDelegate(Reader reader) throws FileNotFoundException {
         this(new JsonParser().parse(reader).getAsJsonObject());
     }
     
-    public JsonObjectWrapper(File file) throws FileNotFoundException {
+    public JsonObjectDelegate(File file) throws FileNotFoundException {
         this(new FileReader(file));
     }
 
-    public JsonObjectWrapper(InputStream inputStream) throws FileNotFoundException {
+    public JsonObjectDelegate(InputStream inputStream) throws FileNotFoundException {
         this(new JsonParser().parse(new InputStreamReader(inputStream)).getAsJsonObject());
     }
 
