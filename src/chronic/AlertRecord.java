@@ -22,8 +22,6 @@ package chronic;
  */
 
 
-import chronic.entitytype.TopicAction;
-import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +29,14 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.datatype.Millis;
+import vellum.datatype.Timestamped;
 import vellum.util.Strings;
 
 /**
  *
  * @author evan.summers
  */
-public class AlertRecord {
+public class AlertRecord implements Timestamped {
 
     static Logger logger = LoggerFactory.getLogger(AlertRecord.class);
     StatusRecord status;
@@ -59,6 +58,11 @@ public class AlertRecord {
         this.previousStatus = previous;
         this.previousAlert = previousAlert;
     }
+    
+    @Override
+    public long getTimestamp() {
+        return status.getTimestamp();
+    }    
     
     public StatusRecord getStatus() {
         return status;
@@ -96,8 +100,5 @@ public class AlertRecord {
     @Override
     public String toString() {
         return status.toString();
-    }
-    
-    
-    
+    }        
 }

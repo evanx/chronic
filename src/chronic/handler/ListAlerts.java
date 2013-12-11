@@ -4,11 +4,11 @@
 package chronic.handler;
 
 import chronic.*;
-import chronic.util.AlertRecordDescendingTimestampComparator;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.datatype.TimestampedComparator;
 import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
@@ -27,7 +27,7 @@ public class ListAlerts implements ChronicHandler {
         String email = app.getVerifiedEmail(httpx);
         List alerts = new LinkedList();
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
-                new AlertRecordDescendingTimestampComparator())) {
+                TimestampedComparator.reverse())) {
             if (alert.getStatus().getService() != null) {
                 alerts.add(alert.getAlertMap(app.getProperties().isAdmin(email)));
             } else {
