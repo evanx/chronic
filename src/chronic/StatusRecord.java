@@ -61,7 +61,8 @@ public class StatusRecord {
 
     transient Collection<StatusCheck> checks = new LinkedList();
     
-    public StatusRecord() {
+    public StatusRecord(String orgUrl) {
+        this.orgUrl = orgUrl;
     }
 
     public StatusRecord(StatusRecord record) {
@@ -74,10 +75,11 @@ public class StatusRecord {
         this.hostname = record.hostname;
         this.username = record.username;
         this.service = record.service;
+        this.orgUrl = record.orgUrl;
     }
 
     public ComparableTuple getKey() {
-        return ComparableTuple.create(username, hostname, service);
+        return ComparableTuple.create(orgUrl, topicString);
     }
 
     public void setUsername(String username) {

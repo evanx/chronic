@@ -26,8 +26,6 @@ import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -52,8 +50,12 @@ public class StatusRecordParser {
     static Pattern headPattern = 
             Pattern.compile("^[a-zA-Z]+: .*$");
     
-    StatusRecord record = new StatusRecord();
+    StatusRecord record;
     
+    public StatusRecordParser(String orgUrl) {
+        record = new StatusRecord(orgUrl);
+    }
+        
     private void parseAlertFormatType(String string) {
         try {
             record.setAlertFormatType(AlertFormatType.valueOf(string));

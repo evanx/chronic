@@ -21,7 +21,6 @@
 package chronic;
 
 import chronic.bundle.Bundle;
-import chronic.type.StatusType;
 
 /**
  *
@@ -29,7 +28,7 @@ import chronic.type.StatusType;
  */
 public class AlertFormatter {
 
-    StatusRecord status = new StatusRecord();
+    StatusRecord status;
 
     public AlertFormatter(StatusRecord status) {
         this.status = status;
