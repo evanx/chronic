@@ -19,6 +19,8 @@ import org.junit.Test;
  */
 public class ChronicTest {
     
+    String orgUrl = "test.org";
+    
     public ChronicTest() {
     }
     
@@ -40,15 +42,15 @@ public class ChronicTest {
     
     @Test
     public void nagiosChanged() {
-        StatusRecord record1 = new StatusRecord();
-        StatusRecord record2 = new StatusRecord();
+        StatusRecord record1 = new StatusRecord(orgUrl);
+        StatusRecord record2 = new StatusRecord(orgUrl);
         record1.getLineList().add("ACME OK - some detail");
         record2.getLineList().add("ACME OK - other detail");
         Assert.assertTrue(record1.equals(record2));
-        record2 = new StatusRecord();
+        record2 = new StatusRecord(orgUrl);
         record2.getLineList().add("ACMY OK - other detail");
         Assert.assertFalse(record1.equals(record2));
-        record2 = new StatusRecord();
+        record2 = new StatusRecord(orgUrl);
         record2.getLineList().add("ACME CRITICAL - some detail");
         Assert.assertFalse(record1.equals(record2));
     }
