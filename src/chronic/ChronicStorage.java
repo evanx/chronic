@@ -167,13 +167,14 @@ public abstract class ChronicStorage {
         logger.warn("listSubscriberEmails {} {}", alert.getStatus().getTopicString(), set);
         set.clear();
         set.add(app.getProperties().getAdminEmails().iterator().next());
+        logger.info("listSubscriberEmails {} {}", alert.getStatus().getTopicString(), set);
         return set;
     }
     
     public Iterable<Subscriber> listSubscribers(String email) {
         List list = new LinkedList();
         for (Subscriber subscriber : getSubscriberStorage().selectCollection(null)) {
-            logger.info("listTopics subscriber {}", subscriber);
+            logger.info("listSubscriber subscriber {}", subscriber);
             if (subscriber.getEmail().equals(email) || app.getProperties().isAdmin(email)) {
                 list.add(subscriber);
             }            
@@ -195,7 +196,7 @@ public abstract class ChronicStorage {
     public Iterable<Subscriber> listSubscribersOrg(String orgUrl) {
         List list = new LinkedList();
         for (Subscriber subscriber : getSubscriberStorage().selectCollection(null)) {
-            logger.info("listTopics topicSubscriber {}", subscriber);
+            logger.info("listSubscriberOrg subscriber {}", subscriber);
             if (subscriber.getOrgUrl().equals(orgUrl)) {
                 list.add(subscriber);
             }            

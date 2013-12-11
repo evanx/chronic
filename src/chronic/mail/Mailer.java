@@ -41,6 +41,7 @@ public class Mailer {
     }
 
     public void sendEmail(String recipient, String subject, String htmlContent) {
+        logger.info("sendEmail {} [{}]", recipient, subject);
         if (properties != null && properties.isEnabled()) {
             try {
                 send(recipient, subject, htmlContent);
