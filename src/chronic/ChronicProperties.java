@@ -52,6 +52,7 @@ public class ChronicProperties {
     private Set<String> adminDomains;
     private Set<String> adminEmails;
     private Set<String> allowedAddresses;
+    private Set<String> enrollEmails;
     private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
     private MailerProperties mailerProperties = new MailerProperties();
 
@@ -64,6 +65,8 @@ public class ChronicProperties {
         testing = object.getBoolean("testing", testing);
         adminDomains = object.getStringSet("adminDomains");
         adminEmails = object.getStringSet("adminEmails");
+        enrollEmails = object.getStringSet("enrollEmails");
+        enrollEmails.addAll(adminEmails);
         allowedAddresses = object.getStringSet("allowedAddresses");
         allowedAddresses.add("127.0.0.1");
         if (object.hasProperties("httpRedirectServer")) {

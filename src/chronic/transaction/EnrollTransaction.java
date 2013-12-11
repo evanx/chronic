@@ -26,18 +26,19 @@ public class EnrollTransaction {
         OrgRole orgRole = app.getStorage().getOrgRoleStorage().
             select(Comparables.tuple(orgUrl, email, OrgRoleType.ADMIN));
         if (orgRole == null) {
+            boolean enabled = app.getProperties().isAdmin(email);
             User user = app.getStorage().getUserStorage().select(email);
             if (user == null) {
                 user = new User(email);
+                user.setEnabled(enabled);
                 app.getStorage().getUserStorage().insert(user);
             }
-            boolean enabled = false;
             Org org = app.getStorage().getOrgStorage().select(orgUrl);
             if (org == null) {
                 org = new Org(orgUrl);
                 app.getStorage().getOrgStorage().insert(org);
                 enabled = true;
-            } else {
+            } else if (!enabled) {
                 enabled = !app.getStorage().isOrgRoleType(orgUrl, OrgRoleType.ADMIN);
             }
             orgRole = new OrgRole(org, user, OrgRoleType.ADMIN);
