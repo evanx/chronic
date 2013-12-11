@@ -17,7 +17,7 @@ public final class Subscriber extends AbstractIdEntity {
     String orgUrl;
     String topicString;
     String email;
-    boolean enabled = false;
+    boolean enabled = true;
             
     public Subscriber() {
     }
@@ -39,6 +39,14 @@ public final class Subscriber extends AbstractIdEntity {
         return new SubscriberKey(orgUrl, topicString, email);
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
     @Override
     public void setId(Long id) {
         this.id = id;

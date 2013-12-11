@@ -12,8 +12,6 @@ import chronic.entity.SubscriberKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.StorageException;
-import vellum.type.ComparableTuple;
-import vellum.util.Comparables;
 
 /**
  *

@@ -28,10 +28,10 @@ public class ListAlerts implements ChronicHandler {
         List alerts = new LinkedList();
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {
-            if (alert.getStatus().getService() != null) {
-                alerts.add(alert.getAlertMap(app.getProperties().isAdmin(email)));
-            } else {
-                logger.warn("exclude {} {}", alert.getStatus().getOrgUrl(), email);
+            if (app.getStorage().isSubscriber(email, alert)) {
+                alerts.add(alert.getAlertMap(true));
+            } else if (app.getProperties().isAdmin(email)) {
+                alerts.add(alert.getAlertMap(false));                
             }
         }
         return JMaps.create("alerts", alerts);

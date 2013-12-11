@@ -20,6 +20,7 @@
  */
 package chronic;
 
+import static chronic.ChronicStorage.logger;
 import chronic.entity.User;
 import chronic.entitytype.OrgRoleType;
 import chronic.entity.Network;
@@ -27,9 +28,10 @@ import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
-import java.util.ArrayList;
+import chronic.entity.SubscriberKey;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,39 +74,25 @@ public abstract class ChronicStorage {
     
     public abstract Storage<Subscriber> getSubscriberStorage();
     
-    public Iterable<String> getEmails(AlertRecord alert) {
-        List<String> list = new ArrayList();
-        list.add(app.getProperties().getAdminEmails().iterator().next());
-        return list;
-    }
-
     public static ChronicStorage create(ChronicApp app) {
         return new TemporaryChronicStorage(app);
     }
 
-    public Iterable<Topic> listTopics(Org org) {
-        Set<Topic> topics = new TreeSet();
-        for (Topic topic : getTopicStorage().selectCollection(
-                ChronicQueryType.TOPICS_org, org.getOrgUrl())) {
-            if (topic.getOrgUrl().equals(org.getOrgUrl())) {
-                topics.add(topic);
-            }
-        }
-        return topics;
+    public Iterable<User> listUsers(String email) {
+        List list = new LinkedList();
+        return list;
     }
 
-    public Iterable<Topic> listTopics(String email) throws StorageException {
-        logger.info("listTopics {} {}", email);
-        Set<Topic> topics = new TreeSet();
-        for (Subscriber topicSubscriber : getSubscriberStorage().selectCollection(null)) {
-            logger.info("listTopics topicSubscriber {}", topicSubscriber);
-            if (topicSubscriber.getEmail().equals(email)) {
-                topics.add(getTopicStorage().find(Comparables.tuple(
-                        topicSubscriber.getOrgUrl(), topicSubscriber.getTopicString())));
-            }            
-        }
-        return topics;
-    }
+    
+    public Iterable<OrgRole> listRoles(String email) {
+        List list = new LinkedList();
+        for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
+            if (orgRole.getEmail().equals(email) || app.getProperties().isAdmin(email)) {
+                list.add(orgRole);
+            }
+        }        
+        return list;
+    }        
     
     public Map<OrgRoleType, OrgRole> mapOrgRole(String url, String email) {
         Map map = new HashMap();
@@ -146,16 +134,46 @@ public abstract class ChronicStorage {
         }        
         return list;
     }
-    
-    public Iterable<User> listUsers(String email) {
-        List list = new LinkedList();
-        return list;
+        
+    public Iterable<Topic> listTopics(Org org) {
+        Set<Topic> topics = new TreeSet();
+        for (Topic topic : getTopicStorage().selectCollection(
+                ChronicQueryType.TOPICS_org, org.getOrgUrl())) {
+            if (topic.getOrgUrl().equals(org.getOrgUrl())) {
+                topics.add(topic);
+            }
+        }
+        return topics;
     }
 
+    public Iterable<Topic> listTopics(String email) throws StorageException {
+        logger.info("listTopics {} {}", email);
+        Set<Topic> topics = new TreeSet();
+        for (Subscriber subscriber : getSubscriberStorage().selectCollection(null)) {
+            logger.info("listTopics subscriber {}", subscriber);
+            if (subscriber.getEmail().equals(email)) {
+                topics.add(getTopicStorage().find(Comparables.tuple(
+                        subscriber.getOrgUrl(), subscriber.getTopicString())));
+            }            
+        }
+        return topics;
+    }
+
+    public Iterable<String> listSubscriberEmails(AlertRecord alert) {
+        Set<String> set = new HashSet();
+        for (Subscriber subscriber : listSubscribers(alert.getStatus())) {
+            set.add(subscriber.getEmail());
+        }
+        logger.warn("listSubscriberEmails {} {}", alert.getStatus().getTopicString(), set);
+        set.clear();
+        set.add(app.getProperties().getAdminEmails().iterator().next());
+        return set;
+    }
+    
     public Iterable<Subscriber> listSubscribers(String email) {
         List list = new LinkedList();
         for (Subscriber subscriber : getSubscriberStorage().selectCollection(null)) {
-            logger.info("listTopics topicSubscriber {}", subscriber);
+            logger.info("listTopics subscriber {}", subscriber);
             if (subscriber.getEmail().equals(email) || app.getProperties().isAdmin(email)) {
                 list.add(subscriber);
             }            
@@ -163,14 +181,35 @@ public abstract class ChronicStorage {
         return list;
     }
 
-    public Iterable<OrgRole> listRoles(String email) {
+    public Iterable<Subscriber> listSubscribers(StatusRecord status) {
         List list = new LinkedList();
-        for (OrgRole orgRole : getOrgRoleStorage().selectCollection(null)) {
-            if (orgRole.getEmail().equals(email) || app.getProperties().isAdmin(email)) {
-                list.add(orgRole);
+        for (Subscriber sub : listSubscribersOrg(status.getOrgUrl())) {
+            if (sub.getTopicString().equals(status.getTopicString())) {
+                list.add(sub);
             }
-        }        
+        }
         return list;
-    }        
+    }
+    
+    
+    public Iterable<Subscriber> listSubscribersOrg(String orgUrl) {
+        List list = new LinkedList();
+        for (Subscriber subscriber : getSubscriberStorage().selectCollection(null)) {
+            logger.info("listTopics topicSubscriber {}", subscriber);
+            if (subscriber.getOrgUrl().equals(orgUrl)) {
+                list.add(subscriber);
+            }            
+        }
+        return list;
+    }
 
+    public boolean isSubscriber(String email, AlertRecord alert) {
+        return isSubscriber(email, alert.getStatus());
+    }
+    
+    public boolean isSubscriber(String email, StatusRecord status) {
+        SubscriberKey key = new SubscriberKey(status.getOrgUrl(), 
+                status.getTopicString(), email);
+        return getSubscriberStorage().containsKey(key);
+    }    
 }
