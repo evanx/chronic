@@ -12,7 +12,8 @@ import vellum.storage.AbstractIdEntity;
  *
  * @author evan.summers
  */
-public final class Subscriber extends AbstractIdEntity {
+public final class Subscriber extends AbstractIdEntity implements OrgKeyed, UserKeyed, 
+        TopicKeyed, SubscriberKeyed {
     Long id;
     String orgUrl;
     String topicString;
@@ -39,6 +40,26 @@ public final class Subscriber extends AbstractIdEntity {
         return new SubscriberKey(orgUrl, topicString, email);
     }
 
+    @Override
+    public SubscriberKey getSubscriberKey() {
+        return new SubscriberKey(orgUrl, topicString, email);
+    }
+    
+    @Override
+    public UserKey getUserKey() {
+        return new UserKey(email);
+    }
+
+    @Override
+    public OrgKey getOrgKey() {
+        return new OrgKey(orgUrl);
+    }
+
+    @Override
+    public TopicKey getTopicKey() {
+        return new TopicKey(orgUrl, topicString);
+    }
+    
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }

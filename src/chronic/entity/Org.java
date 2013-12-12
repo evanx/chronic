@@ -16,11 +16,11 @@ import vellum.validation.ValidationExceptionType;
  *
  * @author evan.summers
  */
-public final class Org extends AbstractEntity {
+public final class Org extends AbstractEntity implements OrgKeyed {
     Long id;
     String orgName;
     String label;
-    String url;
+    String orgUrl;
     String region;
     String locality;
     String country;
@@ -30,7 +30,7 @@ public final class Org extends AbstractEntity {
     }
 
     public Org(String url, String orgName) {
-        this.url = url;
+        this.orgUrl = url;
         this.orgName = orgName;
     }
 
@@ -44,14 +44,14 @@ public final class Org extends AbstractEntity {
     }
 
     public void update(JMap map) throws JMapException {
-        url = map.getString("url");
+        orgUrl = map.getString("url");
         orgName = map.getString("orgName");
         label = map.getString("label");
         region = map.getString("region");
         locality = map.getString("locality");
         country = map.getString("country");
         if (orgName == null) {
-            orgName = url;
+            orgName = orgUrl;
         }
         if (label == null) {
             label = orgName;
@@ -63,7 +63,7 @@ public final class Org extends AbstractEntity {
         map.put("orgId", id);
         map.put("orgName", orgName);
         map.put("label", label);
-        map.put("url", url);
+        map.put("url", orgUrl);
         map.put("region", region);
         map.put("locality", locality);
         map.put("country", country);
@@ -73,9 +73,14 @@ public final class Org extends AbstractEntity {
     
     @Override
     public String getKey() {
-        return url;
+        return orgUrl;
     }
 
+    @Override
+    public OrgKey getOrgKey() {
+        return new OrgKey(orgUrl);
+    }
+    
     public void setId(long id) {
         this.id = id;
     }
@@ -116,24 +121,20 @@ public final class Org extends AbstractEntity {
         this.label = label;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+    public void setOrgUrl(String orgUrl) {
+        this.orgUrl = orgUrl;
     }
     
+    public String getOrgUrl() {
+        return orgName;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getOrgUrl() {
-        return orgName;
     }
 
     public void setOrgName(String orgName) {
@@ -145,8 +146,8 @@ public final class Org extends AbstractEntity {
     }
     
     public void validate() throws ValidationException {
-        if (!Patterns.matchesDomain(url)) {
-            throw new ValidationException(ValidationExceptionType.INVALID_URL, url);
+        if (!Patterns.matchesDomain(orgUrl)) {
+            throw new ValidationException(ValidationExceptionType.INVALID_URL, orgUrl);
         }
     }
 

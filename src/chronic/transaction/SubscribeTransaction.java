@@ -34,7 +34,7 @@ public class SubscribeTransaction {
             app.getStorage().getOrgStorage().insert(org);
         }
         for (Topic topic : app.getStorage().listTopics(org)) {
-            SubscriberKey key = new SubscriberKey(org.getUrl(), topic.getTopicString(), email);
+            SubscriberKey key = new SubscriberKey(org.getOrgUrl(), topic.getTopicString(), email);
             Subscriber subscriber = app.getStorage().getSubscriberStorage().select(key);
             if (subscriber == null) {
                 subscriber = new Subscriber(key);

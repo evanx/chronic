@@ -17,7 +17,7 @@ import vellum.util.Comparables;
  *
  * @author evan.summers
  */
-public class OrgRole extends AbstractIdEntity {
+public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed {
     Long id;
     String orgUrl;
     String email;
@@ -42,6 +42,16 @@ public class OrgRole extends AbstractIdEntity {
         email = user.getEmail();
     }
 
+    @Override
+    public OrgKey getOrgKey() {
+        return new OrgKey(orgUrl);
+    }
+
+    @Override
+    public UserKey getUserKey() {
+        return new UserKey(email);
+    }
+    
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }

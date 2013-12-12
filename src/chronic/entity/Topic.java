@@ -13,7 +13,7 @@ import vellum.util.Comparables;
  *
  * @author evan.summers
  */
-public final class Topic extends AbstractIdEntity {
+public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicKeyed {
 
     Long id;
     String orgUrl;
@@ -78,5 +78,15 @@ public final class Topic extends AbstractIdEntity {
     @Override
     public String toString() {
         return getMap().toString();
+    }
+
+    @Override
+    public OrgKey getOrgKey() {
+        return new OrgKey(orgUrl);
+    }
+
+    @Override
+    public TopicKey getTopicKey() {
+        return new TopicKey(orgUrl, topicString);
     }
 }

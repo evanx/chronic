@@ -14,7 +14,7 @@ import vellum.storage.AbstractEntity;
  *
  * @author evan.summers
  */
-public class User extends AbstractEntity {
+public class User extends AbstractEntity implements UserKeyed {
 
     Long id;
     String email;
@@ -43,6 +43,11 @@ public class User extends AbstractEntity {
         return email;
     }
 
+    @Override
+    public UserKey getUserKey() {
+        return new UserKey(email);
+    }
+    
     public void setId(Long id) {
         this.id = id;
     }
