@@ -144,7 +144,7 @@ public class StatusRecordParser {
         String[] lines = text.split("\n");
         boolean nagiosStatus = true;
         for (int i = 0; i < lines.length; i++) {
-            String line = lines[i].trim();
+            String line = Strings.trimEnd(lines[i]);
             if (line.startsWith("From: ")) {
                 parseFromLine(line);
             } else if (line.startsWith("Subject: ")) {
