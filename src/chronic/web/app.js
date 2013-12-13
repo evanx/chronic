@@ -248,3 +248,37 @@ app.controller("rolesController", ["$scope", "$http",
          }
       });
    }]);
+
+app.controller("certsController", ["$scope", "$http",
+   function($scope, $http) {
+      $scope.certsList = function() {
+         console.log("certs", $scope.persona.email);
+         $scope.certs = undefined;
+         $scope.selected = undefined;
+         $scope.loading = true;
+         $http.post("/chronicapp/certList", {
+            email: $scope.persona.email
+         }).then(function(response) {
+            $scope.loading = false;
+            console.log("certs", response.data);
+            if (response.data && response.data.certs) {
+               $scope.certs = response.data.certs;
+            } else {
+               console.warn("certs", response);
+               //navigator.id.logout();
+            }
+         });
+      };
+      $scope.setSelected = function() {
+         $scope.selected = this.cert;
+         console.log("selected", $scope.selected);
+      };
+      $scope.$on("changeView", function(event, view) {
+         console.log("certs changeView", view);
+         if (view === "certs") {
+            $scope.certsList();
+         } else {
+            $scope.certs = undefined;            
+         }
+      });
+   }]);
