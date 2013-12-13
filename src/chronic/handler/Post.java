@@ -57,18 +57,18 @@ public class Post implements HttpHandler {
             String orgUrl = Certificates.getOrg(certificate.getSubjectDN());
             String networkName = Certificates.getOrgUnit(certificate.getSubjectDN());
             logger.trace("certificate {} {}", hostName, orgUrl);
-            if (!app.getStorage().getOrgStorage().containsKey(orgUrl)) {
+            if (!app.getStorage().org().containsKey(orgUrl)) {
                 org = new Org(orgUrl);
-                app.getStorage().getOrgStorage().insert(org);
+                app.getStorage().org().insert(org);
             } else {
-                org = app.getStorage().getOrgStorage().find(orgUrl);
+                org = app.getStorage().org().find(orgUrl);
             }
-            if (!app.getStorage().getNetworkStorage().containsKey(networkName)) {
+            if (!app.getStorage().network().containsKey(networkName)) {
                 network = new Network(orgUrl, networkName);
                 network.setAddress(hostAddress);
-                app.getStorage().getNetworkStorage().insert(network);
+                app.getStorage().network().insert(network);
             } else {
-                network = app.getStorage().getNetworkStorage().find(networkName);
+                network = app.getStorage().network().find(networkName);
                 if (!network.getOrgUrl().equals(org.getOrgUrl())) {
                     logger.warn("network orgName {}, {}", network.getOrgUrl(), org.getOrgUrl());
                 }                

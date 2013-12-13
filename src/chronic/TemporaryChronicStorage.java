@@ -20,27 +20,19 @@
  */
 package chronic;
 
-import static chronic.ChronicStorage.logger;
+import chronic.entity.Cert;
 import chronic.entity.User;
-import chronic.entitytype.OrgRoleType;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
 import java.sql.Connection;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import org.h2.tools.Server;
 import vellum.storage.Storage;
-import vellum.storage.StorageException;
 import vellum.storage.TemporaryStorage;
-import vellum.util.Comparables;
 
 /**
  *
@@ -54,6 +46,7 @@ public class TemporaryChronicStorage extends ChronicStorage {
     TemporaryStorage<Network> networkStorage = new TemporaryStorage();
     TemporaryStorage<Topic> topicStorage = new TemporaryStorage();
     TemporaryStorage<Subscriber> subscriberStorage = new TemporaryStorage();
+    TemporaryStorage<Cert> certStorage = new TemporaryStorage();
     Map<String, Connection> connectionMap = new HashMap();
 
     public TemporaryChronicStorage(ChronicApp app) {
@@ -73,32 +66,39 @@ public class TemporaryChronicStorage extends ChronicStorage {
     }
 
     @Override
-    public Storage<User> getUserStorage() {
+    public Storage<User> user() {
         return userStorage;
     }
 
     @Override
-    public Storage<Org> getOrgStorage() {
+    public Storage<Org> org() {
         return orgStorage;
     }
     
     @Override
-    public Storage<OrgRole> getOrgRoleStorage() {
+    public Storage<OrgRole> role() {
         return orgRoleStorage;
     }
 
     @Override
-    public Storage<Network> getNetworkStorage() {
+    public Storage<Network> network() {
         return networkStorage;
     }
     
     @Override
-    public Storage<Topic> getTopicStorage() {
+    public Storage<Topic> topic() {
         return topicStorage;
     }
 
     @Override
-    public Storage<Subscriber> getSubscriberStorage() {
+    public Storage<Subscriber> sub() {
         return subscriberStorage;
     }
+
+    @Override
+    public Storage<Cert> cert() {
+        return certStorage;
+    }
+    
+    
 }

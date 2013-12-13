@@ -4,14 +4,17 @@
  */
 package chronic.entity;
 
+import vellum.util.ComparableValue;
+
 /**
  *
  * @author evan.summers
  */
-public class OrgKey {
+public class OrgKey extends ComparableValue {
     String orgUrl;
 
     public OrgKey(String orgUrl) {
+        super(orgUrl);
         this.orgUrl = orgUrl;
     }
 
@@ -19,3 +22,4 @@ public class OrgKey {
         return orgUrl;
     }        
 }
+
