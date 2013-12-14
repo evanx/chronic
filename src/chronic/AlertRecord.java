@@ -86,7 +86,7 @@ public class AlertRecord implements Timestamped {
         map.put("timestamp", status.timestamp);
         map.put("timestampLabel", Millis.formatTime(status.timestamp));
         map.put("topic", status.getTopicString());
-        map.put("message", formatter.formatMessage());
+        map.put("message", formatter.formatAlertTypeLabel());
         if (detail) {
             if (status.statusType == StatusType.CONTENT_CHANGED) {
                 map.put("content", 
