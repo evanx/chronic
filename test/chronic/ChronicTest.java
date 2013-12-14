@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import vellum.data.Patterns;
+import vellum.util.Strings;
 
 /**
  *
@@ -43,6 +44,11 @@ public class ChronicTest {
     
     @After
     public void tearDown() {
+    }
+
+    @Test
+    public void emailHeaderPattern() {
+        Assert.assertTrue("X-from: test".matches("^\\S*: .*"));
     }
     
     @Test
