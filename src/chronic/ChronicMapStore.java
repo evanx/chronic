@@ -27,6 +27,8 @@ import chronic.entitykey.OrgKey;
 import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.OrgRoleKeyed;
+import chronic.entitykey.OrgRoleTypeKey;
+import chronic.entitykey.OrgRoleTypeKeyed;
 import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.SubscriberKeyed;
 import chronic.entitykey.TopicKey;
@@ -54,22 +56,47 @@ public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
         }
         Collection list = new LinkedList();
         for (E entity : list()) {
-            if (matches(entity, key)) {
+            if (matches(key, entity)) {
                 list.add(entity);
             }
         }
         return list;
     }
 
-    private boolean matches(E entity, Comparable key) {
-        if (key instanceof OrgKey) {
-            if (entity instanceof OrgKeyed)  {
-                return matches((OrgKeyed) entity, (OrgKey) key);
+    private boolean matches(Comparable key, E entity) {
+        if (key instanceof UserKey) {
+            if (entity instanceof UserKeyed)  {
+                return matches((UserKeyed) entity, (UserKey) key);
             }
         }
         if (key instanceof OrgKey) {
             if (entity instanceof OrgKeyed)  {
                 return matches((OrgKeyed) entity, (OrgKey) key);
+            }
+        }
+        if (key instanceof OrgRoleKey) {
+            if (entity instanceof OrgRoleKeyed)  {
+                return matches((OrgRoleKeyed) entity, (OrgRoleKey) key);
+            }
+        }
+        if (key instanceof OrgRoleTypeKey) {
+            if (entity instanceof OrgRoleTypeKeyed)  {
+                return matches((OrgRoleTypeKeyed) entity, (OrgRoleTypeKey) key);
+            }
+        }
+        if (key instanceof TopicKey) {
+            if (entity instanceof TopicKeyed)  {
+                return matches((TopicKeyed) entity, (TopicKey) key);
+            }
+        }
+        if (key instanceof SubscriberKey) {
+            if (entity instanceof SubscriberKeyed)  {
+                return matches((SubscriberKeyed) entity, (SubscriberKey) key);
+            }
+        }
+        if (key instanceof CertKey) {
+            if (entity instanceof CertKeyed)  {
+                return matches((CertKeyed) entity, (CertKey) key);
             }
         }
         return false;
@@ -89,6 +116,10 @@ public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
     
     private boolean matches(OrgRoleKeyed keyed, OrgRoleKey key) {
         return keyed.getOrgRoleKey().equals(key);        
+    }
+
+    private boolean matches(OrgRoleTypeKeyed keyed, OrgRoleTypeKey key) {
+        return keyed.getOrgRoleTypeKey().equals(key);        
     }
     
     private boolean matches(TopicKeyed keyed, TopicKey key) {

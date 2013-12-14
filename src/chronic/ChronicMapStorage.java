@@ -35,17 +35,17 @@ import vellum.storage.MapStore;
  *
  * @author evan.summers
  */
-public class ChronicMemoryStore extends ChronicStorage {
+public class ChronicMapStorage extends ChronicStorage {
     Server h2Server;
-    MapStore<User> userStorage = new ChronicMapStore();
-    MapStore<Org> orgStorage = new ChronicMapStore();
-    MapStore<OrgRole> orgRoleStorage = new ChronicMapStore();
-    MapStore<Network> networkStorage = new ChronicMapStore();
-    MapStore<Topic> topicStorage = new ChronicMapStore();
-    MapStore<Subscriber> subscriberStorage = new ChronicMapStore();
-    MapStore<Cert> certStorage = new ChronicMapStore();
+    MapStore<User> users = new ChronicMapStore();
+    MapStore<Org> orgs = new ChronicMapStore();
+    MapStore<OrgRole> orgRoles = new ChronicMapStore();
+    MapStore<Network> nets = new ChronicMapStore();
+    MapStore<Topic> topics = new ChronicMapStore();
+    MapStore<Subscriber> subscribers = new ChronicMapStore();
+    MapStore<Cert> certs = new ChronicMapStore();
 
-    public ChronicMemoryStore(ChronicApp app) {
+    public ChronicMapStorage(ChronicApp app) {
         super(app);
     }
         
@@ -62,38 +62,38 @@ public class ChronicMemoryStore extends ChronicStorage {
     }
 
     @Override
-    public EntityStore<User> user() {
-        return userStorage;
+    public EntityStore<User> users() {
+        return users;
     }
 
     @Override
-    public EntityStore<Org> org() {
-        return orgStorage;
+    public EntityStore<Org> orgs() {
+        return orgs;
     }
     
     @Override
-    public EntityStore<OrgRole> role() {
-        return orgRoleStorage;
+    public EntityStore<OrgRole> roles() {
+        return orgRoles;
     }
 
     @Override
-    public EntityStore<Network> network() {
-        return networkStorage;
+    public EntityStore<Network> nets() {
+        return nets;
     }
     
     @Override
-    public EntityStore<Topic> topic() {
-        return topicStorage;
+    public EntityStore<Topic> topics() {
+        return topics;
     }
 
     @Override
-    public EntityStore<Subscriber> sub() {
-        return subscriberStorage;
+    public EntityStore<Subscriber> subs() {
+        return subscribers;
     }
 
     @Override
-    public EntityStore<Cert> cert() {
-        return certStorage;
+    public EntityStore<Cert> certs() {
+        return certs;
     }
     
     

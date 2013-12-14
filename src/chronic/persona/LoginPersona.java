@@ -59,17 +59,17 @@ public class LoginPersona implements HttpHandler {
                 httpx.getServerUrl(), assertion);
         logger.trace("persona {}", userInfo);
         String email = userInfo.getEmail();
-        User user = app.getStorage().user().select(email);
+        User user = app.getStorage().users().select(email);
         if (user == null) {
             user = new User(email);
             user.setEnabled(true);
             user.setLoginTime(new Date());
-            app.getStorage().user().insert(user);
+            app.getStorage().users().insert(user);
             logger.info("insert user {}", email);
         } else {
             user.setEnabled(true);
             user.setLoginTime(new Date());
-            app.getStorage().user().update(user);
+            app.getStorage().users().update(user);
         }
         cookie = new ChronicCookie(user.getEmail(), user.getLabel(), 
                 user.getLoginTime().getTime(), assertion);

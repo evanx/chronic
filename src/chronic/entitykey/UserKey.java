@@ -4,14 +4,17 @@
  */
 package chronic.entitykey;
 
+import vellum.util.ComparableValue;
+
 /**
  *
  * @author evan.summers
  */
-public class UserKey {
+public class UserKey extends ComparableValue {
     String email;
 
     public UserKey(String email) {
+        super(email);
         this.email = email;
     }
 
