@@ -116,8 +116,7 @@ public class AlertMailBuilder {
     }
 
     public String formatSubject(StatusRecord status) {
-        logger.info("formatSubject {} {}", status.getStatusType(),
-                status.getStatusType().getLabel());
+        logger.info("formatSubject {} {}", status.getStatusType());
         if (status.isAlertable()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
                 return status.getTopicString()

@@ -32,6 +32,7 @@ import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.ComparableTuple;
+import vellum.data.Patterns;
 import vellum.util.Args;
 
 /**
@@ -247,6 +248,15 @@ public class StatusRecord {
             }
         }
         return list;
+    }
+    
+    public boolean isHtmlContent() {
+        for (String line : lineList) {
+            if (Patterns.matchesTag(line)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean contains(String otherLine) {

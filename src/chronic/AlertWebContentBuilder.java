@@ -21,12 +21,9 @@
 package chronic;
 
 import chronic.type.StatusType;
-import chronic.type.AlertFormatType;
-import chronic.type.AlertType;
-import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.data.Millis;
+import vellum.data.Patterns;
 import vellum.util.Strings;
 
 /**
@@ -45,9 +42,11 @@ public class AlertWebContentBuilder {
         } else {
             string = Strings.join("\n", alert.status.lineList);
         }
-        if (string.matches("<[a-z]+>")) {
+        if (alert.status.isHtmlContent()) {
+            logger.info("html content");
             return string;
         } else {
+            logger.info("preformatted content");
             return String.format("<pre>%s</pre>", string);
         }
     }    
