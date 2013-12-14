@@ -22,7 +22,6 @@ package chronic;
  */
 
 
-import chronic.type.StatusType;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.data.Timestamped;
-import vellum.util.Strings;
 
 /**
  *
@@ -88,13 +86,7 @@ public class AlertRecord implements Timestamped {
         map.put("topic", status.getTopicString());
         map.put("message", formatter.formatAlertTypeLabel());
         if (detail) {
-            if (status.statusType == StatusType.CONTENT_CHANGED) {
-                map.put("content", 
-                        Strings.join("\n", status.buildChanged(previousStatus)));
-            } else {
-                map.put("content", 
-                        Strings.join("\n", status.lineList));
-            }
+            map.put("content", new AlertWebContentBuilder().build(this));
         }
         return map;
     }

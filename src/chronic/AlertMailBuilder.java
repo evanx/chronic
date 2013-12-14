@@ -33,9 +33,9 @@ import vellum.util.Strings;
  *
  * @author evan.summers
  */
-public class AlertBuilder {
+public class AlertMailBuilder {
 
-    static Logger logger = LoggerFactory.getLogger(AlertBuilder.class);
+    static Logger logger = LoggerFactory.getLogger(AlertMailBuilder.class);
     StringBuilder builder = new StringBuilder();
     AlertRecord alert;
     

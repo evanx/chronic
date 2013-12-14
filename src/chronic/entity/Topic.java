@@ -9,7 +9,8 @@ import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.TopicOrgKey;
 import chronic.entitykey.TopicOrgKeyed;
 import chronic.entitykey.OrgKey;
-import chronic.entitykey.TopicOrgUnitKey;
+import chronic.entitykey.TopicKey;
+import chronic.entitykey.TopicKeyed;
 import chronic.entitytype.TopicAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
@@ -20,7 +21,8 @@ import vellum.util.Comparables;
  *
  * @author evan.summers
  */
-public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicOrgKeyed, Enabled {
+public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeyed, 
+        TopicOrgKeyed, Enabled {
 
     Long id;
     String orgUrl;
@@ -29,7 +31,7 @@ public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicOrgK
     String topicString;
     boolean enabled = true;
 
-    public Topic(TopicOrgUnitKey key) {
+    public Topic(TopicKey key) {
         this.orgUrl = key.getOrgUrl();
         this.orgUnit = key.getOrgUnit();
         this.commonName = key.getCommonName();
@@ -45,9 +47,14 @@ public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicOrgK
 
     @Override
     public Comparable getKey() {
-        return Comparables.tuple(orgUrl, topicString);
+        return getTopicKey();
     }
 
+    @Override
+    public TopicKey getTopicKey() {
+        return new TopicKey(orgUrl, orgUnit, commonName, topicString);
+    }    
+    
     @Override
     public void setId(Long id) {
         this.id = id;
