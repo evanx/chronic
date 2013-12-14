@@ -141,7 +141,6 @@ public class StatusRecordParser {
     
     public StatusRecord parse(String text) throws IOException {
         logger.trace("parse: {}", text);
-        boolean inHeader = true;
         String[] lines = text.split("\n");
         boolean nagiosStatus = true;
         for (int i = 0; i < lines.length; i++) {
@@ -172,8 +171,6 @@ public class StatusRecordParser {
                 parsePort(line.substring(6).trim());
             } else if (line.matches("^\\w*: ")) {
                 logger.warn("{}", line);
-            } else if (line.length() == 0) {
-                inHeader = false;
             } else {
                 if (nagiosStatus) {
                     parseNagiosStatus(line);
