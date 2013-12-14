@@ -21,9 +21,9 @@
 package chronic;
 
 import chronic.type.StatusType;
+import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.data.Patterns;
 import vellum.util.Strings;
 
 /**
@@ -34,20 +34,25 @@ public class AlertWebContentBuilder {
 
     static Logger logger = LoggerFactory.getLogger(AlertWebContentBuilder.class);
     
+    AlertRecord alert;    
     String string; 
     
     public String build(AlertRecord alert) {
-        if (alert.status.statusType == StatusType.CONTENT_CHANGED) {
-            string = Strings.join("\n", alert.status.buildChanged(alert.previousStatus));
-        } else {
-            string = Strings.join("\n", alert.status.lineList);
-        }
+        this.alert = alert;
         if (alert.status.isHtmlContent()) {
             logger.info("html content");
-            return string;
+            return Strings.join("\n<br>", getLineList());
         } else {
             logger.info("preformatted content");
-            return String.format("<pre>%s</pre>", string);
+            return String.format("<pre>%s</pre>", Strings.join("\n", getLineList()));
         }
     }    
+    
+    private Collection<String> getLineList() {
+        if (alert.status.statusType == StatusType.CONTENT_CHANGED) {
+            return alert.status.buildChanged(alert.previousStatus);
+        } else {
+            return alert.status.lineList;
+        }
+    }
 }
