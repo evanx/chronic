@@ -89,6 +89,8 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         this.username = record.username;
         this.service = record.service;
         this.orgUrl = record.orgUrl;
+        this.orgUnit = record.orgUnit;
+        this.commonName = record.commonName;
     }
 
     public ComparableTuple getKey() {
