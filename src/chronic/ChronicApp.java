@@ -62,21 +62,21 @@ public class ChronicApp implements Runnable {
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     Deque statusDeque = new CapacityDeque(100);
     Deque alertDeque = new CapacityDeque(100);
-    
+
     public ChronicApp() {
     }
 
-    public void init() throws Exception {        
+    public void init() throws Exception {
         properties.init();
         storage.init();
         messenger.init();
         messenger.alertAdmins("Chronic restarted");
         httpServer.start(properties.getHttpRedirectServer(),
                 new RedirectPortHttpHandler(properties.getWebServer().getInt("port")));
-        webServer.start(properties.getWebServer(), 
+        webServer.start(properties.getWebServer(),
                 new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
-        appServer.start(properties.getAppServer(), 
+        appServer.start(properties.getAppServer(),
                 new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
         logger.info("initialized");
@@ -116,7 +116,7 @@ public class ChronicApp implements Runnable {
     public Map<ComparableTuple, AlertRecord> getAlertMap() {
         return alertMap;
     }
-    
+
     @Override
     public synchronized void run() {
         logger.info("run {}", properties.getPeriod());
@@ -132,8 +132,8 @@ public class ChronicApp implements Runnable {
         logger.debug("checkElapsed {}: elapsed {}", status.getTopicString(), elapsed);
         if (elapsed > status.getPeriodMillis() + properties.getPeriod()) {
             AlertRecord previousAlert = alertMap.get(status.getKey());
-            if (previousAlert == null || 
-                    previousAlert.getStatus().getStatusType() != StatusType.ELAPSED) {
+            if (previousAlert == null
+                    || previousAlert.getStatus().getStatusType() != StatusType.ELAPSED) {
                 status.setStatusType(StatusType.ELAPSED);
                 AlertRecord alert = new AlertRecord(status);
                 alertMap.put(status.getKey(), alert);
@@ -160,6 +160,15 @@ public class ChronicApp implements Runnable {
             if (status.getAlertType() != AlertType.INITIAL) {
                 messenger.alert(alert);
             }
+        } else {
+            long period = status.getTimestamp() - previousStatus.getTimestamp();
+            logger.info("putRecord period {}", Millis.formatTime(period));
+            if (status.getPeriodMillis() == 0) {
+                if (period > Millis.fromSeconds(55) && period < Millis.fromSeconds(70)) {
+                    status.setPeriodMillis(Millis.fromSeconds(60));
+                    logger.info("putRecord set period {}", Millis.formatTime(period));
+                }
+            }
         }
     }
 
@@ -178,10 +187,10 @@ public class ChronicApp implements Runnable {
             }
         }
         logger.warn("getEmail cookie {}", httpx.getCookieMap());
-        httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);                
+        httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
         throw new PersonaException("no verified email");
     }
-    
+
     public static void main(String[] args) throws Exception {
         try {
             ChronicApp app = new ChronicApp();
