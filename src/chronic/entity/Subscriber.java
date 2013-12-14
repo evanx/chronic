@@ -4,6 +4,8 @@
  */
 package chronic.entity;
 
+import chronic.entitykey.CertKey;
+import chronic.entitykey.CertKeyed;
 import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.UserKeyed;
 import chronic.entitykey.SubscriberKey;
@@ -12,6 +14,8 @@ import chronic.entitykey.OrgTopicKey;
 import chronic.entitykey.OrgTopicKeyed;
 import chronic.entitykey.SubscriberKeyed;
 import chronic.entitykey.OrgKey;
+import chronic.entitykey.TopicKey;
+import chronic.entitykey.TopicKeyed;
 import chronic.entitytype.TopicAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
@@ -21,10 +25,12 @@ import vellum.type.Enabled;
  *
  * @author evan.summers
  */
-public final class Subscriber extends AbstractIdEntity implements OrgKeyed, UserKeyed, 
-        OrgTopicKeyed, SubscriberKeyed, Enabled {
+public final class Subscriber extends AbstractIdEntity implements SubscriberKeyed, 
+        OrgKeyed, UserKeyed, TopicKeyed, OrgTopicKeyed, CertKeyed, Enabled {
     Long id;
     String orgUrl;
+    String orgUnit;
+    String commonName;
     String topicString;
     String email;
     boolean enabled = true;
@@ -34,24 +40,30 @@ public final class Subscriber extends AbstractIdEntity implements OrgKeyed, User
 
     public Subscriber(SubscriberKey key) {
         this.orgUrl = key.getOrgUrl();
+        this.orgUnit = key.getOrgUnit();
+        this.commonName = key.getCommonName();
         this.topicString = key.getTopicString();
         this.email = key.getEmail();
     }
     
-    public Subscriber(String orgUrl, String topicString, String email) {
-        this.topicString = topicString;
-        this.orgUrl = orgUrl;
-        this.email = email;
-    }
-
     @Override
     public Comparable getKey() {
-        return new SubscriberKey(orgUrl, topicString, email);
+        return getSubscriberKey();
     }
 
     @Override
     public SubscriberKey getSubscriberKey() {
-        return new SubscriberKey(orgUrl, topicString, email);
+        return new SubscriberKey(orgUrl, orgUnit, commonName, topicString, email);
+    }
+
+    @Override
+    public TopicKey getTopicKey() {
+        return new TopicKey(orgUrl, orgUnit, commonName, topicString);
+    }
+
+    @Override
+    public CertKey getCertKey() {
+        return new CertKey(orgUrl, orgUnit, commonName);
     }
     
     @Override

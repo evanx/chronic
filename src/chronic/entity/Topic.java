@@ -31,18 +31,19 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
     String topicString;
     boolean enabled = true;
 
+    public Topic(String orgUrl, String orgUnit, String commonName, String topicString) {
+        this.orgUrl = orgUrl;
+        this.orgUnit = orgUnit;
+        this.commonName = commonName;
+        this.topicString = topicString;
+    }
+    
     public Topic(TopicKey key) {
-        this.orgUrl = key.getOrgUrl();
-        this.orgUnit = key.getOrgUnit();
-        this.commonName = key.getCommonName();
-        this.topicString = key.getTopicString();
+        this(key.getOrgUrl(), key.getOrgUnit(), key.getCommonName(), key.getTopicString());
     }
 
     public Topic(CertKey key, String topicString) {
-        this.orgUrl = key.getOrgUrl();
-        this.orgUnit = key.getOrgUnit();
-        this.commonName = key.getCommonName();
-        this.topicString = topicString;
+        this(key.getOrgUrl(), key.getOrgUnit(), key.getCommonName(), topicString);
     }
 
     @Override

@@ -33,8 +33,8 @@ import chronic.entity.Subscriber;
 import chronic.entitykey.OrgRoleTypeKey;
 import chronic.entitykey.OrgUserKey;
 import chronic.entitykey.SubscriberKey;
+import chronic.entitykey.TopicKey;
 import chronic.entitykey.UserKey;
-import chronic.entitykey.UserRoleTypeKey;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.EntityStore;
 import vellum.storage.StorageException;
-import vellum.util.Comparables;
 
 /**
  *
@@ -141,8 +140,7 @@ public abstract class ChronicDataStore {
         Set<Topic> topics = new TreeSet();
         for (Subscriber subscriber : subs().list(new UserKey(email))) {
             logger.info("listTopics subscriber {}", subscriber);
-            topics.add(topics().find(Comparables.tuple(
-                    subscriber.getOrgUrl(), subscriber.getTopicString())));
+            topics.add(topics().find(subscriber.getTopicKey()));
         }
         return topics;
     }
@@ -175,8 +173,7 @@ public abstract class ChronicDataStore {
     }
 
     public boolean isSubscriber(String email, StatusRecord status) {
-        SubscriberKey key = new SubscriberKey(status.getOrgUrl(),
-                status.getTopicString(), email);
+        SubscriberKey key = new SubscriberKey(status.getTopicKey(), email);
         return subs().containsKey(key);
     }
 
