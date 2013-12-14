@@ -166,7 +166,7 @@ public class ChronicApp implements Runnable {
             if (status.getPeriodMillis() == 0) {
                 if (period > Millis.fromSeconds(55) && period < Millis.fromSeconds(70)) {
                     status.setPeriodMillis(Millis.fromSeconds(60));
-                    logger.info("putRecord set period {}", Millis.formatTime(period));
+                    logger.info("putRecord set period {}", Millis.format(period));
                 }
             }
         }
