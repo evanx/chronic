@@ -4,6 +4,7 @@
  */
 package chronic;
 
+import chronic.entitykey.CertKey;
 import java.util.regex.Matcher;
 import junit.framework.AssertionFailedError;
 import org.junit.After;
@@ -12,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import vellum.data.Patterns;
 
 /**
  *
@@ -20,6 +22,9 @@ import org.junit.Test;
 public class ChronicTest {
     
     String orgUrl = "test.org";
+    String orgUnit = "test";
+    String commonName = "serverx.test.org";
+    CertKey certKey = new CertKey(orgUrl, orgUnit, commonName);            
     
     public ChronicTest() {
     }
@@ -42,15 +47,15 @@ public class ChronicTest {
     
     @Test
     public void nagiosChanged() {
-        StatusRecord record1 = new StatusRecord(orgUrl);
-        StatusRecord record2 = new StatusRecord(orgUrl);
+        StatusRecord record1 = new StatusRecord(certKey);
+        StatusRecord record2 = new StatusRecord(certKey);
         record1.getLineList().add("ACME OK - some detail");
         record2.getLineList().add("ACME OK - other detail");
         Assert.assertTrue(record1.equals(record2));
-        record2 = new StatusRecord(orgUrl);
+        record2 = new StatusRecord(certKey);
         record2.getLineList().add("ACMY OK - other detail");
         Assert.assertFalse(record1.equals(record2));
-        record2 = new StatusRecord(orgUrl);
+        record2 = new StatusRecord(certKey);
         record2.getLineList().add("ACME CRITICAL - some detail");
         Assert.assertFalse(record1.equals(record2));
     }
@@ -77,6 +82,12 @@ public class ChronicTest {
         sanitary(false, "<p style='expression:call()'>");
     }
 
+    @Test
+    public void tagPattern() {        
+        Assert.assertTrue(Patterns.matchesTag("test test <i>test</i> test"));
+        Assert.assertFalse(Patterns.matchesTag("test"));
+    }
+    
     private void sanitary(boolean expected, String line) {
         if (HtmlChecker.sanitary(line) != expected) {
             throw new AssertionFailedError(line);
