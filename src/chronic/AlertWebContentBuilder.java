@@ -41,7 +41,7 @@ public class AlertWebContentBuilder {
         this.alert = alert;
         if (alert.status.isHtmlContent()) {
             logger.info("html content");
-            return Strings.join("\n<br>", getLineList());
+            return String.format("<pre>%s</pre>", Strings.join("\n", getLineList()));
         } else {
             logger.info("preformatted content");
             return String.format("<pre>%s</pre>", Strings.join("\n", getLineList()));
