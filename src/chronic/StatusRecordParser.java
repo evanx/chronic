@@ -169,7 +169,7 @@ public class StatusRecordParser {
                 parseAlertType(line.substring(7).trim());
             } else if (line.startsWith("Port: ")) {
                 parsePort(line.substring(6).trim());
-            } else if (line.matches("^\\w*: ")) {
+            } else if (line.matches("^\\S*: .*")) {
                 logger.warn("{}", line);
             } else {
                 if (nagiosStatus) {
