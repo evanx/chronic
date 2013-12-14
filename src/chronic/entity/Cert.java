@@ -117,6 +117,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, CertKeyed,
         map.put("commonName", commonName);
         map.put("enabled", enabled);
         map.put("address", address);
+        map.put("actionLabel", getAction().getLabel());
         return map;
     }
 
