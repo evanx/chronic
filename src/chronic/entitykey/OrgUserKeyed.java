@@ -8,6 +8,6 @@ package chronic.entitykey;
  *
  * @author evan.summers
  */
-public interface TopicOrgKeyed {
-    public TopicOrgKey getTopicOrgKey();
+public interface OrgUserKeyed {
+    public OrgUserKey getOrgUserKey();
 }

@@ -10,7 +10,7 @@ import vellum.jx.JMap;
  *
  * @author evan.summers
  */
-public interface ChronicHandler {
+public interface ChronicHttpxHandler {
     
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception;
 }

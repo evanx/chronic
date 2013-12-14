@@ -21,6 +21,14 @@
 package chronic;
 
 import chronic.check.StatusCheck;
+import chronic.entitykey.CertKey;
+import chronic.entitykey.CertKeyed;
+import chronic.entitykey.OrgKey;
+import chronic.entitykey.OrgKeyed;
+import chronic.entitykey.OrgTopicKey;
+import chronic.entitykey.OrgTopicKeyed;
+import chronic.entitykey.TopicKey;
+import chronic.entitykey.TopicKeyed;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
@@ -39,7 +47,7 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-public class StatusRecord {
+public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKeyed {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
     List<String> lineList = new ArrayList();
@@ -57,13 +65,17 @@ public class StatusRecord {
     String service;
     String period;
     String orgUrl;
+    String orgUnit;
+    String commonName;
     String[] subscribers;
     List<String> changedLines;
 
     transient Collection<StatusCheck> checks = new LinkedList();
     
-    public StatusRecord(String orgUrl) {
-        this.orgUrl = orgUrl;
+    public StatusRecord(CertKey certKey) {
+        this.orgUrl = certKey.getOrgUrl();
+        this.orgUnit = certKey.getOrgUnit();
+        this.commonName = certKey.getCommonName();
     }
 
     public StatusRecord(StatusRecord record) {
@@ -80,9 +92,29 @@ public class StatusRecord {
     }
 
     public ComparableTuple getKey() {
-        return ComparableTuple.create(orgUrl, topicString);
+        return getTopicKey();
     }
 
+    @Override
+    public TopicKey getTopicKey() {
+        return new TopicKey(orgUrl, orgUnit, commonName, topicString);
+    }
+    
+    @Override
+    public OrgKey getOrgKey() {
+        return new OrgKey(orgUrl);
+    }
+    
+    @Override
+    public OrgTopicKey getOrgTopicKey() {
+        return new OrgTopicKey(orgUrl, topicString);
+    }
+
+    @Override
+    public CertKey getCertKey() {
+        return new CertKey(orgUrl, orgUnit, commonName);
+    }
+    
     public void setUsername(String username) {
         this.username = username;
     }

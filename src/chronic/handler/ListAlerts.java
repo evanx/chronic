@@ -18,7 +18,7 @@ import vellum.util.Lists;
  *
  * @author evan.summers
  */
-public class ListAlerts implements ChronicHandler {
+public class ListAlerts implements ChronicHttpxHandler {
 
     Logger logger = LoggerFactory.getLogger(ListAlerts.class);
     

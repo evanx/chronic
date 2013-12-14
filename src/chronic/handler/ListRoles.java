@@ -4,7 +4,7 @@
 package chronic.handler;
 
 import chronic.ChronicApp;
-import chronic.ChronicHandler;
+import chronic.ChronicHttpxHandler;
 import chronic.entity.OrgRole;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +18,7 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class ListRoles implements ChronicHandler {
+public class ListRoles implements ChronicHttpxHandler {
 
     Logger logger = LoggerFactory.getLogger(ListRoles.class);
   

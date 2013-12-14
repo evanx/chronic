@@ -6,6 +6,7 @@ package chronic;
 import chronic.handler.Enroll;
 import chronic.handler.EnrollOrg;
 import chronic.handler.ListAlerts;
+import chronic.handler.ListCerts;
 import chronic.handler.ListSubscribers;
 import chronic.handler.ListTopics;
 import chronic.handler.ListRoles;
@@ -62,6 +63,8 @@ public class ChronicHttpHandler implements HttpHandler {
                     handle(new ListSubscribers(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/roleList")) {
                     handle(new ListRoles(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/certList")) {
+                    handle(new ListCerts(), new Httpx(httpExchange));
                 } else {
                     logger.warn("handle {}", path);
                 }
@@ -74,7 +77,7 @@ public class ChronicHttpHandler implements HttpHandler {
         }
     }
 
-    private void handle(ChronicHandler handler, Httpx httpx) {
+    private void handle(ChronicHttpxHandler handler, Httpx httpx) {
         try {
             httpx.sendResponse(handler.handle(app, httpx));
         } catch (Exception e) {

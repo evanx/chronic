@@ -6,8 +6,8 @@ package chronic.entity;
 
 import chronic.entitykey.CertKey;
 import chronic.entitykey.OrgKeyed;
-import chronic.entitykey.TopicOrgKey;
-import chronic.entitykey.TopicOrgKeyed;
+import chronic.entitykey.OrgTopicKey;
+import chronic.entitykey.OrgTopicKeyed;
 import chronic.entitykey.OrgKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicKeyed;
@@ -22,7 +22,7 @@ import vellum.util.Comparables;
  * @author evan.summers
  */
 public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeyed, 
-        TopicOrgKeyed, Enabled {
+        OrgTopicKeyed, Enabled {
 
     Long id;
     String orgUrl;
@@ -109,7 +109,7 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
     }
 
     @Override
-    public TopicOrgKey getTopicOrgKey() {
-        return new TopicOrgKey(orgUrl, topicString);
+    public OrgTopicKey getOrgTopicKey() {
+        return new OrgTopicKey(orgUrl, topicString);
     }
 }

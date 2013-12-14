@@ -61,7 +61,7 @@ public class Post implements HttpHandler {
             httpExchange.getRequestBody().read(content);
             String contentString = new String(content);
             logger.trace("content {}", contentString);
-            StatusRecord status = new StatusRecordParser(cert.getOrgUrl()).parse(contentString);
+            StatusRecord status = new StatusRecordParser(cert.getCertKey()).parse(contentString);
             status.setOrgUrl(cert.getOrgUrl());
             logger.trace("content lines {}: {}", status.getLineList().size(),
                     Strings.formatFirst(status.getLineList()));

@@ -4,23 +4,20 @@
  */
 package chronic.entitykey;
 
-import chronic.entitytype.OrgRoleType;
 import vellum.data.ComparableTuple;
 
 /**
  *
  * @author evan.summers
  */
-public class OrgRoleKey extends ComparableTuple {
+public class OrgUserKey extends ComparableTuple {
     String orgUrl;
     String email;
-    OrgRoleType roleType;
 
-    public OrgRoleKey(String orgUrl, String email, OrgRoleType roleType) {
-        super(orgUrl, email, roleType);        
+    public OrgUserKey(String orgUrl, String email) {
+        super(orgUrl, email);        
         this.orgUrl = orgUrl;
         this.email = email;
-        this.roleType = roleType;
     }
 
     public String getOrgUrl() {
@@ -29,11 +26,6 @@ public class OrgRoleKey extends ComparableTuple {
 
     public String getEmail() {
         return email;
-    }
-    
-    public OrgRoleType getRoleType() {
-        return roleType;
-    }
-        
+    }        
 }
 

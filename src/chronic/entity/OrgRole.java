@@ -12,8 +12,12 @@ import chronic.entitytype.OrgRoleType;
 import chronic.ChronicApp;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.OrgRoleKeyed;
+import chronic.entitykey.OrgUserKey;
+import chronic.entitykey.OrgUserKeyed;
 import chronic.entitykey.OrgRoleTypeKey;
 import chronic.entitykey.OrgRoleTypeKeyed;
+import chronic.entitykey.UserRoleTypeKey;
+import chronic.entitykey.UserRoleTypeKeyed;
 import chronic.entitytype.OrgRoleAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
@@ -26,8 +30,8 @@ import vellum.util.Comparables;
  *
  * @author evan.summers
  */
-public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed, 
-        OrgRoleKeyed, OrgRoleTypeKeyed, Enabled {
+public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleTypeKeyed,
+        OrgKeyed, OrgUserKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled {
     Long id;
     String orgUrl;
     String email;
@@ -53,29 +57,46 @@ public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed,
     }
 
     @Override
+    public OrgRoleKey getKey() {
+        return getOrgRoleKey();
+    }
+    
+    @Override
+    public OrgRoleKey getOrgRoleKey() {
+        return new OrgRoleKey(orgUrl, email, roleType);
+    }
+
+    @Override
     public OrgKey getOrgKey() {
         return new OrgKey(orgUrl);
     }
 
+    
     @Override
     public UserKey getUserKey() {
         return new UserKey(email);
     }
 
     @Override
-    public OrgRoleKey getOrgRoleKey() {
-        return new OrgRoleKey(orgUrl, email);
+    public OrgUserKey getOrgUserKey() {
+        return new OrgUserKey(orgUrl, email);
     }
 
     @Override
     public OrgRoleTypeKey getOrgRoleTypeKey() {
         return new OrgRoleTypeKey(orgUrl, roleType);
     }
+
+    @Override
+    public UserRoleTypeKey getUserRoleTypeKey() {
+        return new UserRoleTypeKey(email, roleType);
+    }
     
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -95,15 +116,11 @@ public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed,
     }
     
     @Override
-    public Comparable getKey() {
-        return Comparables.tuple(orgUrl, email, roleType);
-    }
-
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -145,9 +162,5 @@ public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed,
     @Override
     public String toString() {
         return Args.format(orgUrl, email, roleType);
-    }
-    
-    public static Comparable key(String orgUrl, String email, OrgRoleType roleType) {
-        return Comparables.tuple(orgUrl, email, roleType);
-    }
+    }    
 }

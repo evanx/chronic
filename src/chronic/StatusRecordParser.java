@@ -22,6 +22,7 @@ package chronic;
 
 import chronic.check.OpenPortChecker;
 import chronic.bundle.Bundle;
+import chronic.entitykey.CertKey;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
@@ -52,8 +53,8 @@ public class StatusRecordParser {
     
     StatusRecord record;
     
-    public StatusRecordParser(String orgUrl) {
-        record = new StatusRecord(orgUrl);
+    public StatusRecordParser(CertKey certKey) {
+        record = new StatusRecord(certKey);
     }
         
     private void parseAlertFormatType(String string) {
