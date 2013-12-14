@@ -61,7 +61,7 @@ public class ChronicMessenger {
         }
         for (String email : app.getStorage().listSubscriberEmails(alert)) {
             mailer.sendEmail(email,
-                    new AlertFormatter(alert.getStatus()).formatSubject(),
+                    alert.getStatus().getTopicString(),
                     new AlertBuilder().build(alert));
         }
     }
@@ -84,7 +84,7 @@ public class ChronicMessenger {
 
     public String buildFooter() {
         String style = "font-size: 12px; font-color: gray";
-        return String.format("<hr><a style='%s' href='%s'>%s<br><img src='cid:image'/></a>", style,
+        return String.format("<hr><a style='%s' href='%s'><img src='cid:image'/></a>", style,
                 app.getProperties().getServerAddress(), app.getProperties().getServerAddress());
     }
 }

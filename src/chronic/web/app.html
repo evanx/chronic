@@ -84,7 +84,8 @@
                </div>
             </div>
             <div class="row">
-            <h4 ng-show="selected" ng-cloak>{{selected.topicString}}</h4>
+               <h4 ng-show="selected" ng-cloak>{{selected.topicString}} 
+                  <i>{{selected.alertTypeLabel}}</i></h4>
             <pre ng-show="selected.content" ng-cloak ng-bind-html="selected.content"/>                 
             </div>
          </div>

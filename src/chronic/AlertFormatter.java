@@ -45,12 +45,4 @@ public class AlertFormatter {
             return Bundle.get("unknown");
         }
     }
-
-    public String formatMessage() {
-        return formatAlertTypeLabel();
-    }
-        
-    public String formatSubject() {
-        return status.getTopicString() + ": " + formatAlertTypeLabel();
-    }        
 }
