@@ -143,8 +143,7 @@ public class ChronicApp implements Runnable {
     }
 
     public synchronized void putRecord(StatusRecord status) throws StorageException {
-        logger.info("putRecord {} [{}]", status.getStatusType(),
-                status.getSubject());
+        logger.info("putRecord {}", status);
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
         AlertRecord alert = alertMap.get(status.getKey());
         if (previousStatus == null) {

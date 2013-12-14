@@ -323,6 +323,6 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     
     @Override
     public String toString() {
-        return Args.format(alertType, orgUrl, topicString, statusType);
+        return Args.format(alertType, orgUrl, topicString, statusType, lineList.size());
     }
 }

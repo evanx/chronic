@@ -170,7 +170,11 @@ public class StatusRecordParser {
                 parseAlertType(line.substring(7).trim());
             } else if (line.startsWith("Port: ")) {
                 parsePort(line.substring(6).trim());
-            } else if (!inHeader) {
+            } else if (line.matches("^\\w*: ")) {
+                logger.warn("{}", line);
+            } else if (line.length() == 0) {
+                inHeader = false;
+            } else {
                 if (nagiosStatus) {
                     parseNagiosStatus(line);
                 }
@@ -179,8 +183,6 @@ public class StatusRecordParser {
                 } else {
                     logger.warn("omit not sanitary: {}", line);
                 }
-            } else if (line.length() == 0) {
-                inHeader = false;
             }
         }
         normalize();
