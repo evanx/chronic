@@ -37,31 +37,44 @@ public class AlertBuilder {
 
     static Logger logger = LoggerFactory.getLogger(AlertBuilder.class);
     StringBuilder builder = new StringBuilder();
-
+    AlertRecord alert;
+    
     public String build(AlertRecord alert) {
+        this.alert = alert;
         logger.info("build {}", alert.status);
         builder.append("<pre>\n");
-        append(alert.status);
-        if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED
-                && alert.previousStatus != null
-                && alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
-            appendPrevious(alert.previousStatus);
-            builder.append("\n<hr><b>Changed:</b>\n\n");
+        if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED) {
+            appendHeading(alert.status);
+            builder.append("\n<b>Changed:</b>\n\n");
             builder.append(Strings.join("\n", alert.status.buildChanged(alert.previousStatus)));
+            if (alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
+                appendPrevious(alert.previousStatus);
+            }
             builder.append('\n');
         } else if (alert.status.getAlertType() == AlertType.STATUS_CHANGED) {
+            append(alert.status);
+            appendPrevious(alert.previousStatus);
+        } else {            
+            append(alert.status);
         }
         builder.append("<hr><img src='cid:image'/>");
         return builder.toString();
     }
 
     private void append(StatusRecord status) {
-        builder.append(String.format("<b>%s</b>\n", formatSubject(status)));
-        builder.append(String.format("<i>%s</i>\n\n",
-                Millis.formatTime(status.getTimestamp())));
-        builder.append(buildContent(status));
+        appendHeading(status);
+        appendContent(status);
     }
 
+    private void appendHeading(StatusRecord status) {
+        builder.append(String.format("<b>%s</b>\n", formatSubject(status)));
+        builder.append(String.format("<i>%s</i>\n\n", Millis.formatTime(status.getTimestamp())));
+    }
+
+    private void appendContent(StatusRecord status) {
+        builder.append(buildContent(status));
+    }
+    
     private void appendPrevious(StatusRecord status) {
         builder.append("\n<hr><b>Previously:</b>\n");
         builder.append(String.format("<b><i>%s</i></b>\n", formatSubject(status)));

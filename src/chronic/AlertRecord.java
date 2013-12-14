@@ -90,10 +90,10 @@ public class AlertRecord implements Timestamped {
         if (detail) {
             if (status.statusType == StatusType.CONTENT_CHANGED) {
                 map.put("content", 
-                        "<pre>" + Strings.join("<br>\n", status.buildChanged(previousStatus)));
+                        Strings.join("\n", status.buildChanged(previousStatus)));
             } else {
                 map.put("content", 
-                        "<pre>" + Strings.join("<br>\n", status.lineList));
+                        Strings.join("\n", status.lineList));
             }
         }
         return map;

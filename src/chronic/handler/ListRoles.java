@@ -25,7 +25,7 @@ public class ListRoles implements ChronicHandler {
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         List roles = new LinkedList();
-        for (OrgRole role : app.getStorage().listRoles(app.getVerifiedEmail(httpx))) {
+        for (OrgRole role : app.getStorage().listRoles(app.getEmail(httpx))) {
             roles.add(role.getMap());
         }
         return JMaps.create("roles", roles);

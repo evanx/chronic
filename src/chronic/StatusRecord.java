@@ -202,9 +202,14 @@ public class StatusRecord {
             }
         }
         if (alertType == AlertType.STATUS_CHANGED) {
-            return isAlertable()
-                    && statusType == previous.statusType
-                    && statusType != alert.getStatus().getStatusType();
+           if (isAlertable() && statusType == previous.statusType
+                    && statusType != alert.getStatus().getStatusType()) {
+               if (alert.getStatus().getAlertType() == AlertType.INITIAL && 
+                       !alert.getStatus().isAlertable()) {
+                   alertType = AlertType.INITIAL;
+               }
+               return true;
+           }
         }
         return false;
     }

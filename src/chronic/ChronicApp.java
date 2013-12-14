@@ -143,37 +143,39 @@ public class ChronicApp implements Runnable {
         logger.info("putRecord {} [{}]", status.getStatusType(),
                 status.getSubject());
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
+        AlertRecord alert = alertMap.get(status.getKey());
         if (previousStatus == null) {
             logger.info("putRecord: no previous status");
-            AlertRecord alert = new AlertRecord(status);
+            alert = new AlertRecord(status);
             status.setAlertType(AlertType.INITIAL);
             alertMap.put(status.getKey(), alert);
             if (properties.isTesting()) {
                 messenger.alert(alert);
             }
-        } else if (status.isAlertable(previousStatus, alertMap.get(status.getKey()))) {
-            AlertRecord alert = new AlertRecord(status, previousStatus);
+        } else if (status.isAlertable(previousStatus, alert)) {
+            alert = new AlertRecord(status, previousStatus);
             alertMap.put(status.getKey(), alert);
-            messenger.alert(alert);
+            if (status.getAlertType() != AlertType.INITIAL) {
+                messenger.alert(alert);
+            }
         }
     }
 
-    public String getVerifiedEmail(Httpx httpx) throws JMapException, IOException, PersonaException {
+    public String getEmail(Httpx httpx) throws JMapException, IOException, PersonaException {
         if (ChronicCookie.matches(httpx.getCookieMap())) {
             ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
             if (cookie.getEmail() != null) {
                 if (properties.isTesting()) {
                     return cookie.getEmail();
                 }
-                PersonaUserInfo userInfo = 
-                        new PersonaVerifier(this, cookie).getUserInfo(httpx.getServerUrl(),
-                    cookie.getAssertion());
+                PersonaUserInfo userInfo = new PersonaVerifier(this, cookie).
+                        getUserInfo(httpx.getServerUrl(), cookie.getAssertion());
                 if (cookie.getEmail().equals(userInfo.getEmail())) {
                     return userInfo.getEmail();
                 }
             }
         }
-        logger.warn("getVerifiedEmail cookie {}", httpx.getCookieMap());
+        logger.warn("getEmail cookie {}", httpx.getCookieMap());
         httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);                
         throw new PersonaException("no verified email");
     }

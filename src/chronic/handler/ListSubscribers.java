@@ -26,7 +26,7 @@ public class ListSubscribers implements ChronicHandler {
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         List subscribers = new LinkedList();
         for (Subscriber subscriber : app.getStorage().listSubscribers(
-                app.getVerifiedEmail(httpx))) {
+                app.getEmail(httpx))) {
             subscribers.add(subscriber.getMap());
         }
         return JMaps.create("subscribers", subscribers);

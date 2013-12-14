@@ -5,9 +5,6 @@
 package chronic.type;
 
 import chronic.bundle.Bundle;
-import java.util.MissingResourceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -19,11 +16,11 @@ public enum StatusType {
     CRITICAL,
     UNKNOWN,
     CONTENT_CHANGED,
-    RESUMED,
-    ELAPSED;
+    ELAPSED,
+    RESUMED;
 
     public boolean isAlertable() {
-        return this != UNKNOWN;
+        return ordinal() < UNKNOWN.ordinal();
     }
     
     public String getLabel() {

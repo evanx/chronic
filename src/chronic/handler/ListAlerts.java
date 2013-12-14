@@ -24,7 +24,7 @@ public class ListAlerts implements ChronicHandler {
     
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
-        String email = app.getVerifiedEmail(httpx);
+        String email = app.getEmail(httpx);
         List alerts = new LinkedList();
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {
