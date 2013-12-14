@@ -7,8 +7,10 @@ import chronic.ChronicApp;
 import chronic.StatusRecord;
 import chronic.StatusRecordParser;
 import chronic.check.StatusCheck;
+import chronic.entity.Cert;
 import chronic.entity.Network;
 import chronic.entity.Org;
+import chronic.entitykey.CertKey;
 import chronic.transaction.EnrollTransaction;
 import chronic.transaction.SubscribeTransaction;
 import chronic.transaction.TopicTransaction;
@@ -53,22 +55,27 @@ public class Post implements HttpHandler {
         try {
             X509Certificate certificate = ((HttpsExchange) httpExchange).getSSLSession().
                     getPeerCertificateChain()[0];
-            String hostName = Certificates.getCommonName(certificate.getSubjectDN());
+            String commonName = Certificates.getCommonName(certificate.getSubjectDN());
             String orgUrl = Certificates.getOrg(certificate.getSubjectDN());
-            String networkName = Certificates.getOrgUnit(certificate.getSubjectDN());
-            logger.trace("certificate {} {}", hostName, orgUrl);
-            if (!app.getStorage().orgs().containsKey(orgUrl)) {
-                org = new Org(orgUrl);
-                app.getStorage().orgs().insert(org);
-            } else {
-                org = app.getStorage().orgs().find(orgUrl);
+            String orgUnit = Certificates.getOrgUnit(certificate.getSubjectDN());
+            CertKey certKey = new CertKey(orgUrl, orgUnit, commonName);
+            if (app.store().certs().containsKey(certKey)) {
+                Cert cert = new Cert(certKey);
+                app.store().certs().insert(cert);
             }
-            if (!app.getStorage().nets().containsKey(networkName)) {
-                network = new Network(orgUrl, networkName);
-                network.setAddress(hostAddress);
-                app.getStorage().nets().insert(network);
+            logger.trace("certificate {} {}", commonName, orgUrl);
+            if (!app.store().orgs().containsKey(orgUrl)) {
+                org = new Org(orgUrl);
+                app.store().orgs().insert(org);
             } else {
-                network = app.getStorage().nets().find(networkName);
+                org = app.store().orgs().find(orgUrl);
+            }
+            if (!app.store().nets().containsKey(orgUnit)) {
+                network = new Network(orgUrl, orgUnit);
+                network.setAddress(hostAddress);
+                app.store().nets().insert(network);
+            } else {
+                network = app.store().nets().find(orgUnit);
                 if (!network.getOrgUrl().equals(org.getOrgUrl())) {
                     logger.warn("network orgName {}, {}", network.getOrgUrl(), org.getOrgUrl());
                 }                
@@ -89,7 +96,7 @@ public class Post implements HttpHandler {
             logger.trace("content lines {}: {}", status.getLineList().size(),
                     Strings.formatFirst(status.getLineList()));
             logger.debug("status {}", status);
-            new TopicTransaction().handle(app, status.getOrgUrl(), networkName, hostName, 
+            new TopicTransaction().handle(app, status.getOrgUrl(), orgUnit, commonName, 
                     status.getTopicString());
             if (status.getSubscribers() != null) {
                 if (status.getSubscribers().length > 0) {

@@ -11,13 +11,14 @@ import chronic.entitykey.OrgKey;
 import chronic.entitytype.TopicAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
+import vellum.type.Enabled;
 import vellum.util.Comparables;
 
 /**
  *
  * @author evan.summers
  */
-public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicKeyed {
+public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicKeyed, Enabled {
 
     Long id;
     String orgUrl;
@@ -51,6 +52,11 @@ public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicKeye
         return id;
     }
 
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
     public String getOrgUrl() {
         return orgUrl;
     }
@@ -62,7 +68,7 @@ public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicKeye
     public void setTopicString(String topicString) {
         this.topicString = topicString;
     }
-
+    
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);

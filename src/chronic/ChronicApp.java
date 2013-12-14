@@ -109,7 +109,7 @@ public class ChronicApp implements Runnable {
         executorService.shutdown();
     }
 
-    public ChronicStorage getStorage() {
+    public ChronicStorage store() {
         return storage;
     }
 

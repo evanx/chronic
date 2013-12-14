@@ -18,6 +18,7 @@ import chronic.entitytype.OrgRoleAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.storage.StorageException;
+import vellum.type.Enabled;
 import vellum.util.Args;
 import vellum.util.Comparables;
 
@@ -26,7 +27,7 @@ import vellum.util.Comparables;
  * @author evan.summers
  */
 public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed, 
-        OrgRoleKeyed, OrgRoleTypeKeyed {
+        OrgRoleKeyed, OrgRoleTypeKeyed, Enabled {
     Long id;
     String orgUrl;
     String email;
@@ -129,14 +130,14 @@ public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed,
     
     public User getUser() throws StorageException {
         if (user == null && email != null) {
-            user = app.getStorage().users().find(email);
+            user = app.store().users().find(email);
         }
         return user;
     }
 
     public Org getOrg() throws StorageException {
         if (org == null && orgUrl != null) {
-            org = app.getStorage().orgs().find(orgUrl);
+            org = app.store().orgs().find(orgUrl);
         }
         return org;
     }    

@@ -11,6 +11,7 @@ import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.security.Certificates;
 import vellum.storage.AbstractEntity;
+import vellum.type.Enabled;
 import vellum.validation.ValidationException;
 import vellum.validation.ValidationExceptionType;
 
@@ -18,7 +19,7 @@ import vellum.validation.ValidationExceptionType;
  *
  * @author evan.summers
  */
-public final class Org extends AbstractEntity implements OrgKeyed {
+public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
     Long id;
     String orgName;
     String label;

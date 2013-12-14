@@ -4,15 +4,19 @@
  */
 package chronic.entity;
 
+import chronic.entitykey.NetworkKey;
+import chronic.entitykey.NetworkKeyed;
 import vellum.logr.Logr;
 import vellum.logr.LogrFactory;
 import vellum.storage.AbstractEntity;
+import vellum.type.Enabled;
+import vellum.type.Labelled;
 
 /**
  *
  * @author evan.summers
  */
-public class Network extends AbstractEntity {
+public class Network extends AbstractEntity implements NetworkKeyed, Labelled, Enabled {
     static Logr logger = LogrFactory.getLogger(Network.class);
     
     String networkName;
@@ -25,9 +29,14 @@ public class Network extends AbstractEntity {
     public Network() {
     }
 
-    public Network(String orgName, String name) {
+    public Network(NetworkKey key) {
+        this.orgUrl = key.getOrgUrl();
+        this.networkName = key.getNetworkName();
+    }
+    
+    public Network(String orgName, String networkName) {
         this.orgUrl = orgName;
-        this.networkName = name;
+        this.networkName = networkName;
     }
     
     @Override
@@ -35,6 +44,11 @@ public class Network extends AbstractEntity {
         return networkName;
     }
 
+    @Override
+    public NetworkKey getNetworkKey() {
+        return new NetworkKey(orgUrl, networkName);
+    }
+    
     public String getNetworkName() {
         return networkName;
     }
@@ -63,6 +77,7 @@ public class Network extends AbstractEntity {
         this.description = description;
     }
 
+    @Override
     public String getLabel() {
         return label;
     }
@@ -71,6 +86,7 @@ public class Network extends AbstractEntity {
         this.label = label;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }

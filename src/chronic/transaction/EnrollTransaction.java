@@ -23,27 +23,27 @@ public class EnrollTransaction {
     
     public void handle(ChronicApp app, String orgUrl, String email) throws StorageException {
         logger.info("enroll {} {}", orgUrl, email);
-        OrgRole orgRole = app.getStorage().roles().
+        OrgRole orgRole = app.store().roles().
             select(Comparables.tuple(orgUrl, email, OrgRoleType.ADMIN));
         if (orgRole == null) {
             boolean enabled = app.getProperties().isAdmin(email);
-            User user = app.getStorage().users().select(email);
+            User user = app.store().users().select(email);
             if (user == null) {
                 user = new User(email);
                 user.setEnabled(enabled);
-                app.getStorage().users().insert(user);
+                app.store().users().insert(user);
             }
-            Org org = app.getStorage().orgs().select(orgUrl);
+            Org org = app.store().orgs().select(orgUrl);
             if (org == null) {
                 org = new Org(orgUrl);
-                app.getStorage().orgs().insert(org);
+                app.store().orgs().insert(org);
                 enabled = true;
             } else if (!enabled) {
-                enabled = !app.getStorage().isOrgRoleType(orgUrl, OrgRoleType.ADMIN);
+                enabled = !app.store().isOrgRoleType(orgUrl, OrgRoleType.ADMIN);
             }
             orgRole = new OrgRole(org, user, OrgRoleType.ADMIN);
             orgRole.setEnabled(enabled);
-            app.getStorage().roles().insert(orgRole);
+            app.store().roles().insert(orgRole);
         }
     }
 }

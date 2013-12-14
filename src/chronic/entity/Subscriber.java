@@ -15,13 +15,14 @@ import chronic.entitykey.OrgKey;
 import chronic.entitytype.TopicAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
+import vellum.type.Enabled;
 
 /**
  *
  * @author evan.summers
  */
 public final class Subscriber extends AbstractIdEntity implements OrgKeyed, UserKeyed, 
-        TopicKeyed, SubscriberKeyed {
+        TopicKeyed, SubscriberKeyed, Enabled {
     Long id;
     String orgUrl;
     String topicString;

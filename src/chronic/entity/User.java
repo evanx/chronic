@@ -11,12 +11,13 @@ import vellum.data.Emails;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.storage.AbstractEntity;
+import vellum.type.Enabled;
 
 /**
  *
  * @author evan.summers
  */
-public class User extends AbstractEntity implements UserKeyed {
+public class User extends AbstractEntity implements UserKeyed, Enabled {
 
     Long id;
     String email;

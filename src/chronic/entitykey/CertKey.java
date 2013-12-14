@@ -15,7 +15,7 @@ public final class CertKey extends ComparableTuple {
     String orgUrl;
     String orgUnit;
     String commonName;
-    String hostAddress;
+    String address;
 
     public CertKey(String orgUrl, String orgUnit, String commonName) {
         super(orgUrl, orgUnit, commonName);
@@ -23,6 +23,24 @@ public final class CertKey extends ComparableTuple {
         this.orgUnit = orgUnit;
         this.commonName = commonName;
     }
-    
 
+    public String getOrgUrl() {
+        return orgUrl;
+    }
+
+    public String getOrgUnit() {
+        return orgUnit;
+    }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

@@ -22,10 +22,10 @@ public class TopicTransaction {
             String topicString) throws StorageException {
         logger.info("handle {} {}", orgUrl, topicString);
         TopicKey key = new TopicKey(orgUrl, topicString);
-        Topic topic = app.getStorage().topics().select(key);
+        Topic topic = app.store().topics().select(key);
         if (topic == null) {
             topic = new Topic(orgUrl, networkName, hostName, topicString);
-            app.getStorage().topics().insert(topic);
+            app.store().topics().insert(topic);
         }        
     }
 }

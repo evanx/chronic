@@ -28,7 +28,7 @@ public class ListAlerts implements ChronicHandler {
         List alerts = new LinkedList();
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {
-            if (app.getStorage().isSubscriber(email, alert)) {
+            if (app.store().isSubscriber(email, alert)) {
                 alerts.add(alert.getAlertMap(true));
             } else if (app.getProperties().isAdmin(email)) {
                 alerts.add(alert.getAlertMap(true));
