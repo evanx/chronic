@@ -20,13 +20,13 @@
  */
 package chronic;
 
-import chronic.bundle.Bundle;
 import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.io.IOException;
+import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -34,6 +34,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.data.CapacityDeque;
 import vellum.data.Millis;
 import vellum.httphandler.RedirectPortHttpHandler;
 import vellum.httpserver.Httpx;
@@ -59,7 +60,9 @@ public class ChronicApp implements Runnable {
     Map<ComparableTuple, StatusRecord> recordMap = new ConcurrentHashMap();
     Map<ComparableTuple, AlertRecord> alertMap = new ConcurrentHashMap();
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-
+    Deque statusDeque = new CapacityDeque(100);
+    Deque alertDeque = new CapacityDeque(100);
+    
     public ChronicApp() {
     }
 
