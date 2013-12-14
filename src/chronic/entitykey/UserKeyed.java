@@ -2,12 +2,12 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.entity;
+package chronic.entitykey;
 
 /**
  *
  * @author evan.summers
  */
-public interface SubscriberKeyed {
-    public SubscriberKey getSubscriberKey();
+public interface UserKeyed {
+    public UserKey getUserKey();
 }

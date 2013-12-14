@@ -5,7 +5,7 @@ package chronic.transaction;
 
 import chronic.*;
 import chronic.entity.Topic;
-import chronic.entity.TopicKey;
+import chronic.entitykey.TopicKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.StorageException;

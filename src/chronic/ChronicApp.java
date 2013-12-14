@@ -34,14 +34,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.datatype.Millis;
+import vellum.data.Millis;
 import vellum.httphandler.RedirectPortHttpHandler;
 import vellum.httpserver.Httpx;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.jx.JMapException;
 import vellum.storage.StorageException;
-import vellum.type.ComparableTuple;
+import vellum.data.ComparableTuple;
 
 /**
  *

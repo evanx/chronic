@@ -4,8 +4,10 @@
  */
 package chronic.entity;
 
+import chronic.entitykey.UserKeyed;
+import chronic.entitykey.UserKey;
 import java.util.Date;
-import vellum.datatype.Emails;
+import vellum.data.Emails;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.storage.AbstractEntity;

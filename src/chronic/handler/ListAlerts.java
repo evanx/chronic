@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.datatype.TimestampedComparator;
+import vellum.data.TimestampedComparator;
 import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;

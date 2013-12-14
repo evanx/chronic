@@ -2,7 +2,7 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.entity;
+package chronic.entitykey;
 
 import vellum.util.ComparableValue;
 
@@ -21,5 +21,6 @@ public class OrgKey extends ComparableValue {
     public String getOrgUrl() {
         return orgUrl;
     }        
+    
 }
 

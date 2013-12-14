@@ -5,7 +5,7 @@
 package chronic.entitytype;
 
 import chronic.bundle.Bundle;
-import vellum.format.Labelled;
+import vellum.type.Labelled;
 
 /**
  *

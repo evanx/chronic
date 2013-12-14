@@ -2,12 +2,12 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.entity;
+package chronic.entitykey;
 
 /**
  *
  * @author evan.summers
  */
-public interface UserKeyed {
-    public UserKey getUserKey();
+public interface CertKeyed {
+    public CertKey getCertKey();
 }

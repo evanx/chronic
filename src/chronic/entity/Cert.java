@@ -4,6 +4,10 @@
  */
 package chronic.entity;
 
+import chronic.entitykey.OrgKeyed;
+import chronic.entitykey.OrgKey;
+import chronic.entitykey.CertKey;
+import chronic.entitykey.CertKeyed;
 import chronic.entitytype.CertAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;

@@ -4,7 +4,9 @@
  */
 package chronic.entity;
 
-import vellum.datatype.Patterns;
+import chronic.entitykey.OrgKeyed;
+import chronic.entitykey.OrgKey;
+import vellum.data.Patterns;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.security.Certificates;

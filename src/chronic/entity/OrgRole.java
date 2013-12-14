@@ -4,8 +4,16 @@
  */
 package chronic.entity;
 
+import chronic.entitykey.OrgKeyed;
+import chronic.entitykey.UserKeyed;
+import chronic.entitykey.UserKey;
+import chronic.entitykey.OrgKey;
 import chronic.entitytype.OrgRoleType;
 import chronic.ChronicApp;
+import chronic.entitykey.OrgRoleKey;
+import chronic.entitykey.OrgRoleKeyed;
+import chronic.entitykey.OrgRoleTypeKey;
+import chronic.entitykey.OrgRoleTypeKeyed;
 import chronic.entitytype.OrgRoleAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
@@ -17,7 +25,8 @@ import vellum.util.Comparables;
  *
  * @author evan.summers
  */
-public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed {
+public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed, 
+        OrgRoleKeyed, OrgRoleTypeKeyed {
     Long id;
     String orgUrl;
     String email;
@@ -50,6 +59,16 @@ public class OrgRole extends AbstractIdEntity implements OrgKeyed, UserKeyed {
     @Override
     public UserKey getUserKey() {
         return new UserKey(email);
+    }
+
+    @Override
+    public OrgRoleKey getOrgRoleKey() {
+        return new OrgRoleKey(orgUrl, email);
+    }
+
+    @Override
+    public OrgRoleTypeKey getOrgRoleTypeKey() {
+        return new OrgRoleTypeKey(orgUrl, roleType);
     }
     
     public void setEnabled(boolean enabled) {

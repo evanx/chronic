@@ -21,7 +21,7 @@
 package chronic.check;
 
 import java.net.Socket;
-import vellum.datatype.Patterns;
+import vellum.data.Patterns;
 
 /**
  *

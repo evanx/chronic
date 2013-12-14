@@ -26,11 +26,11 @@ import chronic.entity.User;
 import chronic.entitytype.OrgRoleType;
 import chronic.entity.Network;
 import chronic.entity.Org;
-import chronic.entity.OrgKey;
+import chronic.entitykey.OrgKey;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
-import chronic.entity.SubscriberKey;
+import chronic.entitykey.SubscriberKey;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,7 +41,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.storage.Storage;
+import vellum.storage.EntityStore;
 import vellum.storage.StorageException;
 import vellum.util.Comparables;
 
@@ -63,22 +63,22 @@ public abstract class ChronicStorage {
 
     public abstract void shutdown();
     
-    public abstract Storage<User> user();
+    public abstract EntityStore<User> user();
     
-    public abstract Storage<Org> org();
+    public abstract EntityStore<Org> org();
     
-    public abstract Storage<OrgRole> role();
+    public abstract EntityStore<OrgRole> role();
 
-    public abstract Storage<Network> network();
+    public abstract EntityStore<Network> network();
 
-    public abstract Storage<Topic> topic();
+    public abstract EntityStore<Topic> topic();
     
-    public abstract Storage<Subscriber> sub();
+    public abstract EntityStore<Subscriber> sub();
     
-    public abstract Storage<Cert> cert();
+    public abstract EntityStore<Cert> cert();
     
     public static ChronicStorage create(ChronicApp app) {
-        return new TemporaryChronicStorage(app);
+        return new ChronicMemoryStore(app);
     }
 
     public Iterable<User> listUsers(String email) {

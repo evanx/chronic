@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.datatype.Millis;
+import vellum.data.Millis;
 import vellum.enumtype.DelimiterType;
 import vellum.util.Strings;
 

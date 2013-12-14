@@ -2,9 +2,9 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.entity;
+package chronic.entitykey;
 
-import vellum.type.ComparableTuple;
+import vellum.data.ComparableTuple;
 
 /**
  *

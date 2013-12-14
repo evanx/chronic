@@ -2,22 +2,24 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.entity;
+package chronic.entitykey;
 
-import vellum.type.ComparableTuple;
+import vellum.data.ComparableTuple;
 
 /**
  *
  * @author evan.summers
  */
-public final class TopicKey extends ComparableTuple {
+public final class SubscriberKey extends ComparableTuple {
     String orgUrl;
     String topicString;
+    String email;
             
-    public TopicKey(String orgUrl, String topicString) {
-        super(orgUrl, topicString);
+    public SubscriberKey(String orgUrl, String topicString, String email) {
+        super(orgUrl, topicString, email);
         this.orgUrl = orgUrl;
         this.topicString = topicString;
+        this.email = email;
     }
 
     public String getOrgUrl() {
@@ -28,4 +30,7 @@ public final class TopicKey extends ComparableTuple {
         return topicString;
     }
 
+    public String getEmail() {
+        return email;
+    }
 }

@@ -26,7 +26,7 @@ import chronic.type.AlertType;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.datatype.Millis;
+import vellum.data.Millis;
 import vellum.util.Strings;
 
 /**

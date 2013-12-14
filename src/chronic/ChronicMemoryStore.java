@@ -27,29 +27,25 @@ import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
 import org.h2.tools.Server;
-import vellum.storage.Storage;
-import vellum.storage.TemporaryStorage;
+import vellum.storage.EntityStore;
+import vellum.storage.MapStore;
 
 /**
  *
  * @author evan.summers
  */
-public class TemporaryChronicStorage extends ChronicStorage {
+public class ChronicMemoryStore extends ChronicStorage {
     Server h2Server;
-    TemporaryStorage<User> userStorage = new TemporaryStorage();
-    TemporaryStorage<Org> orgStorage = new TemporaryStorage();
-    TemporaryStorage<OrgRole> orgRoleStorage = new TemporaryStorage();
-    TemporaryStorage<Network> networkStorage = new TemporaryStorage();
-    TemporaryStorage<Topic> topicStorage = new TemporaryStorage();
-    TemporaryStorage<Subscriber> subscriberStorage = new TemporaryStorage();
-    TemporaryStorage<Cert> certStorage = new TemporaryStorage();
-    Map<String, Connection> connectionMap = new HashMap();
+    MapStore<User> userStorage = new ChronicMapStore();
+    MapStore<Org> orgStorage = new ChronicMapStore();
+    MapStore<OrgRole> orgRoleStorage = new ChronicMapStore();
+    MapStore<Network> networkStorage = new ChronicMapStore();
+    MapStore<Topic> topicStorage = new ChronicMapStore();
+    MapStore<Subscriber> subscriberStorage = new ChronicMapStore();
+    MapStore<Cert> certStorage = new ChronicMapStore();
 
-    public TemporaryChronicStorage(ChronicApp app) {
+    public ChronicMemoryStore(ChronicApp app) {
         super(app);
     }
         
@@ -66,37 +62,37 @@ public class TemporaryChronicStorage extends ChronicStorage {
     }
 
     @Override
-    public Storage<User> user() {
+    public EntityStore<User> user() {
         return userStorage;
     }
 
     @Override
-    public Storage<Org> org() {
+    public EntityStore<Org> org() {
         return orgStorage;
     }
     
     @Override
-    public Storage<OrgRole> role() {
+    public EntityStore<OrgRole> role() {
         return orgRoleStorage;
     }
 
     @Override
-    public Storage<Network> network() {
+    public EntityStore<Network> network() {
         return networkStorage;
     }
     
     @Override
-    public Storage<Topic> topic() {
+    public EntityStore<Topic> topic() {
         return topicStorage;
     }
 
     @Override
-    public Storage<Subscriber> sub() {
+    public EntityStore<Subscriber> sub() {
         return subscriberStorage;
     }
 
     @Override
-    public Storage<Cert> cert() {
+    public EntityStore<Cert> cert() {
         return certStorage;
     }
     

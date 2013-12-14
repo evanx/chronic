@@ -24,7 +24,7 @@ import java.security.GeneralSecurityException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base32;
-import vellum.datatype.Millis;
+import vellum.data.Millis;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.util.Bytes;

@@ -4,7 +4,7 @@
  */
 package chronic.mail;
 
-import vellum.datatype.Emails;
+import vellum.data.Emails;
 import vellum.util.Args;
 import vellum.util.ExtendedProperties;
 import vellum.util.Streams;

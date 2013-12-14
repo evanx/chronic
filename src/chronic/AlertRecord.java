@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.datatype.Millis;
-import vellum.datatype.Timestamped;
+import vellum.data.Millis;
+import vellum.data.Timestamped;
 import vellum.util.Strings;
 
 /**
