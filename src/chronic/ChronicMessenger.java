@@ -50,7 +50,7 @@ public class ChronicMessenger {
             try {
                 Executor executor = new Executor();
                 executor.exec(app.getProperties().getAlertScript(),
-                        new AlertMailBuilder().build(alert).getBytes(),
+                        new AlertMailBuilder(app).build(alert).getBytes(),
                         alert.getAlertMap(true));
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
@@ -62,7 +62,7 @@ public class ChronicMessenger {
         for (String email : app.store().listSubscriberEmails(alert)) {
             mailer.sendEmail(email,
                     alert.getStatus().getTopicString(),
-                    new AlertMailBuilder().build(alert));
+                    new AlertMailBuilder(app).build(alert));
         }
     }
 
@@ -72,19 +72,13 @@ public class ChronicMessenger {
     
     public void alertAdmins(String subject, String content) {
         if (content == null) {
-            content = buildFooter();
-        } else {
-            content += buildFooter();
+            content = "";
         }
+        content += new AlertMailBuilder(app).formatFooter();
         for (String email : app.getProperties().getAdminEmails()) {
             logger.info("alertAdmins email {}", email);
             mailer.sendEmail(email, subject, content);
         }
     }
-
-    public String buildFooter() {
-        String style = "font-size: 12px; font-color: gray";
-        return String.format("<hr><a style='%s' href='%s'><img src='cid:image'/></a>", style,
-                app.getProperties().getServerAddress(), app.getProperties().getServerAddress());
-    }
+    
 }

@@ -38,8 +38,14 @@ public class AlertMailBuilder {
     static Logger logger = LoggerFactory.getLogger(AlertMailBuilder.class);
     StringBuilder builder = new StringBuilder();
     AlertRecord alert;
+    ChronicApp app;
+    
+    public AlertMailBuilder(ChronicApp app) {
+        this.app = app;
+    }
     
     public String build(AlertRecord alert) {
+        this.app = app;
         this.alert = alert;
         logger.info("build {}", alert.status);
         builder.append("<pre>\n");
@@ -57,7 +63,7 @@ public class AlertMailBuilder {
         } else {            
             append(alert.status);
         }
-        builder.append("<hr><img src='cid:image'/>");
+        builder.append(formatFooter());
         return builder.toString();
     }
 
@@ -132,6 +138,12 @@ public class AlertMailBuilder {
             return status.getTopicString();
         }
         return status.getSubject();
+    }
+    
+    public String formatFooter() {
+        String style = "font-size: 12px; font-color: gray";
+        return String.format("<hr><a style='%s' href='%s'><img src='cid:image'/></a>", style,
+                app.getProperties().getServerAddress(), app.getProperties().getServerAddress());
     }
     
 }
