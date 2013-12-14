@@ -31,8 +31,8 @@ import chronic.entitykey.OrgRoleTypeKey;
 import chronic.entitykey.OrgRoleTypeKeyed;
 import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.SubscriberKeyed;
-import chronic.entitykey.TopicKey;
-import chronic.entitykey.TopicKeyed;
+import chronic.entitykey.TopicOrgKey;
+import chronic.entitykey.TopicOrgKeyed;
 import chronic.entitykey.UserKey;
 import chronic.entitykey.UserKeyed;
 import java.util.Collection;
@@ -84,9 +84,9 @@ public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
                 return matches((OrgRoleTypeKeyed) entity, (OrgRoleTypeKey) key);
             }
         }
-        if (key instanceof TopicKey) {
-            if (entity instanceof TopicKeyed)  {
-                return matches((TopicKeyed) entity, (TopicKey) key);
+        if (key instanceof TopicOrgKey) {
+            if (entity instanceof TopicOrgKeyed)  {
+                return matches((TopicOrgKeyed) entity, (TopicOrgKey) key);
             }
         }
         if (key instanceof SubscriberKey) {
@@ -122,8 +122,8 @@ public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
         return keyed.getOrgRoleTypeKey().equals(key);        
     }
     
-    private boolean matches(TopicKeyed keyed, TopicKey key) {
-        return keyed.getTopicKey().equals(key);        
+    private boolean matches(TopicOrgKeyed keyed, TopicOrgKey key) {
+        return keyed.getTopicOrgKey().equals(key);        
     }
 
     private boolean matches(SubscriberKeyed keyed, SubscriberKey key) {

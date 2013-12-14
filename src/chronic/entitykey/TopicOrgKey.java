@@ -10,11 +10,11 @@ import vellum.data.ComparableTuple;
  *
  * @author evan.summers
  */
-public final class TopicKey extends ComparableTuple {
+public final class TopicOrgKey extends ComparableTuple {
     String orgUrl;
     String topicString;
             
-    public TopicKey(String orgUrl, String topicString) {
+    public TopicOrgKey(String orgUrl, String topicString) {
         super(orgUrl, topicString);
         this.orgUrl = orgUrl;
         this.topicString = topicString;

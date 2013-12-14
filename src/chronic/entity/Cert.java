@@ -25,8 +25,8 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, CertKeyed,
     String orgUnit;
     String commonName;
     String address;
-    String pem;
-    boolean enabled = true;
+    String encoded;
+    boolean enabled;
 
     public Cert() {
     }
@@ -56,17 +56,16 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, CertKeyed,
         return Comparables.tuple(orgUrl, orgUnit, commonName);
     }
 
-
-    @Override
-    public OrgKey getOrgKey() {
-        return new OrgKey(orgUrl);
-    }
-
     @Override
     public CertKey getCertKey() {
         return new CertKey(orgUrl, orgUnit, commonName);
     }
     
+    @Override
+    public OrgKey getOrgKey() {
+        return new OrgKey(orgUrl);
+    }
+
     @Override
     public void setId(Long id) {
         this.id = id;
@@ -81,6 +80,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, CertKeyed,
         this.enabled = enabled;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -89,12 +89,24 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, CertKeyed,
         return orgUrl;
     }
 
-    public String getPem() {
-        return pem;
+    public String getOrgUnit() {
+        return orgUnit;
+    }
+    
+    public String getEncoded() {
+        return encoded;
     }
 
-    public void setPem(String pem) {
-        this.pem = pem;
+    public void setEncoded(String encoded) {
+        this.encoded = encoded;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
     
     public JMap getMap() {

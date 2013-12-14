@@ -8,8 +8,8 @@ import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.UserKeyed;
 import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.UserKey;
-import chronic.entitykey.TopicKey;
-import chronic.entitykey.TopicKeyed;
+import chronic.entitykey.TopicOrgKey;
+import chronic.entitykey.TopicOrgKeyed;
 import chronic.entitykey.SubscriberKeyed;
 import chronic.entitykey.OrgKey;
 import chronic.entitytype.TopicAction;
@@ -22,7 +22,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 public final class Subscriber extends AbstractIdEntity implements OrgKeyed, UserKeyed, 
-        TopicKeyed, SubscriberKeyed, Enabled {
+        TopicOrgKeyed, SubscriberKeyed, Enabled {
     Long id;
     String orgUrl;
     String topicString;
@@ -65,8 +65,8 @@ public final class Subscriber extends AbstractIdEntity implements OrgKeyed, User
     }
 
     @Override
-    public TopicKey getTopicKey() {
-        return new TopicKey(orgUrl, topicString);
+    public TopicOrgKey getTopicOrgKey() {
+        return new TopicOrgKey(orgUrl, topicString);
     }
     
     public void setEnabled(boolean enabled) {

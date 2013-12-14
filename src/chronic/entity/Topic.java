@@ -4,10 +4,12 @@
  */
 package chronic.entity;
 
+import chronic.entitykey.CertKey;
 import chronic.entitykey.OrgKeyed;
-import chronic.entitykey.TopicKey;
-import chronic.entitykey.TopicKeyed;
+import chronic.entitykey.TopicOrgKey;
+import chronic.entitykey.TopicOrgKeyed;
 import chronic.entitykey.OrgKey;
+import chronic.entitykey.TopicOrgUnitKey;
 import chronic.entitytype.TopicAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
@@ -18,22 +20,26 @@ import vellum.util.Comparables;
  *
  * @author evan.summers
  */
-public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicKeyed, Enabled {
+public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicOrgKeyed, Enabled {
 
     Long id;
     String orgUrl;
-    String networkName;
-    String hostName;
+    String orgUnit;
+    String commonName;
     String topicString;
     boolean enabled = true;
 
-    public Topic() {
+    public Topic(TopicOrgUnitKey key) {
+        this.orgUrl = key.getOrgUrl();
+        this.orgUnit = key.getOrgUnit();
+        this.commonName = key.getCommonName();
+        this.topicString = key.getTopicString();
     }
 
-    public Topic(String orgUrl, String networkName, String hostName, String topicString) {
-        this.orgUrl = orgUrl;
-        this.networkName = networkName;
-        this.hostName = hostName;
+    public Topic(CertKey key, String topicString) {
+        this.orgUrl = key.getOrgUrl();
+        this.orgUnit = key.getOrgUnit();
+        this.commonName = key.getCommonName();
         this.topicString = topicString;
     }
 
@@ -73,8 +79,8 @@ public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicKeye
         JMap map = new JMap();
         map.put("id", id);
         map.put("orgUrl", orgUrl);
-        map.put("networkName", networkName);
-        map.put("hostName", hostName);
+        map.put("networkName", orgUnit);
+        map.put("hostName", commonName);
         map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());
         map.put("topicString", topicString);
@@ -96,7 +102,7 @@ public final class Topic extends AbstractIdEntity implements OrgKeyed, TopicKeye
     }
 
     @Override
-    public TopicKey getTopicKey() {
-        return new TopicKey(orgUrl, topicString);
+    public TopicOrgKey getTopicOrgKey() {
+        return new TopicOrgKey(orgUrl, topicString);
     }
 }
