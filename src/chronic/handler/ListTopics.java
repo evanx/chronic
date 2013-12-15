@@ -25,7 +25,7 @@ public class ListTopics implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         List topics = new LinkedList();
-        for (Topic topic : app.store().listTopics(app.getEmail(httpx))) {
+        for (Topic topic : app.storage().listTopics(app.getEmail(httpx))) {
             topics.add(topic.getMap());
         }
         return JMaps.create("topics", topics);

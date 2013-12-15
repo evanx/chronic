@@ -20,7 +20,7 @@
  */
 package chronic;
 
-import static chronic.ChronicDataStore.logger;
+import static chronic.ChronicStorage.logger;
 import chronic.entity.Cert;
 import chronic.entity.User;
 import chronic.entitytype.OrgRoleType;
@@ -52,13 +52,13 @@ import vellum.storage.StorageException;
  *
  * @author evan.summers
  */
-public abstract class ChronicDataStore {
+public abstract class ChronicStorage {
 
-    static Logger logger = LoggerFactory.getLogger(ChronicDataStore.class);
+    static Logger logger = LoggerFactory.getLogger(ChronicStorage.class);
 
     ChronicApp app;
 
-    public ChronicDataStore(ChronicApp app) {
+    public ChronicStorage(ChronicApp app) {
         this.app = app;
     }
 
@@ -80,8 +80,8 @@ public abstract class ChronicDataStore {
 
     public abstract EntityStore<Cert> certs();
 
-    public static ChronicDataStore create(ChronicApp app) {
-        return new ChronicMapStorage(app);
+    public static ChronicStorage create(ChronicApp app) {
+        return new MockChronicStorage(app);
     }
 
     public Iterable<User> listUsers(String email) {

@@ -87,7 +87,8 @@
          <div class="row">
             <h4 ng-show="selected"><b>{{selected.topicString}}</b>
                &nbsp;<i>{{selected.alertTypeLabel}}</i></h4>
-            <div ng-show="selected.content" ng-bind-html="selected.content" class="well">  
+            <div ng-show="selected.content" ng-bind-html="selected.content" class="well"
+                 style="font-family: monospace">  
             </div>
          </div>
       </div>
@@ -130,12 +131,6 @@
                      </tr>
                   </tbody>
                </table>    
-            </div>
-         </div>
-         <div class="row">
-            <h4 ng-show="selected">{{selected.topicString}}</h4>
-            <div ng-show="selected" ng-bind-html="selected"
-                 style="font-family: monospace" class="well">               
             </div>
          </div>
       </div>

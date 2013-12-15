@@ -22,10 +22,10 @@ public class TopicTransaction {
     public void handle(ChronicApp app, CertKey certKey, String topicString) throws StorageException {
         logger.info("handle {} {}", certKey, topicString);
         TopicKey key = new TopicKey(certKey, topicString);
-        Topic topic = app.store().topics().select(key);
+        Topic topic = app.storage().topics().select(key);
         if (topic == null) {
             topic = new Topic(key);
-            app.store().topics().insert(topic);
+            app.storage().topics().insert(topic);
         }        
     }
 

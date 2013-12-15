@@ -52,7 +52,7 @@ public class ChronicApp implements Runnable {
 
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicProperties properties = new ChronicProperties();
-    ChronicDataStore storage = ChronicDataStore.create(this);
+    ChronicStorage storage = ChronicStorage.create(this);
     ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
@@ -109,7 +109,7 @@ public class ChronicApp implements Runnable {
         executorService.shutdown();
     }
 
-    public ChronicDataStore store() {
+    public ChronicStorage storage() {
         return storage;
     }
 
@@ -166,6 +166,9 @@ public class ChronicApp implements Runnable {
             if (status.getPeriodMillis() == 0) {
                 if (period > Millis.fromSeconds(55) && period < Millis.fromSeconds(70)) {
                     status.setPeriodMillis(Millis.fromSeconds(60));
+                    logger.info("putRecord set period {}", Millis.format(period));
+                } else if (period > Millis.fromMinutes(59) && period < Millis.fromMinutes(70)) {
+                    status.setPeriodMillis(Millis.fromMinutes(60));
                     logger.info("putRecord set period {}", Millis.format(period));
                 }
             }

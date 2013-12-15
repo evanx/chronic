@@ -35,7 +35,7 @@ import vellum.storage.MapStore;
  *
  * @author evan.summers
  */
-public class ChronicMapStorage extends ChronicDataStore {
+public class MockChronicStorage extends ChronicStorage {
     Server h2Server;
     MapStore<User> users = new ChronicMapStore();
     MapStore<Org> orgs = new ChronicMapStore();
@@ -45,7 +45,7 @@ public class ChronicMapStorage extends ChronicDataStore {
     MapStore<Subscriber> subscribers = new ChronicMapStore();
     MapStore<Cert> certs = new ChronicMapStore();
 
-    public ChronicMapStorage(ChronicApp app) {
+    public MockChronicStorage(ChronicApp app) {
         super(app);
     }
         

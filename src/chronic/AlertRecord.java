@@ -88,6 +88,7 @@ public class AlertRecord implements Timestamped {
         if (detail) {
             map.put("content", new AlertWebContentBuilder().build(this));
         }
+        logger.trace("map {}", map);
         return map;
     }
 

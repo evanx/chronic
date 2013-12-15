@@ -44,7 +44,7 @@ public class AlertWebContentBuilder {
             return String.format("%s", Strings.join("\n<br>", getLineList()));
         } else {
             logger.info("preformatted content");
-            return String.format("<pre>%s</pre>", Strings.join("\n", getLineList()));
+            return String.format("%s", Strings.join("\n<br>", getLineList()));
         }
     }    
     
@@ -52,7 +52,7 @@ public class AlertWebContentBuilder {
         if (alert.status.statusType == StatusType.CONTENT_CHANGED) {
             return alert.status.buildChanged(alert.previousStatus);
         } else {
-            return alert.status.lineList;
+            return Strings.trimLines(alert.status.lineList);
         }
     }
 }

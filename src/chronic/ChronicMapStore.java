@@ -33,8 +33,14 @@ import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.SubscriberKeyed;
 import chronic.entitykey.OrgTopicKey;
 import chronic.entitykey.OrgTopicKeyed;
+import chronic.entitykey.OrgUnitKey;
+import chronic.entitykey.OrgUnitKeyed;
+import chronic.entitykey.TopicKey;
+import chronic.entitykey.TopicKeyed;
 import chronic.entitykey.UserKey;
 import chronic.entitykey.UserKeyed;
+import chronic.entitykey.UserRoleTypeKey;
+import chronic.entitykey.UserRoleTypeKeyed;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.slf4j.Logger;
@@ -69,6 +75,11 @@ public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
                 return matches((UserKeyed) entity, (UserKey) key);
             }
         }
+        if (key instanceof UserRoleTypeKey) {
+            if (entity instanceof UserRoleTypeKeyed)  {
+                return matches((UserRoleTypeKeyed) entity, (UserRoleTypeKey) key);
+            }
+        }
         if (key instanceof OrgKey) {
             if (entity instanceof OrgKeyed)  {
                 return matches((OrgKeyed) entity, (OrgKey) key);
@@ -79,9 +90,19 @@ public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
                 return matches((OrgUserKeyed) entity, (OrgUserKey) key);
             }
         }
+        if (key instanceof OrgUnitKey) {
+            if (entity instanceof OrgUnitKeyed)  {
+                return matches((OrgUnitKeyed) entity, (OrgUnitKey) key);
+            }
+        }
         if (key instanceof OrgRoleTypeKey) {
             if (entity instanceof OrgRoleTypeKeyed)  {
                 return matches((OrgRoleTypeKeyed) entity, (OrgRoleTypeKey) key);
+            }
+        }
+        if (key instanceof TopicKey) {
+            if (entity instanceof TopicKeyed)  {
+                return matches((TopicKeyed) entity, (TopicKey) key);
             }
         }
         if (key instanceof OrgTopicKey) {
@@ -103,31 +124,43 @@ public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
     }
     
     private boolean matches(CertKeyed keyed, CertKey key) {
-        return keyed.getCertKey().equals(key);        
-    }
-
-    private boolean matches(OrgKeyed keyed, OrgKey key) {
-        return keyed.getOrgKey().equals(key);        
+        return keyed.getCertKey().matches(key);        
     }
 
     private boolean matches(UserKeyed keyed, UserKey key) {
-        return keyed.getUserKey().equals(key);        
+        return keyed.getUserKey().matches(key);        
+    }
+
+    private boolean matches(UserRoleTypeKeyed keyed, UserRoleTypeKey key) {
+        return keyed.getUserRoleTypeKey().matches(key);        
+    }
+    
+    private boolean matches(OrgKeyed keyed, OrgKey key) {
+        return keyed.getOrgKey().matches(key);        
     }
     
     private boolean matches(OrgUserKeyed keyed, OrgUserKey key) {
-        return keyed.getOrgUserKey().equals(key);        
+        return keyed.getOrgUserKey().matches(key);        
     }
 
+    private boolean matches(OrgUnitKeyed keyed, OrgUnitKey key) {
+        return keyed.getOrgUnitKey().matches(key);        
+    }
+    
     private boolean matches(OrgRoleTypeKeyed keyed, OrgRoleTypeKey key) {
-        return keyed.getOrgRoleTypeKey().equals(key);        
+        return keyed.getOrgRoleTypeKey().matches(key);        
     }
     
     private boolean matches(OrgTopicKeyed keyed, OrgTopicKey key) {
-        return keyed.getOrgTopicKey().equals(key);        
+        return keyed.getOrgTopicKey().matches(key);        
     }
 
+    private boolean matches(TopicKeyed keyed, TopicKey key) {
+        return keyed.getTopicKey().matches(key);        
+    }
+    
     private boolean matches(SubscriberKeyed keyed, SubscriberKey key) {
-        return keyed.getSubscriberKey().equals(key);        
+        return keyed.getSubscriberKey().matches(key);
     }
     
 }

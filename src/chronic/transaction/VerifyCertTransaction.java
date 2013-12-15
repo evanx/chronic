@@ -30,12 +30,12 @@ public class VerifyCertTransaction {
         String orgUrl = Certificates.getOrg(certificate.getSubjectDN());
         String orgUnit = Certificates.getOrgUnit(certificate.getSubjectDN());
         CertKey certKey = new CertKey(orgUrl, orgUnit, commonName);
-        Cert cert = app.store().certs().select(certKey);
+        Cert cert = app.storage().certs().select(certKey);
         if (cert == null) {
             cert = new Cert(certKey);
             cert.setEncoded(encoded);
             cert.setAddress(hostAddress);
-            app.store().certs().insert(cert);
+            app.storage().certs().insert(cert);
             logger.info("certificate {}", certKey);
         } else if (!cert.getEncoded().equals(encoded)) {
             logger.warn("invalid public key {}", certKey);
@@ -44,10 +44,10 @@ public class VerifyCertTransaction {
         } else if (!cert.getAddress().equals(hostAddress)) {
             logger.warn("host address {}", hostAddress);
         }
-        Org org = app.store().orgs().select(cert.getOrgUrl());
+        Org org = app.storage().orgs().select(cert.getOrgUrl());
         if (org == null) {
             org = new Org(cert.getOrgUrl());
-            app.store().orgs().insert(org);
+            app.storage().orgs().insert(org);
             logger.info("insert org {}", org);
         }
         return cert;

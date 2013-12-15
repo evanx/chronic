@@ -59,7 +59,7 @@ public class ChronicMessenger {
                 logger.warn(e.getMessage(), e);
             }
         }
-        for (String email : app.store().listSubscriberEmails(alert)) {
+        for (String email : app.storage().listSubscriberEmails(alert)) {
             mailer.sendEmail(email,
                     alert.getStatus().getTopicString(),
                     new AlertMailBuilder(app).build(alert));

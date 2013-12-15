@@ -25,7 +25,7 @@ public class ListCerts implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         List certs = new LinkedList();
-        for (Cert cert : app.store().listCerts(app.getEmail(httpx))) {
+        for (Cert cert : app.storage().listCerts(app.getEmail(httpx))) {
             certs.add(cert.getMap());
         }
         return JMaps.create("certs", certs);
