@@ -13,7 +13,7 @@ then
   exit 1
 fi
 
-if ! grep '^[a-zA-Z]*=[" ]*' $custom
+if ! grep '^[a-zA-Z]*=[" ]*$' $custom
 then
   echo "Invalid $custom"
   exit 1
