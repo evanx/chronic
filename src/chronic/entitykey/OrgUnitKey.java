@@ -13,13 +13,11 @@ import vellum.data.ComparableTuple;
 public final class OrgUnitKey extends ComparableTuple {
     String orgUrl;
     String orgUnit;
-    String commonName;
             
-    public OrgUnitKey(String orgUrl, String orgUnit, String commonName) {
-        super(orgUrl, orgUnit, commonName);
+    public OrgUnitKey(String orgUrl, String orgUnit) {
+        super(orgUrl, orgUnit);
         this.orgUrl = orgUrl;
         this.orgUnit = orgUnit;
-        this.commonName = commonName;
     }
 
     public String getOrgUrl() {
@@ -29,8 +27,4 @@ public final class OrgUnitKey extends ComparableTuple {
     public String getOrgUnit() {
         return orgUnit;
     }
-
-    public String getCommonName() {
-        return commonName;
-    }        
 }

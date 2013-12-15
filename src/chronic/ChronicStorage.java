@@ -146,7 +146,7 @@ public abstract class ChronicStorage {
     }
 
     public Iterable<String> listSubscriberEmails(AlertRecord alert) {
-        Set<String> set = new HashSet();
+        Set<String> set = new TreeSet();
         for (Subscriber subscriber : subs().list(alert.getStatus().getOrgTopicKey())) {
             set.add(subscriber.getEmail());
         }
@@ -158,7 +158,7 @@ public abstract class ChronicStorage {
     }
 
     public Iterable<Subscriber> listSubscribers(String email) {
-        Set set = new HashSet();
+        Set set = new TreeSet();
         set.addAll(subs().list(new UserKey(email)));
         logger.info("listSubscriber {}", set);
         if (app.getProperties().isAdmin(email)) {
@@ -178,7 +178,7 @@ public abstract class ChronicStorage {
     }
 
     public Iterable<Cert> listCerts(String email) {
-        Set set = new HashSet();
+        Set set = new TreeSet();
         for (String orgUrl : listOrgUrls(email, OrgRoleType.ADMIN)) {
             logger.info("listCerts {}", orgUrl);
             set.addAll(certs().list(new OrgKey(orgUrl)));

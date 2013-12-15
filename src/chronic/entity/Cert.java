@@ -8,17 +8,19 @@ import chronic.entitykey.CertKey;
 import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.OrgKey;
 import chronic.entitykey.CertKeyed;
+import chronic.entitykey.OrgUnitKey;
+import chronic.entitykey.OrgUnitKeyed;
 import chronic.entitytype.CertAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
-import vellum.util.Comparables;
 
 /**
  *
  * @author evan.summers
  */
-public final class Cert extends AbstractIdEntity implements OrgKeyed, CertKeyed, Enabled {
+public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed, 
+        CertKeyed, Enabled {
 
     Long id;
     String orgUrl;
@@ -53,7 +55,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, CertKeyed,
 
     @Override
     public Comparable getKey() {
-        return Comparables.tuple(orgUrl, orgUnit, commonName);
+        return getCertKey();
     }
 
     @Override
@@ -66,6 +68,11 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, CertKeyed,
         return new OrgKey(orgUrl);
     }
 
+    @Override
+    public OrgUnitKey getOrgUnitKey() {
+        return new OrgUnitKey(orgUrl, orgUnit);
+    }
+    
     @Override
     public void setId(Long id) {
         this.id = id;

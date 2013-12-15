@@ -5,24 +5,26 @@
 package chronic.entity;
 
 import chronic.entitykey.CertKey;
+import chronic.entitykey.CertKeyed;
 import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.OrgTopicKey;
 import chronic.entitykey.OrgTopicKeyed;
 import chronic.entitykey.OrgKey;
+import chronic.entitykey.OrgUnitKey;
+import chronic.entitykey.OrgUnitKeyed;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicKeyed;
 import chronic.entitytype.TopicAction;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
-import vellum.util.Comparables;
 
 /**
  *
  * @author evan.summers
  */
 public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeyed, 
-        OrgTopicKeyed, Enabled {
+        OrgUnitKeyed, CertKeyed, OrgTopicKeyed, Enabled {
 
     Long id;
     String orgUrl;
@@ -55,6 +57,27 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
     public TopicKey getTopicKey() {
         return new TopicKey(orgUrl, orgUnit, commonName, topicString);
     }    
+
+    @Override
+    public OrgTopicKey getOrgTopicKey() {
+        return new OrgTopicKey(orgUrl, topicString);
+    }
+    
+    @Override
+    public OrgKey getOrgKey() {
+        return new OrgKey(orgUrl);
+    }
+    
+    @Override
+    public OrgUnitKey getOrgUnitKey() {
+        return new OrgUnitKey(orgUrl, orgUnit);
+    }
+
+    @Override
+    public CertKey getCertKey() {
+        return new CertKey(orgUrl, orgUnit, commonName);
+    }
+    
     
     @Override
     public void setId(Long id) {
@@ -102,15 +125,5 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
     @Override
     public String toString() {
         return getMap().toString();
-    }
-
-    @Override
-    public OrgKey getOrgKey() {
-        return new OrgKey(orgUrl);
-    }
-
-    @Override
-    public OrgTopicKey getOrgTopicKey() {
-        return new OrgTopicKey(orgUrl, topicString);
     }
 }
