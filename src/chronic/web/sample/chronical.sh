@@ -141,7 +141,7 @@ c0mdstat() {
 
 c0sshAuthKeys() {
   echo "<br><b>sshAuthKeys</b>"
-  md5sum `locate authorized_keys | /etc/ssh/sshd_config
+  md5sum `locate authorized_keys | /etc/ssh/sshd_config`
 }
 
 
