@@ -36,13 +36,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.CapacityDeque;
 import vellum.data.Millis;
-import vellum.httphandler.RedirectPortHttpHandler;
 import vellum.httpserver.Httpx;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.jx.JMapException;
 import vellum.storage.StorageException;
 import vellum.data.ComparableTuple;
+import vellum.httphandler.RedirectHttpsHandler;
 
 /**
  *
@@ -72,7 +72,7 @@ public class ChronicApp implements Runnable {
         messenger.init();
         messenger.alertAdmins("Chronic restarted");
         httpServer.start(properties.getHttpRedirectServer(),
-                new RedirectPortHttpHandler(properties.getWebServer().getInt("port")));
+                new RedirectHttpsHandler());
         webServer.start(properties.getWebServer(),
                 new ChronicTrustManager(this),
                 new ChronicHttpHandler(this));
