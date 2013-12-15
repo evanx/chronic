@@ -2,7 +2,7 @@
 set -u 
 
 
-# init 
+### init 
 
 custom=`dirname $0`/custom.chronical.sh
 echo "custom $custom"
@@ -27,7 +27,7 @@ fi
 
 . $custom
 
-# reviewable setup
+### reviewable setup
 
 commonName=`hostname`
 
@@ -41,17 +41,8 @@ c1topic() {
   echo "Subscribe: $subscribers"
 }
 
-c1curl() {
-  tee curl.txt | curl -k --cacert server.pem --key key.pem --cert ./cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' https://chronical.info:8444/$1 > curl.out 2> curl.err
-}
 
-c0enroll() {
-  echo "$subscribers" | c1curl enroll 
-}
-
-
-# check util functions 
+### check util functions 
 
 c2tcp() {
   if nc -w3 $1 $2
@@ -111,7 +102,7 @@ c2postgres() {
   psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' || echo "WARNING - $1:$2 postgres server not running"
 }
 
-# typical checks
+### typical checks
 
 c0login() {
   echo "<br><b>login</b>"
@@ -145,7 +136,16 @@ c0sshAuthKeys() {
 }
 
 
-# standard functionality
+### standard functionality
+
+c1curl() {
+  tee curl.txt | curl -k --cacert server.pem --key key.pem --cert ./cert.pem \
+    --data-binary @- -H 'Content-Type: text/plain' https://chronical.info:8444/$1 > curl.out 2> curl.err
+}
+
+c0enroll() {
+  echo "$subscribers" | c1curl enroll 
+}
 
 c0ensureKey() {
   if [ ! -f key.pem ] 

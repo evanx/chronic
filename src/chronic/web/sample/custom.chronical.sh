@@ -2,6 +2,7 @@
 ### custom config 
 
 subscribers=""
+admins=""
 orgUrl=""
 orgUnit=""
 
