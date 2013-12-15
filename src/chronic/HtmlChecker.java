@@ -36,11 +36,13 @@ import vellum.util.Strings;
  */
 public class HtmlChecker {
 
+    private static final Logger logger = LoggerFactory.getLogger(HtmlChecker.class);
+
     private static final String[] names = {"b", "i", "br", "hr", "span",
         "h1", "h2", "h3", "h4", "h5", "h6"
     };
     private static final Collection<String> whitelist = Lists.asHashSet(names);
-    
+
     public static boolean sanitary(String line) {
         int fromIndex = line.indexOf('<');
         while (fromIndex >= 0 && fromIndex < line.length() - 3) {
@@ -51,14 +53,19 @@ public class HtmlChecker {
                 fromIndex = line.indexOf('<', toIndex + 1);
                 if (string.charAt(0) == '/') {
                     string = string.substring(1);
-                }
-                if (!Strings.startsWith(string, whitelist)) {
+                    if (!Strings.equals(string, whitelist)) {
+                        logger.warn("not sanitary {}", string);
+                        return false;
+                    }
+                } else if (!Strings.startsWith(string, whitelist)) {
+                    logger.warn("not sanitary {}", string);
                     return false;
                 }
             } else {
                 return false;
             }
         }
+        logger.trace("sanitary {}", line);
         return true;
-    }        
+    }
 }

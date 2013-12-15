@@ -277,6 +277,8 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     public List<String> buildChanged(StatusRecord previous) {
         List<String> list = new ArrayList();
         for (String line : lineList) {
+            assert(previous != null);
+            assert(line != null);
             if (!line.isEmpty() && !previous.contains(line)) {
                 list.add(line);
             }
