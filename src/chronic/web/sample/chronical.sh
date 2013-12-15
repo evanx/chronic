@@ -140,7 +140,7 @@ c0sshAuthKeys() {
 
 c1curl() {
   tee curl.txt | curl -k --cacert server.pem --key key.pem --cert ./cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' https://chronical.info:8444/$1 > curl.out 2> curl.err
+    --data-binary @- -H 'Content-Type: text/plain' https://chronical.info:8444/$1 >curl.out 2> curl.err
 }
 
 c0enroll() {
@@ -198,23 +198,33 @@ c0dailyPost() {
   cat daily
 }
 
+c0minutelyCron() {
+  c0minutelyPost
+  if [ `date +%M` -eq $cronMinute ] 
+  then
+    c0hourlyPost
+    if [ `date +%H` -eq $cronHour ] 
+    then
+      c0dailyPost
+    fi
+  fi
+}
+
 c0run() {
   c0enroll
   c0hourlyPost
   c0dailyPost
   while [ 1 ]
   do
-    c0minutelyPost
+    c0minutelyCron
     echo "sleeping for 60 seconds..."
     sleep 58 
     date
-    [ `date +%M` -eq 15 ] && c0hourlyPost
-    [ `date +%H%M` -eq 1435 ] && c0dailyPost
   done
 }
 
 c0start() {
-  c0run &
+  c0run 2>run.err >run.out &
 }
 
 if [ $# -gt 0 ]
