@@ -33,10 +33,10 @@ import vellum.util.Strings;
 public class AlertWebContentBuilder {
 
     static Logger logger = LoggerFactory.getLogger(AlertWebContentBuilder.class);
-    
-    AlertRecord alert;    
-    String string; 
-    
+
+    AlertRecord alert;
+    String string;
+
     public String build(AlertRecord alert) {
         this.alert = alert;
         if (alert.status.isHtmlContent()) {
@@ -46,13 +46,15 @@ public class AlertWebContentBuilder {
             logger.info("preformatted content");
             return String.format("%s", Strings.join("\n<br>", getLineList()));
         }
-    }    
-    
+    }
+
     private Collection<String> getLineList() {
         if (alert.status.statusType == StatusType.CONTENT_CHANGED) {
-            return alert.status.buildChanged(alert.previousStatus);
-        } else {
-            return Strings.trimLines(alert.status.lineList);
+            Collection changedLines = alert.status.buildChanged(alert.previousStatus);
+            if (!changedLines.isEmpty()) {
+                return changedLines;
+            }
         }
+        return Strings.trimLines(alert.status.lineList);
     }
 }

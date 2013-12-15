@@ -205,6 +205,16 @@ app.controller("subscribersController", ["$scope", "$http",
             }
          });
       };
+      $scope.actionAll = function() {
+         console.log("actionAll");
+      };
+      $scope.actionNone = function() {
+         console.log("actionNone");
+      };
+      $scope.action = function() {
+         $scope.selected = this.subscriber;
+         console.log("action", $scope.selected);
+      };
       $scope.setSelected = function() {
          $scope.selected = this.subscriber;
          console.log("selected", $scope.selected);
