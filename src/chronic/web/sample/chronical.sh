@@ -217,7 +217,7 @@ c0kill() {
     pid=`cat pid`
     echo kill $pid
     kill $pid
-  done
+  fi
   rm -f pid
 }
 
