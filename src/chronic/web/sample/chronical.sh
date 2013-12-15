@@ -13,13 +13,13 @@ then
   exit 1
 fi
 
-if ! grep '^[a-zA-Z]*=[" ]*$' $custom
+if ! grep '^[a-zA-Z]*=' $custom
 then
   echo "Invalid $custom"
   exit 1
 fi
 
-if grep '^[a-zA-Z]*=\s*$' $custom
+if grep '^[a-zA-Z]*=[\s"]*$' $custom
 then
   echo "Please edit $custom to configure the above settings"
   exit 1
