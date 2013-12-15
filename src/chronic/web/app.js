@@ -194,6 +194,7 @@ app.controller("subscribersController", ["$scope", "$http",
             $scope.loading = false;
             console.log("subscribers", response.data);
             if (response.data && response.data.subscribers) {
+               $scope.subscriptions = response.data.subscriptions;
                $scope.subscribers = response.data.subscribers;
             } else {
                console.warn("subscribers", response);

@@ -20,11 +20,11 @@ import chronic.entitykey.UserRoleTypeKey;
 import chronic.entitykey.UserRoleTypeKeyed;
 import chronic.entitytype.OrgRoleAction;
 import vellum.jx.JMap;
+import vellum.jx.JMaps;
 import vellum.storage.AbstractIdEntity;
 import vellum.storage.StorageException;
 import vellum.type.Enabled;
 import vellum.util.Args;
-import vellum.util.Comparables;
 
 /**
  *
@@ -103,12 +103,12 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     
     public JMap getMap() throws StorageException {
         return new JMap(
-                JMap.entry("orgName", getOrg().getOrgName()),
-                JMap.entry("email", email),
-                JMap.entry("role", roleType),
-                JMap.entry("action", getAction()),
-                JMap.entry("actionLabel", getAction().getLabel()),
-                JMap.entry("roleLabel", roleType.getLabel()));
+                JMaps.entry("orgName", getOrg().getOrgName()),
+                JMaps.entry("email", email),
+                JMaps.entry("role", roleType),
+                JMaps.entry("action", getAction()),
+                JMaps.entry("actionLabel", getAction().getLabel()),
+                JMaps.entry("roleLabel", roleType.getLabel()));
     }
     
     private OrgRoleAction getAction() {

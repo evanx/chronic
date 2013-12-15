@@ -30,7 +30,7 @@
                      <a href="#" ng-click="changeView('topics')">Topics</a>
                   </li>
                   <li ng-class="getClass('subscribers')">
-                     <a href="#" ng-click="changeView('subscribers')">Subscribers</a>
+                     <a href="#" ng-click="changeView('subscribers')">Subscriptions</a>
                   </li>
                   <li ng-class="getClass('roles')">
                      <a href="#" ng-click="changeView('roles')">Roles</a>
@@ -138,30 +138,26 @@
       <div class="container" ng-controller="subscribersController" ng-cloak 
            ng-show="persona.email && view === 'subscribers'">
          <p ng-show="loading" ng-cloak>Loading...</p>
-         <p ng-show="subscribers && subscribers.length == 0" ng-cloak>No subscribers</p>
-         <div class="row" ng-show="subscribers.length > 0" ng-cloak>
+         <p ng-show="subscriptions && subscriptions.length === 0">No subscriptions</p>
+         <div class="row" ng-show="subscriptions.length > 0">            
             <div class="col-lg-12">
                <table class="table table-striped table-bordered table-condensed">
                   <thead>
                      <tr>
                         <th>Organisation</th>
                         <th>Topic</th>
-                        <th>Subscriber</th>
                         <th>
                            <input type="button" value="Subscribe All" ng-click="actionAll()">
                         </th>
                      </tr>
                   </thead>
                   <tbody>
-                     <tr ng-repeat="subscriber in subscribers">
+                     <tr ng-repeat="subscriber in subscriptions">
                         <td ng-click="setSelected()">
-                           {{subscriber.orgName}}
+                           {{subscriber.orgUrl}}
                         </td>
                         <td>
                            {{subscriber.topicString}}
-                        </td>
-                        <td>
-                           {{subscriber.email}}
                         </td>
                         <td>
                            <input type="button" value="{{subscriber.actionLabel}}" 
@@ -172,6 +168,32 @@
                </table>    
             </div>
          </div>
+         <div class="row" ng-show="subscribers.length > 0">
+            <div class="col-lg-12">
+               <table class="table table-striped table-bordered table-condensed">
+                  <thead>
+                     <tr>
+                        <th>Organisation</th>
+                        <th>Topic</th>
+                        <th>Email</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr ng-repeat="subscriber in subscribers">
+                        <td>
+                           {{subscriber.orgUrl}}
+                        </td>
+                        <td>
+                           {{subscriber.topicString}}
+                        </td>
+                        <td>
+                           {{subscriber.email}}
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>    
+            </div>
+         </div>         
       </div>
 
       <div class="container" ng-controller="rolesController" ng-cloak 
