@@ -44,7 +44,7 @@ public class AlertWebContentBuilder {
             return String.format("%s", Strings.join("\n<br>", getLineList()));
         } else {
             logger.info("preformatted content");
-            return String.format("%s", Strings.join("\n<br>", getLineList()));
+            return String.format("<pre>%s</pre>", Strings.join("\n", getLineList()));
         }
     }
 

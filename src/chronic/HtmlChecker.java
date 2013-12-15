@@ -36,7 +36,7 @@ import vellum.util.Strings;
  */
 public class HtmlChecker {
 
-    private static final String[] names = {"b", "i", "br", "hr",
+    private static final String[] names = {"b", "i", "br", "hr", "span",
         "h1", "h2", "h3", "h4", "h5", "h6"
     };
     private static final Collection<String> whitelist = Lists.asHashSet(names);
@@ -52,7 +52,7 @@ public class HtmlChecker {
                 if (string.charAt(0) == '/') {
                     string = string.substring(1);
                 }
-                if (!whitelist.contains(string)) {
+                if (!Strings.startsWith(string, whitelist)) {
                     return false;
                 }
             } else {
