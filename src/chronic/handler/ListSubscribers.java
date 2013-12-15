@@ -26,6 +26,10 @@ public class ListSubscribers implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         String email = app.getEmail(httpx);
+        List subscriptions = new LinkedList();
+        for (Subscriber subscriber : app.storage().subs().list(new UserKey(email))) {
+            subscriptions.add(subscriber.getMap());
+        }
         List subscribers = new LinkedList();
         if (app.getProperties().isAdmin(email)) {
             for (Subscriber subscriber : app.storage().subs().list()) {
@@ -35,7 +39,7 @@ public class ListSubscribers implements ChronicHttpxHandler {
             }
         }
         return new JMap(JMaps.entry("subscribers", subscribers),
-                JMaps.entry("subscriptions", app.storage().subs().list(new UserKey(email))));
+                JMaps.entry("subscriptions", subscriptions));
     }
     
 }

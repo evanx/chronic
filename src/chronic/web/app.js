@@ -111,6 +111,7 @@ app.controller("personaController", ["$scope", "$location", "personaService",
 
 app.controller("alertsController", ["$scope", "$http",
    function($scope, $http) {
+      $scope.loading = false;
       $scope.alertsList = function() {
          console.log("alerts", $scope.persona.email);
          $scope.alerts = undefined;
@@ -149,6 +150,7 @@ app.controller("alertsController", ["$scope", "$http",
 
 app.controller("topicsController", ["$scope", "$http",
    function($scope, $http) {
+      $scope.loading = false;
       $scope.topicsList = function() {
          console.log("topics", $scope.persona.email);
          $scope.topics = undefined;
@@ -183,6 +185,7 @@ app.controller("topicsController", ["$scope", "$http",
 
 app.controller("subscribersController", ["$scope", "$http",
    function($scope, $http) {
+      $scope.loading = false;
       $scope.subscribersList = function() {
          console.log("subscribers", $scope.persona.email);
          $scope.subscribers = undefined;
@@ -218,6 +221,7 @@ app.controller("subscribersController", ["$scope", "$http",
 
 app.controller("rolesController", ["$scope", "$http",
    function($scope, $http) {
+      $scope.loading = false;
       $scope.rolesList = function() {
          console.log("roles", $scope.persona.email);
          $scope.roles = undefined;
@@ -252,6 +256,7 @@ app.controller("rolesController", ["$scope", "$http",
 
 app.controller("certsController", ["$scope", "$http",
    function($scope, $http) {
+      $scope.loading = false;
       $scope.certsList = function() {
          console.log("certs", $scope.persona.email);
          $scope.certs = undefined;

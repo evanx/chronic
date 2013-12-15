@@ -114,7 +114,7 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
-        map.put("orgName", orgUrl);
+        map.put("orgUrl", orgUrl);
         map.put("topicString", topicString);
         map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());
