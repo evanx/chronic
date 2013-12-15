@@ -227,6 +227,7 @@ c0kill() {
 c0run() {
   c0kill
   echo $$ > pid
+  echo pid `cat pid`
   c0enroll
   c0hourlyPost
   c0dailyPost
