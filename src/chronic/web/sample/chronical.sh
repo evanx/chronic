@@ -212,10 +212,10 @@ c0minutelyCron() {
 
 c0kill() {
   pgrep -f chronical
-  while [ -f pid ] 
-  do
+  if [ -f pid ] 
+  then
     pid=`cat pid`
-    echo "kill $pid"
+    echo kill $pid
     kill $pid
   done
   rm -f pid
@@ -233,6 +233,10 @@ c0run() {
     echo `date '+%H:%M:%S'` sleeping for 60 seconds
     sleep 58 
     date
+    if [ ! -f pid -o `cat $pid` -ne $$ ]
+    then
+      return
+    fi
   done
 }
 
