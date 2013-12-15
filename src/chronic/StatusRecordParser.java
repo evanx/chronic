@@ -42,21 +42,21 @@ import vellum.util.Strings;
 public class StatusRecordParser {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecordParser.class);
-    public final static Pattern fromCronPattern = 
-            Pattern.compile("^From: ([a-z]+) \\(Cron Daemon\\)$");
-    public final static Pattern subjectCronPattern = 
-            Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)"); 
-    public final static Pattern nagiosStatusPattern = 
-            Pattern.compile("^(\\S+) (OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
-    static Pattern headPattern = 
-            Pattern.compile("^[a-zA-Z]+: .*$");
-    
+    public final static Pattern fromCronPattern
+            = Pattern.compile("^From: ([a-z]+) \\(Cron Daemon\\)$");
+    public final static Pattern subjectCronPattern
+            = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)");
+    public final static Pattern nagiosStatusPattern
+            = Pattern.compile("^(\\S*\\s*)(OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
+    static Pattern headPattern
+            = Pattern.compile("^[a-zA-Z]+: .*$");
+
     StatusRecord record;
-    
+
     public StatusRecordParser(CertKey certKey) {
         record = new StatusRecord(certKey);
     }
-        
+
     private void parseAlertFormatType(String string) {
         try {
             record.setAlertFormatType(AlertFormatType.valueOf(string));
@@ -64,7 +64,7 @@ public class StatusRecordParser {
             logger.warn("parseAlertFormatType {}: {}", string, e.getMessage());
         }
     }
-    
+
     private void parseAlertType(String string) {
         logger.trace("parseAlertType {}", string);
         try {
@@ -73,7 +73,7 @@ public class StatusRecordParser {
             logger.warn("parseAlertType {}: {}", string, e.getMessage());
         }
     }
-    
+
     public void parseFromLine(String fromLine) {
         Matcher matcher = fromCronPattern.matcher(fromLine);
         if (matcher.find()) {
@@ -97,7 +97,9 @@ public class StatusRecordParser {
     public boolean parseNagiosStatus(String line) {
         Matcher matcher = nagiosStatusPattern.matcher(line);
         if (matcher.find()) {
-            record.setService(matcher.group(1));
+            if (!matcher.group(1).isEmpty()) {
+                record.setService(matcher.group(1));
+            }
             parseStatusType(matcher.group(2));
             logger.debug("parseNagiosStatus {} {}", matcher.group(1), matcher.group(2));
             return true;
@@ -137,7 +139,7 @@ public class StatusRecordParser {
             logger.warn("parsePort {}: {}", string, e.getMessage());
         }
     }
-    
+
     public StatusRecord parse(String text) throws IOException {
         logger.trace("parse: {}", text);
         String[] lines = text.split("\n");
@@ -223,7 +225,7 @@ public class StatusRecordParser {
             return record.service;
         }
         if (record.subject != null) {
-            return record.subject;            
+            return record.subject;
         }
         if (record.username == null && record.hostname == null && record.service == null) {
             return Bundle.get("unknown");
