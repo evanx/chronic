@@ -14,13 +14,13 @@ public enum StatusType {
     OK,
     WARNING,
     CRITICAL,
-    UNKNOWN,
     CONTENT_CHANGED,
     ELAPSED,
-    RESUMED;
+    RESUMED,
+    UNKNOWN;    
 
-    public boolean isAlertable() {
-        return ordinal() < UNKNOWN.ordinal();
+    public boolean isStatusAlertable() {
+        return ordinal() <= CRITICAL.ordinal();
     }
     
     public String getLabel() {

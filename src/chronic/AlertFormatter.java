@@ -35,7 +35,7 @@ public class AlertFormatter {
     }
 
     public String formatAlertTypeLabel() {
-        if (status.statusType != null && status.statusType.isAlertable()) {
+        if (status.statusType != null && status.statusType.isStatusAlertable()) {
             return status.statusType.getLabel();
         } else if (status.statusType != null && status.alertType == null) {
             return status.statusType.getLabel();

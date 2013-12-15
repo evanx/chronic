@@ -42,10 +42,10 @@ public class AlertWebContentBuilder {
         if (alert.status.isHtmlContent()) {
             logger.info("html content");
             alert.htmlContent = String.format("<pre>%s</pre>", 
-                    Strings.join("\n<br>", getLineList()));
+                    Strings.join("\n", getLineList()));
         } else {
             logger.info("preformatted content");
-            alert.preContent =  String.format("<pre>%s</pre>", 
+            alert.preContent =  String.format("%s", 
                     Strings.join("\n", getLineList()));
         }
     }

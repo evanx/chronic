@@ -150,7 +150,7 @@ public abstract class ChronicStorage {
         for (Subscriber subscriber : subs().list(alert.getStatus().getOrgTopicKey())) {
             set.add(subscriber.getEmail());
         }
-        logger.warn("listSubscriberEmails {} {}", alert.getStatus().getTopicString(), set);
+        logger.info("listSubscriberEmails {} {}", alert.getStatus().getTopicString(), set);
         set.clear();
         set.add(app.getProperties().getAdminEmails().iterator().next());
         logger.info("listSubscriberEmails {} {}", alert.getStatus().getTopicString(), set);

@@ -169,6 +169,10 @@ app.controller("topicsController", ["$scope", "$http",
             }
          });
       };
+      $scope.action = function() {
+         $scope.selected = this.topic;
+         console.log("action", $scope.selected);
+      };
       $scope.setSelected = function() {
          $scope.selected = this.topic;
          console.log("selected", $scope.selected);
@@ -249,6 +253,10 @@ app.controller("rolesController", ["$scope", "$http",
                //navigator.id.logout();
             }
          });
+      };
+      $scope.action = function() {
+         $scope.selected = this.role;
+         console.log("action", $scope.selected);
       };
       $scope.setSelected = function() {
          $scope.selected = this.role;

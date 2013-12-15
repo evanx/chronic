@@ -24,11 +24,11 @@ package chronic;
 
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.data.Timestamped;
+import vellum.jx.JMap;
 
 /**
  *
@@ -74,18 +74,14 @@ public class AlertRecord implements Timestamped {
 
     public Map getAlertMap(boolean detail) {
         AlertFormatter formatter = new AlertFormatter(status);
-        Map map = new TreeMap();
+        JMap map = status.getTopicKey().getMap();
         map.put("from", status.from);
-        map.put("username", status.username);
-        map.put("hostname", status.hostname);
-        map.put("service", status.service);
         map.put("statusType", status.statusType);
         map.put("alertType", status.alertType);
         map.put("alertTypeLabel", formatter.formatAlertTypeLabel());
         map.put("topicString", status.topicString);
         map.put("timestamp", status.timestamp);
         map.put("timestampLabel", Millis.formatTime(status.timestamp));
-        map.put("topic", status.getTopicString());
         map.put("message", formatter.formatAlertTypeLabel());
         if (detail) {
             new AlertWebContentBuilder().build(this);

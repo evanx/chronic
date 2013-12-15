@@ -45,13 +45,12 @@ public class AlertMailBuilder {
     }
     
     public String build(AlertRecord alert) {
-        this.app = app;
         this.alert = alert;
         logger.info("build {}", alert.status);
         builder.append("<pre>\n");
         if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED) {
             appendHeading(alert.status);
-            builder.append("\n<b>Changed:</b>\n\n");
+            builder.append("\n<br>");
             builder.append(Strings.join("\n", alert.status.buildChanged(alert.previousStatus)));
             if (alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
                 appendPrevious(alert.previousStatus);
@@ -73,7 +72,7 @@ public class AlertMailBuilder {
     }
 
     private void appendHeading(StatusRecord status) {
-        builder.append(String.format("<b>%s</b>\n", formatSubject(status)));
+        builder.append(String.format("<b>%s</b>\n", formatWebSubject(status)));
         builder.append(String.format("<i>%s</i>\n\n", Millis.formatTime(status.getTimestamp())));
     }
 
@@ -82,8 +81,8 @@ public class AlertMailBuilder {
     }
     
     private void appendPrevious(StatusRecord status) {
-        builder.append("\n<hr><b>Previously:</b>\n");
-        builder.append(String.format("<b><i>%s</i></b>\n", formatSubject(status)));
+        builder.append("\n<br><hr><b>Previously:</b>\n");
+        builder.append(String.format("<b><i>%s</i></b>\n", formatWebSubject(status)));
         builder.append(String.format("<i>%s</i>\n\n",
                 Millis.formatTime(status.getTimestamp())));
         builder.append(buildContent(status));
@@ -121,9 +120,9 @@ public class AlertMailBuilder {
         builder.append('\n');
     }
 
-    public String formatSubject(StatusRecord status) {
+    public String formatWebSubject(StatusRecord status) {
         logger.info("formatSubject {} {}", status.getStatusType());
-        if (status.isAlertable()) {
+        if (status.isStatusType()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
                 return status.getTopicString()
                         + " <i>" + status.getStatusType().getLabel() + "</i>";

@@ -99,7 +99,6 @@ public class StatusRecordParser {
         if (matcher.find()) {
             record.setService(matcher.group(1));
             parseStatusType(matcher.group(2));
-            record.setSubject(line);
             logger.debug("parseNagiosStatus {} {}", matcher.group(1), matcher.group(2));
             return true;
         }
@@ -205,25 +204,30 @@ public class StatusRecordParser {
             }
         }
         if (record.topicString == null) {
-            record.topicString = buildSource();
+            record.topicString = createTopicString();
         }
     }
 
-    public String buildSource() {
+    public String createTopicString() {
         if (record.username != null && record.hostname != null && record.service != null) {
             if (record.service.matches("\\s")) {
-                return String.format("%s@%s: %s", record.username, record.hostname, record.service);
+                return String.format("%s@%s '%s'", record.username, record.hostname, record.service);
             } else {
-                return String.format("%s@%s/%s", record.username, record.hostname, record.service);
+                return String.format("%s@%s %s", record.username, record.hostname, record.service);
             }
         }
         if (record.username != null && record.hostname != null) {
             return String.format("%s@%s", record.username, record.hostname);
+        }
+        if (record.service != null) {
+            return record.service;
+        }
+        if (record.subject != null) {
+            return record.subject;            
         }
         if (record.username == null && record.hostname == null && record.service == null) {
             return Bundle.get("unknown");
         }
         return Strings.joinNotNullArgs("/", record.username, record.hostname, record.service);
     }
-
 }

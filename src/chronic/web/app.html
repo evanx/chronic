@@ -64,6 +64,8 @@
                   <thead>
                      <tr>
                         <th>Time</th>
+                        <th>Unit</th>
+                        <th>Name</th>
                         <th>Topic</th>
                         <th>Message</th>
                      </tr>
@@ -72,6 +74,12 @@
                      <tr ng-repeat="alert in alerts" ng-click="setSelected()">
                         <td>
                            <i>{{alert.timestampLabel}}</i>
+                        </td>
+                        <td>
+                           {{alert.orgUnit}}
+                        </td>
+                        <td>
+                           {{alert.commonName}}
                         </td>
                         <td>
                            <b>{{alert.topicString}}</b>
@@ -87,11 +95,11 @@
          <div class="row">
             <h4 ng-show="selected"><b>{{selected.topicString}}</b>
                &nbsp;<i>{{selected.alertTypeLabel}}</i></h4>
-            <div ng-show="selected.htmlContent" ng-bind-html="selected.htmlContent" class="well"
-                 style="font-family: monospace">  
+            <div ng-show="selected.htmlContent" ng-bind-html="selected.htmlContent" 
+                 style="font-family: verdana">  
             </div>
             <pre ng-show="selected.preContent" ng-bind-html="selected.preContent"
-                 style="font-family: monospace">  
+                 style="font-family: verdana">  
             </pre>
          </div>
       </div>

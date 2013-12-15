@@ -209,8 +209,12 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         return lineList;
     }
 
-    public boolean isAlertable() {
-        return statusType != null && statusType.isAlertable();
+    public boolean isStatusType() {
+        return statusType != null && statusType != StatusType.UNKNOWN;
+    }
+    
+    public boolean isStatusAlertable() {
+        return statusType != null && statusType.isStatusAlertable();
     }
 
     public boolean isAlertable(StatusRecord previous, AlertRecord alert) {
@@ -237,10 +241,10 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
             }
         }
         if (alertType == AlertType.STATUS_CHANGED) {
-           if (isAlertable() && statusType == previous.statusType
+           if (isStatusAlertable() && statusType == previous.statusType
                     && statusType != alert.getStatus().getStatusType()) {
                if (alert.getStatus().getAlertType() == AlertType.INITIAL && 
-                       !alert.getStatus().isAlertable()) {
+                       !alert.getStatus().isStatusAlertable()) {
                    alertType = AlertType.INITIAL;
                }
                return true;
