@@ -76,7 +76,7 @@ public class ChronicProperties {
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
         if (serverAddress.contains("chronical")) {
-            byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));
+            byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app48.png"));
             mailerProperties = new MailerProperties(bytes, 
                     "chronical.info", "alerts@chronical.info");
             logger.info("mailer {}", mailerProperties);

@@ -17,7 +17,7 @@
 
    <body ng-controller="personaController">
       <div class="container">
-         <div class="navbar navbar-default" role="navigation" ng-cloak>
+         <div class="navbar navbar-default navbar-fixed-top" role="navigation" ng-cloak>
             <div class="navbar-header">
                <a class="navbar-brand" href="#">chronical.info</a>
             </div>
@@ -87,9 +87,12 @@
          <div class="row">
             <h4 ng-show="selected"><b>{{selected.topicString}}</b>
                &nbsp;<i>{{selected.alertTypeLabel}}</i></h4>
-            <div ng-show="selected.content" ng-bind-html="selected.content" class="well"
+            <div ng-show="selected.htmlContent" ng-bind-html="selected.htmlContent" class="well"
                  style="font-family: monospace">  
             </div>
+            <pre ng-show="selected.preContent" ng-bind-html="selected.preContent"
+                 style="font-family: monospace">  
+            </pre>
          </div>
       </div>
 

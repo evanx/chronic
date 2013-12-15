@@ -41,7 +41,9 @@ public class AlertRecord implements Timestamped {
     StatusRecord previousStatus;
     AlertRecord previousAlert;
     List<String> changedLines;
-
+    String htmlContent;
+    String preContent;
+    
     public AlertRecord(StatusRecord status) {
         this.status = status;
     }
@@ -86,7 +88,9 @@ public class AlertRecord implements Timestamped {
         map.put("topic", status.getTopicString());
         map.put("message", formatter.formatAlertTypeLabel());
         if (detail) {
-            map.put("content", new AlertWebContentBuilder().build(this));
+            new AlertWebContentBuilder().build(this);
+            map.put("htmlContent", htmlContent);
+            map.put("preContent", preContent);
         }
         logger.trace("map {}", map);
         return map;

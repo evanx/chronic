@@ -37,14 +37,16 @@ public class AlertWebContentBuilder {
     AlertRecord alert;
     String string;
 
-    public String build(AlertRecord alert) {
+    public void build(AlertRecord alert) {
         this.alert = alert;
         if (alert.status.isHtmlContent()) {
             logger.info("html content");
-            return String.format("%s", Strings.join("\n<br>", getLineList()));
+            alert.htmlContent = String.format("<pre>%s</pre>", 
+                    Strings.join("\n<br>", getLineList()));
         } else {
             logger.info("preformatted content");
-            return String.format("<pre>%s</pre>", Strings.join("\n", getLineList()));
+            alert.preContent =  String.format("<pre>%s</pre>", 
+                    Strings.join("\n", getLineList()));
         }
     }
 
