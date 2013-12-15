@@ -40,15 +40,10 @@ public class Post implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        String hostAddress = httpExchange.getRemoteAddress().getAddress().getHostAddress();
-        if (!app.getProperties().getAllowedAddresses().contains(hostAddress)) {
-            logger.warn("remote hostAddress {}", hostAddress);
-            sendPlainResponse(httpExchange, "error: not allowed IP address: " + hostAddress);
-            return;
-        }
         try {
             X509Certificate certificate = ((HttpsExchange) httpExchange).getSSLSession().
                     getPeerCertificateChain()[0];
+            String hostAddress = httpExchange.getRemoteAddress().getAddress().getHostAddress();
             Cert cert = new VerifyCertTransaction().handle(app, hostAddress, certificate);
             int contentLength = Integer.parseInt(
                     httpExchange.getRequestHeaders().get("Content-length").get(0));

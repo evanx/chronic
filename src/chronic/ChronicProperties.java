@@ -51,6 +51,7 @@ public class ChronicProperties {
     private ExtendedProperties webServer;
     private Set<String> adminDomains;
     private Set<String> adminEmails;
+    private Set<String> allowedOrgUrls;
     private Set<String> allowedAddresses;
     private Set<String> subscriberEmails;
     private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
@@ -67,6 +68,7 @@ public class ChronicProperties {
         adminEmails = object.getStringSet("adminEmails");
         subscriberEmails = object.getStringSet("subscriberEmails");
         subscriberEmails.addAll(adminEmails);
+        allowedOrgUrls = object.getStringSet("allowedOrgUrls");
         allowedAddresses = object.getStringSet("allowedAddresses");
         allowedAddresses.add("127.0.0.1");
         if (object.hasProperties("httpRedirectServer")) {
@@ -119,6 +121,10 @@ public class ChronicProperties {
         return adminEmails;
     }
 
+    public Set<String> getAllowedOrgUrls() {
+        return allowedOrgUrls;
+    }   
+    
     public Set<String> getAllowedAddresses() {
         return allowedAddresses;
     }   
@@ -133,7 +139,5 @@ public class ChronicProperties {
 
     public boolean isSubscriber(String email) {
         return subscriberEmails.contains(email) || isAdmin(email);
-    }    
-    
-    
+    }            
 }

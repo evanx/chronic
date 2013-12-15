@@ -7,6 +7,7 @@ import chronic.*;
 import chronic.entity.Cert;
 import chronic.entity.Org;
 import chronic.entitykey.CertKey;
+import static chronic.handler.Post.sendPlainResponse;
 import java.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
 import org.slf4j.Logger;
@@ -29,6 +30,11 @@ public class VerifyCertTransaction {
         String commonName = Certificates.getCommonName(certificate.getSubjectDN());
         String orgUrl = Certificates.getOrg(certificate.getSubjectDN());
         String orgUnit = Certificates.getOrgUnit(certificate.getSubjectDN());
+        if (!app.getProperties().getAllowedOrgUrls().contains(orgUrl)) {
+            throw new CertificateException("org not allowed: " + orgUrl);
+        } else if (!app.getProperties().getAllowedAddresses().contains(hostAddress)) {
+            logger.warn("remote hostAddress {}", hostAddress);
+        }
         CertKey certKey = new CertKey(orgUrl, orgUnit, commonName);
         Cert cert = app.storage().certs().select(certKey);
         if (cert == null) {

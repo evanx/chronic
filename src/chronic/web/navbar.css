@@ -6,3 +6,8 @@ body {
 .navbar {
   margin-bottom: 20px;
 }
+
+pre {
+  font-family: Ubuntu Mono;
+  font-size: 14px;
+}
