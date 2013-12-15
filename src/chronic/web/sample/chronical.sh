@@ -210,14 +210,27 @@ c0minutelyCron() {
   fi
 }
 
+c0kill() {
+  pgrep -f chronical
+  while [ -f pid ] 
+  do
+    pid=`cat pid`
+    echo "kill $pid"
+    kill $pid
+  done
+  rm -f pid
+}
+
 c0run() {
+  c0kill
+  echo $$ > pid
   c0enroll
   c0hourlyPost
   c0dailyPost
   while [ 1 ]
   do
     c0minutelyCron
-    echo "sleeping for 60 seconds..."
+    echo `date '+%H:%M:%S'` sleeping for 60 seconds
     sleep 58 
     date
   done
