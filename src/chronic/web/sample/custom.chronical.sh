@@ -1,7 +1,12 @@
 
-# config 
+### custom config 
 
 subscribers=""
+orgUrl=""
+orgUnit=""
+
+
+### default settings
 
 loadWarningThreshold=4
 loadCriticalThreshold=9
@@ -9,10 +14,8 @@ loadCriticalThreshold=9
 diskWarningThreshold=80
 diskCriticalThreshold=90
 
-orgUrl=""
-orgUnit=""
 
-# customizable jobs
+### customizable jobs
 
 c0minutely() {
   c1topic minutely
@@ -32,6 +35,7 @@ c0hourly() {
   c0diskspace
   #c0mdstat
   #c0sshAuthKeys
+  #c0megaRaid
 }
 
 c0daily() {
