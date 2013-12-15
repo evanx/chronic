@@ -50,6 +50,14 @@ public class ChronicTest {
     public void emailHeaderPattern() {
         Assert.assertTrue("X-from: test".matches("^\\S*: .*"));
     }
+
+    @Test
+    public void nagiosPattern() {
+        Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher("CRITICAL - 101ms");
+        Assert.assertTrue(matcher.find());
+        Assert.assertTrue(matcher.group(1).equals(""));
+        Assert.assertTrue(matcher.group(2).equals("CRITICAL"));
+    }
     
     @Test
     public void nagiosChanged() {
