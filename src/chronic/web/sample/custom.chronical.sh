@@ -31,7 +31,7 @@ c0hourly() {
   c1topic hourly
   c0diskspace
   #c0mdstat
-  #c0sshd
+  #c0sshAuthKeys
 }
 
 c0daily() {

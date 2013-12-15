@@ -13,7 +13,7 @@ then
   exit 1
 fi
 
-if ! grep '^[a-zA-Z]*=' $custom
+if ! grep '^[a-zA-Z]*=[" ]*' $custom
 then
   echo "Invalid $custom"
   exit 1
@@ -140,8 +140,8 @@ c0mdstat() {
 }
 
 c0sshAuthKeys() {
-  echo "<br><b>sshd</b>"
-  md5sum `locate authorized_keys | grep '^/home\|^/root'` /etc/ssh/sshd_config
+  echo "<br><b>sshAuthKeys</b>"
+  md5sum `locate authorized_keys | /etc/ssh/sshd_config
 }
 
 
@@ -151,7 +151,8 @@ c0ensureKey() {
   if [ ! -f key.pem ] 
   then
     rm -f cert.pem
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pem -subj "/CN=$commonName/O=$orgUrl/OU=$orgUnit"
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pem \
+      -subj "/CN=$commonName/O=$orgUrl/OU=$orgUnit"
     openssl x509 -text -in cert.pem | grep CN
   fi
 }
@@ -161,7 +162,8 @@ c0ensureCert() {
   then
     if echo | openssl s_client -connect chronical.info:8444 2>/dev/null | grep -q 'BEGIN CERT'
     then
-      openssl s_client -connect chronical.info:8444 2>/dev/null | sed -n -e '/BEGIN CERT/,/END CERT/p' > server.pem
+      openssl s_client -connect chronical.info:8444 2>/dev/null | 
+        sed -n -e '/BEGIN CERT/,/END CERT/p' > server.pem
       openssl x509 -text -in server.pem | grep 'CN='
       ls -l server.pem
     fi
@@ -223,4 +225,3 @@ then
 else 
   c0hourly
 fi
-
