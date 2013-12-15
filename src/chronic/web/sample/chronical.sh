@@ -215,8 +215,11 @@ c0kill() {
   if [ -f pid ] 
   then
     pid=`cat pid`
-    echo kill $pid
-    kill $pid
+    if ps -p $pid 
+    then
+      echo "kill $pid"
+      kill $pid
+    fi
   fi
   rm -f pid
 }
