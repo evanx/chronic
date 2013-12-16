@@ -4,6 +4,8 @@ set -u
 
 ### init 
 
+echo "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
+
 pwd
 custom=`dirname $0`/custom.chronical.sh
 echo "custom $custom"
