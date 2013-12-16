@@ -232,7 +232,7 @@ c0kill() {
   if [ -f pid ] 
   then
     pid=`cat pid`
-    if ps -p $pid 
+    if ps -p $pid | grep $pid
     then
       decho "kill $pid"
       kill $pid
