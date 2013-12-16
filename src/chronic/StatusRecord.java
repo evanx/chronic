@@ -268,7 +268,13 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     public static boolean equals(String line, String other) {
         Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(line);
         if (matcher.find()) {
+            if (matcher.group(2).equals("UNKNOWN")) {
+                return true;
+            }
             Matcher otherMatcher = StatusRecordParser.nagiosStatusPattern.matcher(other);
+            if (otherMatcher.group(2).equals("UNKNOWN")) {
+                return true;
+            }
             return otherMatcher.find() && otherMatcher.group(1).equals(matcher.group(1))
                     && otherMatcher.group(2).equals(matcher.group(2));
 
