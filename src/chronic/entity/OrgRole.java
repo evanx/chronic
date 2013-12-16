@@ -9,7 +9,7 @@ import chronic.entitykey.UserKeyed;
 import chronic.entitykey.UserKey;
 import chronic.entitykey.OrgKey;
 import chronic.entitytype.OrgRoleType;
-import chronic.ChronicApp;
+import chronic.app.ChronicApp;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.OrgRoleKeyed;
 import chronic.entitykey.OrgUserKey;

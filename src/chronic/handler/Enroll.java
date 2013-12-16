@@ -3,8 +3,8 @@
  */
 package chronic.handler;
 
+import chronic.app.ChronicApp;
 import chronic.transaction.EnrollTransaction;
-import chronic.*;
 import com.sun.net.httpserver.HttpExchange;
 import java.util.Arrays;
 import org.slf4j.Logger;

@@ -3,7 +3,7 @@
  */
 package chronic.transaction;
 
-import chronic.*;
+import chronic.app.ChronicApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.StorageException;

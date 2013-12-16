@@ -3,8 +3,8 @@
  */
 package chronic.handler;
 
-import chronic.ChronicApp;
-import chronic.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
+import chronic.app.ChronicHttpxHandler;
 import chronic.entity.OrgRole;
 import java.util.LinkedList;
 import java.util.List;

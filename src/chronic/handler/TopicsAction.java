@@ -3,8 +3,8 @@
  */
 package chronic.handler;
 
-import chronic.ChronicApp;
-import chronic.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
+import chronic.app.ChronicHttpxHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httpserver.Httpx;

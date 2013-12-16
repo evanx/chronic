@@ -18,8 +18,10 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package chronic.app;
 
+import static chronic.app.StatusRecordMatcher.getFilteredLineList;
+import static chronic.app.StatusRecordMatcher.matches;
 import chronic.check.StatusCheck;
 import chronic.entitykey.CertKey;
 import chronic.entitykey.CertKeyed;
@@ -42,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import vellum.data.ComparableTuple;
 import vellum.data.Patterns;
 import vellum.util.Args;
+import vellum.util.Strings;
 
 /**
  *
@@ -251,41 +254,11 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         }
         return false;
     }
-
+    
     public boolean matches(StatusRecord other) {
-        if (lineList.size() != other.lineList.size()) {
-            return false;
-        }
-        for (int i = 0; i < lineList.size(); i++) {
-            if (!matches(lineList.get(i), other.lineList.get(i))) {
-                return false;
-            }
-        }
-        return true;
+        return new StatusRecordMatcher(this).matches(other);
     }
-
-    public static boolean matches(String line, String other) {
-        Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(line);
-        if (matcher.find()) {
-            if (matcher.group(2).equals("UNKNOWN")) {
-                return true;
-            }
-            Matcher otherMatcher = StatusRecordParser.nagiosStatusPattern.matcher(other);
-            if (!otherMatcher.find()) {
-                return false;
-            }
-            if (otherMatcher.group(2).equals("UNKNOWN")) {
-                return true;
-            }
-            return otherMatcher.group(1).equals(matcher.group(1))
-                    && otherMatcher.group(2).equals(matcher.group(2));
-
-        } else if (StatusRecordParser.headPattern.matcher(line).find()) {
-            return true;
-        }
-        return line.equals(other);
-    }
-
+    
     public List<String> buildChanged(StatusRecord previous) {
         List<String> list = new ArrayList();
         for (String line : lineList) {
@@ -298,15 +271,6 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         return list;
     }
     
-    public boolean isHtmlContent() {
-        for (String line : lineList) {
-            if (Patterns.matchesTag(line)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean contains(String otherLine) {
         for (String line : lineList) {
             if (line.equals(otherLine)) {

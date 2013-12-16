@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic;
+package chronic.app;
 
 import chronic.handler.Enroll;
 import chronic.handler.EnrollOrg;

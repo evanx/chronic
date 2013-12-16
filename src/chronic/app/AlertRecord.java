@@ -1,4 +1,4 @@
-package chronic;
+package chronic.app;
 
 /*
  * Source https://github.com/evanx by @evanxsummers

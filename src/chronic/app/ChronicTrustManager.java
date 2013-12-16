@@ -18,7 +18,7 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package chronic;
+package chronic.app;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;

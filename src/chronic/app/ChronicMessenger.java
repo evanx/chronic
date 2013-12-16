@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package chronic.app;
 
 import chronic.mail.Mailer;
 import org.slf4j.Logger;

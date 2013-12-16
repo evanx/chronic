@@ -3,7 +3,7 @@
  */
 package chronic.transaction;
 
-import chronic.*;
+import chronic.app.ChronicApp;
 import chronic.entity.Topic;
 import chronic.entitykey.CertKey;
 import chronic.entitykey.TopicKey;

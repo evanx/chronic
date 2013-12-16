@@ -4,9 +4,9 @@
  */
 package chronic.persona;
 
-import chronic.ChronicApp;
+import chronic.app.ChronicApp;
 import chronic.entity.User;
-import chronic.ChronicCookie;
+import chronic.app.ChronicCookie;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import vellum.httpserver.Httpx;

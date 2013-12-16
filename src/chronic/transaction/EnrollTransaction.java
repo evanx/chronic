@@ -3,7 +3,7 @@
  */
 package chronic.transaction;
 
-import chronic.*;
+import chronic.app.ChronicApp;
 import chronic.entity.User;
 import chronic.entitytype.OrgRoleType;
 import chronic.entity.Org;

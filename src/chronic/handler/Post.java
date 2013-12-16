@@ -3,9 +3,9 @@
  */
 package chronic.handler;
 
-import chronic.ChronicApp;
-import chronic.StatusRecord;
-import chronic.StatusRecordParser;
+import chronic.app.ChronicApp;
+import chronic.app.StatusRecord;
+import chronic.app.StatusRecordParser;
 import chronic.check.StatusCheck;
 import chronic.entity.Cert;
 import chronic.transaction.EnrollTransaction;

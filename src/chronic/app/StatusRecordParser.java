@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package chronic.app;
 
 import chronic.check.OpenPortChecker;
 import chronic.bundle.Bundle;
@@ -42,14 +42,6 @@ import vellum.util.Strings;
 public class StatusRecordParser {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecordParser.class);
-    public final static Pattern fromCronPattern
-            = Pattern.compile("^From: ([a-z]+) \\(Cron Daemon\\)$");
-    public final static Pattern subjectCronPattern
-            = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)");
-    public final static Pattern nagiosStatusPattern
-            = Pattern.compile("^(\\S*\\s*)(OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
-    static Pattern headPattern
-            = Pattern.compile("^[a-zA-Z]+: .*$");
 
     StatusRecord record;
 
@@ -75,7 +67,7 @@ public class StatusRecordParser {
     }
 
     public void parseFromLine(String fromLine) {
-        Matcher matcher = fromCronPattern.matcher(fromLine);
+        Matcher matcher = StatusRecordPatterns.fromCronPattern.matcher(fromLine);
         if (matcher.find()) {
             record.setUsername(matcher.group(1));
             record.setFrom(matcher.group(1));
@@ -83,7 +75,7 @@ public class StatusRecordParser {
     }
 
     public void parseSubjectLine(String subjectLine) {
-        Matcher matcher = subjectCronPattern.matcher(subjectLine);
+        Matcher matcher = StatusRecordPatterns.subjectCronPattern.matcher(subjectLine);
         if (matcher.find()) {
             record.setUsername(matcher.group(1));
             record.setHostname(matcher.group(2));
@@ -95,10 +87,11 @@ public class StatusRecordParser {
     }
 
     public boolean parseNagiosStatus(String line) {
-        Matcher matcher = nagiosStatusPattern.matcher(line);
+        Matcher matcher = StatusRecordPatterns.nagiosStatusPattern.matcher(line);
         if (matcher.find()) {
-            if (!matcher.group(1).isEmpty()) {
-                record.setService(matcher.group(1));
+            String service = matcher.group(1).trim();
+            if (!service.isEmpty()) {
+                record.setService(service);
             }
             parseStatusType(matcher.group(2));
             logger.debug("parseNagiosStatus {} {}", matcher.group(1), matcher.group(2));

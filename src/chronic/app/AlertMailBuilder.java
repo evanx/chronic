@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package chronic.app;
 
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
@@ -98,7 +98,7 @@ public class AlertMailBuilder {
                 continue;
             }
             if (status.getAlertFormatType() == AlertFormatType.MINIMAL) {
-                Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(line);
+                Matcher matcher = StatusRecordPatterns.nagiosStatusPattern.matcher(line);
                 if (matcher.find()) {
                     int index = line.indexOf(" - ");
                     if (index > 0) {

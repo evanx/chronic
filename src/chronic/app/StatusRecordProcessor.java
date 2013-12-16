@@ -18,31 +18,20 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package chronic.app;
 
-import chronic.bundle.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author evan.summers
  */
-public class AlertFormatter {
+public class StatusRecordProcessor {
 
-    StatusRecord status;
+    static Logger logger = LoggerFactory.getLogger(StatusRecordProcessor.class);
 
-    public AlertFormatter(StatusRecord status) {
-        this.status = status;
+    public StatusRecordProcessor() {
     }
-
-    public String formatAlertTypeLabel() {
-        if (status.statusType != null && status.statusType.isStatusAlertable()) {
-            return status.statusType.getLabel();
-        } else if (status.statusType != null && status.alertType == null) {
-            return status.statusType.getLabel();
-        } else if (status.alertType != null) {
-            return status.alertType.getLabel();
-        } else {
-            return Bundle.get("unknown");
-        }
-    }
+        
 }

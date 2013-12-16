@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package chronic.app;
 
 import chronic.type.StatusType;
 import java.util.Collection;
@@ -39,7 +39,7 @@ public class AlertWebContentBuilder {
 
     public void build(AlertRecord alert) {
         this.alert = alert;
-        if (alert.status.isHtmlContent()) {
+        if (new StatusRecordMatcher(alert.status).isHtmlContent()) {
             logger.info("html content");
             alert.htmlContent = String.format("<pre>%s</pre>", 
                     Strings.join("\n", getLineList()));

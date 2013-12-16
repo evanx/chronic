@@ -4,8 +4,8 @@
  */
 package chronic.persona;
 
-import chronic.ChronicApp;
-import chronic.ChronicCookie;
+import chronic.app.ChronicApp;
+import chronic.app.ChronicCookie;
 import chronic.util.JsonObjectDelegate;
 import java.io.IOException;
 import java.net.URL;

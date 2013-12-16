@@ -4,7 +4,7 @@
  */
 package chronic.mail;
 
-import chronic.ChronicMessenger;
+import chronic.app.ChronicMessenger;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
