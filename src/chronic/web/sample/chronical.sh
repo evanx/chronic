@@ -254,7 +254,7 @@ c0hourlyCron() {
   c0stopped
   c0hourlyPost
   c0stopped
-  if [ `date +%H` -eq $cronHour ] 
+  if [ `date +%H` -eq $scheduledHour ] 
   then
     c0dailyPost
   fi
@@ -263,7 +263,7 @@ c0hourlyCron() {
 c0minutelyCron() {
   c0stopped
   c0minutelyPost
-  if [ `date +%M` -eq $cronMinute ]
+  if [ `date +%M` -eq $scheduledMinute ]
   then
     if [ -f hourly ]
     then
@@ -349,7 +349,7 @@ c0run() {
     decho "periodTime $periodTime (current $time, period $periodSeconds seconds, pid $$)"
     c0minutelyCron
     decho "periodTime $periodTime vs stat `stat -c %Z minutely`"
-    decho "minute `date +%M` vs cronMinute $cronMinute"
+    decho "minute `date +%M` vs scheduledMinute $scheduledMinute"
     decho "`date '+%H:%M:%S'` time `date +%s` finish $periodTime for $periodSeconds seconds"
     time=`date +%s`
     if [ $periodTime -gt $time ]

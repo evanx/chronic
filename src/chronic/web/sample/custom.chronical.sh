@@ -6,8 +6,8 @@ subscribers=""
 admins=""
 orgUrl=""
 orgUnit=""
-cronMinute=""
-cronHour=""
+scheduledMinute=""
+scheduledHour=""
 
 
 ### default settings

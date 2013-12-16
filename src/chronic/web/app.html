@@ -296,12 +296,40 @@
       </div>
 
       <div class="container" ng-show="!persona.email">
-         <a href="https://www.positivessl.com" 
-            style="font-family: arial; font-size: 10px; color: #212121; text-decoration: none;"><img
-               src="https://www.positivessl.com/images-new/PositiveSSL_tl_white2.gif" 
-               alt="SSL Certificate" title="SSL Certificate" border="0" /></a>
+         <div class="row" class="well-lg">
+            <div class="col-lg-12">
+               <h2>Instant cloud monitoring</h2>
+               <p>Step 1: Get the scripts.
+               <pre>wget https://chronical.info/sample/custom.chronical.sh
+wget https://chronical.info/sample/chronical.sh</pre>   
+               <p>Step 2: Edit custom.chronical.sh
+               <pre>subscribers="you@your.org"
+admins="you@your.org"
+orgUrl="your.org"</pre>                  
+               <p>Step 3. Review chronical.sh out of curiosity and security.
+               <p>Step 4: Test.
+               <pre>sh chronical.sh</pre>
+               <p>Step 5: Run.
+               <pre>sh chronical.sh run</pre>
+               <p>Step 6: Signin to <a href="https://chronical.info">https://chronical.info</a>
+               <hr>
+               <h2>Resources</h2>
+               <p><a href="/sample/custom.chronical.sh"
+                     >https://chronical.info/sample/custom.chronical.sh</a> - customisable template
+
+               <p><a href="/sample/chronical.sh"
+                     >https://chronical.info/sample/chronical.sh</a> - client utility script
+               <hr> 
+               <p class="pull-right">
+                  <a href="https://www.positivessl.com" 
+                     style="font-family: arial; font-size: 10px; color: #212121; text-decoration: none;"><img
+                        src="https://www.positivessl.com/images-new/PositiveSSL_tl_white2.gif" 
+                        alt="SSL Certificate" title="SSL Certificate" border="0" /></a>
+               </p>
+            </div>
+         </div>
       </div>
-      
+
       <script src="https://login.persona.org/include.js"></script>
       <script src="app.js"></script>
       <script src="js/jquery-1.10.2.min.js"></script>
