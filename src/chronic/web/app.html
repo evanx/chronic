@@ -1,342 +1,347 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:ng="https://angularjs.org" ng-app="app">
-   <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="description" content="">
-      <meta name="author" content="">
-      <link rel="shortcut icon" href="favicon.png">
-      <title>Chronical.info</title>
-      <link href="bootstrap-3.0.2/css/bootstrap.css" rel="stylesheet" />
-      <link href="css/bootstrap-switch.css" rel="stylesheet" />
-      <link href="navbar.css" rel="stylesheet" />
-      <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' 
-            type='text/css'>
-      <script src="js/angular-1.2.0.min.js"></script>
-      <script src="js/angular-sanitize.min.js"></script>
-   </head>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="favicon.png">
+    <title>Chronical.info</title>
+    <link href="bootstrap-3.0.2/css/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap-switch.css" rel="stylesheet" />
+    <link href="navbar.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' 
+          type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' 
+          type='text/css'>
+    <script src="js/angular-1.2.0.min.js"></script>
+    <script src="js/angular-sanitize.min.js"></script>
+  </head>
 
-   <body ng-controller="personaController">
-      <div class="container">
-         <div class="navbar navbar-default navbar-fixed-top" role="navigation" ng-cloak>
-            <div class="navbar-header">
-               <a class="navbar-brand" href="#">chronical.info</a>
+  <body ng-controller="personaController">
+    <div class="container">
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation" ng-cloak>
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#" ng-click="changeView('info')">chronical.info</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav" ng-show="persona.email" >
+            <li ng-class="getClass('alerts')">
+              <a href="#" ng-click="changeView('alerts')">Alerts</a>
+            </li>
+            <li ng-class="getClass('topics')">
+              <a href="#" ng-click="changeView('topics')">Topics</a>
+            </li>
+            <li ng-class="getClass('subscribers')">
+              <a href="#" ng-click="changeView('subscribers')">Subscriptions</a>
+            </li>
+            <li ng-class="getClass('roles')">
+              <a href="#" ng-click="changeView('roles')">Roles</a>
+            </li>
+            <li ng-class="getClass('certs')">
+              <a href="#" ng-click="changeView('certs')">Certs</a>
+            </li>
+            <li ng-class="getClass('help')">
+              <a href="#" ng-click="changeView('info')">Help</a>
+            </li>
+          </ul>
+          <div class="navbar-collapse collapse pull-right">
+            <div class="navbar-text" ng-cloak ng-hide="persona.email || loggingIn">
+              <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a>
             </div>
-            <div class="navbar-collapse collapse">
-               <ul class="nav navbar-nav" ng-show="persona.email" >
-                  <li ng-class="getClass('alerts')">
-                     <a href="#" ng-click="changeView('alerts')">Alerts</a>
-                  </li>
-                  <li ng-class="getClass('topics')">
-                     <a href="#" ng-click="changeView('topics')">Topics</a>
-                  </li>
-                  <li ng-class="getClass('subscribers')">
-                     <a href="#" ng-click="changeView('subscribers')">Subscriptions</a>
-                  </li>
-                  <li ng-class="getClass('roles')">
-                     <a href="#" ng-click="changeView('roles')">Roles</a>
-                  </li>
-                  <li ng-class="getClass('certs')">
-                     <a href="#" ng-click="changeView('certs')">Certs</a>
-                  </li>
-               </ul>
-               <div class="navbar-collapse collapse pull-right">
-                  <div class="navbar-text" ng-cloak ng-hide="persona.email || loggingIn">
-                     <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a>
-                  </div>
-                  <div class="navbar-text" ng-show="loggingIn">
-                     <span>Verify...</span>
-                  </div>
-                  <div class="navbar-text" ng-cloak ng-show="persona.email && !loggingIn">
-                     <a ng-click="logout()" class="navbar-link" href="#">{{persona.email}}</a>
-                  </div>
-               </div>
+            <div class="navbar-text" ng-show="loggingIn">
+              <span>Verify...</span>
             </div>
-         </div>
+            <div class="navbar-text" ng-cloak ng-show="persona.email && !loggingIn">
+              <a ng-click="logout()" class="navbar-link" href="#">{{persona.email}}</a>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <div class="container" ng-controller="alertsController" ng-cloak 
-           ng-show="persona.email && view === 'alerts'">
-         <p ng-show="loading">Loading...</p>
-         <p ng-show="!loading && alerts && alerts.length === 0">No alerts</p>
-         <div class="row" ng-show="alerts.length > 0" ng-cloak>
-            <div class="col-lg-12">
-               <table class="table table-striped table-bordered table-condensed">
-                  <thead>
-                     <tr>
-                        <th>Time</th>
-                        <th>Unit</th>
-                        <th>Name</th>
-                        <th>Topic</th>
-                        <th>Message</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr ng-repeat="alert in alerts" ng-click="setSelected()">
-                        <td>
-                           <i>{{alert.timestampLabel}}</i>
-                        </td>
-                        <td>
-                           {{alert.orgUnit}}
-                        </td>
-                        <td>
-                           {{alert.commonName}}
-                        </td>
-                        <td>
-                           <b>{{alert.topicString}}</b>
-                        </td>
-                        <td ng-click="setSelected()">
-                           {{alert.message}}
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>    
-            </div>
-         </div>
-         <div class="row">
-            <h4 ng-show="selected"><b>{{selected.topicString}}</b>
-               &nbsp;<i>{{selected.alertTypeLabel}}</i></h4>
-            <div ng-show="selected.htmlContent" ng-bind-html="selected.htmlContent" 
-                 style="font-family: Ubuntu Mono">  
-            </div>
-            <pre ng-show="selected.preContent" ng-bind-html="selected.preContent"
-                 style="font-family: Ubuntu Mono">  
-            </pre>
-         </div>
+    <div class="container" ng-controller="alertsController" ng-cloak 
+         ng-show="persona.email && view === 'alerts'">
+      <p ng-show="loading">Loading...</p>
+      <p ng-show="!loading && alerts && alerts.length === 0">No alerts</p>
+      <div class="row" ng-show="alerts.length > 0" ng-cloak>
+        <div class="col-lg-12">
+          <table class="table table-striped table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Unit</th>
+                <th>Name</th>
+                <th>Topic</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="alert in alerts" ng-click="setSelected()">
+                <td>
+                  <i>{{alert.timestampLabel}}</i>
+                </td>
+                <td>
+                  {{alert.orgUnit}}
+                </td>
+                <td>
+                  {{alert.commonName}}
+                </td>
+                <td>
+                  <b>{{alert.topicString}}</b>
+                </td>
+                <td ng-click="setSelected()">
+                  {{alert.message}}
+                </td>
+              </tr>
+            </tbody>
+          </table>    
+        </div>
       </div>
-
-      <div class="container" ng-controller="topicsController" ng-cloak 
-           ng-show="persona.email && view === 'topics'">
-         <p ng-show="loading">Loading...</p>
-         <p ng-show="!loading && topics && topics.length === 0">No topics</p>
-         <div class="row" ng-show="topics.length > 0" ng-cloak>
-            <div class="col-lg-12">
-               <table class="table table-striped table-bordered table-condensed">
-                  <thead>
-                     <tr>
-                        <th>Topic</th>
-                        <th>Host</th>
-                        <th>Network</th>
-                        <th>Organisation</th>
-                        <th>
-                           <input type="button" value="Subscribe All" ng-click="actionAll()">
-                        </th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr ng-repeat="topic in topics">
-                        <td ng-click="setSelected()">
-                           {{topic.topicString}}
-                        </td>
-                        <td>
-                           {{topic.hostName}}
-                        </td>
-                        <td>
-                           {{topic.networkName}}
-                        </td>
-                        <td>
-                           {{topic.orgUrl}}
-                        </td>
-                        <td>
-                           <input type="button" value="{{topic.actionLabel}}" ng-click="action()">
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>    
-            </div>
-         </div>
+      <div class="row">
+        <h4 ng-show="selected"><b>{{selected.topicString}}</b>
+          &nbsp;<i>{{selected.alertTypeLabel}}</i></h4>
+        <div ng-show="selected.htmlContent" ng-bind-html="selected.htmlContent" 
+             style="font-family: Ubuntu Mono">  
+        </div>
+        <pre ng-show="selected.preContent" ng-bind-html="selected.preContent"
+             style="font-family: Ubuntu Mono">  
+        </pre>
       </div>
+    </div>
 
-      <div class="container" ng-controller="subscribersController" ng-cloak 
-           ng-show="persona.email && view === 'subscribers'">
-         <p ng-show="loading" ng-cloak>Loading...</p>
-         <p ng-show="!loading && subscriptions && subscriptions.length === 0">No subscriptions</p>
-         <div class="row" ng-show="subscriptions.length > 0">            
-            <div class="col-lg-12">
-               <table class="table table-striped table-bordered table-condensed">
-                  <thead>
-                     <tr>
-                        <th>Organisation</th>
-                        <th>Topic</th>
-                        <th>
-                           <input type="button" value="All" ng-click="actionAll()">
-                           <input type="button" value="None" ng-click="actionNone()">
-                        </th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr ng-repeat="subscriber in subscriptions">
-                        <td ng-click="setSelected()">
-                           {{subscriber.orgUrl}}
-                        </td>
-                        <td>
-                           {{subscriber.topicString}}
-                        </td>
-                        <td>
-                           <input type="button" value="{{subscriber.actionLabel}}" 
-                                  ng-click="action()">
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>    
-            </div>
-         </div>
-         <div class="row" ng-show="subscribers.length > 0">
-            <hr>
-            <div class="col-lg-12">
-               <table class="table table-striped table-bordered table-condensed">
-                  <thead>
-                     <tr>
-                        <th>Organisation</th>
-                        <th>Topic</th>
-                        <th>Email</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr ng-repeat="subscriber in subscribers">
-                        <td>
-                           {{subscriber.orgUrl}}
-                        </td>
-                        <td>
-                           {{subscriber.topicString}}
-                        </td>
-                        <td>
-                           {{subscriber.email}}
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>    
-            </div>
-         </div>         
+    <div class="container" ng-controller="topicsController" ng-cloak 
+         ng-show="persona.email && view === 'topics'">
+      <p ng-show="loading">Loading...</p>
+      <p ng-show="!loading && topics && topics.length === 0">No topics</p>
+      <div class="row" ng-show="topics.length > 0" ng-cloak>
+        <div class="col-lg-12">
+          <table class="table table-striped table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>Topic</th>
+                <th>Host</th>
+                <th>Network</th>
+                <th>Organisation</th>
+                <th>
+                  <input type="button" value="Subscribe All" ng-click="actionAll()">
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="topic in topics">
+                <td ng-click="setSelected()">
+                  {{topic.topicString}}
+                </td>
+                <td>
+                  {{topic.hostName}}
+                </td>
+                <td>
+                  {{topic.networkName}}
+                </td>
+                <td>
+                  {{topic.orgUrl}}
+                </td>
+                <td>
+                  <input type="button" value="{{topic.actionLabel}}" ng-click="action()">
+                </td>
+              </tr>
+            </tbody>
+          </table>    
+        </div>
       </div>
+    </div>
 
-      <div class="container" ng-controller="rolesController" ng-cloak 
-           ng-show="persona.email && view === 'roles'">
-         <p ng-show="loading" ng-cloak>Loading...</p>
-         <p ng-show="!loading && roles && roles.length === 0" ng-cloak>No roles</p>
-         <div class="row" ng-show="roles.length > 0" ng-cloak>
-            <div class="col-lg-12">
-               <table class="table table-striped table-bordered table-condensed">
-                  <thead>
-                     <tr>
-                        <th>Organisation</th>
-                        <th>Person</th>
-                        <th>Role</th>
-                        <th>
-                           <input type="button" value="Enable All" ng-click="actionAll()">
-                        </th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr ng-repeat="role in roles">
-                        <td ng-click="setSelected()">
-                           {{role.orgName}}
-                        </td>
-                        <td>
-                           {{role.email}}
-                        </td>
-                        <td>
-                           {{role.roleLabel}}
-                        </td>
-                        <td>
-                           <input type="button" value="{{role.actionLabel}}" ng-click="action()">
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>    
-            </div>
-         </div>
+    <div class="container" ng-controller="subscribersController" ng-cloak 
+         ng-show="persona.email && view === 'subscribers'">
+      <p ng-show="loading" ng-cloak>Loading...</p>
+      <p ng-show="!loading && subscriptions && subscriptions.length === 0">No subscriptions</p>
+      <div class="row" ng-show="subscriptions.length > 0">            
+        <div class="col-lg-12">
+          <table class="table table-striped table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>Organisation</th>
+                <th>Topic</th>
+                <th>
+                  <input type="button" value="All" ng-click="actionAll()">
+                  <input type="button" value="None" ng-click="actionNone()">
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="subscriber in subscriptions">
+                <td ng-click="setSelected()">
+                  {{subscriber.orgUrl}}
+                </td>
+                <td>
+                  {{subscriber.topicString}}
+                </td>
+                <td>
+                  <input type="button" value="{{subscriber.actionLabel}}" 
+                         ng-click="action()">
+                </td>
+              </tr>
+            </tbody>
+          </table>    
+        </div>
       </div>
+      <div class="row" ng-show="subscribers.length > 0">
+        <hr>
+        <div class="col-lg-12">
+          <table class="table table-striped table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>Organisation</th>
+                <th>Topic</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="subscriber in subscribers">
+                <td>
+                  {{subscriber.orgUrl}}
+                </td>
+                <td>
+                  {{subscriber.topicString}}
+                </td>
+                <td>
+                  {{subscriber.email}}
+                </td>
+              </tr>
+            </tbody>
+          </table>    
+        </div>
+      </div>         
+    </div>
 
-      <div class="container" ng-controller="certsController" ng-cloak 
-           ng-show="persona.email && view === 'certs'">
-         <p ng-show="loading">Loading...</p>
-         <p ng-show="!loading && certs && certs.length === 0">No certs</p>
-         <div class="row" ng-show="certs.length > 0" ng-cloak>
-            <div class="col-lg-12">
-               <table class="table table-striped table-bordered table-condensed">
-                  <thead>
-                     <tr>
-                        <th>Timestamp</th>
-                        <th>Organisation</th>
-                        <th>Name</th>
-                        <th>Unit</th>
-                        <th>Address</th>
-                        <th>
-                           <input type="button" value="Enable All" ng-click="actionAll()">
-                        </th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr ng-repeat="cert in certs">
-                        <td>
-                           {{cert.timestampLabel}}
-                        </td>
-                        <td ng-click="setSelected()">
-                           {{cert.orgUrl}}
-                        </td>
-                        <td>
-                           {{cert.commonName}}
-                        </td>
-                        <td>
-                           {{cert.orgUnit}}
-                        </td>
-                        <td>
-                           {{cert.address}}
-                        </td>
-                        <td>
-                           <input type="button" value="{{cert.actionLabel}}" ng-click="action()">
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>    
-            </div>
-         </div>
+    <div class="container" ng-controller="rolesController" ng-cloak 
+         ng-show="persona.email && view === 'roles'">
+      <p ng-show="loading" ng-cloak>Loading...</p>
+      <p ng-show="!loading && roles && roles.length === 0" ng-cloak>No roles</p>
+      <div class="row" ng-show="roles.length > 0" ng-cloak>
+        <div class="col-lg-12">
+          <table class="table table-striped table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>Organisation</th>
+                <th>Person</th>
+                <th>Role</th>
+                <th>
+                  <input type="button" value="Enable All" ng-click="actionAll()">
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="role in roles">
+                <td ng-click="setSelected()">
+                  {{role.orgName}}
+                </td>
+                <td>
+                  {{role.email}}
+                </td>
+                <td>
+                  {{role.roleLabel}}
+                </td>
+                <td>
+                  <input type="button" value="{{role.actionLabel}}" ng-click="action()">
+                </td>
+              </tr>
+            </tbody>
+          </table>    
+        </div>
       </div>
+    </div>
 
-      <div class="container" ng-show="!persona.email">
-         <div class="row" class="well-lg">
-            <div class="col-lg-12">
-               <h2>Instant cloud monitoring</h2>
-               <p>Step 1: Get the scripts.
-               <pre>wget https://chronical.info/sample/custom.chronical.sh
+    <div class="container" ng-controller="certsController" ng-cloak 
+         ng-show="persona.email && view === 'certs'">
+      <p ng-show="loading">Loading...</p>
+      <p ng-show="!loading && certs && certs.length === 0">No certs</p>
+      <div class="row" ng-show="certs.length > 0" ng-cloak>
+        <div class="col-lg-12">
+          <table class="table table-striped table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Organisation</th>
+                <th>Name</th>
+                <th>Unit</th>
+                <th>Address</th>
+                <th>
+                  <input type="button" value="Enable All" ng-click="actionAll()">
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="cert in certs">
+                <td>
+                  {{cert.timestampLabel}}
+                </td>
+                <td ng-click="setSelected()">
+                  {{cert.orgUrl}}
+                </td>
+                <td>
+                  {{cert.commonName}}
+                </td>
+                <td>
+                  {{cert.orgUnit}}
+                </td>
+                <td>
+                  {{cert.address}}
+                </td>
+                <td>
+                  <input type="button" value="{{cert.actionLabel}}" ng-click="action()">
+                </td>
+              </tr>
+            </tbody>
+          </table>    
+        </div>
+      </div>
+    </div>
+
+    <div class="container" ng-show="!persona.email || view === 'info'">
+      <div class="row well-lg">
+          <h3 ng-cloak ng-show="!persona.email"><b>Instant</b> cloud monitoring, <i>as follows.</i></h3>
+          <p>Step 1: <b>Get</b> two scripts.
+          <pre>wget https://chronical.info/sample/custom.chronical.sh
 wget https://chronical.info/sample/chronical.sh</pre>   
-               <p>Step 2: Edit custom.chronical.sh
-               <pre>subscribers="you@your.org"
+          <p>Step 2: <b>Edit</b> <tt>custom.chronical.sh</tt> <i>(for you and yours)</i>
+          <pre>subscribers="you@your.org"
 admins="you@your.org"
 orgUrl="your.org"</pre>                  
-               <p>Step 3. Review chronical.sh out of curiosity and security.
-               <p>Step 4: Test.
-               <pre>sh chronical.sh</pre>
-               <p>Step 5: Run.
-               <pre>sh chronical.sh run</pre>
-               <p>Step 6: Signin to <a href="https://chronical.info">https://chronical.info</a>
-               <hr>
-               <h2>Resources</h2>
-               <p><a href="/sample/custom.chronical.sh"
-                     >https://chronical.info/sample/custom.chronical.sh</a> - customisable template
+          <p>Step 3. <b>Review</b> <tt>chronical.sh</tt> <i>(so you know it's cool)</i>
+          <p>Step 4: <b>Test</b>
+          <pre>sh chronical.sh</pre>
+          <p>Step 5: <b>Run</b>
+          <pre>sh chronical.sh run</pre>
+          <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
+            <i>(to <a href="https://chronical.info">https://chronical.info</a> 
+              using Mozilla Persona)</i>
+          <hr>
+          <h4>Resources</h4>
+          <p><a href="/sample/custom.chronical.sh">
+              https://chronical.info/sample/custom.chronical.sh</a> - customisable template
 
-               <p><a href="/sample/chronical.sh"
-                     >https://chronical.info/sample/chronical.sh</a> - client utility script
-               <hr> 
-               <p class="pull-right">
-                  <a href="https://www.positivessl.com" 
-                     style="font-family: arial; font-size: 10px; color: #212121; text-decoration: none;"><img
-                        src="https://www.positivessl.com/images-new/PositiveSSL_tl_white2.gif" 
-                        alt="SSL Certificate" title="SSL Certificate" border="0" /></a>
-               </p>
-            </div>
-         </div>
-      </div>
+          <p><a href="/sample/chronical.sh">
+              https://chronical.info/sample/chronical.sh</a> - operational script
+          <hr> 
+          <p class="pull-right">
+            <a href="https://www.positivessl.com" style=
+               "font-family: arial; font-size: 10px; color: #212121; text-decoration: none;">
+              <img src="https://www.positivessl.com/images-new/PositiveSSL_tl_white2.gif"
+                   alt="positivessl" width="64"/></a>
+          </p>
+        </div>
+    </div>
 
-      <script src="https://login.persona.org/include.js"></script>
-      <script src="app.js"></script>
-      <script src="js/jquery-1.10.2.min.js"></script>
-      <script src="js/angular-bootstrap-switch.min.js"></script>
-      <script src="js/bootstrap-switch.js"></script>
-      <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
+    <script src="https://login.persona.org/include.js"></script>
+    <script src="app.js"></script>
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/angular-bootstrap-switch.min.js"></script>
+    <script src="js/bootstrap-switch.js"></script>
+    <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
 
-   </body>
+  </body>
 
 </html>
