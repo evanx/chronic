@@ -45,6 +45,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.data.TimestampedComparator;
 import vellum.storage.EntityStore;
 import vellum.storage.StorageException;
 
@@ -178,7 +179,7 @@ public abstract class ChronicStorage {
     }
 
     public Iterable<Cert> listCerts(String email) {
-        Set set = new TreeSet();
+        Set set = new TreeSet(TimestampedComparator.reverse());
         for (String orgUrl : listOrgUrls(email, OrgRoleType.ADMIN)) {
             logger.info("listCerts {}", orgUrl);
             set.addAll(certs().list(new OrgKey(orgUrl)));

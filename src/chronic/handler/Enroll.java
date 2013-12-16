@@ -36,7 +36,9 @@ public class Enroll {
             if (Emails.matchesEmail(email)) {
                 new EnrollTransaction().handle(app, orgUrl, email);
             } else {
-                hx.handleError("invalid email %s", email);
+                hx.sendError("invalid email %s", email);
+                hx.close();
+                return;
             }
         }
         hx.sendPlainResponse("ok %s %s", orgUrl, emails);

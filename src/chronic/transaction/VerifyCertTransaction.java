@@ -50,6 +50,7 @@ public class VerifyCertTransaction {
         } else if (!cert.getAddress().equals(hostAddress)) {
             logger.warn("host address {}", hostAddress);
         }
+        cert.setTimestamp(System.currentTimeMillis());
         Org org = app.storage().orgs().select(cert.getOrgUrl());
         if (org == null) {
             org = new Org(cert.getOrgUrl());

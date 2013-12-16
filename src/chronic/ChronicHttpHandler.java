@@ -81,7 +81,7 @@ public class ChronicHttpHandler implements HttpHandler {
         try {
             httpx.sendResponse(handler.handle(app, httpx));
         } catch (Exception e) {
-            httpx.handleError(e);
+            httpx.sendError(e);
         }
         httpx.close();
     }

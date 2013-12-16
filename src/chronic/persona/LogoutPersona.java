@@ -55,7 +55,7 @@ public class LogoutPersona implements HttpHandler {
                 httpExchangeInfo.sendEmptyOkResponse();
             }
         } catch (Exception e) {
-            httpExchangeInfo.handleError(e);
+            httpExchangeInfo.sendError(e);
         }
         httpExchange.close();
     }

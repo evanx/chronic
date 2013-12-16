@@ -11,6 +11,8 @@ import chronic.entitykey.CertKeyed;
 import chronic.entitykey.OrgUnitKey;
 import chronic.entitykey.OrgUnitKeyed;
 import chronic.entitytype.CertAction;
+import vellum.data.Millis;
+import vellum.data.Timestamped;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
@@ -20,7 +22,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed, 
-        CertKeyed, Enabled {
+        CertKeyed, Timestamped, Enabled {
 
     Long id;
     String orgUrl;
@@ -28,6 +30,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
     String commonName;
     String address;
     String encoded;
+    transient long timestamp;
     boolean enabled;
 
     public Cert() {
@@ -115,7 +118,15 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
     public void setAddress(String address) {
         this.address = address;
     }
-    
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+        
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
@@ -124,6 +135,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
         map.put("commonName", commonName);
         map.put("enabled", enabled);
         map.put("address", address);
+        map.put("timestampLabel", Millis.formatTime(timestamp));
         map.put("actionLabel", getAction().getLabel());
         return map;
     }

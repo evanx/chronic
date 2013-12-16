@@ -43,7 +43,7 @@ public class LoginPersona implements HttpHandler {
             assertion = map.getString("assertion");
             handle();
         } catch (Exception e) {
-            httpx.handleError(e);
+            httpx.sendError(e);
         }
         httpExchange.close();
     }

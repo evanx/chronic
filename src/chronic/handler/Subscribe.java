@@ -34,7 +34,7 @@ public class Subscribe {
             new SubscribeTransaction().handle(app, orgUrl, email);
             hx.sendPlainResponse("ok %s %s", orgUrl, email);
         } else {
-            hx.handleError("invalid email %s", email);
+            hx.sendError("invalid email %s", email);
         }
         hx.close();
     }
