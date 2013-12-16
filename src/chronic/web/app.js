@@ -144,6 +144,7 @@ app.controller("alertsController", ["$scope", "$http",
             $scope.alertsList();
          } else {
             $scope.alerts = undefined;            
+            $scope.loading = false;
          }
       });
    }]);
@@ -183,6 +184,7 @@ app.controller("topicsController", ["$scope", "$http",
             $scope.topicsList();
          } else {
             $scope.topics = undefined;            
+            $scope.loading = false;
          }
       });
    }]);
@@ -229,6 +231,7 @@ app.controller("subscribersController", ["$scope", "$http",
             $scope.subscribersList();
          } else {
             $scope.subscribers = undefined;            
+            $scope.loading = false;
          }
       });
    }]);
@@ -303,6 +306,7 @@ app.controller("certsController", ["$scope", "$http",
             $scope.certsList();
          } else {
             $scope.certs = undefined;            
+            $scope.loading = false;
          }
       });
    }]);
