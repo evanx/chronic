@@ -4,6 +4,10 @@
  */
 package chronic;
 
+import chronic.app.HtmlChecker;
+import chronic.app.StatusRecord;
+import chronic.app.StatusRecordParser;
+import chronic.app.StatusRecordPatterns;
 import chronic.entitykey.CertKey;
 import java.util.regex.Matcher;
 import junit.framework.AssertionFailedError;
@@ -14,7 +18,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import vellum.data.Patterns;
-import vellum.util.Strings;
 
 /**
  *
@@ -53,7 +56,7 @@ public class ChronicTest {
 
     @Test
     public void nagiosPattern() {
-        Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher("CRITICAL - 101ms");
+        Matcher matcher = StatusRecordPatterns.NAGIOS.matcher("CRITICAL - 101ms");
         Assert.assertTrue(matcher.find());
         Assert.assertTrue(matcher.group(1).equals(""));
         Assert.assertTrue(matcher.group(2).equals("CRITICAL"));
@@ -76,7 +79,7 @@ public class ChronicTest {
     
     @Test
     public void cronSubject() {
-        Matcher matcher = StatusRecordParser.subjectCronPattern.matcher(
+        Matcher matcher = StatusRecordPatterns.CRON_SUBJECT.matcher(
                 "Subject: Cron <root@client> ~/scripts/test.sh");
         Assert.assertTrue(matcher.find());
         Assert.assertEquals("root", matcher.group(1));
