@@ -65,13 +65,13 @@ public class ChronicTest {
         StatusRecord record2 = new StatusRecord(certKey);
         record1.getLineList().add("ACME OK - some detail");
         record2.getLineList().add("ACME OK - other detail");
-        Assert.assertTrue(record1.equals(record2));
+        Assert.assertTrue(record1.matches(record2));
         record2 = new StatusRecord(certKey);
         record2.getLineList().add("ACMY OK - other detail");
-        Assert.assertFalse(record1.equals(record2));
+        Assert.assertFalse(record1.matches(record2));
         record2 = new StatusRecord(certKey);
         record2.getLineList().add("ACME CRITICAL - some detail");
-        Assert.assertFalse(record1.equals(record2));
+        Assert.assertFalse(record1.matches(record2));
     }
     
     @Test
