@@ -222,6 +222,10 @@ c0killstart() {
   then
     kill `pgrep -f 'chronical.sh start'`
   fi
+  if pgrep -f "sleep $sleepSeconds"
+  then
+    kill `pgrep -f "sleep $sleepSeconds"`
+  fi
 }
 
 c0kill() {
@@ -250,8 +254,8 @@ c0run() {
   while [ 1 ]
   do
     c0minutelyCron
-    echo `date '+%H:%M:%S'` sleeping for 60 seconds
-    sleep 58 
+    echo `date '+%H:%M:%S'` sleeping for $sleepSeconds seconds
+    sleep $sleepSeconds 
     date
     if [ ! -f pid -o `cat $pid` -ne $$ ]
     then
