@@ -242,11 +242,7 @@ c0kill() {
 }
 
 c0run() {
-  if [ -f pid ] 
-  then
-    echo "previous pid:" `cat pid`
-    kill `cat pid`
-  fi
+  c0kill
   echo $$ > pid
   c0enroll
   c0hourlyPost
