@@ -215,7 +215,7 @@ c0minutelyCron() {
 }
 
 c0killstart() {
-  if [ `pgrep -f 'chronical.sh start'
+  if pgrep -f 'chronical.sh start'
   then
     kill `pgrep -f 'chronical.sh start'`
   fi
