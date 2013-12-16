@@ -305,7 +305,7 @@
         <h2 ng-cloak ng-show="!persona.email">
           <b>Instant</b> cloud monitoring, <i>as follows.</i></h2>
         <h3 ng-cloak ng-show="persona.email">Getting started</h3>
-        <p>Step 1: <b>Get</b> two scripts.
+        <p>Step 1: <b>Get</b> two scripts, as an unpriviledged user.
         <pre>wget https://chronical.info/sample/custom.chronical.sh
 wget https://chronical.info/sample/chronical.sh</pre>   
         <p>Step 2: <b>Edit</b> <tt>custom.chronical.sh</tt> <i>(for you and yours)</i>
@@ -323,19 +323,27 @@ orgUrl="your.org"</pre>
         <hr>
         <h4>Getting jiggy with it</h4>
         <p>Customize <tt>custom.chronical.sh</tt> as you wish for ports and services you wish to monitor.</p>
-        <p>Add nagios plugins and custom scripts as you wish.</p>
-        <p>Send your questions, bugs and suggestions to evan.summers@gmail.com, e.g. changes to <tt>chronical.sh</tt>, the Chronical.info site, and some documentation, that would make Chronical.info more useful to you.</p>
+        <p>Add nagios plugins and custom scripts as required.</p>
+        <p>Send your questions, bugs and suggestions to evan.summers@gmail.com.</p>
         <hr>
         <h4>Frequently asked questions</h4>
+        <p><b>What is it?</b>          
+        <br>A cloud-based passive monitoring solution.
         <p><b>How much does it cost?</b>
-        <br>This service will be open and free, forever. Bits and bytes are priceless.
+        <br>This service is free and open. Bits and bytes are priceless.
+        <p><b>How is this different from other cloud-based monitoring services?</b>
+        <br>It's designed to be great for custom monitoring.
+        <p><b>How is this different from other opensource monitoring projects?</b>
+        <br>It's designed to be used in the cloud, for adhoc monitoring without any server setup, leveraging nagios plugins, and enabling custom checks.
+        <p><b>What is installed on clients?</b>        
+        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, this script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. But the system is specially engineered to support nagios plugins, and custom application checks.
         <p><b>Why doesn't the site work on my phone's browser already?</b>
-        <br>It will! We use Twitter Bootstrap which is "mobile first." Except we're "mobile second" ;)
+        <br>It will! We use Twitter Bootstrap which is "mobile first." But this service is still pre-alpha.
         <p><b>What technologies are used?</b>
-        <br>AngularJS for the front-end, with JSON requests to a Java back-end. <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication. PostgreSQL will be used for the back-end database, very soon. (We support a pluggable SQL'esque storage engine, where this pre-alpha version uses an in-memory implementation to acelerate prototyping.)
+        <br>AngularJS for the front-end, making JSON requests to a Java back-end. We use the JRE's built-in HTTPS server rather than Apache Tomcat. <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication. Soon, PostgreSQL will be used for the back-end database. (We support a pluggable SQL'esque storage engine, and currently use an in-memory implementation to accelerate prototyping.) 
         <p><b>Show me the code!</b>
         <br>See <a href="https://github.com/evanx/chronic">https://github.com/evanx/chronic</a>.
-        This uses <a href="https://github.com/evanx/vellumcore">https://github.com/evanx/vellumcore</a> which is bits of code distilled from previous projects.
+        This uses <a href="https://github.com/evanx/vellumcore">https://github.com/evanx/vellumcore</a> which is a common base of distilled code from previous projects.
         <hr>
         <h4>Resources</h4>
         <p><a href="/sample/custom.chronical.sh">
