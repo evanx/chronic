@@ -36,12 +36,12 @@ public class VerifyCertTransaction {
             logger.warn("remote hostAddress {}", hostAddress);
         }
         CertKey certKey = new CertKey(orgUrl, orgUnit, commonName);
-        Cert cert = app.storage().certs().select(certKey);
+        Cert cert = app.storage().cert().select(certKey);
         if (cert == null) {
             cert = new Cert(certKey);
             cert.setEncoded(encoded);
             cert.setAddress(hostAddress);
-            app.storage().certs().insert(cert);
+            app.storage().cert().insert(cert);
             logger.info("certificate {}", certKey);
         } else if (!cert.getEncoded().equals(encoded)) {
             logger.warn("invalid public key {}", certKey);
@@ -51,10 +51,10 @@ public class VerifyCertTransaction {
             logger.warn("host address {}", hostAddress);
         }
         cert.setTimestamp(System.currentTimeMillis());
-        Org org = app.storage().orgs().select(cert.getOrgUrl());
+        Org org = app.storage().org().select(cert.getOrgUrl());
         if (org == null) {
             org = new Org(cert.getOrgUrl());
-            app.storage().orgs().insert(org);
+            app.storage().org().insert(org);
             logger.info("insert org {}", org);
         }
         return cert;

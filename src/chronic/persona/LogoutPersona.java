@@ -62,9 +62,9 @@ public class LogoutPersona implements HttpHandler {
 
     private void handle() throws Exception {
         logger.info("cookie", cookie.getEmail());
-        User user = app.storage().users().find(cookie.getEmail());
+        User user = app.storage().user().find(cookie.getEmail());
         user.setLogoutTime(new Date());
-        app.storage().users().update(user);
+        app.storage().user().update(user);
         httpExchangeInfo.sendEmptyOkResponse();
     } 
 }

@@ -62,37 +62,37 @@ public class MockChronicStorage extends ChronicStorage {
     }
 
     @Override
-    public EntityStore<User> users() {
+    public EntityStore<User> user() {
         return users;
     }
 
     @Override
-    public EntityStore<Org> orgs() {
+    public EntityStore<Org> org() {
         return orgs;
     }
     
     @Override
-    public EntityStore<OrgRole> roles() {
+    public EntityStore<OrgRole> role() {
         return orgRoles;
     }
 
     @Override
-    public EntityStore<Network> nets() {
+    public EntityStore<Network> net() {
         return nets;
     }
     
     @Override
-    public EntityStore<Topic> topics() {
+    public EntityStore<Topic> topic() {
         return topics;
     }
 
     @Override
-    public EntityStore<Subscriber> subs() {
+    public EntityStore<Subscriber> sub() {
         return subscribers;
     }
 
     @Override
-    public EntityStore<Cert> certs() {
+    public EntityStore<Cert> cert() {
         return certs;
     }
     

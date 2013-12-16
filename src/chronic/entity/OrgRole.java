@@ -147,14 +147,14 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     
     public User getUser() throws StorageException {
         if (user == null && email != null) {
-            user = app.storage().users().find(email);
+            user = app.storage().user().find(email);
         }
         return user;
     }
 
     public Org getOrg() throws StorageException {
         if (org == null && orgUrl != null) {
-            org = app.storage().orgs().find(orgUrl);
+            org = app.storage().org().find(orgUrl);
         }
         return org;
     }    

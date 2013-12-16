@@ -85,6 +85,7 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
         this.enabled = enabled;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
