@@ -1,4 +1,5 @@
 
+
 ### custom config 
 
 subscribers=""
@@ -8,6 +9,7 @@ orgUnit=""
 cronMinute=""
 cronHour=""
 
+
 ### default settings
 
 loadWarningThreshold=4
@@ -15,6 +17,8 @@ loadCriticalThreshold=9
 
 diskWarningThreshold=80
 diskCriticalThreshold=90
+
+sleepSeconds="58"
 
 
 ### customizable jobs

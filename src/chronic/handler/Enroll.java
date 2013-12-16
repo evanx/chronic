@@ -6,6 +6,7 @@ package chronic.handler;
 import chronic.transaction.EnrollTransaction;
 import chronic.*;
 import com.sun.net.httpserver.HttpExchange;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Emails;
@@ -41,7 +42,7 @@ public class Enroll {
                 return;
             }
         }
-        hx.sendPlainResponse("ok %s %s", orgUrl, emails);
+        hx.sendPlainResponse("ok %s %s", orgUrl, Arrays.toString(emails));
         hx.close();
     }
 }
