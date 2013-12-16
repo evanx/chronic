@@ -235,7 +235,6 @@ c0kill() {
 }
 
 c0run() {
-  c0kill
   echo $$ > pid
   echo pid `cat pid`
   c0enroll
@@ -255,6 +254,7 @@ c0run() {
 }
 
 c0start() {
+  c0kill
   c0run 2>run.err >run.out &
 }
 
