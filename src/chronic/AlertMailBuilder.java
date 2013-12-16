@@ -50,7 +50,6 @@ public class AlertMailBuilder {
         builder.append("<pre>\n");
         if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED) {
             appendHeading(alert.status);
-            builder.append("\n<br>");
             builder.append(Strings.join("\n", alert.status.buildChanged(alert.previousStatus)));
             if (alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
                 appendPrevious(alert.previousStatus);

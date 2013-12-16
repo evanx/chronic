@@ -19,6 +19,7 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.exception.Exceptions;
 import vellum.httphandler.WebHttpHandler;
 import vellum.httpserver.Httpx;
 
@@ -38,9 +39,9 @@ public class ChronicHttpHandler implements HttpHandler {
     
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        String path = httpExchange.getRequestURI().getPath();
+        logger.trace("handle {}", path);
         try {
-            String path = httpExchange.getRequestURI().getPath();
-            logger.trace("handle {}", path);
             if (path.equals("/post")) {
                 new Post(app).handle(httpExchange);
             } else if (path.equals("/enroll")) {
@@ -72,7 +73,7 @@ public class ChronicHttpHandler implements HttpHandler {
                 webHandler.handle(httpExchange);
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            logger.warn("error {} {}", path, Exceptions.getMessage(e));
             
         }
     }
