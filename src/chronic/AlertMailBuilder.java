@@ -49,7 +49,7 @@ public class AlertMailBuilder {
         logger.info("build {}", alert.status);
         builder.append("<pre>\n");
         if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED) {
-            appendHeading(alert.status);
+            appendHeader(alert.status);
             builder.append(Strings.join("\n", alert.status.buildChanged(alert.previousStatus)));
             if (alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
                 appendPrevious(alert.previousStatus);
@@ -65,26 +65,40 @@ public class AlertMailBuilder {
         return builder.toString();
     }
 
-    private void append(StatusRecord status) {
-        appendHeading(status);
+    private void appendPrevious(StatusRecord status) {
+        builder.append("\n<br><hr><b>Previously:</b>\n");
+        appendHeader(status);
         appendContent(status);
     }
 
-    private void appendHeading(StatusRecord status) {
-        builder.append(String.format("<b>%s</b>\n", formatWebSubject(status)));
-        builder.append(String.format("<i>%s</i>\n\n", Millis.formatTime(status.getTimestamp())));
+    private void append(StatusRecord status) {
+        appendHeader(status);
+        appendContent(status);
+    }
+    
+    private void appendHeader(StatusRecord status) {
+        appendHeading(status);
+        appendTimestamp(status);
+        appendInfo(status);        
     }
 
     private void appendContent(StatusRecord status) {
         builder.append(buildContent(status));
     }
     
-    private void appendPrevious(StatusRecord status) {
-        builder.append("\n<br><hr><b>Previously:</b>\n");
-        builder.append(String.format("<b><i>%s</i></b>\n", formatWebSubject(status)));
+    private void appendHeading(StatusRecord status) {
+        builder.append(String.format("<b>%s</b>\n", formatHeading(status)));        
+    }
+
+    private void appendInfo(StatusRecord status) {
+        String style = "font-color: gray";
+        builder.append(String.format("<i style='%s'>(%s, %s)</i>\n", style,
+                status.getAlertType(), Millis.format(status.getTimestamp())));
+    }
+    
+    private void appendTimestamp(StatusRecord status) {
         builder.append(String.format("<i>%s</i>\n\n",
-                Millis.formatTime(status.getTimestamp())));
-        builder.append(buildContent(status));
+                Millis.formatTime(status.getTimestamp())));        
     }
     
     public static String buildContent(StatusRecord status) {
@@ -119,7 +133,11 @@ public class AlertMailBuilder {
         builder.append('\n');
     }
 
-    public String formatWebSubject(StatusRecord status) {
+    private void appendf(String string, Object... args) {
+        builder.append(String.format(string, args));
+    }
+    
+    public String formatHeading(StatusRecord status) {
         logger.info("formatSubject {} {}", status.getStatusType());
         if (status.isStatusType()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {

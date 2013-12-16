@@ -56,6 +56,12 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
         email = user.getEmail();
     }
 
+    public OrgRole(OrgRoleKey key) {
+        this.orgUrl = key.getOrgUrl();
+        this.email = key.getEmail();
+        this.roleType = key.getRoleType();
+    }
+    
     @Override
     public OrgRoleKey getKey() {
         return getOrgRoleKey();

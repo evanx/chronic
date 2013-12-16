@@ -8,10 +8,10 @@ import chronic.entity.User;
 import chronic.entitytype.OrgRoleType;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
+import chronic.entitykey.OrgRoleKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.StorageException;
-import vellum.util.Comparables;
 
 /**
  *
@@ -23,8 +23,8 @@ public class EnrollTransaction {
     
     public void handle(ChronicApp app, String orgUrl, String email) throws StorageException {
         logger.info("enroll {} {}", orgUrl, email);
-        OrgRole orgRole = app.storage().role().
-            select(Comparables.tuple(orgUrl, email, OrgRoleType.ADMIN));
+        OrgRoleKey orgRoleKey = new OrgRoleKey(orgUrl, email, OrgRoleType.ADMIN);
+        OrgRole orgRole = app.storage().role().select(orgRoleKey);
         if (orgRole == null) {
             boolean enabled = app.getProperties().isAdmin(email);
             User user = app.storage().user().select(email);
@@ -41,7 +41,7 @@ public class EnrollTransaction {
             } else if (!enabled) {
                 enabled = !app.storage().isOrgRoleType(orgUrl, OrgRoleType.ADMIN);
             }
-            orgRole = new OrgRole(org, user, OrgRoleType.ADMIN);
+            orgRole = new OrgRole(orgRoleKey);
             orgRole.setEnabled(enabled);
             app.storage().role().insert(orgRole);
         }

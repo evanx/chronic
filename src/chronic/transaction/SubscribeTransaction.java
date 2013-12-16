@@ -24,10 +24,9 @@ public class SubscribeTransaction {
     
     public void handle(ChronicApp app, String orgUrl, String email) throws StorageException {
         logger.info("handle {} {}", orgUrl, email);
-        UserKey userKey = new UserKey(email);
-        User user = app.storage().user().select(userKey);
+        User user = app.storage().user().select(email);
         if (user == null) {
-            user = new User(userKey);
+            user = new User(email);
             app.storage().user().insert(user);
         }
         Org org = app.storage().org().select(orgUrl);

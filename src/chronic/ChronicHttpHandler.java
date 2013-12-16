@@ -74,6 +74,9 @@ public class ChronicHttpHandler implements HttpHandler {
             }
         } catch (Exception e) {
             logger.warn("error {} {}", path, Exceptions.getMessage(e));
+            if (e.getClass() == IllegalStateException.class) {
+                e.printStackTrace(System.err);
+            }
             
         }
     }
