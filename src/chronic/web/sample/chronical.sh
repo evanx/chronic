@@ -1,14 +1,16 @@
 
 set -u 
 
+alias echod='echo DEBUG'
 
 ### init 
 
-echo "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
+echod "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
+echod "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/custom.chronical.sh"
 
-echo pwd `pwd`
+echod pwd `pwd`
 custom=`dirname $0`/custom.chronical.sh
-echo "custom $custom"
+echod "custom $custom"
 
 if [ ! -f $custom ]
 then
@@ -33,7 +35,6 @@ fi
 dir=~/.chronic
 mkdir -p $dir
 cd $dir
-pwd
 
 
 ### reviewable setup
@@ -103,7 +104,8 @@ c2nohttps() {
 }
 
 c2postgres() {
-  psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' || echo "WARNING - $1:$2 postgres server not running"
+  psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' || 
+    echo "WARNING - $1:$2 postgres server not running"
 }
 
 ### typical checks
@@ -224,10 +226,14 @@ c0killstart() {
 c0kill() {
   if [ -f pid ] 
   then
+    echo "pid file exists" `cat pid`
+  fi
+  if [ -f pid ] 
+  then
     pid=`cat pid`
     if ps -p $pid 
     then
-      echo "kill $pid"
+      echod "kill $pid"
       kill $pid
     fi
   fi
@@ -235,8 +241,12 @@ c0kill() {
 }
 
 c0run() {
+  if [ -f pid ] 
+  then
+    echo "pid file exists, please first try: kill" `cat pid`
+    exit 1
+  fi
   echo $$ > pid
-  echo pid `cat pid`
   c0enroll
   c0hourlyPost
   c0dailyPost
