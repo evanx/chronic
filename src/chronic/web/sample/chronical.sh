@@ -214,7 +214,10 @@ c0minutelyCron() {
 }
 
 c0kill() {
-  pgrep -f chronical
+  if pgrep -f 'chronical.sh start'
+  then
+    kill `pgrep -f 'chronical.sh start'`
+  fi
   if [ -f pid ] 
   then
     pid=`cat pid`
