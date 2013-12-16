@@ -1,16 +1,17 @@
 
 set -u 
 
-alias echod='echo DEBUG'
+alias decho='echo DEBUG'
+alias dcat='cat'
 
 ### init 
 
-echod "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
-echod "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/custom.chronical.sh"
+decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
+decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/custom.chronical.sh"
 
-echod pwd `pwd`
+decho pwd `pwd`
 custom=`dirname $0`/custom.chronical.sh
-echod "custom $custom"
+decho "custom $custom"
 
 if [ ! -f $custom ]
 then
@@ -191,17 +192,17 @@ c0post() {
 
 c0hourlyPost() {
   c0hourly 2>&1 | tee hourly | c0post
-  cat hourly
+  dcat hourly
 }
 
 c0minutelyPost() {
   c0minutely 2>&1 | tee minutely | c0post
-  cat minutely
+  dcat minutely
 }
 
 c0dailyPost() {
   c0daily 2>&1 | tee daily | c0post
-  cat daily
+  dcat daily
 }
 
 c0minutelyCron() {
@@ -226,14 +227,14 @@ c0killstart() {
 c0kill() {
   if [ -f pid ] 
   then
-    echo "pid file exists" `cat pid`
+    echo "previous pid:" `cat pid`
   fi
   if [ -f pid ] 
   then
     pid=`cat pid`
     if ps -p $pid 
     then
-      echod "kill $pid"
+      decho "kill $pid"
       kill $pid
     fi
   fi
@@ -243,8 +244,8 @@ c0kill() {
 c0run() {
   if [ -f pid ] 
   then
-    echo "pid file exists, please first try: kill" `cat pid`
-    exit 1
+    echo "previous pid:" `cat pid`
+    kill $pid
   fi
   echo $$ > pid
   c0enroll
