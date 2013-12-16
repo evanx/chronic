@@ -42,7 +42,7 @@
             <li ng-class="getClass('certs')">
               <a href="#" ng-click="changeView('certs')">Certs</a>
             </li>
-            <li ng-class="getClass('help')">
+            <li ng-class="getClass('info')">
               <a href="#" ng-click="changeView('info')">Help</a>
             </li>
           </ul>
@@ -300,7 +300,7 @@
       </div>
     </div>
 
-    <div class="container" ng-show="!persona.email || view === 'info'">
+    <div class="container" ng-show="!persona.email || view === 'info'" ng-cloak>
       <div class="row well-lg">
           <h3 ng-cloak ng-show="!persona.email"><b>Instant</b> cloud monitoring, <i>as follows.</i></h3>
           <p>Step 1: <b>Get</b> two scripts.
