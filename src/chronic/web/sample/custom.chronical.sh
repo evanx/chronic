@@ -18,7 +18,18 @@ loadCriticalThreshold=9
 diskWarningThreshold=80
 diskCriticalThreshold=90
 
-sleepSeconds="58"
+pingLossWarningThreshold=20
+pingLossCriticalThreshold=60
+
+server=chronical.info:8444
+
+periodSeconds=60
+
+pingCount=1
+sslTimeout=2
+tcpTimeout=2
+httpTimeout=2
+databaseTimeout=2
 
 
 ### customizable jobs

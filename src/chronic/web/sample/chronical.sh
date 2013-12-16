@@ -1,8 +1,17 @@
 
 set -u 
 
-alias decho='echo DEBUG'
-alias dcat='cat'
+### debug 
+
+decho() {
+  echo "debug $*" 1>&2
+}
+
+dcat() {
+  decho "cat $*"
+  cat "$*" 1>&2
+}
+
 
 ### init 
 
@@ -11,7 +20,7 @@ decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/cu
 
 decho pwd `pwd`
 custom=`dirname $0`/custom.chronical.sh
-decho "custom $custom"
+decho custom $custom
 
 if [ ! -f $custom ]
 then
@@ -50,63 +59,98 @@ c1topic() {
 
 ### check util functions 
 
+c1ping() {
+  decho "ping -qc$pingCount $1"
+  packetLoss=`ping -qc2 $1 | grep 'packet loss' | sed 's/.* \([0-9]*\)% packet loss.*/\1/'`
+  if [ $packetLoss -lt $pingLossWarningThreshold ]
+  then
+    echo "OK - $1 pingable ($packetLoss% packet loss)"
+  elif [ $packetLoss -lt $pingLossCriticalThreshold ]
+  then
+    echo "WARNING - $1 not pingable ($packetLoss% packet loss)"
+  else
+    echo "CRITICAL - $1 not pingable ($packetLoss% packet loss)"
+  fi
+}
+
+c1noping() {
+  decho "ping -qc$pingCount $1"
+  packetLoss=`ping -qc2 $1 | grep 'packet loss' | sed 's/.* \([0-9]*\)% packet loss.*/\1/'`
+  if [ $packetLoss -lt 100 ]
+  then
+    echo "CRITICAL - $1 pingable ($packetLoss% packet loss)"
+  else
+    echo "OK - $1 not pingable ($packetLoss% packet loss)"
+  fi
+}
+
 c2tcp() {
-  if nc -w3 $1 $2
+  decho "nc -w$tcpTimeout $1 $2"
+  if nc -w$tcpTimeout $1 $2
   then
     echo "OK - $1:$2 open"
   else
-    echo "WARNING - $1:$2 closed"
+    echo "CRITICAL - $1:$2 closed"
   fi
 }
 
 c2notcp() {
-  if nc -w3 $1 $2
+  decho "nc -w$tcpTimeout $1 $2"
+  if nc -w$tcpTimeout $1 $2
   then
-    echo "WARNING - $1:$2 open"
+    echo "CRITICAL - $1:$2 open"
   else
     echo "OK - $1:$2 closed"
   fi
 }
 
 c2ssl() {
-  if timeout 4 openssl s_client -connect $1:$2 2> /dev/null < /dev/null | grep '^subject=' 
+  decho "timeout $sslTimeout openssl s_client -connect $1:$2"
+  if timeout $sslTimeout openssl s_client -connect $1:$2 2> /dev/null < /dev/null | grep '^subject=' 
   then
     echo "OK - $1:$2 has SSL"
   else
-    echo "WARNING - $1:$2 no SSL"
+    echo "CRITICAL - $1:$2 no SSL"
   fi
 }
 
 c2nossl() {
-  if timeout 4 openssl s_client -connect $1:$2 2> /dev/null < /dev/null | grep '^subject=' 
+  decho "timeout $sslTimeout openssl s_client -connect $1:$2"
+  if timeout $sslTimeout openssl s_client -connect $1:$2 2> /dev/null < /dev/null | grep '^subject=' 
   then
-    echo "WARNING - $1:$2 has SSL"
+    echo "CRITICAL - $1:$2 has SSL"
   else
     echo "OK - $1:$2 no SSL"
   fi
 }
 
 c2https() {
-  if curl --connect-timeout 8 -k -s -I https://$1:$2 | grep 'HTTP' 
+  decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
+  if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep 'HTTP' 
   then
     echo "OK - $1:$2 https available"
   else 
-    echo "WARNING - $1:$2 unavailable https"
+    echo "CRITICAL - $1:$2 unavailable https"
   fi
 }
 
 c2nohttps() {
-  if curl --connect-timeout 8 -k -s -I https://$1:$2 | grep 'HTTP'
+  decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
+  if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep 'HTTP'
   then
-    echo "WARNING - $1:$2 https available"
+    echo "CRITICAL - $1:$2 https available"
   else 
     echo "OK - $1:$2 unavailable https"
   fi
 }
 
 c2postgres() {
-  psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' || 
-    echo "WARNING - $1:$2 postgres server not running"
+  if timeout $databaseTimeout psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' 
+  then
+    echo "OK - $1:$2 postgres server"
+  else
+    echo "CRITICAL - $1:$2 postgres server not running"
+  fi
 }
 
 ### typical checks
@@ -147,7 +191,7 @@ c0sshAuthKeys() {
 
 c1curl() {
   tee curl.txt | curl -k --cacert server.pem --key key.pem --cert ./cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' https://chronical.info:8444/$1 >curl.out 2> curl.err
+    --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 >curl.out 2> curl.err
 }
 
 c0enroll() {
@@ -167,9 +211,9 @@ c0ensureKey() {
 c0ensureCert() {
   if [ ! -f server.pem ]
   then
-    if echo | openssl s_client -connect chronical.info:8444 2>/dev/null | grep -q 'BEGIN CERT'
+    if echo | openssl s_client -connect $server 2>/dev/null | grep -q 'BEGIN CERT'
     then
-      openssl s_client -connect chronical.info:8444 2>/dev/null | 
+      openssl s_client -connect $server 2>/dev/null | 
         sed -n -e '/BEGIN CERT/,/END CERT/p' > server.pem
       openssl x509 -text -in server.pem | grep 'CN='
       ls -l server.pem
@@ -207,12 +251,17 @@ c0dailyPost() {
 
 c0minutelyCron() {
   c0minutelyPost
-  if [ `date +%M` -eq $cronMinute ] 
+  if [ `date +%M` -eq $cronMinute ]
   then
-    c0hourlyPost
-    if [ `date +%H` -eq $cronHour ] 
+    if [ -f hourly -a `stat -c %Z hourly` -gt `date -d '55 minutes ago' '+%s'` ]
     then
-      c0dailyPost
+      decho "too soon for hourly" `stat -c %Z hourly` vs `date -d '55 minutes ago' '+%s'` 
+    else 
+      c0hourlyPost
+      if [ `date +%H` -eq $cronHour ] 
+      then
+        c0dailyPost
+      fi
     fi
   fi
 }
@@ -221,10 +270,6 @@ c0killstart() {
   if pgrep -f 'chronical.sh start'
   then
     kill `pgrep -f 'chronical.sh start'`
-  fi
-  if pgrep -f "sleep $sleepSeconds"
-  then
-    kill `pgrep -f "sleep $sleepSeconds"`
   fi
 }
 
@@ -249,16 +294,28 @@ c0run() {
   c0kill
   echo $$ > pid
   c0enroll
-  c0hourlyPost
-  c0dailyPost
+  rm -f hourly minutely
   while [ 1 ]
   do
+    periodTime=`date -d "$periodSeconds seconds" +%s`
+    decho "periodTime $periodTime is $periodSeconds seconds from current `date +%s`"
     c0minutelyCron
-    echo `date '+%H:%M:%S'` sleeping for $sleepSeconds seconds
-    sleep $sleepSeconds 
+    decho "periodTime $periodTime vs stat `stat -c %Z minutely`"
+    decho "minute `date +%M` vs cronMinute $cronMinute"
+    decho "`date '+%H:%M:%S'` time `date +%s` finish $periodTime for $periodSeconds seconds"
+    while [ $periodTime -gt `date +%s` ] 
+    do
+      decho "sleep until periodTime $periodTime from time `date +%s`"
+      sleep 1
+    done
     date
-    if [ ! -f pid -o `cat $pid` -ne $$ ]
+    if [ ! -f pid ]
     then
+      decho "cancelled (pid file removed)"
+      return
+    elif [ `cat $pid` -ne $$ ]
+    then
+      decho "cancelled (pid file changed)"
       return
     fi
   done
@@ -275,5 +332,7 @@ then
   shift
   c$#$command $@  
 else 
+  c0minutely
   c0hourly
+  c0daily
 fi

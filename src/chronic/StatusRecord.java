@@ -218,7 +218,7 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
 
     public boolean isAlertable(StatusRecord previous, AlertRecord alert) {
         logger.info("isAlertable {}", Args.format(topicString, alertType, 
-                statusType, previous.getStatusType(), equals(previous),
+                statusType, previous.getStatusType(), matches(previous),
                 alert.getStatus().getStatusType()));
         if (alertType == AlertType.NEVER) {
             return false;
@@ -234,7 +234,7 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         } else if (alertType == AlertType.ERROR) {
         }
         if (alertType == AlertType.CONTENT_CHANGED) {
-            if (!equals(previous)) {
+            if (!matches(previous)) {
                 statusType = StatusType.CONTENT_CHANGED;
                 return true;
             }
@@ -252,29 +252,32 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         return false;
     }
 
-    public boolean equals(StatusRecord other) {
+    public boolean matches(StatusRecord other) {
         if (lineList.size() != other.lineList.size()) {
             return false;
         }
         for (int i = 0; i < lineList.size(); i++) {
-            if (!equals(lineList.get(i), other.lineList.get(i))) {
+            if (!matches(lineList.get(i), other.lineList.get(i))) {
                 return false;
             }
         }
         return true;
     }
 
-    public static boolean equals(String line, String other) {
+    public static boolean matches(String line, String other) {
         Matcher matcher = StatusRecordParser.nagiosStatusPattern.matcher(line);
         if (matcher.find()) {
             if (matcher.group(2).equals("UNKNOWN")) {
                 return true;
             }
             Matcher otherMatcher = StatusRecordParser.nagiosStatusPattern.matcher(other);
+            if (!otherMatcher.find()) {
+                return false;
+            }
             if (otherMatcher.group(2).equals("UNKNOWN")) {
                 return true;
             }
-            return otherMatcher.find() && otherMatcher.group(1).equals(matcher.group(1))
+            return otherMatcher.group(1).equals(matcher.group(1))
                     && otherMatcher.group(2).equals(matcher.group(2));
 
         } else if (StatusRecordParser.headPattern.matcher(line).find()) {

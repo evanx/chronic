@@ -47,7 +47,7 @@ public class User extends AbstractEntity implements UserKeyed, Enabled {
     
     @Override
     public Comparable getKey() {
-        return getUserKey();
+        return email;
     }
 
     @Override

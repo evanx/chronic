@@ -92,12 +92,12 @@ public class AlertMailBuilder {
 
     private void appendInfo(StatusRecord status) {
         String style = "font-color: gray";
-        builder.append(String.format("<i style='%s'>(%s, %s)</i>\n", style,
-                status.getAlertType(), Millis.format(status.getTimestamp())));
+        builder.append(String.format("<i style='%s'>(%s, %s)</i>\n\n", style,
+                status.getAlertType().getLabel(), Millis.formatTime(status.getTimestamp())));
     }
     
     private void appendTimestamp(StatusRecord status) {
-        builder.append(String.format("<i>%s</i>\n\n",
+        builder.append(String.format("<i>%s</i>\n",
                 Millis.formatTime(status.getTimestamp())));        
     }
     
