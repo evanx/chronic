@@ -9,6 +9,7 @@ import chronic.entity.Org;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
 import chronic.entitykey.SubscriberKey;
+import chronic.entitykey.UserKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.StorageException;
@@ -23,9 +24,10 @@ public class SubscribeTransaction {
     
     public void handle(ChronicApp app, String orgUrl, String email) throws StorageException {
         logger.info("handle {} {}", orgUrl, email);
-        User user = app.storage().user().select(email);
+        UserKey userKey = new UserKey(email);
+        User user = app.storage().user().select(userKey);
         if (user == null) {
-            user = new User(email);
+            user = new User(userKey);
             app.storage().user().insert(user);
         }
         Org org = app.storage().org().select(orgUrl);

@@ -31,6 +31,10 @@ public class User extends AbstractEntity implements UserKeyed, Enabled {
     public User() {
     }
 
+    public User(UserKey key) {
+        this(key.getEmail());
+    }
+    
     public User(String email) {
         this.email = email;
         this.label = Emails.getUsername(email);
@@ -42,8 +46,8 @@ public class User extends AbstractEntity implements UserKeyed, Enabled {
     }
     
     @Override
-    public String getKey() {
-        return email;
+    public Comparable getKey() {
+        return getUserKey();
     }
 
     @Override
