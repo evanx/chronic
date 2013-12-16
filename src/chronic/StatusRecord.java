@@ -63,7 +63,6 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     String username;
     String hostname;
     String service;
-    String period;
     String orgUrl;
     String orgUnit;
     String commonName;
@@ -337,6 +336,6 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     
     @Override
     public String toString() {
-        return Args.format(alertType, orgUrl, topicString, statusType, lineList.size());
+        return Args.format(alertType, orgUrl, topicString, statusType, periodMillis);
     }
 }

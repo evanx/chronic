@@ -129,7 +129,7 @@ public class ChronicApp implements Runnable {
 
     private void checkElapsed(StatusRecord status) {
         long elapsed = Millis.elapsed(status.getTimestamp());
-        logger.debug("checkElapsed {}: elapsed {}", status.getTopicString(), elapsed);
+        logger.debug("checkElapsed {} {}", elapsed, status);
         if (elapsed > status.getPeriodMillis() + properties.getPeriod()) {
             AlertRecord previousAlert = alertMap.get(status.getKey());
             if (previousAlert == null
