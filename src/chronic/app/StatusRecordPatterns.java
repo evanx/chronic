@@ -31,17 +31,19 @@ import org.slf4j.LoggerFactory;
 public class StatusRecordPatterns {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecordPatterns.class);
-    public final static Pattern fromCronPattern
+    public final static Pattern FROM_CRON
             = Pattern.compile("^From: ([a-z]+) \\(Cron Daemon\\)$");
-    public final static Pattern subjectCronPattern
+    public final static Pattern CRON_SUBJECT
             = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)");
-    public final static Pattern logPattern
+    public final static Pattern LOG
             = Pattern.compile("^(INFO|DEBUG|WARN|ERROR) (.*)$");
-    public final static Pattern nagiosStatusPattern
+    public final static Pattern NAGIOS
             = Pattern.compile("^(\\S*\\s*)(OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
-    public final static Pattern headPattern
+    public final static Pattern NAGIOS_UNKNOWN
+            = Pattern.compile("^(\\S*\\s*)(UNKNOWN) - (.*)$");
+    public final static Pattern HEADER
             = Pattern.compile("^[a-zA-Z]+: .*$");
-    public final static Pattern debugLogPattern
+    public final static Pattern LOG_DEBUG
             = Pattern.compile("^(DEBUG|TRACE)");
 
 }

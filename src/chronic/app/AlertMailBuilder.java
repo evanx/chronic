@@ -98,7 +98,7 @@ public class AlertMailBuilder {
                 continue;
             }
             if (status.getAlertFormatType() == AlertFormatType.MINIMAL) {
-                Matcher matcher = StatusRecordPatterns.nagiosStatusPattern.matcher(line);
+                Matcher matcher = StatusRecordPatterns.NAGIOS.matcher(line);
                 if (matcher.find()) {
                     int index = line.indexOf(" - ");
                     if (index > 0) {

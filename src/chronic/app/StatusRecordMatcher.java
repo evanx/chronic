@@ -60,7 +60,9 @@ public class StatusRecordMatcher {
     public static List<String> getFilteredLineList(StatusRecord status) {
         List<String> list = new LinkedList();
         for (String line : status.lineList) {
-            if (!StatusRecordPatterns.debugLogPattern.matcher(line).matches()) {
+            if (StatusRecordPatterns.LOG_DEBUG.matcher(line).matches()) {
+            } else if (StatusRecordPatterns.NAGIOS_UNKNOWN.matcher(line).matches()) {
+            } else {
                 list.add(line);
             }
         }
@@ -80,19 +82,26 @@ public class StatusRecordMatcher {
     }
 
     public static boolean matches(String line, String other) {
-        Matcher logMatcher = StatusRecordPatterns.logPattern.matcher(line);
+        Matcher logMatcher = StatusRecordPatterns.LOG.matcher(line);
         if (logMatcher.find()) {
             String category = logMatcher.group(1);
-            Matcher otherMatcher = StatusRecordPatterns.logPattern.matcher(line);
+            Matcher otherMatcher = StatusRecordPatterns.LOG.matcher(other);
             if (otherMatcher.find()) {
                 String otherCategory = otherMatcher.group(1);
                 if (category.equals(otherCategory)) {
-                    return Strings.equals(category, "TRACE", "DEBUG", "VERBOSE") ||
-                            Strings.equalsIgnoreNumeric(line, other);
+                    return Strings.equalsIgnoreNumeric(line, other);
                 }
             }
             return false;
-        } else if (StatusRecordPatterns.headPattern.matcher(line).find()) {
+        }
+        Matcher nagiosMatcher = StatusRecordPatterns.NAGIOS.matcher(line);
+        if (nagiosMatcher.find()) {
+            Matcher otherMatcher = StatusRecordPatterns.NAGIOS.matcher(other);
+            if (otherMatcher.find()) {
+                
+            }
+            return false;
+        } else if (StatusRecordPatterns.HEADER.matcher(line).find()) {
             return true;
         }
         return line.equals(other);

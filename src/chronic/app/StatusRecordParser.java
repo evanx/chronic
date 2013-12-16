@@ -67,7 +67,7 @@ public class StatusRecordParser {
     }
 
     public void parseFromLine(String fromLine) {
-        Matcher matcher = StatusRecordPatterns.fromCronPattern.matcher(fromLine);
+        Matcher matcher = StatusRecordPatterns.FROM_CRON.matcher(fromLine);
         if (matcher.find()) {
             record.setUsername(matcher.group(1));
             record.setFrom(matcher.group(1));
@@ -75,7 +75,7 @@ public class StatusRecordParser {
     }
 
     public void parseSubjectLine(String subjectLine) {
-        Matcher matcher = StatusRecordPatterns.subjectCronPattern.matcher(subjectLine);
+        Matcher matcher = StatusRecordPatterns.CRON_SUBJECT.matcher(subjectLine);
         if (matcher.find()) {
             record.setUsername(matcher.group(1));
             record.setHostname(matcher.group(2));
@@ -87,7 +87,7 @@ public class StatusRecordParser {
     }
 
     public boolean parseNagiosStatus(String line) {
-        Matcher matcher = StatusRecordPatterns.nagiosStatusPattern.matcher(line);
+        Matcher matcher = StatusRecordPatterns.NAGIOS.matcher(line);
         if (matcher.find()) {
             String service = matcher.group(1).trim();
             if (!service.isEmpty()) {
