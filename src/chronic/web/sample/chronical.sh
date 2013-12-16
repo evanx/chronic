@@ -6,7 +6,7 @@ set -u
 
 echo "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
 
-pwd
+echo pwd `pwd`
 custom=`dirname $0`/custom.chronical.sh
 echo "custom $custom"
 
@@ -30,14 +30,15 @@ fi
 
 . $custom
 
-### reviewable setup
-
-commonName=`hostname`
-
 dir=~/.chronic
 mkdir -p $dir
 cd $dir
 pwd
+
+
+### reviewable setup
+
+commonName=`hostname`
 
 c1topic() {
   echo "Topic: $commonName $1"
