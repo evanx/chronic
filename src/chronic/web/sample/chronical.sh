@@ -4,6 +4,7 @@ set -u
 
 ### init 
 
+pwd
 custom=`dirname $0`/custom.chronical.sh
 echo "custom $custom"
 
