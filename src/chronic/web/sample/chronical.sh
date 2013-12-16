@@ -62,14 +62,14 @@ c1topic() {
 c1ping() {
   decho "ping -qc$pingCount $1"
   packetLoss=`ping -qc2 $1 | grep 'packet loss' | sed 's/.* \([0-9]*\)% packet loss.*/\1/'`
-  if [ $packetLoss -lt $pingLossWarningThreshold ]
+  if [ $packetLoss -lt $packetLossWarningThreshold ]
   then
     echo "OK - $1 pingable ($packetLoss% packet loss)"
-  elif [ $packetLoss -lt $pingLossCriticalThreshold ]
+  elif [ $packetLoss -lt $packetLossCriticalThreshold ]
   then
-    echo "WARNING - $1 not pingable ($packetLoss% packet loss)"
+    echo "WARNING - $1 $packetLoss% packet loss"
   else
-    echo "CRITICAL - $1 not pingable ($packetLoss% packet loss)"
+    echo "CRITICAL - $1 $packetLoss% packet loss"
   fi
 }
 
@@ -78,9 +78,9 @@ c1noping() {
   packetLoss=`ping -qc2 $1 | grep 'packet loss' | sed 's/.* \([0-9]*\)% packet loss.*/\1/'`
   if [ $packetLoss -lt 100 ]
   then
-    echo "CRITICAL - $1 pingable ($packetLoss% packet loss)"
+    echo "CRITICAL - $1 $packetLoss% packet loss"
   else
-    echo "OK - $1 not pingable ($packetLoss% packet loss)"
+    echo "OK - $1 $packetLoss% packet loss"
   fi
 }
 
@@ -152,6 +152,7 @@ c2postgres() {
     echo "CRITICAL - $1:$2 postgres server not running"
   fi
 }
+
 
 ### typical checks
 
@@ -249,25 +250,55 @@ c0dailyPost() {
   dcat daily
 }
 
+c0hourlyCron() {
+  c0stopped
+  c0hourlyPost
+  c0stopped
+  if [ `date +%H` -eq $cronHour ] 
+  then
+    c0dailyPost
+  fi
+}
+
 c0minutelyCron() {
+  c0stopped
   c0minutelyPost
   if [ `date +%M` -eq $cronMinute ]
   then
-    if [ -f hourly -a `stat -c %Z hourly` -gt `date -d '55 minutes ago' '+%s'` ]
+    if [ -f hourly ]
     then
-      decho "too soon for hourly" `stat -c %Z hourly` vs `date -d '55 minutes ago' '+%s'` 
-    else 
-      c0hourlyPost
-      if [ `date +%H` -eq $cronHour ] 
+      if [ `stat -c %Z hourly` -gt `date -d '55 minutes ago' '+%s'` ]
       then
-        c0dailyPost
+        decho "too soon for hourly" `stat -c %Z hourly` vs `date -d '55 minutes ago' '+%s'` 
+        return
+      fi
+    fi
+    c0hourlyCron
+  else
+    if [ -f hourly ]
+    then
+      if [ `stat -c %Z hourly` -lt `date -d '59 minutes ago' '+%s'` ]
+      then
+        c0hourlyCron
       fi
     fi
   fi
 }
 
+c0killrun() {
+  if pgrep -f 'chronical.sh run' 
+  then
+    kill -TERM `pgrep -f 'chronical.sh run'`
+    sleep 2
+    if pgrep -f 'chronical.sh run' 
+    then
+      kill -KILL `pgrep -f 'chronical.sh run'`
+    fi
+  fi
+}
+
 c0killstart() {
-  if pgrep -f 'chronical.sh start'
+  if pgrep -f 'chronical.sh start' 
   then
     kill `pgrep -f 'chronical.sh start'`
   fi
@@ -290,6 +321,22 @@ c0kill() {
   rm -f pid
 }
 
+c0stop() {
+  rm -f pid
+}
+
+c0stopped() {
+  if [ ! -f pid ]
+  then
+    decho "cancelled (pid file removed)"
+    exit 1
+  elif [ `cat pid` -ne $$ ]
+  then
+    decho "cancelled (pid file changed)"
+    exit 1
+  fi
+}
+
 c0run() {
   c0kill
   echo $$ > pid
@@ -297,31 +344,28 @@ c0run() {
   rm -f hourly minutely
   while [ 1 ]
   do
+    time=`date +%s`
     periodTime=`date -d "$periodSeconds seconds" +%s`
-    decho "periodTime $periodTime is $periodSeconds seconds from current `date +%s`"
+    decho "periodTime $periodTime (current $time, period $periodSeconds seconds, pid $$)"
     c0minutelyCron
     decho "periodTime $periodTime vs stat `stat -c %Z minutely`"
     decho "minute `date +%M` vs cronMinute $cronMinute"
     decho "`date '+%H:%M:%S'` time `date +%s` finish $periodTime for $periodSeconds seconds"
-    while [ $periodTime -gt `date +%s` ] 
-    do
-      decho "sleep until periodTime $periodTime from time `date +%s`"
-      sleep 1
-    done
-    date
-    if [ ! -f pid ]
+    time=`date +%s`
+    if [ $periodTime -gt $time ]
     then
-      decho "cancelled (pid file removed)"
-      return
-    elif [ `cat $pid` -ne $$ ]
-    then
-      decho "cancelled (pid file changed)"
-      return
+      sleepSeconds=`expr $periodTime - $time`
+      decho "sleep $sleepSeconds seconds until periodTime $periodTime from time $time"
+      sleep $sleepSeconds
+    else
+      periodSeconds=`expr $periodSeconds + 30`
+      decho "extending periodSeconds to $periodSeconds"
     fi
   done
 }
 
 c0start() {
+  c0killrun
   c0kill
   c0run 2>run.err >run.out &
 }

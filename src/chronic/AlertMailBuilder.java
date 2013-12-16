@@ -77,28 +77,15 @@ public class AlertMailBuilder {
     }
     
     private void appendHeader(StatusRecord status) {
-        appendHeading(status);
-        appendTimestamp(status);
-        appendInfo(status);        
+        builder.append(String.format("<i>%s</i>", Millis.formatTime(status.getTimestamp())));        
+        builder.append(String.format(" <b>%s</b>", formatHeading(status)));        
+        String alertTypeStyle = "font-color: gray";
+        builder.append(String.format(" <i style='%s'>(%s)</i>\n\n", alertTypeStyle,
+                status.getAlertType().getLabel()));
     }
 
     private void appendContent(StatusRecord status) {
         builder.append(buildContent(status));
-    }
-    
-    private void appendHeading(StatusRecord status) {
-        builder.append(String.format("<b>%s</b>\n", formatHeading(status)));        
-    }
-
-    private void appendInfo(StatusRecord status) {
-        String style = "font-color: gray";
-        builder.append(String.format("<i style='%s'>(%s, %s)</i>\n\n", style,
-                status.getAlertType().getLabel(), Millis.formatTime(status.getTimestamp())));
-    }
-    
-    private void appendTimestamp(StatusRecord status) {
-        builder.append(String.format("<i>%s</i>\n",
-                Millis.formatTime(status.getTimestamp())));        
     }
     
     public static String buildContent(StatusRecord status) {

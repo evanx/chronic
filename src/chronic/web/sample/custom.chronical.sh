@@ -18,8 +18,8 @@ loadCriticalThreshold=9
 diskWarningThreshold=80
 diskCriticalThreshold=90
 
-pingLossWarningThreshold=20
-pingLossCriticalThreshold=60
+packetLossWarningThreshold=20
+packetLossCriticalThreshold=60
 
 server=chronical.info:8444
 
