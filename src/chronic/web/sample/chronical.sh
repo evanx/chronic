@@ -245,7 +245,7 @@ c0run() {
   if [ -f pid ] 
   then
     echo "previous pid:" `cat pid`
-    kill $pid
+    kill `cat pid`
   fi
   echo $$ > pid
   c0enroll
