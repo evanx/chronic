@@ -333,17 +333,17 @@ orgUrl="your.org"</pre>
 
         <h4>Frequently asked questions</h4>
         <p><b>What is it?</b>          
-        <br>A cloud-based passive monitoring solution.
+        <br>A multi-tenancy cloud-based passive monitoring solution.
         <p><b>How much does it cost?</b>
         <br>It's free and open. Bits and bytes are priceless.
-        <p><b>How is this different from other cloud-based monitoring services?</b>
-        <br>It's great for adhoc monitoring.
-        <p><b>How is this different from other opensource monitoring projects?</b>
-        <br>It's designed to be used in the cloud, without any server setup, leveraging Nagios plugins, and enabling custom checks.
-        <p><b>What is installed on clients?</b>        
+        <p><b>How is this different from some other cloud-based monitoring services?</b>
+        <br>It's great for adhoc monitoring. 
+        <p><b>How is this different from some other opensource monitoring projects?</b>
+        <br>It's designed to be a multi-tenant cloud service, without any server setup, leveraging Nagios plugins, and enabling custom checks.
+        <p><b>What is installed on clients?</b>
         <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, this script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. But the system is specially engineered to support Nagios plugins, and custom checks.
         <p><b>What notification mechanisms are supported?</b>
-        <br>Currently only email. Support is envisaged for mobile push notifications, but not SMS.
+        <br>Only email. Support is envisaged for mobile push notifications, but not SMS. (Currently email is disabled for alpha testing.)
         <p><b>Why doesn't the site work on my phone's browser already?</b>
         <br>It will! We use Twitter Bootstrap which is "mobile first." But this service is still pre-alpha.
         <p><b>What technologies are used?</b>

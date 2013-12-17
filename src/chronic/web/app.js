@@ -271,7 +271,7 @@ app.controller("subscribersController", ["$scope", "$http",
          $http.post("/chronicapp/subscriberAction", {
             "subscriber": $scope.selected
          }).then(function(response) {
-            if (response.data && response.data.subscriptions) {
+            if (response.data && response.data.subscriber) {
                console.warn("subscriberAction", response.data.subscriber.actionLabel);
                $scope.selected.actionLabel = response.data.subscriber.actionLabel;
             } else {
