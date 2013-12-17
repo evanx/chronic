@@ -19,13 +19,13 @@
 
 ### custom config 
 
-admins=""
-orgUrl=""
-orgUnit=""
-subscribers=""
-scheduledMinute=""
-scheduledHour=""
-
+orgUnit="" # network or group
+orgUrl="" # URL of your organisation 
+admins="" # emails of chronical admins for this organisation
+commonName="" # name of this host or account
+subscribers="" # emails of invited subcribers for this topic
+scheduledHour="19" # hour of day for daily check
+scheduledMinute="19" # minute of hour for daily check
 
 ### customizable jobs
 
