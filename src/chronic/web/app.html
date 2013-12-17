@@ -310,7 +310,8 @@
         <h2 ng-cloak ng-show="!persona.email">
           <b>Instant</b> cloud monitoring, <i>as follows.</i></h2>
         <h2 ng-cloak ng-show="persona.email">Getting started</h2>
-        <p><a class="btn btn-primary btn-lg" role="button" ng-cloak ng-show="!persona.email">Learn more &raquo;</a></p>
+        <p><a href="#faq" class="btn btn-primary btn-lg" role="button"
+              ng-cloak ng-show="!persona.email && false">Learn more &raquo;</a></p>
         <p>Step 1: <b>Get</b> two scripts, as an unpriviledged user.
         <pre>wget https://chronical.info/sample/custom.chronical.sh
 wget https://chronical.info/sample/chronical.sh</pre>   
@@ -372,11 +373,10 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
     
     <div class="container" ng-show="!persona.email || view === 'faq'" ng-cloak>
       <div class="row well-lg">
-        <h2 ng-cloak ng-show="persona.email && view === 'faq'">
-          <b>Instant</b> cloud monitoring</h2>
+        <h2 ng-cloak ng-show="persona.email && view === 'faq'"><b>Instant</b> cloud monitoring</h2>
 
         <hr>
-        <h4>Frequently asked questions</h4>
+        <h4><a name="faq">Frequently asked questions</a></h4>
 
         <p><b>What's this?</b>          
           <br>A simple multi-tenancy cloud-based passive monitoring solution.
