@@ -85,6 +85,7 @@ dcat() {
   then
     echo "chronical:" 
     cat "$1"
+  fi
   if [ $debug -eq 2 ]
   then
     echo "chronical:" >&2
