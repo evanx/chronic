@@ -499,7 +499,7 @@ c0showpid() {
   if pgrep -f "chronical.sh" | grep -v "$$\|grep" | grep '[0-9]'
   then
     pgrep -f "chronical.sh"
-    echo "Chronical WARNING - another chronical.sh still running (pgrep)"
+    echo "Chronical WARNING - another chronical.sh still running"
   elif ps x | grep "chronical.sh" | grep -v "$$\|grep" | grep '[0-9]'
   then
     echo "Chronical WARNING - another chronical.sh still running (ps)"
