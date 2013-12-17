@@ -59,9 +59,9 @@ rm -f debug
 decho() {
   if [ -f debug ]
   then
-    echo "DEBUG $*" >> debug
+    echo "chronical: $*" >> debug
   else 
-    echo "DEBUG $*" >&2
+    echo "chronical: $*" >&2
   fi
 }
 
@@ -71,8 +71,6 @@ dcat() {
   if [ -f debug ]
   then
     cat "$1" >> debug
-  else 
-    cat "$1" >&2
   fi
 }
 
