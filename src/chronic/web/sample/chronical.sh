@@ -484,7 +484,7 @@ c0start() {
 }
 
 c0showpid() {
-  if -n "$previousPid" ]
+  if [ -n "$previousPid" ]
   then
     echo "previousPid: " `pwd`/pid
   else 
