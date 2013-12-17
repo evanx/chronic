@@ -65,9 +65,11 @@ public class ChronicMessenger {
         }
         for (String email : app.storage().listSubscriberEmails(alert)) {
             AlertRecord previous = alertMap.put(email, alert);
-            long elapsed = Millis.elapsed(previous.getTimestamp());
-            if (elapsed < Millis.fromMinutes(2)) {
-                logger.warn("elapsed {} {}", email, Millis.formatPeriod(elapsed));
+            if (previous != null) {
+                long elapsed = Millis.elapsed(previous.getTimestamp());
+                if (elapsed < Millis.fromMinutes(2)) {
+                    logger.warn("elapsed {} {}", email, Millis.formatPeriod(elapsed));
+                }
             }
             mailer.sendEmail(email,
                     alert.getStatus().getTopicString(),

@@ -330,8 +330,22 @@ orgUrl="your.org"</pre>
         <hr>
         <h4>Getting jiggy with it</h4>
         <p>Customize the <tt>custom.chronical.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or only daily.</p>
+      <pre>c0minutely() {
+  c1topic minutely
+  c0load
+  c2tcp chronical.info 80
+  c2notcp chronical 21
+  c2https chronical.info 443 
+  c2https chronical.info 8444
+}</pre><p>where the convention for naming commands indicates the number of parameters, and they can be invoked from the command-line for testing.</p>
+      <pre>$ sh scripts/chronical.sh load
+Load OK - 0.38 0.35 0.33 2/748 24495</pre>
         <p>Add Nagios plugins and adhoc scripts as required.</p>
+        <pre>$ /usr/lib/nagios/plugins/check_pgsql -H localhost 
+CRITICAL - no connection</pre>
         <p>As good practice, run <tt>chronical.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>sudo</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
+      <pre>$ cat /etc/rc.local
+/home/chronical/scripts/chronical.sh start</pre>
         <p>Send your questions, bugs and suggestions to evan.summers@gmail.com.</p>
         <hr>
         <h4>Resources</h4>
@@ -353,14 +367,15 @@ orgUrl="your.org"</pre>
         <p><b>Info pages added</b> <i>2013-12-16</i>         
           <br>News, FAQ and Getting Starting sections added.
         </p>
+        
         <p><b>AngujarJS UI started</b> <i>2013-12-01</i>         
           <br>Oh my god, AngularJS is <i>awesome</i>! Goodbye my formerly beloved jQuery.
         </p>
 
         <p><b>Project inception</b> <i>2013-11-24</i></p>
-        <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Crocserver (on http://github.com/evanx/vellumapp). Chronical's mantra is "wonderfully simple, incredibly powerful." 
-        <p>Bizstat is single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks.
-        <p>Crocserver ("Cron Output Collector") is a multi-tenancy server passive server, and the inspiration for Chronical. It's UI uses Bootstrap 2 and jQuery, and it used JDBC from word go, albeit using an H2 in-memory database. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed. 
+        <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Croc (on http://github.com/evanx/vellumapp). Chronical's mantra is "wonderfully simple, incredibly powerful." 
+        <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks.
+        <p>Croc ("Cron Output Collector") is a multi-tenancy server passive server, and the inspiration for Chronical. It's UI uses Bootstrap 2 and jQuery, and it used JDBC from word go, albeit using an H2 in-memory database. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed. 
         <p>The result is Chronical, which uses the awesome AngularJS front-end framework (see <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>), and a lovely pluggable SQL'esque storage engine mechanism (see <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/EntityStore.java">EntityStore</a> and <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/MapStore.java">MapStore</a>). Prototyping can forgo SQL, but a JDBC plugin can enable persistence right off the bat. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicMapStore.java">ChronicMapStore</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicStorage.java">ChronicStorage</a>.
         
         <hr>

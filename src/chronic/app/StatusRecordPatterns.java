@@ -40,7 +40,7 @@ public class StatusRecordPatterns {
     public final static Pattern LOG_DEBUG
             = Pattern.compile("^(DEBUG|TRACE)");
     public final static Pattern NAGIOS
-            = Pattern.compile("^(\\S*\\s*)(OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
+            = Pattern.compile("^(\\S*\\s*)(OK|WARNING|CRITICAL|UNKNOWN)[\\s:-]*(.*)$");
     public final static Pattern NAGIOS_UNKNOWN
             = Pattern.compile("^(\\S*\\s*)(UNKNOWN) - (.*)$");
     public final static Pattern HEADER
