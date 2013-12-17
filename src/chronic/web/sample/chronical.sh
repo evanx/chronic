@@ -402,7 +402,7 @@ c0minutelyCron() {
 }
 
 c1killall() {
-  if pgrep -f "chronical.sh $1" | grep -v $$
+  if pgrep -f "chronical.sh $1" | grep -v $$ 
   then
     kill `pgrep -f "chronical.sh $1" | grep -v $$`    
   else
@@ -479,8 +479,10 @@ c0start() {
   c0restart
 }
 
-echo "pid $$"
-ps x | grep "chronical.sh $1" | grep -v $$ && echo "WARNING previous chronical running"
+echo "previous pid $previousPid"
+echo "current pid $$"
+pgrep -f "chronical.sh" | grep -v $$ echo "WARNING previous chronical running (pgrep)"
+ps x | grep "chronical.sh" | grep -v $$ && echo "WARNING previous chronical running"
 
 if [ $# -gt 0 ]
 then
