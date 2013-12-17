@@ -54,11 +54,21 @@ public class ChronicTest {
     }
 
     @Test
-    public void nagiosPattern() {
-        Matcher matcher = StatusRecordPatterns.NAGIOS.matcher("CRITICAL - 101ms");
+    public void nagiosPatternDash() {
+        Matcher matcher = StatusRecordPatterns.NAGIOS.matcher("CRITICAL - no connection");
         Assert.assertTrue(matcher.find());
         Assert.assertTrue(matcher.group(1).equals(""));
         Assert.assertTrue(matcher.group(2).equals("CRITICAL"));
+        Assert.assertTrue(matcher.group(3).equals("no connection"));
+    }
+
+    @Test
+    public void nagiosPatternColon() {
+        Matcher matcher = StatusRecordPatterns.NAGIOS.matcher("CRITICAL: no connection");
+        Assert.assertTrue(matcher.find());
+        Assert.assertTrue(matcher.group(1).equals(""));
+        Assert.assertTrue(matcher.group(2).equals("CRITICAL"));
+        Assert.assertTrue(matcher.group(3).equals("no connection"));
     }
     
     @Test
