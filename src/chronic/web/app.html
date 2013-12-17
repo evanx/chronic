@@ -125,7 +125,8 @@
                 <th>Network</th>
                 <th>Organisation</th>
                 <th>
-                  <input type="button" value="Subscribe All" ng-click="actionAll()">
+                  <input type="button" value="All" ng-click="actionAll()">
+                  <input type="button" value="None" ng-click="actionNone()">
                 </th>
               </tr>
             </thead>
@@ -229,20 +230,20 @@
                 <th>Person</th>
                 <th>Role</th>
                 <th>
-                  <input type="button" value="Enable All" ng-click="actionAll()">
+                  <input type="button" value="All" ng-click="actionAll()">
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr ng-repeat="role in roles">
                 <td ng-click="setSelected()">
-                  {{role.orgName}}
+                  {{role.orgUrl}}
                 </td>
                 <td>
                   {{role.email}}
                 </td>
                 <td>
-                  {{role.roleLabel}}
+                  {{role.roleTypeLabel}}
                 </td>
                 <td>
                   <input type="button" value="{{role.actionLabel}}" ng-click="action()">
@@ -269,7 +270,7 @@
                 <th>Unit</th>
                 <th>Address</th>
                 <th>
-                  <input type="button" value="Enable All" ng-click="actionAll()">
+                  <input type="button" value="All" ng-click="actionAll()">
                 </th>
               </tr>
             </thead>
@@ -309,7 +310,8 @@
         <pre>wget https://chronical.info/sample/custom.chronical.sh
 wget https://chronical.info/sample/chronical.sh</pre>   
         <p>Step 2: <b>Edit</b> <tt>custom.chronical.sh</tt> <i>(for you and yours)</i>
-        <pre>subscribers="you@your.org"
+        <pre>$ vi custom.chronical.sh
+subscribers="you@your.org"
 admins="you@your.org"
 orgUrl="your.org"</pre>                  
         <p>Step 3. <b>Review</b> <tt>chronical.sh</tt> <i>(so you know it's cool)</i>
@@ -321,22 +323,27 @@ orgUrl="your.org"</pre>
           <i>(to <a href="https://chronical.info">https://chronical.info</a> 
             using Mozilla Persona)</i>
         <hr>
+
         <h4>Getting jiggy with it</h4>
         <p>Customize <tt>custom.chronical.sh</tt> as you wish for ports and services you wish to monitor.</p>
-        <p>Add nagios plugins and custom scripts as required.</p>
+        <p>Add Nagios plugins and custom scripts as required.</p>
+        <p>As good practice, run <tt>chronical.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>sudo</tt>.<br>Use <tt>sudo</tt> and/or <tt>ssh</tt> forced-commands to grant only required priviledges for your custom checks.</p>
         <p>Send your questions, bugs and suggestions to evan.summers@gmail.com.</p>
         <hr>
+
         <h4>Frequently asked questions</h4>
         <p><b>What is it?</b>          
         <br>A cloud-based passive monitoring solution.
         <p><b>How much does it cost?</b>
         <br>It's free and open. Bits and bytes are priceless.
         <p><b>How is this different from other cloud-based monitoring services?</b>
-        <br>It's designed to be great for custom monitoring.
+        <br>It's great for adhoc monitoring.
         <p><b>How is this different from other opensource monitoring projects?</b>
-        <br>It's designed to be used in the cloud, for adhoc monitoring without any server setup, leveraging nagios plugins, and enabling custom checks.
+        <br>It's designed to be used in the cloud, without any server setup, leveraging Nagios plugins, and enabling custom checks.
         <p><b>What is installed on clients?</b>        
-        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, this script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. But the system is specially engineered to support nagios plugins, and custom application checks.
+        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, this script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. But the system is specially engineered to support Nagios plugins, and custom checks.
+        <p><b>What notification mechanisms are supported?</b>
+        <br>Currently only email. Support is envisaged for mobile push notifications, but not SMS.
         <p><b>Why doesn't the site work on my phone's browser already?</b>
         <br>It will! We use Twitter Bootstrap which is "mobile first." But this service is still pre-alpha.
         <p><b>What technologies are used?</b>

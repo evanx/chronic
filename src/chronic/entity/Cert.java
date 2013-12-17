@@ -10,7 +10,7 @@ import chronic.entitykey.OrgKey;
 import chronic.entitykey.CertKeyed;
 import chronic.entitykey.OrgUnitKey;
 import chronic.entitykey.OrgUnitKeyed;
-import chronic.entitytype.CertAction;
+import chronic.entitytype.CertActionType;
 import vellum.data.Millis;
 import vellum.data.Timestamped;
 import vellum.jx.JMap;
@@ -136,12 +136,13 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
         map.put("enabled", enabled);
         map.put("address", address);
         map.put("timestampLabel", Millis.formatTime(timestamp));
+        map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());
         return map;
     }
 
-    private CertAction getAction() {
-        return enabled ? CertAction.DISABLE : CertAction.ENABLE;
+    private CertActionType getAction() {
+        return enabled ? CertActionType.REVOKE : CertActionType.GRANT;
     }
     
     @Override

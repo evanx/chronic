@@ -18,9 +18,9 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class ListCerts implements ChronicHttpxHandler {
+public class CertList implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(ListCerts.class);
+    Logger logger = LoggerFactory.getLogger(CertList.class);
   
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {

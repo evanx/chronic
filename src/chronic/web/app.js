@@ -170,9 +170,41 @@ app.controller("topicsController", ["$scope", "$http",
             }
          });
       };
+      $scope.actionAll = function() {
+         console.log("actionAll");
+         $http.post("/chronicapp/topicActionAll", {
+         }).then(function(response) {
+            if (response.data && response.data.topics) {
+               $scope.topics = response.data.topics;
+            } else {
+               console.warn("topicActionAll", response);
+            }
+         });
+      };
+      $scope.actionNone = function() {
+         console.log("actionNone");
+         $http.post("/chronicapp/topicActionNone", {
+         }).then(function(response) {
+            if (response.data && response.data.topics) {
+               $scope.topics = response.data.topics;
+            } else {
+               console.warn("topicActionNone", response);
+            }
+         });
+      };
       $scope.action = function() {
          $scope.selected = this.topic;
          console.log("action", $scope.selected);
+         $http.post("/chronicapp/topicAction", {
+            "topic": $scope.selected
+         }).then(function(response) {
+            if (response.data && response.data.topic) {
+               console.warn("topicAction", response.data.topic.actionLabel);
+               $scope.selected.actionLabel = response.data.topic.actionLabel;
+            } else {
+               console.warn("topicAction", response);
+            }
+         });
       };
       $scope.setSelected = function() {
          $scope.selected = this.topic;
@@ -213,13 +245,39 @@ app.controller("subscribersController", ["$scope", "$http",
       };
       $scope.actionAll = function() {
          console.log("actionAll");
+         $http.post("/chronicapp/subscriberActionAll", {
+         }).then(function(response) {
+            if (response.data && response.data.subscriptions) {
+               $scope.subscriptions = response.data.subscriptions;
+            } else {
+               console.warn("subscriberActionAll", response);
+            }
+         });
       };
       $scope.actionNone = function() {
          console.log("actionNone");
+         $http.post("/chronicapp/subscriberActionNone", {
+         }).then(function(response) {
+            if (response.data && response.data.subscriptions) {
+               $scope.subscriptions = response.data.subscriptions;
+            } else {
+               console.warn("subscriberActionNone", response);
+            }
+         });
       };
       $scope.action = function() {
          $scope.selected = this.subscriber;
          console.log("action", $scope.selected);
+         $http.post("/chronicapp/subscriberAction", {
+            "subscriber": $scope.selected
+         }).then(function(response) {
+            if (response.data && response.data.subscriptions) {
+               console.warn("subscriberAction", response.data.subscriber.actionLabel);
+               $scope.selected.actionLabel = response.data.subscriber.actionLabel;
+            } else {
+               console.warn("subscriberAction", response);
+            }
+         });
       };
       $scope.setSelected = function() {
          $scope.selected = this.subscriber;
@@ -257,9 +315,30 @@ app.controller("rolesController", ["$scope", "$http",
             }
          });
       };
+      $scope.actionAll = function() {
+         console.log("actionAll");
+         $http.post("/chronicapp/roleActionAll", {
+         }).then(function(response) {
+            if (response.data && response.data.roles) {
+               $scope.roles = response.data.roles;
+            } else {
+               console.warn("roleActionAll", response);
+            }
+         });
+      };
       $scope.action = function() {
          $scope.selected = this.role;
          console.log("action", $scope.selected);
+         $http.post("/chronicapp/roleAction", {
+            "role": $scope.selected
+         }).then(function(response) {
+            if (response.data && response.data.role) {
+               console.warn("roleAction", response.data.role.actionLabel);
+               $scope.selected.actionLabel = response.data.role.actionLabel;
+            } else {
+               console.warn("roleAction", response);
+            }
+         });
       };
       $scope.setSelected = function() {
          $scope.selected = this.role;
@@ -296,9 +375,44 @@ app.controller("certsController", ["$scope", "$http",
             }
          });
       };
+      $scope.actionAll = function() {
+         console.log("actionAll");
+         $http.post("/chronicapp/certActionAll", {
+         }).then(function(response) {
+            if (response.data && response.data.certs) {
+               $scope.certs = response.data.certs;
+            } else {
+               console.warn("certActionAll", response);
+            }
+         });
+      };
+      $scope.action = function() {
+         $scope.selected = this.cert;
+         console.log("action", $scope.selected);
+         $http.post("/chronicapp/certAction", {
+            "cert": $scope.selected
+         }).then(function(response) {
+            if (response.data && response.data.cert) {
+               console.warn("certAction", response.data.cert.actionLabel);
+               $scope.selected.actionLabel = response.data.cert.actionLabel;
+            } else {
+               console.warn("certAction", response);
+            }
+         });
+      };
       $scope.setSelected = function() {
          $scope.selected = this.cert;
          console.log("selected", $scope.selected);
+         $http.post("/chronicapp/certAction", {
+            "cert": $scope.selected
+         }).then(function(response) {
+            if (response.data && response.data.cert) {
+               console.warn("certAction", response.data.cert.actionLabel);
+               $scope.selected.actionLabel = response.data.cert.actionLabel;
+            } else {
+               console.warn("certAction", response);
+            }
+         });
       };
       $scope.$on("changeView", function(event, view) {
          console.log("certs changeView", view);

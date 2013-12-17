@@ -18,17 +18,16 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class CertActionAll implements ChronicHttpxHandler {
+public class CertActionNone implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(CertActionAll.class);
+    Logger logger = LoggerFactory.getLogger(CertActionNone.class);
   
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         List certs = new LinkedList();
         for (Cert cert : app.storage().listCerts(app.getEmail(httpx))) {
-            cert.setEnabled(true);
-            app.storage().cert().update(cert);            
-            certs.add(cert.getMap());
+            cert.setEnabled(false);
+            app.storage().cert().update(cert);
         }
         return JMaps.create("certs", certs);
     }

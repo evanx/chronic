@@ -144,6 +144,16 @@ public abstract class ChronicStorage {
         return topics;
     }
 
+    public Iterable<Topic> listTopics(String email, boolean enabled) throws StorageException {
+        logger.info("listTopics {} {}", email);
+        Set<Topic> topics = new TreeSet();
+        for (Subscriber subscriber : sub().list(new UserKey(email))) {
+            logger.info("listTopics subscriber {}", subscriber);
+            topics.add(topic().find(subscriber.getTopicKey()));
+        }
+        return topics;
+    }
+    
     public Iterable<String> listSubscriberEmails(AlertRecord alert) {
         Set<String> set = new TreeSet();
         for (Subscriber subscriber : sub().list(alert.getStatus().getOrgTopicKey())) {

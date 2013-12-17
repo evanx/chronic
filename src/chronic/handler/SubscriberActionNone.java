@@ -19,27 +19,20 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class ListSubscribers implements ChronicHttpxHandler {
+public class SubscriberActionNone implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(ListSubscribers.class);
+    Logger logger = LoggerFactory.getLogger(SubscriberActionNone.class);
   
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         String email = app.getEmail(httpx);
-        List subscriptions = new LinkedList();
+        List subscribers = new LinkedList();        
         for (Subscriber subscriber : app.storage().sub().list(new UserKey(email))) {
-            subscriptions.add(subscriber.getMap());
+            subscriber.setEnabled(false);
+            app.storage().sub().update(subscriber);
+            subscribers.add(subscriber.getMap());            
         }
-        List subscribers = new LinkedList();
-        if (app.getProperties().isAdmin(email)) {
-            for (Subscriber subscriber : app.storage().sub().list()) {
-                if (!subscriber.getEmail().equals(email)) {
-                    subscribers.add(subscriber.getMap());
-                }
-            }
-        }
-        return new JMap(JMaps.entry("subscribers", subscribers),
-                JMaps.entry("subscriptions", subscriptions));
+        return JMaps.create("subscriptions", subscribers);
     }
     
 }

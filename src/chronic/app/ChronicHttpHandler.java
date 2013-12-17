@@ -3,15 +3,26 @@
  */
 package chronic.app;
 
+import chronic.handler.CertAction;
+import chronic.handler.CertActionAll;
+import chronic.handler.CertActionNone;
 import chronic.handler.Enroll;
 import chronic.handler.EnrollOrg;
 import chronic.handler.ListAlerts;
-import chronic.handler.ListCerts;
-import chronic.handler.ListSubscribers;
-import chronic.handler.ListTopics;
-import chronic.handler.ListRoles;
+import chronic.handler.CertList;
+import chronic.handler.SubscriberList;
+import chronic.handler.TopicList;
+import chronic.handler.RoleList;
 import chronic.handler.Post;
+import chronic.handler.RoleAction;
+import chronic.handler.RoleActionAll;
 import chronic.handler.Subscribe;
+import chronic.handler.SubscriberAction;
+import chronic.handler.SubscriberActionAll;
+import chronic.handler.SubscriberActionNone;
+import chronic.handler.TopicAction;
+import chronic.handler.TopicActionAll;
+import chronic.handler.TopicActionNone;
 import chronic.persona.LoginPersona;
 import chronic.persona.LogoutPersona;
 import com.sun.net.httpserver.HttpExchange;
@@ -59,13 +70,35 @@ public class ChronicHttpHandler implements HttpHandler {
                 } else if (path.equals("/chronicapp/alertList")) {
                     handle(new ListAlerts(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/topicList")) {
-                    handle(new ListTopics(), new Httpx(httpExchange));
+                    handle(new TopicList(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/topicActionAll")) {
+                    handle(new TopicActionAll(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/topicActionNone")) {
+                    handle(new TopicActionNone(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/topicAction")) {
+                    handle(new TopicAction(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/subscriberList")) {
-                    handle(new ListSubscribers(), new Httpx(httpExchange));
+                    handle(new SubscriberList(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/subscriberActionAll")) {
+                    handle(new SubscriberActionAll(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/subscriberActionNone")) {
+                    handle(new SubscriberActionNone(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/subscriberAction")) {
+                    handle(new SubscriberAction(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/roleList")) {
-                    handle(new ListRoles(), new Httpx(httpExchange));
+                    handle(new RoleList(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/roleActionAll")) {
+                    handle(new RoleActionAll(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/roleAction")) {
+                    handle(new RoleAction(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/certList")) {
-                    handle(new ListCerts(), new Httpx(httpExchange));
+                    handle(new CertList(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/certAction")) {
+                    handle(new CertAction(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/certActionAll")) {
+                    handle(new CertActionAll(), new Httpx(httpExchange));
+                } else if (path.equals("/chronicapp/certActionNone")) {
+                    handle(new CertActionNone(), new Httpx(httpExchange));
                 } else {
                     logger.warn("handle {}", path);
                 }

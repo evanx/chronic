@@ -11,9 +11,9 @@ import vellum.type.Labelled;
  *
  * @author evan.summers
  */
-public enum CertAction implements Labelled {
-    DISABLE,    
-    ENABLE;
+public enum CertActionType implements Labelled {
+    GRANT,
+    REVOKE;
     
     @Override
     public String getLabel() {

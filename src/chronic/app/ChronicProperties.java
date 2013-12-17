@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.httpserver.HttpServerProperties;
+import vellum.util.Args;
 import vellum.util.ExtendedProperties;
 import vellum.util.Streams;
 import vellum.util.Strings;
@@ -43,6 +44,7 @@ public class ChronicProperties {
     static Logger logger = LoggerFactory.getLogger(ChronicProperties.class);
 
     private String serverAddress = "https://localhost:8443";
+    private String mimicEmail = null;
     private String alertScript = null;
     private long period = Millis.fromMinutes(3);
     private boolean testing = false;
@@ -60,6 +62,7 @@ public class ChronicProperties {
     public void init() throws IOException {
         String jsonConfigFileName = properties.getString("config.json", "config.json");
         JsonObjectDelegate object = new JsonObjectDelegate(new File(jsonConfigFileName));
+        mimicEmail = object.getString("mimicEmail", null);
         serverAddress = object.getString("serverAddress", serverAddress);
         alertScript = object.getString("alertScript", alertScript);
         period = object.getMillis("period", period);
@@ -85,6 +88,10 @@ public class ChronicProperties {
         }
     }
 
+    public String getMimicEmail() {
+        return mimicEmail;
+    }
+    
     public String getServerAddress() {
         return serverAddress;
     }
@@ -140,4 +147,15 @@ public class ChronicProperties {
     public boolean isSubscriber(String email) {
         return subscriberEmails.contains(email) || isAdmin(email);
     }            
+
+    public boolean isMimicEmail(String email) {
+        return mimicEmail != null && adminEmails.contains(email);
+    }
+
+    @Override
+    public String toString() {
+        return Args.format(mimicEmail);
+    }
+    
+    
 }

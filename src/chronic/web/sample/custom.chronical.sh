@@ -43,9 +43,9 @@ server=chronical.info:8444
 periodSeconds=60
 
 pingCount=1
-sslTimeout=2
 tcpTimeout=2
-httpTimeout=2
+sslTimeout=3
+httpTimeout=4
 databaseTimeout=2
 
 

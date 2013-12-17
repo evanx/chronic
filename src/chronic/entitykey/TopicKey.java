@@ -6,6 +6,7 @@ package chronic.entitykey;
 
 import vellum.data.ComparableTuple;
 import vellum.jx.JMap;
+import vellum.jx.JMapException;
 
 /**
  *
@@ -16,7 +17,14 @@ public final class TopicKey extends ComparableTuple {
     String orgUnit;
     String commonName;
     String topicString;
-            
+
+    public TopicKey(JMap map) throws JMapException {
+        this(map.getString("orgUrl"), 
+                map.getString("orgUnit"), 
+                map.getString("commonName"),
+                map.getString("topicString"));
+    }
+    
     public TopicKey(String orgUrl, String orgUnit, String commonName, String topicString) {
         super(orgUrl, orgUnit, commonName, topicString);
         this.orgUrl = orgUrl;

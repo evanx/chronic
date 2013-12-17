@@ -68,6 +68,7 @@ public class ChronicApp implements Runnable {
 
     public void init() throws Exception {
         properties.init();
+        logger.info("properties {}", properties);
         storage.init();
         messenger.init();
         messenger.alertAdmins("Chronic restarted");
@@ -180,7 +181,11 @@ public class ChronicApp implements Runnable {
             ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
             if (cookie.getEmail() != null) {
                 if (properties.isTesting()) {
-                    return cookie.getEmail();
+                    if (properties.isMimicEmail(cookie.getEmail())) {
+                        return properties.getMimicEmail();
+                    } else {
+                        return cookie.getEmail();
+                    }
                 }
                 PersonaUserInfo userInfo = new PersonaVerifier(this, cookie).
                         getUserInfo(httpx.getServerUrl(), cookie.getAssertion());

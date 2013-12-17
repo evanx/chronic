@@ -109,16 +109,16 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     
     public JMap getMap() throws StorageException {
         return new JMap(
-                JMaps.entry("orgName", getOrg().getOrgName()),
+                JMaps.entry("orgUrl", orgUrl),
                 JMaps.entry("email", email),
-                JMaps.entry("role", roleType),
+                JMaps.entry("roleType", roleType),
+                JMaps.entry("roleTypeLabel", roleType.getLabel()),
                 JMaps.entry("action", getAction()),
-                JMaps.entry("actionLabel", getAction().getLabel()),
-                JMaps.entry("roleLabel", roleType.getLabel()));
+                JMaps.entry("actionLabel", getAction().getLabel()));
     }
     
     private OrgRoleAction getAction() {
-        return enabled ? OrgRoleAction.REVOKE : OrgRoleAction.CONFIRM;
+        return enabled ? OrgRoleAction.REVOKE : OrgRoleAction.GRANT;
     }
     
     @Override

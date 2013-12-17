@@ -12,7 +12,7 @@ import vellum.type.Labelled;
  * @author evan.summers
  */
 public enum TopicAction implements Labelled {
-    UNSUBSCRIBE,    
+    DISABLE,    
     SUBSCRIBE;
     
     @Override

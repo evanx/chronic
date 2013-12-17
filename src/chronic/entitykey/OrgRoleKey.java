@@ -6,6 +6,8 @@ package chronic.entitykey;
 
 import chronic.entitytype.OrgRoleType;
 import vellum.data.ComparableTuple;
+import vellum.jx.JMap;
+import vellum.jx.JMapException;
 
 /**
  *
@@ -16,6 +18,11 @@ public class OrgRoleKey extends ComparableTuple {
     String email;
     OrgRoleType roleType;
 
+    public OrgRoleKey(JMap map, String email) throws JMapException {
+        this(map.getString("orgUrl"), email,
+                OrgRoleType.valueOf(map.getString("roleType")));
+    }
+    
     public OrgRoleKey(String orgUrl, String email, OrgRoleType roleType) {
         super(orgUrl, email, roleType);        
         this.orgUrl = orgUrl;

@@ -89,6 +89,10 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
         return id;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    
     @Override
     public boolean isEnabled() {
         return enabled;
@@ -119,7 +123,7 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
     }
 
     private TopicAction getAction() {
-        return enabled ? TopicAction.UNSUBSCRIBE : TopicAction.SUBSCRIBE;
+        return enabled ? TopicAction.DISABLE : TopicAction.SUBSCRIBE;
     }
 
     @Override

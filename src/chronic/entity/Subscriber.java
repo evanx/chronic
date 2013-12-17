@@ -116,6 +116,8 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
         JMap map = new JMap();
         map.put("id", id);
         map.put("orgUrl", orgUrl);
+        map.put("orgUnit", orgUnit);
+        map.put("commonName", commonName);
         map.put("topicString", topicString);
         map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());
@@ -124,7 +126,7 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
     }
 
     private TopicAction getAction() {
-        return enabled ? TopicAction.UNSUBSCRIBE : TopicAction.SUBSCRIBE;
+        return enabled ? TopicAction.DISABLE : TopicAction.SUBSCRIBE;
     }
     
     @Override

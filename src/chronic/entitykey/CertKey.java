@@ -5,6 +5,8 @@
 package chronic.entitykey;
 
 import vellum.data.ComparableTuple;
+import vellum.jx.JMap;
+import vellum.jx.JMapException;
 
 /**
  *
@@ -17,6 +19,12 @@ public final class CertKey extends ComparableTuple {
     String commonName;
     String address;
 
+    public CertKey(JMap map) throws JMapException {
+        this(map.getString("orgUrl"), 
+                map.getString("orgUnit"), 
+                map.getString("commonName"));
+    }
+    
     public CertKey(String orgUrl, String orgUnit, String commonName) {
         super(orgUrl, orgUnit, commonName);
         this.orgUrl = orgUrl;
