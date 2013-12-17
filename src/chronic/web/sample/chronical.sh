@@ -471,6 +471,7 @@ c0run() {
 
 c0restart() {
   debug=0  
+  c0killall
   c0run 2>run.err >run.out &
 }
 
