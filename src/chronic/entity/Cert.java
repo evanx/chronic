@@ -94,13 +94,29 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
     public boolean isEnabled() {
         return enabled;
     }
+
+    public void setOrgUrl(String orgUrl) {
+        this.orgUrl = orgUrl;
+    }
     
     public String getOrgUrl() {
         return orgUrl;
     }
 
+    public void setOrgUnit(String orgUnit) {
+        this.orgUnit = orgUnit;
+    }
+    
     public String getOrgUnit() {
         return orgUnit;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+    
+    public String getCommonName() {
+        return commonName;
     }
     
     public String getEncoded() {
@@ -123,6 +139,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
         this.timestamp = timestamp;
     }
 
+    @Override
     public long getTimestamp() {
         return timestamp;
     }
