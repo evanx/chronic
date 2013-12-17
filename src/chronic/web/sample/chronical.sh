@@ -53,6 +53,9 @@ dir=~/.chronic
 mkdir -p $dir
 cd $dir
 
+pwd | grep '/.chronic$' || exit 1
+
+echo $$ > pid
 
 ### debug 
 
@@ -357,9 +360,7 @@ c0dailyPost() {
 }
 
 c0hourlyCron() {
-  c0stopped
   c0hourlyPost
-  c0stopped
   if [ `date +%H` -eq $scheduledHour ] 
   then
     c0dailyPost
@@ -367,8 +368,8 @@ c0hourlyCron() {
 }
 
 c0minutelyCron() {
-  c0stopped
   c0minutelyPost
+  c0stopped
   if [ `date +%M` -eq $scheduledMinute ]
   then
     if [ -f hourly ]
@@ -441,7 +442,6 @@ c0stopped() {
 c0run() {
   debug=2
   c0kill
-  echo $$ > pid
   c0enroll
   rm -f hourly minutely
   while [ 1 ]
@@ -450,6 +450,7 @@ c0run() {
     periodTime=`date -d "$periodSeconds seconds" +%s`
     decho "periodTime $periodTime (current $time, period $periodSeconds seconds, pid $$)"
     c0minutelyCron
+    c0stopped
     decho "periodTime $periodTime vs stat `stat -c %Z minutely`"
     decho "minute `date +%M` vs scheduledMinute $scheduledMinute"
     decho "`date '+%H:%M:%S'` time `date +%s` finish $periodTime for $periodSeconds seconds"
