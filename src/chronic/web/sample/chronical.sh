@@ -226,9 +226,9 @@ c2https() {
   decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
   if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
-    echo "OK - $1 (port $2) https available" `bcat https`
+    echo "OK - $1 port $2 https available" `bcat https`
   else 
-    echo "CRITICAL - $1 (port $2) https unavailable" `bcat https`
+    echo "CRITICAL - $1 port $2 https unavailable" `bcat https`
   fi
 }
 
@@ -236,9 +236,9 @@ c2nohttps() {
   decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
   if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
-    echo "CRITICAL - $1 (port $2) https available" `bcat https`
+    echo "CRITICAL - $1 port $2 https available" `bcat https`
   else 
-    echo "OK - $1 (port $2) https unavailable" `bcat https`
+    echo "OK - $1 port $2 https unavailable" `bcat https`
   fi
 }
 
@@ -246,9 +246,9 @@ c2http() {
   decho "curl --connect-timeout $httpTimeout -k -s -I http://$1:$2"
   if curl --connect-timeout $httpTimeout -k -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
   then
-    echo "OK - $1 (port $2) http available" `bcat http`
+    echo "OK - $1 port $2 http available" `bcat http`
   else 
-    echo "CRITICAL - $1 (port $2) http unavailable" `bcat http`
+    echo "CRITICAL - $1 port $2 http unavailable" `bcat http`
   fi
 }
 
