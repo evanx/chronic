@@ -6,7 +6,6 @@ package chronic;
 
 import chronic.app.HtmlChecker;
 import chronic.app.StatusRecord;
-import chronic.app.StatusRecordParser;
 import chronic.app.StatusRecordPatterns;
 import chronic.entitykey.CertKey;
 import java.util.regex.Matcher;
