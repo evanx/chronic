@@ -27,28 +27,6 @@ scheduledMinute=""
 scheduledHour=""
 
 
-### default settings
-
-loadWarningThreshold=4
-loadCriticalThreshold=9
-
-diskWarningThreshold=80
-diskCriticalThreshold=90
-
-packetLossWarningThreshold=20
-packetLossCriticalThreshold=60
-
-server=chronical.info:8444
-
-periodSeconds=60
-
-pingCount=1
-tcpTimeout=2
-sslTimeout=3
-httpTimeout=4
-databaseTimeout=2
-
-
 ### customizable jobs
 
 c0minutely() {
