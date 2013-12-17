@@ -23,7 +23,11 @@
     <div class="container">
       <div class="navbar navbar-default navbar-fixed-top" role="navigation" ng-cloak>
         <div class="navbar-header">
-          <a class="navbar-brand" href="#" ng-click="changeView('info')">chronical.info</a>
+          <ul class="nav navbar-nav">
+            <li ng-class="getClass('faq')">
+              <a class="navbar-brand" href="#" ng-click="changeView('faq')">chronical.info</a>
+            </li>
+          </ul>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav" ng-show="persona.email" >
@@ -322,18 +326,28 @@ orgUrl="your.org"</pre>
         <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
           <i>(to <a href="https://chronical.info">https://chronical.info</a> 
             using Mozilla Persona)</i>
+        <p>ps. The script posts to HTTPS on port 8444, which might be blocked by your firewall?</p>
         <hr>
-
         <h4>Getting jiggy with it</h4>
         <p>Customize the <tt>custom.chronical.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or only daily.</p>
         <p>Add Nagios plugins and adhoc scripts as required.</p>
         <p>As good practice, run <tt>chronical.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>sudo</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
         <p>Send your questions, bugs and suggestions to evan.summers@gmail.com.</p>
         <hr>
+        <h4>Resources</h4>
+        <p><a href="/sample/custom.chronical.sh">
+            https://chronical.info/sample/custom.chronical.sh</a> - customisable template
 
+        <p><a href="/sample/chronical.sh">
+            https://chronical.info/sample/chronical.sh</a> - operational script
+      </div>
+    </div>
+    <div class="container" ng-show="!persona.email || view === 'faq'" ng-cloak>
+      <div class="row well-lg">
+        <hr>
         <h4>Frequently asked questions</h4>
 
-        <p><b>What is it?</b>          
+        <p><b>What's this?</b>          
         <br>A simple multi-tenancy cloud-based passive monitoring solution.
 
         <p><b>How much does it cost?</b>
@@ -343,12 +357,12 @@ orgUrl="your.org"</pre>
         <br>It's great for adhoc monitoring. 
 
         <p><b>How is this different from some other opensource monitoring projects?</b>
-        <br>It's provides a multi-tenancy cloud service, without any server setup, leveraging Nagios plugins, and enabling custom checks.
+        <br>It provides a multi-tenancy cloud service, without any server setup, leveraging Nagios plugins, and enabling custom checks.
 
         <p><b>What is installed on clients?</b>
         <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, this script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. But the system is specially engineered to support Nagios plugins, and custom checks.
         <p><b>What API does one use?</b>
-        <br>Plain text document over HTTPS POST, for piping the output of a monitored script into <tt>curl</tt>. A script might invoke multiple Nagios plugins or commands to produce output you wish to monitor e.g. list the hashes of sensitive files, verify installed packages, <tt>grep</tt> for interesting patterns in log files, etc.
+        <br>Plain text document over HTTPS POST, for piping the output of a monitored script into <tt>curl</tt>. A script might invoke multiple Nagios plugins or commands to produce output that you wish to monitor. Commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> for interesting patterns in log files, etc.
 
         <p><b>How are alerts triggered?</b>
         <br>Typically by any change in the monitored output. However, the content is specially compared, to recognise Nagios status lines, Cron and email-style headers, and logging lines, so that superflous information does not trigger alerts. Otherwise <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
@@ -363,13 +377,6 @@ orgUrl="your.org"</pre>
         <p><b>Show me the code!</b>
         <br>See <a href="https://github.com/evanx/chronic">https://github.com/evanx/chronic</a>.
         This uses <a href="https://github.com/evanx/vellumcore">https://github.com/evanx/vellumcore</a> which is a common base of distilled code from previous projects.
-        <hr>
-        <h4>Resources</h4>
-        <p><a href="/sample/custom.chronical.sh">
-            https://chronical.info/sample/custom.chronical.sh</a> - customisable template
-
-        <p><a href="/sample/chronical.sh">
-            https://chronical.info/sample/chronical.sh</a> - operational script
         <hr> 
         <p class="pull-right">
           <a href="https://www.positivessl.com" style=
