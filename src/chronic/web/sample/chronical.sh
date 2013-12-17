@@ -42,6 +42,8 @@ databaseTimeout=2
 
 ### init 
 
+startTimestamp=`date '+%s'`
+
 set -u 
 
 cd `dirname $0`
@@ -54,22 +56,40 @@ cd $dir
 
 ### debug 
 
+debug=3 # 0 no debugging 1 log to stdout, 2 to sterr, 3 debug file only
+
 rm -f debug
 
 decho() {
-  if [ -f debug ]
+  if [ $debug -eq 1 ]
+  then
+    echo "chronical: $*" 
+  fi
+  if [ $debug -eq 2 ]
+  then
+    echo "chronical: $*" >&2
+  fi
+  if [ $debug -ge 1 ]
   then
     echo "chronical: $*" >> debug
-  else 
-    echo "chronical: $*" >&2
   fi
 }
 
 decho custom $custom
 
 dcat() {
-  if [ -f debug ]
+  if [ $debug -eq 1 ]
   then
+    echo "chronical:" 
+    cat "$1"
+  if [ $debug -eq 2 ]
+  then
+    echo "chronical:" >&2
+    cat "$1" >&2
+  fi
+  if [ $debug -ge 1 ]
+  then
+    echo "chronical:" >> debug
     cat "$1" >> debug
   fi
 }
@@ -419,6 +439,7 @@ c0stopped() {
 }
 
 c0run() {
+  debug=2
   c0kill
   echo $$ > pid
   c0enroll
@@ -442,15 +463,11 @@ c0run() {
       periodSeconds=`expr $periodSeconds + 30`
       decho "extending periodSeconds to $periodSeconds"
     fi
-    if [ -f debug -a `stat -c %Z debug` -lt `date -d '10 minutes ago' '+%s'` ]
-    then
-      rm debug
-    fi
   done
 }
 
 c0start() {
-  touch debug
+  debug=0  
   c0killall
   c0kill
   c0run 2>run.err >run.out &
