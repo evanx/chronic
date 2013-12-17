@@ -310,6 +310,7 @@
         <h2 ng-cloak ng-show="!persona.email">
           <b>Instant</b> cloud monitoring, <i>as follows.</i></h2>
         <h2 ng-cloak ng-show="persona.email">Getting started</h2>
+        <p><a class="btn btn-primary btn-lg" role="button" ng-cloak ng-show="!persona.email">Learn more &raquo;</a></p>
         <p>Step 1: <b>Get</b> two scripts, as an unpriviledged user.
         <pre>wget https://chronical.info/sample/custom.chronical.sh
 wget https://chronical.info/sample/chronical.sh</pre>   
@@ -362,11 +363,13 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         <h4>Resources</h4>
         <p><a href="/sample/custom.chronical.sh">
             https://chronical.info/sample/custom.chronical.sh</a> - customisable template
-
+        </p>
         <p><a href="/sample/chronical.sh">
             https://chronical.info/sample/chronical.sh</a> - operational script
+        </p>
       </div>
     </div>
+    
     <div class="container" ng-show="!persona.email || view === 'faq'" ng-cloak>
       <div class="row well-lg">
         <h2 ng-cloak ng-show="persona.email && view === 'faq'">
@@ -406,14 +409,12 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         <p><b>Show me the code!</b>
           <br>See <a href="https://github.com/evanx/chronic">https://github.com/evanx/chronic</a>.
           This uses <a href="https://github.com/evanx/vellumcore">https://github.com/evanx/vellumcore</a> which is a common base of distilled code from previous projects.
-        <hr> 
-        <p class="pull-right">
-          <a href="https://www.positivessl.com" style=
-             "font-family: arial; font-size: 10px; color: #212121; text-decoration: none;">
-            <img src="https://www.positivessl.com/images-new/PositiveSSL_tl_white2.gif"
-                 alt="positivessl" width="64"/></a>
-        </p>
-
+      </div>
+    </div>
+    
+    <div class="container" ng-show="!persona.email || view === 'faq'" ng-cloak>
+      <div class="row well-lg">
+      
         <hr>
         <h4>News</h4>
 
@@ -430,6 +431,13 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks.
         <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronical. Its UI uses Bootstrap 2 and jQuery, and it used JDBC from word go, albeit using an H2 in-memory database. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed. 
         <p>The result is Chronical, which uses the awesome AngularJS front-end framework (see <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>), and a lovely pluggable SQL'esque storage engine mechanism (see <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/EntityStore.java">EntityStore</a> and <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/MapStore.java">MapStore</a>). Prototyping can forgo SQL, but a JDBC plugin can enable persistence right off the bat. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicMapStore.java">ChronicMapStore</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicStorage.java">ChronicStorage</a>.
+        <hr> 
+        <p class="pull-right">
+          <a href="https://www.positivessl.com" style=
+             "font-family: arial; font-size: 10px; color: #212121; text-decoration: none;">
+            <img src="https://www.positivessl.com/images-new/PositiveSSL_tl_white2.gif"
+                 alt="positivessl" width="64"/></a>
+        </p>
       </div>
     </div>
 
