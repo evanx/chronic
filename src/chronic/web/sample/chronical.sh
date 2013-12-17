@@ -444,7 +444,6 @@ c0stopped() {
 
 c0run() {
   debug=2
-  c0killall
   c0enroll
   rm -f hourly minutely
   while [ 1 ]
@@ -472,13 +471,14 @@ c0run() {
 
 c0restart() {
   debug=0  
-  c0killall
   c0run 2>run.err >run.out &
 }
 
 c0start() {
   c0restart
 }
+
+pgrep -f "chronical.sh $1" | grep -v $$ && echo "WARNING previous chronical running"
 
 if [ $# -gt 0 ]
 then
