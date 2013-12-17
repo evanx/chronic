@@ -50,7 +50,7 @@ cd `dirname $0`
 custom=`pwd`/custom.chronical.sh
 
 dir=~/.chronic
-mkdir -p $dir
+mkdir -p $dir/etc
 cd $dir
 
 pwd | grep '/.chronic$' || exit 1
@@ -108,6 +108,8 @@ then
 fi
 
 echo $$ > pid
+
+trap 'rm -f pid' EXIT
 
 ### util 
 
@@ -309,8 +311,8 @@ c0sshAuthKeys() {
 ### standard functionality
 
 c1curl() {
-  tee curl.txt | curl -k --cacert server.pem --key key.pem --cert ./cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 >curl.out 2> curl.err
+  tee curl.txt | curl -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+    --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 >curl.out 2>curl.err
 }
 
 c0enroll() {
@@ -318,24 +320,24 @@ c0enroll() {
 }
 
 c0ensureKey() {
-  if [ ! -f key.pem ] 
+  if [ ! -f etc/key.pem ] 
   then
-    rm -f cert.pem
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pem \
+    rm -f etc/cert.pem
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout etc/key.pem -out etc/cert.pem \
       -subj "/CN=$commonName/O=$orgUrl/OU=$orgUnit"
-    openssl x509 -text -in cert.pem | grep CN
+    openssl x509 -text -in etc/cert.pem | grep CN
   fi
 }
 
 c0ensureCert() {
-  if [ ! -f server.pem ]
+  if [ ! -f etc/server.pem ]
   then
     if echo | openssl s_client -connect $server 2>/dev/null | grep -q 'BEGIN CERT'
     then
       openssl s_client -connect $server 2>/dev/null | 
-        sed -n -e '/BEGIN CERT/,/END CERT/p' > server.pem
-      openssl x509 -text -in server.pem | grep 'CN='
-      ls -l server.pem
+        sed -n -e '/BEGIN CERT/,/END CERT/p' > etc/server.pem
+      openssl x509 -text -in etc/server.pem | grep 'CN='
+      ls -l etc/server.pem
     fi
   fi
 }
@@ -344,7 +346,7 @@ c0ensureKey
 c0ensureCert
 
 c0reset() {
-  rm -f cert.pem key.pem server.pem
+  rm -f etc/cert.pem etc/key.pem etc/server.pem
   c0ensureKey
   c0ensureCert
 }
