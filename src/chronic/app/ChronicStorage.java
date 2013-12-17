@@ -170,7 +170,6 @@ public abstract class ChronicStorage {
         set.addAll(sub().list(new UserKey(email)));
         logger.info("listSubscriber {}", set);
         if (app.getProperties().isAdmin(email)) {
-            set.addAll(sub().list());
         }
         return set;
     }
@@ -192,7 +191,6 @@ public abstract class ChronicStorage {
             set.addAll(cert().list(new OrgKey(orgUrl)));
         }
         if (app.getProperties().isAdmin(email)) {
-            set.addAll(cert().list());
         }
         return set;
     }

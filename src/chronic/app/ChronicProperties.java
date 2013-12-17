@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
+import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
@@ -152,10 +153,35 @@ public class ChronicProperties {
         return mimicEmail != null && adminEmails.contains(email);
     }
 
+    public PoolProperties getPoolProperties() {
+        PoolProperties poolProperties = new PoolProperties();
+        poolProperties.setUrl("jdbc:h2:mem");
+        poolProperties.setDriverClassName("org.h2.Driver");
+        poolProperties.setUsername("sa");
+        poolProperties.setPassword("sa");
+        poolProperties.setJmxEnabled(true);
+        poolProperties.setTestWhileIdle(false);
+        poolProperties.setTestOnBorrow(true);
+        poolProperties.setValidationQuery("SELECT 1");
+        poolProperties.setTestOnReturn(false);
+        poolProperties.setValidationInterval(30000);
+        poolProperties.setTimeBetweenEvictionRunsMillis(30000);
+        poolProperties.setMaxActive(100);
+        poolProperties.setInitialSize(10);
+        poolProperties.setMaxWait(10000);
+        poolProperties.setRemoveAbandonedTimeout(60);
+        poolProperties.setMinEvictableIdleTimeMillis(30000);
+        poolProperties.setMinIdle(10);
+        poolProperties.setLogAbandoned(true);
+        poolProperties.setRemoveAbandoned(true);
+        poolProperties.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
+                + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer");
+        return poolProperties;
+    }
+    
     @Override
     public String toString() {
         return Args.format(mimicEmail);
     }
-    
-    
+       
 }

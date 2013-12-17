@@ -54,14 +54,14 @@ import vellum.storage.MapStore;
  */
 public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
     Logger logger = LoggerFactory.getLogger(ChronicMapStore.class);
-    
+
     @Override
     public Collection<E> list(Comparable key) {
         if (key instanceof Org) {
             key = new OrgKey(((Org) key).getOrgUrl());
         }
         Collection list = new LinkedList();
-        for (E entity : list()) {
+        for (E entity : keyMap.values()) {
             if (matches(key, entity)) {
                 list.add(entity);
             }

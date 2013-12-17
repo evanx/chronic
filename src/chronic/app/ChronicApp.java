@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.CapacityDeque;
@@ -62,7 +63,8 @@ public class ChronicApp implements Runnable {
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     Deque statusDeque = new CapacityDeque(100);
     Deque alertDeque = new CapacityDeque(100);
-
+    DataSource dataSource;
+    
     public ChronicApp() {
     }
 
@@ -87,6 +89,10 @@ public class ChronicApp implements Runnable {
         return properties;
     }
 
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+    
     public void start() throws Exception {
         logger.info("schedule {}", properties.getPeriod());
         executorService.scheduleAtFixedRate(this, properties.getPeriod(),
