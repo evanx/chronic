@@ -488,7 +488,7 @@ c0showpid() {
   then
     echo "previousPid: $previousPid"
   else 
-    echo "previousPid: " `pwd`/pid
+    echo "previousPid: none in" `pwd`/pid
   fi
   echo "currentPid: $$"
   if pgrep -f "chronical.sh" | grep -v $$ 
