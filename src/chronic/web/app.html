@@ -354,7 +354,7 @@ OK - chronical.info (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)<
         <p>Then you can test such functions individually from the command-line as follows.</p>
       <pre>$ sh scripts/chronical.sh pgsql
 CRITICAL - no connection</pre>        
-        <p>As good practice, run <tt>chronical.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>sudo</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
+        <p>As good practice, run <tt>chronical.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>su</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
       <pre>$ cat /etc/rc.local
 su - chronical -c 'scripts/chronical.sh start'</pre>
         <p>Send your questions, bugs and suggestions to evan.summers@gmail.com.</p>
