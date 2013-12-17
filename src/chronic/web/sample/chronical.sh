@@ -491,6 +491,7 @@ c0showpid() {
     echo "INFO no previous pid file:" `pwd`/pid
   fi
   echo "INFO current pid: $$"
+    pgrep -f "chronical.sh"
   if pgrep -f "chronical.sh" | grep -v $$ 
   then
     pgrep -f "chronical.sh"
