@@ -488,11 +488,12 @@ c0showpid() {
   then
     echo "Chronical WARNING - another chronical.sh still running: $previousPid"
   else 
-    echo "Chronical OK - none in" `pwd`/pid
+    echo "INFO no previous pid file:" `pwd`/pid
   fi
-  echo "currentPid: $$"
+  echo "INFO current pid: $$"
   if pgrep -f "chronical.sh" | grep -v $$ 
   then
+    pgrep -f "chronical.sh"
     echo "Chronical WARNING - another chronical.sh still running"
   elif ps x | grep "chronical.sh" | grep -v "$$\|grep" 
   then
@@ -500,7 +501,7 @@ c0showpid() {
   fi
 }
 
-c0showpid | grep WARNING
+c0showpid | grep 'WARNING'
 
 if [ $# -gt 0 ]
 then
