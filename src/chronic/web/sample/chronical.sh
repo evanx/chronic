@@ -383,8 +383,8 @@ c1killall() {
 }
 
 c0killall() {
-  c2killall run
-  c2killall start
+  c1killall run
+  c1killall start
 }
 
 c0kill() {
