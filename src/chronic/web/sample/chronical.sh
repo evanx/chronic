@@ -495,17 +495,13 @@ c0showpid() {
     echo "INFO no previous pid file:" `pwd`/pid
   fi
   echo "INFO current pid: $$"
-  if pgrep -f "chronical.sh" | grep -v "$$\|grep" | grep '[0-9]'
+  if ps x | grep "chronical.sh" | grep -v "$$\|grep" | grep '[0-9]'
   then
     echo "Chronical WARNING - another chronical.sh still running"
-  elif ps x | grep "chronical.sh" | grep -v "$$\|grep" | grep '[0-9]'
-  then
-    echo "Chronical WARNING - another chronical.sh still running (ps)"
   fi
 }
 
-c0showpid
-c0showpid | grep 'WARNING'
+#c0showpid | grep 'WARNING'
 
 if [ $# -gt 0 ]
 then
