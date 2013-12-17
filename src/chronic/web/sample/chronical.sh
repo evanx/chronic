@@ -496,7 +496,7 @@ c0showpid() {
   fi
   echo "INFO current pid: $$"
     pgrep -f "chronical.sh"
-  if pgrep -f "chronical.sh" | grep -v $$ | grep '[0-9]'
+  if pgrep -f "chronical.sh" | grep -v '$$\|grep' | grep '[0-9]'
   then
     pgrep -f "chronical.sh"
     echo "Chronical WARNING - another chronical.sh still running"
