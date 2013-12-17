@@ -55,7 +55,6 @@ cd $dir
 
 pwd | grep '/.chronic$' || exit 1
 
-echo $$ > pid
 
 ### debug 
 
@@ -98,6 +97,17 @@ dcat() {
   fi
 }
 
+
+### pid 
+
+previousPid=''
+[ -f pid ] 
+then
+  previousPid=`head -1 pid`
+  decho "previous pid: $previousPid" 
+fi
+
+echo $$ > pid
 
 ### util 
 
@@ -401,25 +411,18 @@ c1killall() {
 }
 
 c0killall() {
+  c0kill
   c1killall run
   c1killall start
 }
 
 c0kill() {
-  if [ -f pid ] 
+  if [ -n "$previousPid" ] 
   then
-    decho "previous pid:" `cat pid`
-  fi
-  if [ -f pid ] 
-  then
-    pid=`cat pid`
-    if ps -p $pid | grep $pid
-    then
-      decho "kill $pid"
-      kill $pid
+    if ps -p "$previousPid" >/dev/null
+    kill $pid
     fi
   fi
-  rm -f pid
 }
 
 c0stop() {
@@ -431,7 +434,7 @@ c0stopped() {
   then
     decho "cancelled (pid file removed)"
     exit 1
-  elif [ `cat pid` -ne $$ ]
+  elif [ `head -1 pid` -ne $$ ]
   then
     decho "cancelled (pid file changed)"
     exit 1
@@ -440,7 +443,7 @@ c0stopped() {
 
 c0run() {
   debug=2
-  c0kill
+  c0killall
   c0enroll
   rm -f hourly minutely
   while [ 1 ]
@@ -466,11 +469,14 @@ c0run() {
   done
 }
 
-c0start() {
+c0restart() {
   debug=0  
   c0killall
-  c0kill
   c0run 2>run.err >run.out &
+}
+
+c0start() {
+  c0restart
 }
 
 if [ $# -gt 0 ]
