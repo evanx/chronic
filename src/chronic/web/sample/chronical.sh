@@ -30,7 +30,7 @@ diskCriticalThreshold=90
 packetLossWarningThreshold=20
 packetLossCriticalThreshold=60
 
-server=chronical.info:443
+server=secure.chronical.info:443
 
 periodSeconds=60
 
@@ -57,13 +57,23 @@ cd $dir
 rm -f debug
 
 decho() {
-  echo "debug $*" >> debug
+  if [ -f debug ]
+  then
+    echo "debug $*" >> debug
+  else 
+    echo "debug $*" >&2
+  fi
 }
 
 decho custom $custom
 
 dcat() {
-  cat "$1" >> debug
+  if [ -f debug ]
+  then
+    cat "$1" >> debug
+  else 
+    cat "$1" >&2
+  fi
 }
 
 decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
@@ -447,6 +457,7 @@ c0run() {
 }
 
 c0start() {
+  touch debug
   c0killrun
   c0kill
   c0run 2>run.err >run.out &
