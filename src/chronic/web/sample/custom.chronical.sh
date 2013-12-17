@@ -19,10 +19,10 @@
 
 ### custom config 
 
-subscribers=""
 admins=""
 orgUrl=""
 orgUnit=""
+subscribers=""
 scheduledMinute=""
 scheduledHour=""
 
