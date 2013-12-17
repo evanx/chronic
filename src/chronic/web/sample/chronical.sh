@@ -420,7 +420,8 @@ c0kill() {
   if [ -n "$previousPid" ] 
   then
     if ps -p "$previousPid" >/dev/null
-    kill $pid
+    then
+      kill "$previousPid"
     fi
   fi
 }
