@@ -106,7 +106,7 @@ previousPid=''
 if [ -f pid ] 
 then
   previousPid=`head -1 pid`
-  decho "previous pid: $previousPid" 
+  decho "previousPid: $previousPid" 
 fi
 
 echo $$ > pid
