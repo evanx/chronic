@@ -42,6 +42,7 @@ sslTimeout=3
 httpTimeout=4
 databaseTimeout=2
 
+
 ### init 
 
 startTimestamp=`date '+%s'`
@@ -55,8 +56,11 @@ dir=~/.chronic
 mkdir -p $dir/etc
 cd $dir
 
-pwd | grep '/.chronic$' || exit 1
-
+if ! pwd | grep -q '/.chronic$'
+then 
+  echo "Chronical CRITICAL - pwd sanity check failed:" `pwd`
+  exit 1
+fi
 
 ### debug 
 
