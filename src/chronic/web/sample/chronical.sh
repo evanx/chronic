@@ -1,4 +1,4 @@
-#!/bin.sh
+#!/bin/bash
 
 # Source https://github.com/evanx by @evanxsummers
 #
@@ -31,6 +31,8 @@ cd $dir
 
 ### debug 
 
+rm -f debug
+
 decho() {
   echo "debug $*" >> debug
 }
@@ -38,7 +40,19 @@ decho() {
 decho custom $custom
 
 dcat() {
-  cat "$*" >> debug
+  cat "$1" >> debug
+}
+
+### util 
+
+bcat() {
+  if [ -f $1 ]
+  then
+    if [ `cat $1 | wc -l` -gt 0 ]
+    then
+      echo "(`head -1 $1 | sed 's/\s*$//'`)"
+    fi
+  fi
 }
 
 
@@ -109,9 +123,9 @@ c2tcp() {
   decho "nc -w$tcpTimeout $1 $2"
   if nc -w$tcpTimeout $1 $2
   then
-    echo "OK - $1:$2 open"
+    echo "OK - $1 port $2 open"
   else
-    echo "CRITICAL - $1:$2 closed"
+    echo "CRITICAL - $1 port $2 closed"
   fi
 }
 
@@ -119,9 +133,9 @@ c2notcp() {
   decho "nc -w$tcpTimeout $1 $2"
   if nc -w$tcpTimeout $1 $2
   then
-    echo "CRITICAL - $1:$2 open"
+    echo "CRITICAL - $1 port $2 open"
   else
-    echo "OK - $1:$2 closed"
+    echo "OK - $1 port $2 closed"
   fi
 }
 
@@ -129,9 +143,9 @@ c2ssl() {
   decho "timeout $sslTimeout openssl s_client -connect $1:$2"
   if timeout $sslTimeout openssl s_client -connect $1:$2 2> /dev/null < /dev/null | grep '^subject=' 
   then
-    echo "OK - $1:$2 has SSL"
+    echo "OK - $1 port $2 has SSL"
   else
-    echo "CRITICAL - $1:$2 no SSL"
+    echo "CRITICAL - $1 port $2 no SSL"
   fi
 }
 
@@ -139,38 +153,58 @@ c2nossl() {
   decho "timeout $sslTimeout openssl s_client -connect $1:$2"
   if timeout $sslTimeout openssl s_client -connect $1:$2 2> /dev/null < /dev/null | grep '^subject=' 
   then
-    echo "CRITICAL - $1:$2 has SSL"
+    echo "CRITICAL - $1 port $2 has SSL"
   else
-    echo "OK - $1:$2 no SSL"
+    echo "OK - $1 port $2 no SSL"
   fi
 }
 
 c2https() {
   decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
-  if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep 'HTTP' 
+  if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
-    echo "OK - $1:$2 https available"
+    echo "OK - $1 (port $2) https available" `bcat https`
   else 
-    echo "CRITICAL - $1:$2 unavailable https"
+    echo "CRITICAL - $1 (port $2) https unavailable" `bcat https`
   fi
 }
 
 c2nohttps() {
   decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
-  if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep 'HTTP'
+  if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
-    echo "CRITICAL - $1:$2 https available"
+    echo "CRITICAL - $1 (port $2) https available" `bcat https`
   else 
-    echo "OK - $1:$2 unavailable https"
+    echo "OK - $1 (port $2) https unavailable" `bcat https`
+  fi
+}
+
+c2http() {
+  decho "curl --connect-timeout $httpTimeout -k -s -I http://$1:$2"
+  if curl --connect-timeout $httpTimeout -k -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
+  then
+    echo "OK - $1 (port $2) http available" `bcat http`
+  else 
+    echo "CRITICAL - $1 (port $2) http unavailable" `bcat http`
+  fi
+}
+
+c2nohttp() {
+  decho "curl --connect-timeout $httpTimeout -k -s -I http://$1:$2"
+  if curl --connect-timeout $httpTimeout -k -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
+  then
+    echo "CRITICAL - $1 (port $2) http available" `bcat http`
+  else 
+    echo "OK - $1 (port $2) http unavailable" `bcat http`
   fi
 }
 
 c2postgres() {
   if timeout $databaseTimeout psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' 
   then
-    echo "OK - $1:$2 postgres server"
+    echo "OK - $1 (port $2) postgres server"
   else
-    echo "CRITICAL - $1:$2 postgres server not running"
+    echo "CRITICAL - $1 (port $2) postgres server not running"
   fi
 }
 
@@ -328,7 +362,7 @@ c0killstart() {
 c0kill() {
   if [ -f pid ] 
   then
-    echo "previous pid:" `cat pid`
+    decho "previous pid:" `cat pid`
   fi
   if [ -f pid ] 
   then
@@ -381,6 +415,10 @@ c0run() {
     else
       periodSeconds=`expr $periodSeconds + 30`
       decho "extending periodSeconds to $periodSeconds"
+    fi
+    if [ -f debug -a `stat -c %Z debug` -lt `date -d '10 minutes ago' '+%s'` ]
+    then
+      rm debug
     fi
   done
 }

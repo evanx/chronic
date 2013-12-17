@@ -75,4 +75,9 @@ public class StatusRecordChecker {
         }
         return false;
     }
+    
+    public boolean matches(StatusRecord other) {
+        return new StatusRecordMatcher(status).matches(other);
+    }
+    
 }
