@@ -11,8 +11,8 @@ import vellum.type.Labelled;
  *
  * @author evan.summers
  */
-public enum OrgRoleAction implements Labelled {
-    GRANT,    
+public enum UserActionType implements Labelled {
+    CONFIRM,    
     REVOKE;
     
     @Override

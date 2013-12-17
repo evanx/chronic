@@ -16,7 +16,7 @@ import chronic.entitykey.SubscriberKeyed;
 import chronic.entitykey.OrgKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicKeyed;
-import chronic.entitytype.TopicAction;
+import chronic.entitytype.TopicActionType;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
@@ -125,8 +125,8 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
         return map;
     }
 
-    private TopicAction getAction() {
-        return enabled ? TopicAction.DISABLE : TopicAction.SUBSCRIBE;
+    private TopicActionType getAction() {
+        return enabled ? TopicActionType.DISABLE : TopicActionType.SUBSCRIBE;
     }
     
     @Override

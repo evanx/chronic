@@ -18,7 +18,7 @@ import chronic.entitykey.OrgRoleTypeKey;
 import chronic.entitykey.OrgRoleTypeKeyed;
 import chronic.entitykey.UserRoleTypeKey;
 import chronic.entitykey.UserRoleTypeKeyed;
-import chronic.entitytype.OrgRoleAction;
+import chronic.entitytype.OrgRoleActionType;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 import vellum.storage.AbstractIdEntity;
@@ -117,8 +117,8 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
                 JMaps.entry("actionLabel", getAction().getLabel()));
     }
     
-    private OrgRoleAction getAction() {
-        return enabled ? OrgRoleAction.REVOKE : OrgRoleAction.GRANT;
+    private OrgRoleActionType getAction() {
+        return enabled ? OrgRoleActionType.REVOKE : OrgRoleActionType.GRANT;
     }
     
     @Override

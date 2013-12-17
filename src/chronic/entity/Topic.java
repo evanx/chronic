@@ -14,7 +14,7 @@ import chronic.entitykey.OrgUnitKey;
 import chronic.entitykey.OrgUnitKeyed;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicKeyed;
-import chronic.entitytype.TopicAction;
+import chronic.entitytype.TopicActionType;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
@@ -122,8 +122,8 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
         return map;
     }
 
-    private TopicAction getAction() {
-        return enabled ? TopicAction.DISABLE : TopicAction.SUBSCRIBE;
+    private TopicActionType getAction() {
+        return enabled ? TopicActionType.DISABLE : TopicActionType.SUBSCRIBE;
     }
 
     @Override

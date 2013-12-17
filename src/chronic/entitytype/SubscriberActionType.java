@@ -11,9 +11,9 @@ import vellum.type.Labelled;
  *
  * @author evan.summers
  */
-public enum UserAction implements Labelled {
-    CONFIRM,    
-    REVOKE;
+public enum SubscriberActionType implements Labelled {
+    UNSUBSCRIBE,    
+    SUBSCRIBE;
     
     @Override
     public String getLabel() {

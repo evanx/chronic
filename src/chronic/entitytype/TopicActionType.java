@@ -11,8 +11,8 @@ import vellum.type.Labelled;
  *
  * @author evan.summers
  */
-public enum TopicSubscriberAction implements Labelled {
-    UNSUBSCRIBE,    
+public enum TopicActionType implements Labelled {
+    DISABLE,    
     SUBSCRIBE;
     
     @Override

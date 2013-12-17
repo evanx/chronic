@@ -11,9 +11,9 @@ import vellum.type.Labelled;
  *
  * @author evan.summers
  */
-public enum TopicAction implements Labelled {
-    DISABLE,    
-    SUBSCRIBE;
+public enum OrgRoleActionType implements Labelled {
+    GRANT,    
+    REVOKE;
     
     @Override
     public String getLabel() {
