@@ -373,23 +373,18 @@ c0minutelyCron() {
   fi
 }
 
-c0killrun() {
-  if pgrep -f 'chronical.sh run' 
+c1killall() {
+  if pgrep -f "chronical.sh $1" | grep -v $$
   then
-    kill -TERM `pgrep -f 'chronical.sh run'`
-    sleep 2
-    if pgrep -f 'chronical.sh run' 
-    then
-      kill -KILL `pgrep -f 'chronical.sh run'`
-    fi
+    kill `pgrep -f "chronical.sh $1" | grep -v $$`    
+  else
+    return 1
   fi
 }
 
-c0killstart() {
-  if pgrep -f 'chronical.sh start' 
-  then
-    kill `pgrep -f 'chronical.sh start'`
-  fi
+c0killall() {
+  c2killall run
+  c2killall start
 }
 
 c0kill() {
@@ -458,7 +453,7 @@ c0run() {
 
 c0start() {
   touch debug
-  c0killrun
+  c0killall
   c0kill
   c0run 2>run.err >run.out &
 }
