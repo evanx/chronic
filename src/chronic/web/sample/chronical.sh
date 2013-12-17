@@ -66,6 +66,9 @@ dcat() {
   cat "$1" >> debug
 }
 
+decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
+decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/custom.chronical.sh"
+
 ### util 
 
 bcat() {
@@ -79,10 +82,7 @@ bcat() {
 }
 
 
-### init 
-
-decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
-decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/custom.chronical.sh"
+### init custom
 
 if [ ! -f $custom ]
 then
