@@ -59,9 +59,9 @@ rm -f debug
 decho() {
   if [ -f debug ]
   then
-    echo "debug $*" >> debug
+    echo "DEBUG $*" >> debug
   else 
-    echo "debug $*" >&2
+    echo "DEBUG $*" >&2
   fi
 }
 
