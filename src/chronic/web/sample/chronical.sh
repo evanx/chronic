@@ -506,6 +506,7 @@ c0showpid() {
   fi
 }
 
+c0showpid
 c0showpid | grep 'WARNING'
 
 if [ $# -gt 0 ]
