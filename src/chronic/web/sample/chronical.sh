@@ -101,7 +101,7 @@ dcat() {
 ### pid 
 
 previousPid=''
-[ -f pid ] 
+if [ -f pid ] 
 then
   previousPid=`head -1 pid`
   decho "previous pid: $previousPid" 
