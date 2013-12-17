@@ -21,8 +21,11 @@
 package chronic.app;
 
 import chronic.mail.Mailer;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.data.Millis;
 import vellum.system.Executor;
 
 /**
@@ -34,6 +37,7 @@ public class ChronicMessenger {
     static Logger logger = LoggerFactory.getLogger(ChronicMessenger.class);
     ChronicApp app;
     Mailer mailer;
+    Map<String, AlertRecord> alertMap = new HashMap();
 
     public ChronicMessenger(ChronicApp app) {
         this.app = app;
@@ -60,6 +64,11 @@ public class ChronicMessenger {
             }
         }
         for (String email : app.storage().listSubscriberEmails(alert)) {
+            AlertRecord previous = alertMap.put(email, alert);
+            long elapsed = Millis.elapsed(previous.getTimestamp());
+            if (elapsed < Millis.fromMinutes(2)) {
+                logger.warn("elapsed {} {}", email, Millis.formatPeriod(elapsed));
+            }
             mailer.sendEmail(email,
                     alert.getStatus().getTopicString(),
                     new AlertMailBuilder(app).build(alert));

@@ -98,7 +98,8 @@ public class StatusRecordMatcher {
         if (nagiosMatcher.find()) {
             Matcher otherMatcher = StatusRecordPatterns.NAGIOS.matcher(other);
             if (otherMatcher.find()) {
-                
+                return nagiosMatcher.group(1).equals(otherMatcher.group(1)) &&
+                        nagiosMatcher.group(2).equals(otherMatcher.group(2));
             }
             return false;
         } else if (StatusRecordPatterns.HEADER.matcher(line).find()) {

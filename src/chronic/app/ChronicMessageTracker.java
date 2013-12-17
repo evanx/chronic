@@ -20,7 +20,6 @@
  */
 package chronic.app;
 
-import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,22 +27,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author evan.summers
  */
-public class StatusRecordPatterns {
+public class ChronicMessageTracker {
 
-    static Logger logger = LoggerFactory.getLogger(StatusRecordPatterns.class);
-    public final static Pattern FROM_CRON
-            = Pattern.compile("^From: ([a-z]+) \\(Cron Daemon\\)$");
-    public final static Pattern CRON_SUBJECT
-            = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)");
-    public final static Pattern LOG
-            = Pattern.compile("^(TRACE|DEBUG|INFO|WARN|WARNING|ERROR) (.*)$");
-    public final static Pattern LOG_DEBUG
-            = Pattern.compile("^(DEBUG|TRACE)");
-    public final static Pattern NAGIOS
-            = Pattern.compile("^(\\S*\\s*)(OK|WARNING|CRITICAL|UNKNOWN) - (.*)$");
-    public final static Pattern NAGIOS_UNKNOWN
-            = Pattern.compile("^(\\S*\\s*)(UNKNOWN) - (.*)$");
-    public final static Pattern HEADER
-            = Pattern.compile("^[a-zA-Z]+: .*$");
+    static Logger logger = LoggerFactory.getLogger(ChronicMessageTracker.class);
+    ChronicApp app;
 
+    public ChronicMessageTracker(ChronicApp app) {
+        this.app = app;
+    }
 }

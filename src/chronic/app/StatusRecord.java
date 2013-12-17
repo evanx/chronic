@@ -226,11 +226,11 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         if (alertType == AlertType.NEVER) {
             return false;
         }
-        if (previous.statusType == StatusType.ELAPSED) {
-            statusType = StatusType.RESUMED;
+        if (alertType == AlertType.ALWAYS) {
             return true;
         }
-        if (alertType == AlertType.ALWAYS) {
+        if (previous.statusType == StatusType.ELAPSED) {
+            statusType = StatusType.RESUMED;
             return true;
         }
         if (alertType == AlertType.PATTERN) {

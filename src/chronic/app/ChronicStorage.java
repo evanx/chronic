@@ -20,7 +20,6 @@
  */
 package chronic.app;
 
-import static chronic.app.ChronicStorage.logger;
 import chronic.entity.Cert;
 import chronic.entity.User;
 import chronic.entitytype.OrgRoleType;
