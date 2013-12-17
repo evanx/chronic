@@ -482,7 +482,7 @@ c0start() {
 echo "previous pid $previousPid"
 echo "current pid $$"
 pgrep -f "chronical.sh" | grep -v $$ && echo "WARNING previous chronical running (pgrep)"
-ps x | grep "chronical.sh" | grep -v "$$\|grep" && echo "WARNING previous chronical running"
+ps x | grep "chronical.sh" | grep -v "$$\|grep" && echo "WARNING previous chronical running (ps)"
 
 if [ $# -gt 0 ]
 then
