@@ -107,8 +107,7 @@ public class ChronicHttpHandler implements HttpHandler {
             }
         } catch (Exception e) {
             logger.warn("error {} {}", path, Exceptions.getMessage(e));
-            e.printStackTrace(System.err);
-            
+            //e.printStackTrace(System.err);            
         }
     }
 

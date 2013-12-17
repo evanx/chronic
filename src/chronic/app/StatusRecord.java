@@ -232,7 +232,7 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     
     public boolean contains(String otherLine) {
         for (String line : lineList) {
-            if (line.equals(otherLine)) {
+            if (StatusRecordMatcher.matches(line, otherLine)) {
                 return true;
             }
         }
