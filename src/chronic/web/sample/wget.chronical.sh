@@ -17,6 +17,9 @@
 # specific language governing permissions and limitations
 # under the License.  
 
+echo "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
+echo "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/custom.chronical.sh"
+
 if [ $# -gt 0 ]
 then 
   if [ -d $1 ]
@@ -26,5 +29,7 @@ then
     wget https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh
   fi
 fi
+
+
 
 

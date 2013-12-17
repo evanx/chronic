@@ -98,8 +98,6 @@ dcat() {
   fi
 }
 
-decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh"
-decho "see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/custom.chronical.sh"
 
 ### util 
 

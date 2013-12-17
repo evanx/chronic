@@ -36,7 +36,7 @@ public class StatusRecordPatterns {
     public final static Pattern CRON_SUBJECT
             = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)");
     public final static Pattern LOG
-            = Pattern.compile("^(TRACE|DEBUG|INFO|WARN|WARNING|ERROR) (.*)$");
+            = Pattern.compile("^(TRACE|DEBUG|INFO|WARN|WARNING|ERROR|debug) (.*)$");
     public final static Pattern LOG_DEBUG
             = Pattern.compile("^(DEBUG|TRACE)");
     public final static Pattern NAGIOS

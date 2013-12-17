@@ -405,7 +405,8 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         <br>It provides a multi-tenancy cloud service, without any server setup, leveraging Nagios plugins, and enabling custom checks.
 
         <p><b>What is installed on clients?</b>
-        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, this script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. But the system is specially engineered to support Nagios plugins, and custom checks.
+        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. This script automatically generates an SSL cert which identifies your organsation. Out of the box, it uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. But the system is specially engineered to support Nagios plugins, and custom checks.
+
         <p><b>What API does one use?</b>
         <br>Plain text document over HTTPS POST, for piping the output of a monitored script into <tt>curl</tt>. A script might invoke multiple Nagios plugins or commands to produce output that you wish to monitor. Commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> for interesting patterns in log files, etc.
 
