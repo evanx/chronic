@@ -19,6 +19,8 @@
 # specific language governing permissions and limitations
 # under the License.  
 
+# see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh
+
 ### default settings
 
 loadWarningThreshold=4
@@ -481,10 +483,24 @@ c0start() {
   c0restart
 }
 
-echo "previous pid $previousPid"
-echo "current pid $$"
-pgrep -f "chronical.sh" | grep -v $$ && echo "WARNING previous chronical running (pgrep)"
-ps x | grep "chronical.sh" | grep -v "$$\|grep" && echo "WARNING previous chronical running (ps)"
+c0showpid() {
+  if -n "$previousPid" ]
+  then
+    echo "previousPid: " `pwd`/pid
+  else 
+    echo "previousPid: $previousPid"
+  fi
+  echo "currentPid: $$"
+  if pgrep -f "chronical.sh" | grep -v $$ 
+  then
+    echo "WARNING - another chronical.sh still running"
+  elif ps x | grep "chronical.sh" | grep -v "$$\|grep" 
+  then
+    echo "WARNING - another chronical.sh still running (ps)"
+  fi
+}
+
+c0showpid || grep WARNING
 
 if [ $# -gt 0 ]
 then
