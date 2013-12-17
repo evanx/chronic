@@ -20,8 +20,6 @@
  */
 package chronic.app;
 
-import static chronic.app.StatusRecordMatcher.getFilteredLineList;
-import static chronic.app.StatusRecordMatcher.matches;
 import chronic.check.StatusCheck;
 import chronic.entitykey.CertKey;
 import chronic.entitykey.CertKeyed;
@@ -38,13 +36,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.ComparableTuple;
-import vellum.data.Patterns;
 import vellum.util.Args;
-import vellum.util.Strings;
 
 /**
  *
@@ -217,42 +212,6 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     
     public boolean isStatusAlertable() {
         return statusType != null && statusType.isStatusAlertable();
-    }
-
-    public boolean isAlertable(StatusRecord previous, AlertRecord alert) {
-        logger.info("isAlertable {}", Args.format(topicString, alertType, 
-                statusType, previous.getStatusType(), matches(previous),
-                alert.getStatus().getStatusType()));
-        if (alertType == AlertType.NEVER) {
-            return false;
-        }
-        if (alertType == AlertType.ALWAYS) {
-            return true;
-        }
-        if (previous.statusType == StatusType.ELAPSED) {
-            statusType = StatusType.RESUMED;
-            return true;
-        }
-        if (alertType == AlertType.PATTERN) {
-        } else if (alertType == AlertType.ERROR) {
-        }
-        if (alertType == AlertType.CONTENT_CHANGED) {
-            if (!matches(previous)) {
-                statusType = StatusType.CONTENT_CHANGED;
-                return true;
-            }
-        }
-        if (alertType == AlertType.STATUS_CHANGED) {
-           if (isStatusAlertable() && statusType == previous.statusType
-                    && statusType != alert.getStatus().getStatusType()) {
-               if (alert.getStatus().getAlertType() == AlertType.INITIAL && 
-                       !alert.getStatus().isStatusAlertable()) {
-                   alertType = AlertType.INITIAL;
-               }
-               return true;
-           }
-        }
-        return false;
     }
     
     public boolean matches(StatusRecord other) {

@@ -155,7 +155,7 @@ public class ChronicApp implements Runnable {
             if (properties.isTesting()) {
                 messenger.alert(alert);
             }
-        } else if (status.isAlertable(previousStatus, alert)) {
+        } else if (new StatusRecordChecker(status).isAlertable(previousStatus, alert)) {
             alert = new AlertRecord(status, previousStatus);
             alertMap.put(status.getKey(), alert);
             if (status.getAlertType() != AlertType.INITIAL) {
