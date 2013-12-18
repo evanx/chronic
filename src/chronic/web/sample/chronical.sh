@@ -299,6 +299,18 @@ c2postgres() {
   fi
 }
 
+c2nosshpass() {
+  if sshpass -p "" ssh $1 -p $2 date 2>&1 | tee sshpass | head -1 | 
+    grep -q "Permission denied, please try again."
+  then
+    echo "CRITICAL - $1 port $2 has ssh asking for password" `bcat sshpass`
+  elif sshpass -p "" ssh $1 -p $2 date 2>&1 | tee sshpass | head -1 | 
+    grep -q "Permission denied (publickey)."
+  then
+    echo "OK - $1 port $2 has ssh asking for password" `bcat sshpass`
+  fi
+}
+
 
 ### typical checks
 
