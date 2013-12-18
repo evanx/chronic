@@ -61,7 +61,6 @@ public class StatusRecordMatcher {
         List<String> list = new LinkedList();
         for (String line : status.lineList) {
             if (StatusRecordPatterns.LOG.matcher(line).matches()) {
-            } else if (StatusRecordPatterns.NAGIOS_UNKNOWN.matcher(line).matches()) {
             } else {
                 list.add(line);
             }
@@ -96,21 +95,29 @@ public class StatusRecordMatcher {
         }
         Matcher nagiosMatcher = StatusRecordPatterns.NAGIOS.matcher(line);
         if (nagiosMatcher.find()) {
-            Matcher otherMatcher = StatusRecordPatterns.NAGIOS.matcher(otherLine);
-            if (otherMatcher.find()) {
-                return equals(nagiosMatcher, otherMatcher, 1, 2);
+            if (nagiosMatcher.group(2).equals("UNKNOWN")) {
+                return true;
+            } else {
+                Matcher otherMatcher = StatusRecordPatterns.NAGIOS.matcher(otherLine);
+                if (otherMatcher.find()) {
+                    if (otherMatcher.group(2).equals("UNKNOWN")) {
+                        return true;
+                    } else if (nagiosMatcher.group(1).equals(otherMatcher.group(1))) {
+                        return nagiosMatcher.group(2).equals(otherMatcher.group(2));
+                    }
+                }
+                return false;
             }
-            return false;
         } else if (StatusRecordPatterns.HEADER.matcher(line).find()) {
             return true;
         }
         return line.equals(otherLine);
     }
-    
-    private static boolean equals(Matcher matcher, Matcher otherMatcher, int... groups) {
+
+    private static boolean equals(Matcher nagiosMatcher, Matcher otherMatcher, int... groups) {
         for (int group : groups) {
-            if (!matcher.group(group).equals(otherMatcher.group(group))) {
-                logger.warn("matcher [{}] vs [{}]", matcher.group(group), otherMatcher.group(group));
+            if (!nagiosMatcher.group(group).equals(otherMatcher.group(group))) {
+                logger.warn("matcher [{}] vs [{}]", nagiosMatcher.group(group), otherMatcher.group(group));
                 return false;
             }
         }
