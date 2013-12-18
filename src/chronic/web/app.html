@@ -337,8 +337,9 @@ OK - chronical.info port 443 https available (HTTP/1.1 200 OK)</pre>
         <pre>c0hourly() {
   c1topic hourly
   c0diskspace
-  c2tcp chronical.info 80
   c2notcp chronical 21
+  c2tcp chronical.info 80
+  c2https chronical.info 443
 }</pre><p>where the convention for naming functions indicates the number of parameters. Commands can be tested from the command-line, as follows.</p>
         <pre>$ sh chronical.sh nohttp chronical.info 80
 OK - chronical.info (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
@@ -346,7 +347,7 @@ OK - chronical.info (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)<
         <pre>c0minutely() {
   c1topic minutely
   c0load
-  c2https chronical.info 443 
+  c2httpsAuth secure.chronical.info 443 
   /usr/lib/nagios/plugins/check_pgsql -H localhost 
   ssh postgres@localhost scripts/check_replication.sh
 }</pre>
