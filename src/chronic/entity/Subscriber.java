@@ -17,7 +17,6 @@ import chronic.entitykey.OrgKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicKeyed;
 import chronic.entitytype.SubscriberActionType;
-import chronic.entitytype.TopicActionType;
 import vellum.jx.JMap;
 import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
