@@ -42,10 +42,10 @@ import vellum.util.Strings;
  * @author evan.summers
  */
 public class ChronicProperties {
+
     static Logger logger = LoggerFactory.getLogger(ChronicProperties.class);
 
     private String serverAddress = "https://localhost:8443";
-    private String mimicEmail = null;
     private String alertScript = null;
     private long period = Millis.fromMinutes(3);
     private boolean testing = false;
@@ -53,6 +53,7 @@ public class ChronicProperties {
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
     private ExtendedProperties appServer;
     private ExtendedProperties webServer;
+    private ExtendedProperties mimic;
     private Set<String> adminDomains;
     private Set<String> adminEmails;
     private Set<String> allowedOrgDomains;
@@ -64,7 +65,6 @@ public class ChronicProperties {
     public void init() throws IOException {
         String jsonConfigFileName = properties.getString("config.json", "config.json");
         JsonObjectDelegate object = new JsonObjectDelegate(new File(jsonConfigFileName));
-        mimicEmail = object.getString("mimicEmail", null);
         serverAddress = object.getString("serverAddress", serverAddress);
         alertScript = object.getString("alertScript", alertScript);
         period = object.getMillis("period", period);
@@ -79,8 +79,9 @@ public class ChronicProperties {
         allowedAddresses.add("127.0.0.1");
         if (object.hasProperties("httpRedirectServer")) {
             httpRedirectServer = new HttpServerProperties(
-                object.getProperties("httpRedirectServer"));
+                    object.getProperties("httpRedirectServer"));
         }
+        mimic = object.getProperties("mimic");
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
         if (serverAddress.contains("chronical")) {
@@ -90,14 +91,10 @@ public class ChronicProperties {
         }
     }
 
-    public String getMimicEmail() {
-        return mimicEmail;
-    }
-    
     public String getServerAddress() {
         return serverAddress;
     }
-        
+
     public String getAlertScript() {
         return alertScript;
     }
@@ -125,37 +122,44 @@ public class ChronicProperties {
     public Set<String> getAdminDomains() {
         return adminDomains;
     }
-    
+
     public Collection<String> getAdminEmails() {
         return adminEmails;
     }
 
     public Set<String> getAllowedOrgDomains() {
         return allowedOrgDomains;
-    }   
-    
+    }
+
     public Set<String> getAllowedAddresses() {
         return allowedAddresses;
-    }   
-    
+    }
+
     public MailerProperties getMailerProperties() {
         return mailerProperties;
     }
-        
+
     public boolean isAdmin(String email) {
         return adminEmails.contains(email) || Strings.endsWith(email, adminDomains);
-    }    
+    }
 
     public boolean isDemo(String serverUrl) {
         return serverUrl.contains("demo");
     }
-    
+
     public boolean isSubscriber(String email) {
         return subscriberEmails.contains(email) || isAdmin(email);
-    }            
+    }
 
     public boolean isMimicEmail(String email) {
-        return mimicEmail != null && adminEmails.contains(email);
+        return getMimicEmail() != null && adminEmails.contains(email);
+    }
+
+    public String getMimicEmail() {
+        if (mimic.containsKey("enabled") && !mimic.getBoolean("enabled")) {
+            return null;
+        }
+        return mimic.getString("email");
     }
 
     public PoolProperties getPoolProperties() {
@@ -183,14 +187,14 @@ public class ChronicProperties {
                 + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer");
         return poolProperties;
     }
-    
+
     @Override
     public String toString() {
-        return Args.format(mimicEmail);
+        return Args.format(serverAddress);
     }
 
     public boolean isMockStorage() {
         return mockStorage;
     }
-       
+
 }
