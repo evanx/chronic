@@ -23,6 +23,7 @@ package chronic;
 
 import chronic.app.HtmlChecker;
 import chronic.app.StatusRecord;
+import chronic.app.StatusRecordMatcher;
 import chronic.app.StatusRecordPatterns;
 import chronic.entitykey.CertKey;
 import java.util.regex.Matcher;
@@ -44,10 +45,10 @@ import vellum.data.Patterns;
 public class ChronicTest {
     static Logger logger = LoggerFactory.getLogger(ChronicTest.class);
     
-    String orgUrl = "test.org";
+    String orgDomain = "test.org";
     String orgUnit = "test";
     String commonName = "serverx.test.org";
-    CertKey certKey = new CertKey(orgUrl, orgUnit, commonName);            
+    CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);            
     
     public ChronicTest() {
     }
@@ -73,6 +74,30 @@ public class ChronicTest {
         Assert.assertTrue("X-from: test".matches("^\\S*: .*"));
     }
 
+    @Test
+    public void nagiosMatches() {
+        Assert.assertTrue(StatusRecordMatcher.matches(
+                "Service OK - 100ms",
+                "Service OK - 200ms"
+        ));
+        Assert.assertTrue(StatusRecordMatcher.matches(
+                "Service OK - 100ms",
+                "Service UNKNOWN - 200ms"
+        ));
+        Assert.assertTrue(StatusRecordMatcher.matches(
+                "Service UNKNOWN - 100ms",
+                "Service CRITICAL - 200ms"
+        ));
+        Assert.assertFalse(StatusRecordMatcher.matches(
+                "Service OK - 100ms",
+                "Service CRITICAL - 100ms"
+        ));
+        Assert.assertFalse(StatusRecordMatcher.matches(
+                "ServiceA OK - 100ms",
+                "ServiceB OK - 100ms"
+        ));
+    }
+    
     @Test
     public void nagiosPatternDash() {
         Matcher matcher = StatusRecordPatterns.NAGIOS.matcher("CRITICAL - no connection");
