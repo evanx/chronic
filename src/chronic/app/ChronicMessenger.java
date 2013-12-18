@@ -26,6 +26,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
+import vellum.storage.StorageException;
 import vellum.system.Executor;
 
 /**
@@ -48,7 +49,7 @@ public class ChronicMessenger {
         mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
-    public synchronized void alert(AlertRecord alert) {
+    public synchronized void alert(AlertRecord alert) throws StorageException {
         logger.info("alert {}", alert.toString());
         if (app.getProperties().getAlertScript() != null) {
             try {
