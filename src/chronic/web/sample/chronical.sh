@@ -307,9 +307,9 @@ c2nosshpass() {
     if sshpass -p "" ssh $1 -p $2 date 2>&1 | head -1 | tee sshpass |
         grep -q "Permission denied, please try again."
     then
-      echo "CRITICAL - $1 port $2 ssh asking password" `bcat sshpass`
+      echo "CRITICAL - $1 port $2 ssh prompting for an ssh password"
     else
-      echo "OK - $1 port $2 ssh not asking for password" `bcat sshpass`
+      echo "OK - $1 port $2 ssh not prompting for an ssh password"
     fi
   fi
 }
@@ -319,12 +319,11 @@ c2sshkey() {
   then
     echo "INFO no sshpass installed so unable to perform sshkey check"
   else
-    if sshpass -p "" ssh $1 -p $2 date 2>&1 | head -1 | tee sshkey | 
-      grep -q "Permission denied (publickey)."
+    if sshpass -p "" ssh $1 -p $2 date 2>&1 | grep -q "Permission denied (publickey)."
     then
-      echo "OK - $1 port $2 ssh requires key" `bcat sshkey`
+      echo "OK - $1 port $2 requires an ssh key"
     else
-      echo "CRITICAL - $1 port $2 ssh not denied" `bcat sshkey`
+      echo "CRITICAL - $1 port $2 ssh is not permission denied"
     fi
   fi
 }
