@@ -307,9 +307,9 @@ c2nosshpass() {
     if sshpass -p "" ssh $1 -p $2 date 2>&1 | head -1 | tee sshpass |
         grep -q "Permission denied, please try again."
     then
-      echo "CRITICAL - $1 port $2 ssh prompting for an ssh password"
+      echo "CRITICAL - $1 port $2 ssh is prompting for an ssh password"
     else
-      echo "OK - $1 port $2 ssh not prompting for an ssh password"
+      echo "OK - $1 port $2 ssh is not prompting for an ssh password"
     fi
   fi
 }
