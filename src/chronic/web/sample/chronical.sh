@@ -300,12 +300,32 @@ c2postgres() {
 }
 
 c2nosshpass() {
-  if sshpass -p "" ssh $1 -p $2 date 2>&1 | tee sshpass | head -1 | 
-    grep -q "Permission denied, please try again."
+  if ! which sshpass > /dev/null
   then
-    echo "CRITICAL - $1 port $2 has ssh asking for password" `bcat sshpass`
+    echo "INFO no sshpass installed so unable to perform nosshpass check
   else
-    echo "OK - $1 port $2 ssh not asking for password" `bcat sshpass`
+    if sshpass -p "" ssh $1 -p $2 date 2>&1 | head -1 | tee sshpass |
+        grep -q "Permission denied, please try again."
+    then
+      echo "CRITICAL - $1 port $2 ssh asking for password" `bcat sshpass`
+    else
+      echo "OK - $1 port $2 ssh not asking for password" `bcat sshpass`
+    fi
+  fi
+}
+
+c2sshkey() {
+  if ! which sshpass > /dev/null
+  then
+    echo "INFO no sshpass installed so unable to perform sshkey check
+  else
+    if sshpass -p "" ssh $1 -p $2 date 2>&1 | head -1 | tee sshkey | 
+      grep -q "Permission denied (publickey)."
+    then
+      echo "OK - $1 port $2 ssh requires key" `bcat sshkey`
+    else
+      echo "CRITICAL - $1 port $2 ssh not denied" `bcat sshkey`
+    fi
   fi
 }
 
