@@ -49,7 +49,7 @@ public class ChronicMessenger {
         mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
-    public synchronized void alert(AlertRecord alert) throws StorageException {
+    public synchronized void alert(AlertRecord alert) {
         logger.info("alert {}", alert.toString());
         if (app.getProperties().getAlertScript() != null) {
             try {
@@ -64,17 +64,21 @@ public class ChronicMessenger {
                 logger.warn(e.getMessage(), e);
             }
         }
-        for (String email : app.storage().listSubscriberEmails(alert)) {
-            AlertRecord previous = alertMap.put(email, alert);
-            if (previous != null) {
-                long elapsed = Millis.elapsed(previous.getTimestamp());
-                if (elapsed < Millis.fromMinutes(2)) {
-                    logger.warn("elapsed {} {}", email, Millis.formatPeriod(elapsed));
+        try {
+            for (String email : app.storage().listSubscriberEmails(alert)) {
+                AlertRecord previous = alertMap.put(email, alert);
+                if (previous != null) {
+                    long elapsed = Millis.elapsed(previous.getTimestamp());
+                    if (elapsed < Millis.fromMinutes(2)) {
+                        logger.warn("elapsed {} {}", email, Millis.formatPeriod(elapsed));
+                    }
                 }
+                mailer.sendEmail(email,
+                        alert.getStatus().getTopicString(),
+                        new AlertMailBuilder(app).build(alert));
             }
-            mailer.sendEmail(email,
-                    alert.getStatus().getTopicString(),
-                    new AlertMailBuilder(app).build(alert));
+        } catch (StorageException e) {
+            logger.warn("{} {}", e.getMessage(), alert);
         }
     }
 
