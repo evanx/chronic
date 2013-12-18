@@ -329,7 +329,7 @@ orgUrl="your.org"</pre>
           <i>(to <a href="https://chronical.info">https://chronical.info</a> 
             using Mozilla Persona)</i>
         <p>ps. The script posts to <tt>https://secure.chronical.info</tt>.</p>
-      <pre>$ sh chronical.sh https chronical.info 443
+        <pre>$ sh chronical.sh https chronical.info 443
 OK - chronical.info port 443 https available (HTTP/1.1 200 OK)</pre>
         <hr>
         <h4>Getting jiggy with it</h4>
@@ -372,7 +372,7 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         </p>
       </div>
     </div>
-    
+
     <div class="container" ng-show="!persona.email || view === 'faq'" ng-cloak>
       <div class="row well-lg">
         <h2 ng-cloak ng-show="persona.email && view === 'faq'"><b>Instant</b> cloud monitoring</h2>
@@ -386,49 +386,73 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         <p><b>How much does it cost?</b>
           <br>It's free and open. Bits and bytes are priceless ;)
 
+        <p><b>What is its value proposition?</b>
+          <br>Any text output you can submit via HTTPS, you can monitor - instantly and freely :)
+
+        <p><b>What use cases?</b>
+          <br>We suggest you use Chronical to monitor your networks and applications, to ensure their integrity and security.
+
+        <p><b>Windows or Linux?</b>
+          <br>We provide a "starter" script for Linux, which can be used to actively monitor Windows machines remotely via TCP. However, expect integration with an opensource Windows agent in a few months, such as the Nagios Cross-Platform Agent (NCPA).
+
         <p><b>How is this different from some other cloud-based monitoring services?</b>
-          <br>It's great for adhoc monitoring. 
+          <br>It's powerful for custom monitoring. It's opensource, so you can own it.
 
         <p><b>How is this different from some other opensource monitoring projects?</b>
-          <br>It provides a multi-tenancy cloud service, without any server setup, leveraging Nagios plugins, and enabling custom checks.
+          <br>We provide a free multi-tenancy cloud service for instant monitoring without any server setup. Our solution supports Nagios plugins, and will be integrated with opensource agents, according to demand.
 
-        <p><b>What is installed on clients?</b>
-        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. This script automatically generates an SSL cert which identifies your organsation. Out of the box, it uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. But the system is specially engineered to support Nagios plugins, and custom checks.
+        <p><b>What can be installed on Linux clients right now?</b>
+        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. This script automatically generates an SSL cert which identifies your organsation. Out of the box, it uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. However, the system is specially engineered to support Nagios plugins, and custom checks.
 
-        <p><b>What API does one use?</b>
-        <br>Plain text document over HTTPS POST, for piping the output of a monitored script into <tt>curl</tt>. A script might invoke multiple Nagios plugins or commands to produce output that you wish to monitor. Commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> for interesting patterns in log files, etc. Whatever output you can produce using a shell script, you can monitor :)
+        <p><b>What API does it use?</b>
+        <br>Plain text document over HTTPS POST, to enable piping the output of a monitored script into <tt>curl</tt> for submission. A script might invoke multiple Nagios plugins or commands to produce the output that you wish to monitor. Commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> for interesting patterns in log files, etc. 
 
         <p><b>How are alerts triggered?</b>
-        <br>Typically by any change in the monitored output. However, the content is specially compared, to recognise Nagios status lines, Cron and email-style headers, and logging lines, so that superflous information does not trigger alerts. Otherwise <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
+        <br>Typically by any change in the monitored output content. However, the content is specially processed to find Nagios status information, Cron and email-style headers, and logging lines, so that superflous information does not trigger alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
 
         <p><b>What notification mechanisms are supported?</b>
           <br>Only email. Support is envisaged for mobile push notifications, but not SMS. (Currently email is disabled for alpha testing.)
 
-        <p><b>Why doesn't the site work on my phone's browser already?</b>
-          <br>It will! We use Twitter Bootstrap which is "mobile first." But this service is still pre-alpha.
+        <p><b>Why doesn't the site work on my phone's browser?</b>
+          <br>It will, soon! We use Twitter Bootstrap 3, which is "mobile first," and responsive to desktop, tablet and phone.
+
         <p><b>What technologies are used?</b>
-          <br>AngularJS for the front-end, making JSON requests to a Java back-end. We use the JRE's built-in HTTPS server rather than Apache Tomcat. <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication. Soon, PostgreSQL will be used for the back-end database. (We support a pluggable SQL'esque storage engine, and currently use an in-memory implementation to accelerate prototyping.) 
+          <br>AngularJS for the front-end, making JSON requests to a Java back-end. We use the JRE's built-in HTTPS server rather than Apache Tomcat. <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
+
         <p><b>Show me the code!</b>
           <br>See <a href="https://github.com/evanx/chronic">https://github.com/evanx/chronic</a>.
           This uses <a href="https://github.com/evanx/vellumcore">https://github.com/evanx/vellumcore</a> which is a common base of distilled code from previous projects.
       </div>
     </div>
-    
+
     <div class="container" ng-show="!persona.email || view === 'faq'" ng-cloak>
       <div class="row well-lg">
-      
+
         <hr>
         <h4>News</h4>
 
-        <p><b>Info sections added to site</b> <i>2013-12-16</i>         
-          <br>News, FAQ and Getting Started sections added.
+        <p>
+          <i>2013-12-17</i> &nbsp;
+          <b>JDBC in progress</b> 
+          <br>Work has started on JDBC persistence, to be ready for an alpha "launch" on the 1st of January :)
         </p>
 
-        <p><b>AngujarJS UI started</b> <i>2013-12-01</i>         
-          <br>Oh my god, AngularJS is <i>awesome</i>! Goodbye my formerly beloved jQuery.
+        <p>
+          <i>2013-12-15</i> &nbsp;
+          <b>Info sections added to site</b> 
+          <br>"Getting Started," "Frequently Asked Questions" and "News" sections have been added to the site, ready for an alpha launch.
         </p>
 
-        <p><b>Project inception</b> <i>2013-11-24</i></p>
+        <p>
+          <i>2013-12-01</i> &nbsp;
+          <b>AngujarJS UI started</b>
+          <br>Oh my god, AngularJS is <i>awesome!</i> Goodbye my formerly beloved jQuery.
+        </p>
+
+        <p>
+          <i>2013-11-24</i> &nbsp;
+          <b>Project inception</b> 
+        </p>
         <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Croc (on http://github.com/evanx/vellumapp). Chronical's mantra is "wonderfully simple, incredibly powerful." 
         <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks.
         <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronical. Its UI uses Bootstrap 2 and jQuery, and it used JDBC from word go, albeit using an H2 in-memory database. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed. 
