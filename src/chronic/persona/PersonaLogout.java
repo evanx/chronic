@@ -19,14 +19,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author evan.summers
  */
-public class LogoutPersona implements HttpHandler {
+public class PersonaLogout implements HttpHandler {
 
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicApp app;
     Httpx httpExchangeInfo;
     ChronicCookie cookie;
 
-    public LogoutPersona(ChronicApp app) {
+    public PersonaLogout(ChronicApp app) {
         super();
         this.app = app;
     }

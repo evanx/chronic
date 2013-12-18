@@ -34,7 +34,7 @@ public class CertAction implements ChronicHttpxHandler {
             Cert cert = app.storage().cert().select(certKey);
             cert.setEnabled(!cert.isEnabled());
             app.storage().cert().update(cert);
-            return JMaps.create("cert", cert.getMap());
+            return JMaps.create("cert", cert.getMap(true));
         }
     }
     

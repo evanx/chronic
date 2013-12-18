@@ -41,7 +41,7 @@ import vellum.storage.StorageExceptionType;
  *
  * @author evan.summers
  */
-public abstract class CertStore implements EntityStore<Cert> {
+public class CertStore implements EntityStore<Cert> {
 
     static Logger logger = LoggerFactory.getLogger(CertStore.class);
     static QueryMap queryMap = new QueryMap(CertStore.class);

@@ -4,7 +4,6 @@
  */
 package chronic.mail;
 
-import chronic.app.ChronicMessenger;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -95,12 +94,12 @@ public class Mailer {
     public static void main(String[] args) {
         try {
             byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));
-            MailerProperties mailerProperties = new MailerProperties(bytes, 
-                    "appcentral.info", "alerts@appcentral.info");
+            MailerProperties mailerProperties = new MailerProperties();
+            mailerProperties.init(bytes, "appcentral.info", "alerts@appcentral.info");
             Mailer mailer = new Mailer(mailerProperties);
             mailer.sendEmail("evan.summers@gmail.com", "test subject", 
                     "test body <hr> <img src='cid:image'/>");
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace(System.err);
         }
     }

@@ -54,7 +54,7 @@ public abstract class ChronicStorage {
 
     static Logger logger = LoggerFactory.getLogger(ChronicStorage.class);
 
-    ChronicApp app;
+    protected ChronicApp app;
 
     public ChronicStorage(ChronicApp app) {
         this.app = app;
@@ -77,11 +77,7 @@ public abstract class ChronicStorage {
     public abstract EntityStore<Subscriber> sub();
 
     public abstract EntityStore<Cert> cert();
-
-    public static ChronicStorage create(ChronicApp app) {
-        return new MockChronicStorage(app);
-    }
-
+    
     public Iterable<User> listUsers(String email) {
         List list = new LinkedList();
         return list;

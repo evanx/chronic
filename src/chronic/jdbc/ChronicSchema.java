@@ -18,16 +18,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author evan.summers
  */
-public class ChronicalSchema {
+public class ChronicSchema {
 
     static final int MIN_VERSION_NUMBER = 0;
     static final int CURRENT_VERSION_NUMBER = 1;
     
-    Logger logger = LoggerFactory.getLogger(ChronicalSchema.class);
+    static final Logger logger = LoggerFactory.getLogger(ChronicSchema.class);
+    
     ChronicApp app;
     DatabaseMetaData databaseMetaData;
 
-    public ChronicalSchema(ChronicApp app) {
+    public ChronicSchema(ChronicApp app) {
         this.app = app;
     }
 
@@ -40,7 +41,7 @@ public class ChronicalSchema {
         }  
     }
 
-    private boolean verifySchemaVersion() throws SQLException {
+    private boolean verifySchemaVersion() {
         try (Connection connection = app.getDataSource().getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                 "select * from schema_revision order by update_time desc")) {
@@ -56,16 +57,17 @@ public class ChronicalSchema {
             } else {
                 return false;
             }
+        } catch (SQLException e) {
+            logger.warn(e.getMessage());
+            return false;
         }
     }
 
     private void createSchema() throws Exception {
-        try (Connection connection = app.getDataSource().getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        "insert into schema_revision (revision_number) values (?)")) {
+        try (Connection connection = app.getDataSource().getConnection()) {
             String sqlScriptName = getClass().getSimpleName() + ".sql";
             InputStream stream = getClass().getResourceAsStream(sqlScriptName);
-            logger.debug("sqlScriptName {}", sqlScriptName);
+            logger.info("sqlScriptName {}", sqlScriptName);
             byte[] bytes = new byte[stream.available()];
             stream.read(bytes);
             String sql = new String(bytes);
@@ -73,7 +75,7 @@ public class ChronicalSchema {
             for (String sqlStatement : sqlStatements) {
                 sqlStatement = sqlStatement.trim();
                 if (!sqlStatement.isEmpty()) {
-                    logger.trace("sqlStatement {}", sqlStatement);
+                    logger.info("sqlStatement {}", sqlStatement);
                     try {
                         connection.createStatement().execute(sqlStatement);
                     } catch (SQLException e) {
@@ -81,8 +83,11 @@ public class ChronicalSchema {
                     }
                 }
             }
-            preparedStatement.setInt(1, CURRENT_VERSION_NUMBER);
-            preparedStatement.execute();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(
+                        "insert into schema_revision (revision_number) values (?)")) {
+                preparedStatement.setInt(1, CURRENT_VERSION_NUMBER);
+                preparedStatement.execute();
+            }
         }
     }
 }

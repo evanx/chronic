@@ -21,39 +21,48 @@
 package chronic.app;
 
 import chronic.entity.Cert;
-import chronic.entity.User;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
-import chronic.entity.Topic;
 import chronic.entity.Subscriber;
+import chronic.entity.Topic;
+import chronic.entity.User;
+import chronic.jdbc.CertStore;
+import chronic.jdbc.ChronicSchema;
 import org.h2.tools.Server;
 import vellum.storage.EntityStore;
-import vellum.storage.MapStore;
 
 /**
  *
  * @author evan.summers
  */
-public class MockChronicStorage extends ChronicStorage {
-    MapStore<User> users = new ChronicMapStore();
-    MapStore<Org> orgs = new ChronicMapStore();
-    MapStore<OrgRole> orgRoles = new ChronicMapStore();
-    MapStore<Network> nets = new ChronicMapStore();
-    MapStore<Topic> topics = new ChronicMapStore();
-    MapStore<Subscriber> subscribers = new ChronicMapStore();
-    MapStore<Cert> certs = new ChronicMapStore();
+public class JdbcChronicStorage extends ChronicStorage {
+    EntityStore<User> users = new ChronicMapStore();
+    EntityStore<Org> orgs = new ChronicMapStore();
+    EntityStore<OrgRole> orgRoles = new ChronicMapStore();
+    EntityStore<Network> nets = new ChronicMapStore();
+    EntityStore<Topic> topics = new ChronicMapStore();
+    EntityStore<Subscriber> subscribers = new ChronicMapStore();
+    EntityStore<Cert> certs;
 
-    public MockChronicStorage(ChronicApp app) {
+    Server h2Server;
+    
+    public JdbcChronicStorage(ChronicApp app) {
         super(app);
     }
         
     @Override
     public void init() throws Exception {
+        h2Server = Server.createTcpServer().start();
+        new ChronicSchema(app).verifySchema();
+        certs = new CertStore(app.getDataSource());
     }
 
     @Override
     public void shutdown() {
+        if (h2Server != null) {
+            h2Server.stop();
+        }
     }
 
     @Override
@@ -90,6 +99,6 @@ public class MockChronicStorage extends ChronicStorage {
     public EntityStore<Cert> cert() {
         return certs;
     }
-    
+            
     
 }

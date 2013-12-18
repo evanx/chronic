@@ -20,7 +20,7 @@ import vellum.jx.JMap;
  *
  * @author evan.summers
  */
-public class LoginPersona implements HttpHandler {
+public class PersonaLogin implements HttpHandler {
 
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicApp app;
@@ -28,7 +28,7 @@ public class LoginPersona implements HttpHandler {
     String assertion;
     String timezoneOffset;
     
-    public LoginPersona(ChronicApp app) {
+    public PersonaLogin(ChronicApp app) {
         super();
         this.app = app;
     }
@@ -74,6 +74,8 @@ public class LoginPersona implements HttpHandler {
         cookie = new ChronicCookie(user.getEmail(), user.getLabel(), 
                 user.getLoginTime().getTime(), assertion);
         JMap cookieMap = cookie.toMap();
+        cookieMap.put("admin", app.getProperties().isAdmin(email));
+        cookieMap.put("demo",app.getProperties().isDemo(httpx.getServerUrl()));
         logger.trace("cookie {}", cookieMap);
         httpx.setCookie(cookieMap, ChronicCookie.MAX_AGE_MILLIS);
         httpx.sendResponse(cookieMap);

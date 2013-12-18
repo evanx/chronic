@@ -49,6 +49,7 @@ public class ChronicProperties {
     private String alertScript = null;
     private long period = Millis.fromMinutes(3);
     private boolean testing = false;
+    private boolean mockStorage = false;
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
     private ExtendedProperties appServer;
     private ExtendedProperties webServer;
@@ -57,8 +58,8 @@ public class ChronicProperties {
     private Set<String> allowedOrgUrls;
     private Set<String> allowedAddresses;
     private Set<String> subscriberEmails;
-    private ExtendedProperties properties = new ExtendedProperties(System.getProperties());
-    private MailerProperties mailerProperties = new MailerProperties();
+    private final ExtendedProperties properties = new ExtendedProperties(System.getProperties());
+    private final MailerProperties mailerProperties = new MailerProperties();
 
     public void init() throws IOException {
         String jsonConfigFileName = properties.getString("config.json", "config.json");
@@ -68,6 +69,7 @@ public class ChronicProperties {
         alertScript = object.getString("alertScript", alertScript);
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
+        mockStorage = object.getBoolean("mockStorage", testing);
         adminDomains = object.getStringSet("adminDomains");
         adminEmails = object.getStringSet("adminEmails");
         subscriberEmails = object.getStringSet("subscriberEmails");
@@ -83,8 +85,7 @@ public class ChronicProperties {
         webServer = object.getProperties("webServer");
         if (serverAddress.contains("chronical")) {
             byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app48.png"));
-            mailerProperties = new MailerProperties(bytes, 
-                    "chronical.info", "alerts@chronical.info");
+            mailerProperties.init(bytes, "chronical.info", "alerts@chronical.info");
             logger.info("mailer {}", mailerProperties);
         }
     }
@@ -145,6 +146,10 @@ public class ChronicProperties {
         return adminEmails.contains(email) || Strings.endsWith(email, adminDomains);
     }    
 
+    public boolean isDemo(String serverUrl) {
+        return serverUrl.contains("demo");
+    }
+    
     public boolean isSubscriber(String email) {
         return subscriberEmails.contains(email) || isAdmin(email);
     }            
@@ -182,6 +187,10 @@ public class ChronicProperties {
     @Override
     public String toString() {
         return Args.format(mimicEmail);
+    }
+
+    public boolean isMockStorage() {
+        return mockStorage;
     }
        
 }

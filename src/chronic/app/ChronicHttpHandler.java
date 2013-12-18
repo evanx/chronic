@@ -23,8 +23,8 @@ import chronic.handler.SubscriberActionNone;
 import chronic.handler.TopicAction;
 import chronic.handler.TopicActionAll;
 import chronic.handler.TopicActionNone;
-import chronic.persona.LoginPersona;
-import chronic.persona.LogoutPersona;
+import chronic.persona.PersonaLogin;
+import chronic.persona.PersonaLogout;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -62,9 +62,9 @@ public class ChronicHttpHandler implements HttpHandler {
             } else if (path.startsWith("/chronicapp/")) {
                 logger.info("path {}", path);
                 if (path.equals("/chronicapp/personaLogin")) {
-                    new LoginPersona(app).handle(httpExchange);
+                    new PersonaLogin(app).handle(httpExchange);
                 } else if (path.equals("/chronicapp/personaLogout")) {
-                    new LogoutPersona(app).handle(httpExchange);
+                    new PersonaLogout(app).handle(httpExchange);
                 } else if (path.equals("/chronicapp/orgEnroll")) {
                     handle(new EnrollOrg(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/alertList")) {
@@ -107,7 +107,7 @@ public class ChronicHttpHandler implements HttpHandler {
             }
         } catch (Exception e) {
             logger.warn("error {} {}", path, Exceptions.getMessage(e));
-            //e.printStackTrace(System.err);            
+            e.printStackTrace(System.err);            
         }
     }
 

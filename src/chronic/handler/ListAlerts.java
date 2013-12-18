@@ -34,6 +34,8 @@ public class ListAlerts implements ChronicHttpxHandler {
                 alerts.add(alert.getAlertMap(true));
             } else if (app.getProperties().isAdmin(email)) {
                 alerts.add(alert.getAlertMap(true));
+            } else if (app.getProperties().isDemo(httpx.getServerUrl())) {
+                alerts.add(alert.getAlertMap(false));
             }
         }
         return JMaps.create("alerts", alerts);

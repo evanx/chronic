@@ -53,7 +53,7 @@ public class ChronicApp implements Runnable {
 
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicProperties properties = new ChronicProperties();
-    ChronicStorage storage = ChronicStorage.create(this);
+    ChronicStorage storage;
     ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
@@ -63,7 +63,7 @@ public class ChronicApp implements Runnable {
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     Deque statusDeque = new CapacityDeque(100);
     Deque alertDeque = new CapacityDeque(100);
-    DataSource dataSource;
+    DataSource dataSource = new DataSource();
     
     public ChronicApp() {
     }
@@ -71,6 +71,12 @@ public class ChronicApp implements Runnable {
     public void init() throws Exception {
         properties.init();
         logger.info("properties {}", properties);
+        if (properties.isMockStorage()) {
+            storage = new MockChronicStorage(this);
+        } else {
+            dataSource.setPoolProperties(properties.getPoolProperties());
+            storage = new JdbcChronicStorage(this);            
+        }
         storage.init();
         messenger.init();
         messenger.alertAdmins("Chronic restarted");
@@ -214,4 +220,5 @@ public class ChronicApp implements Runnable {
             e.printStackTrace(System.err);
         }
     }
+
 }

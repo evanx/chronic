@@ -320,14 +320,23 @@ wget https://chronical.info/sample/chronical.sh</pre>
 subscribers="you@your.org"
 admins="you@your.org"
 orgUrl="your.org"</pre>                  
-        <p>Step 3. <b>Review</b> <tt>chronical.sh</tt> <i>(so you know it's cool)</i>
-        <p>Step 4: <b>Test</b>
+        <p>
+          Step 3. <b>Review</b> <tt>chronical.sh</tt> <i>(so you know it's cool)</i>
+        </p>
+        <p>
+          Step 4: <b>Test</b>
+        </p>
         <pre>sh chronical.sh</pre>
-        <p>Step 5: <b>Run</b>
+        <p>
+          Step 5: <b>Run</b>
+        </p>
         <pre>sh chronical.sh run</pre>
         <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
           <i>(to <a href="https://chronical.info">https://chronical.info</a> 
             using Mozilla Persona)</i>
+        </p>
+        <p>Click on alert rows to see their content (except on <a href="https://demo.chronical.info">https://demo.chronical.info</a> where you can preview sample alerts that are not your own.)
+        </p>
         <p>ps. The script posts to <tt>https://secure.chronical.info</tt>.</p>
         <pre>$ sh chronical.sh https chronical.info 443
 OK - chronical.info port 443 https available (HTTP/1.1 200 OK)</pre>
@@ -382,47 +391,92 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         <h4><a name="faq">Frequently asked questions</a></h4>
 
         <p><b>What's this?</b>          
-          <br>A simple multi-tenancy cloud-based passive monitoring solution.
+          <br>A cloud-computing monitoring service.
+        </p>
+
+        <p><b>What does it compute in the cloud?</b>
+          <br>Information from computers you want to monitor, which our server processes to see if the message has changed, and to alert you. If it is changing all the time, we will ignore it for you. If the messages stop, we will alert you that something might be wrong.
+        </p>
+        
+        <p><b>What is it essentially?</b>
+          <br>Similar to email, except that "messages" are submitted using client-authenticated HTTPS, and "recipients" must subscribe to recieve alerts when the message changes e.g. "your website was up but now it is down."
+        </p>                
 
         <p><b>How much does it cost?</b>
           <br>It's free and open. Bits and bytes are priceless ;)
+        </p>
 
         <p><b>What is its value proposition?</b>
           <br>Any text output you can submit via HTTPS, you can monitor - instantly and freely :)
+        </p>
 
         <p><b>What use cases?</b>
-          <br>We suggest you use Chronical to monitor your networks and applications, to ensure their integrity and security.
-
-        <p><b>Windows or Linux?</b>
-          <br>We provide a "starter" script for Linux, which can be used to actively monitor Windows machines remotely via TCP. However, expect integration with an opensource Windows agent in a few months, such as the Nagios Cross-Platform Agent (NCPA).
+          <br>We suggest you use Chronical to monitor your networks and applications, to ensure your IT performance and security. Be the first to know :)
+        </p>
 
         <p><b>How is this different from some other cloud-based monitoring services?</b>
-          <br>It's powerful for custom monitoring. It's opensource, so you can own it.
+          <br>It's simple yet powerful for custom monitoring. It's opensource, so you can own it.
+        </p>
 
         <p><b>How is this different from some other opensource monitoring projects?</b>
           <br>We provide a free multi-tenancy cloud service for instant monitoring without any server setup. Our solution supports Nagios plugins, and will be integrated with opensource agents, according to demand.
-
-        <p><b>What can be installed on Linux clients right now?</b>
-        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. This script automatically generates an SSL cert which identifies your organsation. Out of the box, it uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. However, the system is specially engineered to support Nagios plugins, and custom checks.
-
-        <p><b>What API does it use?</b>
-        <br>Plain text document over HTTPS POST, to enable piping the output of a monitored script into <tt>curl</tt> for submission. A script might invoke multiple Nagios plugins or commands to produce the output that you wish to monitor. Commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> for interesting patterns in log files, etc. 
-
-        <p><b>How are alerts triggered?</b>
-        <br>Typically by any change in the monitored output content. However, the content is specially processed to find Nagios status information, Cron and email-style headers, and logging lines, so that superflous information does not trigger alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
+        </p>
 
         <p><b>What notification mechanisms are supported?</b>
           <br>Only email. Support is envisaged for mobile push notifications, but not SMS. (Currently email is disabled for alpha testing.)
-
-        <p><b>Why doesn't the site work on my phone's browser?</b>
-          <br>It will, soon! We use Twitter Bootstrap 3, which is "mobile first," and responsive to desktop, tablet and phone.
+        </p>
 
         <p><b>What technologies are used?</b>
           <br>AngularJS for the front-end, making JSON requests to a Java back-end. We use the JRE's built-in HTTPS server rather than Apache Tomcat. <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
+        </p>
 
-        <p><b>Show me the code!</b>
-          <br>See <a href="https://github.com/evanx/chronic">https://github.com/evanx/chronic</a>.
-          This uses <a href="https://github.com/evanx/vellumcore">https://github.com/evanx/vellumcore</a> which is a common base of distilled code from previous projects.
+        <p><b>Why doesn't the site work on my phone's browser?</b>
+          <br>It will, soon! We use Twitter Bootstrap 3, which is "mobile first," and responsive to desktop, tablet and phone.
+        </p>
+        
+        <p><b>Windows or Linux?</b>
+          <br>We provide a "starter" script for Linux, which can be used out the box to actively monitor Windows machines remotely via TCP. However, you can expect integration with an opensource Windows agent in a few months, such as the Nagios Cross-Platform Agent (NCPA).
+        </p>
+        
+        <p><b>What can be installed on Linux clients right now?</b>
+        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, the client uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. However, the system is specially engineered to support Nagios plugins, and custom checks.
+        </p>
+
+        <p><b>How is it run?</b>
+        <br>The script can be started from <tt>rc.local</tt>. It has built-in support for minutely, hourly and daily checks, without needing <tt>crond</tt>. However, you can pipe the output of cron jobs to our script also. Finally, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink), to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
+        </p>
+
+        <p><b>What API does it use?</b>
+        <br>Text document with email-style headers, submitted via HTTPS POST. For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronical.info</tt>. Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. But the text is considered preformatted with line-breaks, and so is not strictly an HTML document.
+        </p>
+        
+        <p><b>How are checks performed?</b>
+        <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. So it's totally customisable. As such, we will extend our script soon to satisfy PCI DSS compliancy, out of the box :)
+        </p>
+        
+        <p><b>How to manage client certs for my organisation?</b>
+        <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. By default the hostname of your machine is used for the cert's common name. It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved, and can confirm client certs, and grant admin priviledges to others, via the site.
+        </p>
+
+        <p><b>How are subcribers managed?</b>
+          <br>The message content specifies its topic, and invites subscribers by their email addresses, via email-style headers, namely "Topic:" and "Subscribers:". If you have approved the topic's cert, then this topic will be published. However, invitees must themselves subscribe to specific topics. This is performed via the site, which validates their email address using Mozilla Persona. So you should advise them visit the site to subscribe to available topics. This way we don't send unsolicited email to unauthentified addresses.</p>
+        
+        <p><b>How do subcribers opt-out?</b>
+          <br>Actually they have to opt-in themselves, and can unsubscribe and re-subscribe anytime.
+        </p>
+                 
+        <p><b>How are alerts triggered?</b>
+        <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore suprious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
+      </p>
+
+      <p><b>How do I to contribute my improvements for inclusion?</b>        
+        <br>Fork <a href="https://github.com/evanx/chronic">https://github.com/evanx/chronic</a>. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/sample/chronical.sh">chronical.sh</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/StatusRecordMatcher.java">StatusRecordMatcher</a>. Email us about your ASL-licensed shell functions and Java text processing classes. 
+      </p>
+
+      <p><b>Show me the code!</b>
+        <br>See <a href="https://github.com/evanx/chronic">https://github.com/evanx/chronic</a>.
+        This uses <a href="https://github.com/evanx/vellumcore">https://github.com/evanx/vellumcore</a> which is a common base of distilled code from previous projects.
+      </p>          
       </div>
     </div>
 

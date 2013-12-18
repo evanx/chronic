@@ -27,7 +27,7 @@ public class MailerProperties {
     public MailerProperties() {
     }
     
-    public MailerProperties(ExtendedProperties properties) {
+    public void init(ExtendedProperties properties) {
         enabled = properties.getBoolean("enabled", true);
         host = properties.getString("host", host);
         port = properties.getInt("port", port);
@@ -44,7 +44,7 @@ public class MailerProperties {
         }
     }
     
-    public MailerProperties(byte[] logoBytes, String organisation, String from) {
+    public void init(byte[] logoBytes, String organisation, String from) {
         this.logoBytes = logoBytes;
         this.organisation = organisation;
         this.from = from;

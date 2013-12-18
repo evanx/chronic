@@ -145,7 +145,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
         return timestamp;
     }
         
-    public JMap getMap() {
+    public JMap getMap(boolean actionEnabled) {
         JMap map = new JMap();
         map.put("id", id);
         map.put("orgUrl", orgUrl);
@@ -156,6 +156,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
         map.put("timestampLabel", Millis.formatTime(timestamp));
         map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());
+        map.put("actionEnabled", actionEnabled);
         return map;
     }
 
@@ -165,6 +166,6 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
     
     @Override
     public String toString() {
-        return getMap().toString();
+        return getMap(true).toString();
     }
 }
