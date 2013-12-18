@@ -13,32 +13,32 @@ import vellum.jx.JMapException;
  * @author evan.summers
  */
 public final class TopicKey extends ComparableTuple {
-    String orgUrl;
+    String orgDomain;
     String orgUnit;
     String commonName;
     String topicString;
 
     public TopicKey(JMap map) throws JMapException {
-        this(map.getString("orgUrl"), 
+        this(map.getString("orgDomain"), 
                 map.getString("orgUnit"), 
                 map.getString("commonName"),
                 map.getString("topicString"));
     }
     
-    public TopicKey(String orgUrl, String orgUnit, String commonName, String topicString) {
-        super(orgUrl, orgUnit, commonName, topicString);
-        this.orgUrl = orgUrl;
+    public TopicKey(String orgDomain, String orgUnit, String commonName, String topicString) {
+        super(orgDomain, orgUnit, commonName, topicString);
+        this.orgDomain = orgDomain;
         this.orgUnit = orgUnit;
         this.commonName = commonName;
         this.topicString = topicString;
     }
 
     public TopicKey(CertKey certKey, String topicString) {
-        this(certKey.getOrgUrl(), certKey.getOrgUnit(), certKey.getCommonName(), topicString);
+        this(certKey.getOrgDomain(), certKey.getOrgUnit(), certKey.getCommonName(), topicString);
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }
 
     public String getOrgUnit() {
@@ -55,7 +55,7 @@ public final class TopicKey extends ComparableTuple {
 
     public JMap getMap() {
         JMap map = new JMap();
-        map.put("orgUrl", orgUrl);
+        map.put("orgDomain", orgDomain);
         map.put("orgUnit", orgUnit);
         map.put("commonName", commonName);
         map.put("topicString", topicString);

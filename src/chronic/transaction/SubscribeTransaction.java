@@ -21,16 +21,16 @@ public class SubscribeTransaction {
     
     static Logger logger = LoggerFactory.getLogger(SubscribeTransaction.class);
     
-    public void handle(ChronicApp app, String orgUrl, String email) throws StorageException {
-        logger.info("handle {} {}", orgUrl, email);
+    public void handle(ChronicApp app, String orgDomain, String email) throws StorageException {
+        logger.info("handle {} {}", orgDomain, email);
         User user = app.storage().user().select(email);
         if (user == null) {
             user = new User(email);
             app.storage().user().insert(user);
         }
-        Org org = app.storage().org().select(orgUrl);
+        Org org = app.storage().org().select(orgDomain);
         if (org == null) {
-            org = new Org(orgUrl);
+            org = new Org(orgDomain);
             app.storage().org().insert(org);
         }
         for (Topic topic : app.storage().topic().list(org)) {

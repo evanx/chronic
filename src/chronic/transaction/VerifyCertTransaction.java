@@ -27,14 +27,14 @@ public class VerifyCertTransaction {
             throws StorageException, CertificateException {
         String encoded = X509Certificates.getEncodedPublicKey(certificate);
         String commonName = Certificates.getCommonName(certificate.getSubjectDN());
-        String orgUrl = Certificates.getOrg(certificate.getSubjectDN());
+        String orgDomain = Certificates.getOrg(certificate.getSubjectDN());
         String orgUnit = Certificates.getOrgUnit(certificate.getSubjectDN());
-        if (!app.getProperties().getAllowedOrgUrls().contains(orgUrl)) {
-            throw new CertificateException("org not allowed: " + orgUrl);
+        if (!app.getProperties().getAllowedOrgDomains().contains(orgDomain)) {
+            throw new CertificateException("org not allowed: " + orgDomain);
         } else if (!app.getProperties().getAllowedAddresses().contains(hostAddress)) {
             logger.warn("remote hostAddress {}", hostAddress);
         }
-        CertKey certKey = new CertKey(orgUrl, orgUnit, commonName);
+        CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);
         Cert cert = app.storage().cert().select(certKey);
         if (cert == null) {
             cert = new Cert(certKey);
@@ -50,9 +50,9 @@ public class VerifyCertTransaction {
             logger.warn("host address {}", hostAddress);
         }
         cert.setTimestamp(System.currentTimeMillis());
-        Org org = app.storage().org().select(cert.getOrgUrl());
+        Org org = app.storage().org().select(cert.getOrgDomain());
         if (org == null) {
-            org = new Org(cert.getOrgUrl());
+            org = new Org(cert.getOrgDomain());
             app.storage().org().insert(org);
             logger.info("insert org {}", org);
         }

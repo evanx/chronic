@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="favicon.png">
-    <title>Chronical.info</title>
+    <title>Chronical.co</title>
     <link href="bootstrap-3.0.2/css/bootstrap.css" rel="stylesheet" />
     <link href="css/bootstrap-switch.css" rel="stylesheet" />
     <link href="navbar.css" rel="stylesheet" />
@@ -25,7 +25,7 @@
         <div class="navbar-header">
           <ul class="nav navbar-nav">
             <li ng-class="getClass('faq')">
-              <a class="navbar-brand" href="#" ng-click="changeView('faq')">chronical.info</a>
+              <a class="navbar-brand" href="#" ng-click="changeView('faq')">chronical.co</a>
             </li>
           </ul>
         </div>
@@ -129,8 +129,10 @@
                 <th>Network</th>
                 <th>Organisation</th>
                 <th>
-                  <input type="button" value="All" ng-click="actionAll()">
-                  <input type="button" value="None" ng-click="actionNone()">
+                  <input type="button" value="All" 
+                         ng-click="actionAll()" ng-disabled="actionAllDisabled">
+                  <input type="button" value="None" 
+                         ng-click="actionNone()" ng-disabled="actionNoneDisabled">
                 </th>
               </tr>
             </thead>
@@ -146,10 +148,11 @@
                   {{topic.networkName}}
                 </td>
                 <td>
-                  {{topic.orgUrl}}
+                  {{topic.orgDomain}}
                 </td>
                 <td>
-                  <input type="button" value="{{topic.actionLabel}}" ng-click="action()">
+                  <input type="button" value="{{topic.actionLabel}}" 
+                         ng-click="action()" ng-disabled="actionAllDisabled">
                 </td>
               </tr>
             </tbody>
@@ -170,22 +173,24 @@
                 <th>Organisation</th>
                 <th>Topic</th>
                 <th>
-                  <input type="button" value="All" ng-click="actionAll()">
-                  <input type="button" value="None" ng-click="actionNone()">
+                  <input type="button" value="All" 
+                         ng-click="actionAll()" ng-disabled="actionAllDisabled">
+                  <input type="button" value="None" 
+                         ng-click="actionNone()" ng-disabled="actionNoneDisabled">
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr ng-repeat="subscriber in subscriptions">
                 <td ng-click="setSelected()">
-                  {{subscriber.orgUrl}}
+                  {{subscriber.orgDomain}}
                 </td>
                 <td>
                   {{subscriber.topicString}}
                 </td>
                 <td>
                   <input type="button" value="{{subscriber.actionLabel}}" 
-                         ng-click="action()">
+                         ng-click="action()" ng-disabled="actionAllDisabled">
                 </td>
               </tr>
             </tbody>
@@ -206,7 +211,7 @@
             <tbody>
               <tr ng-repeat="subscriber in subscribers">
                 <td>
-                  {{subscriber.orgUrl}}
+                  {{subscriber.orgDomain}}
                 </td>
                 <td>
                   {{subscriber.topicString}}
@@ -234,14 +239,15 @@
                 <th>Person</th>
                 <th>Role</th>
                 <th>
-                  <input type="button" value="All" ng-click="actionAll()">
+                  <input type="button" value="All" 
+                         ng-click="actionAll()" ng-disabled="actionAllDisabled">
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr ng-repeat="role in roles">
                 <td ng-click="setSelected()">
-                  {{role.orgUrl}}
+                  {{role.orgDomain}}
                 </td>
                 <td>
                   {{role.email}}
@@ -250,7 +256,8 @@
                   {{role.roleTypeLabel}}
                 </td>
                 <td>
-                  <input type="button" value="{{role.actionLabel}}" ng-click="action()">
+                  <input type="button" value="{{role.actionLabel}}" 
+                         ng-click="action()" ng-disabled="actionAllDisabled">
                 </td>
               </tr>
             </tbody>
@@ -274,7 +281,8 @@
                 <th>Unit</th>
                 <th>Address</th>
                 <th>
-                  <input type="button" value="All" ng-click="actionAll()">
+                  <input type="button" value="All" 
+                         ng-click="actionAll()" ng-disabled="actionAllDisabled">
                 </th>
               </tr>
             </thead>
@@ -284,7 +292,7 @@
                   {{cert.timestampLabel}}
                 </td>
                 <td ng-click="setSelected()">
-                  {{cert.orgUrl}}
+                  {{cert.orgDomain}}
                 </td>
                 <td>
                   {{cert.commonName}}
@@ -296,7 +304,8 @@
                   {{cert.address}}
                 </td>
                 <td>
-                  <input type="button" value="{{cert.actionLabel}}" ng-click="action()">
+                  <input type="button" value="{{cert.actionLabel}}" 
+                         ng-click="action()" ng-disabled="actionAllDisabled">
                 </td>
               </tr>
             </tbody>
@@ -313,13 +322,13 @@
         <p><a href="#faq" class="btn btn-primary btn-lg" role="button"
               ng-cloak ng-show="!persona.email && false">Learn more &raquo;</a></p>
         <p>Step 1: <b>Get</b> two scripts, as an unpriviledged user.
-        <pre>wget https://chronical.info/sample/custom.chronical.sh
-wget https://chronical.info/sample/chronical.sh</pre>   
+        <pre>wget https://chronical.co/sample/custom.chronical.sh
+wget https://chronical.co/sample/chronical.sh</pre>   
         <p>Step 2: <b>Edit</b> <tt>custom.chronical.sh</tt> <i>(for you and yours)</i>
         <pre>$ vi custom.chronical.sh
 subscribers="you@your.org"
 admins="you@your.org"
-orgUrl="your.org"</pre>                  
+orgDomain="your.org"</pre>                  
         <p>
           Step 3. <b>Review</b> <tt>chronical.sh</tt> <i>(so you know it's cool)</i>
         </p>
@@ -332,31 +341,31 @@ orgUrl="your.org"</pre>
         </p>
         <pre>sh chronical.sh run</pre>
         <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
-          <i>(to <a href="https://chronical.info">https://chronical.info</a> 
+          <i>(to <a href="https://chronical.co">https://chronical.co</a> 
             using Mozilla Persona)</i>
         </p>
-        <p>Click on alert rows to see their content (except on <a href="https://demo.chronical.info">https://demo.chronical.info</a> where you can preview sample alerts that are not your own.)
+        <p>Click on alert rows to see their content (except on <a href="https://demo.chronical.co">https://demo.chronical.co</a> where you can preview sample alerts that are not your own.)
         </p>
-        <p>ps. The script posts to <tt>https://secure.chronical.info</tt>.</p>
-        <pre>$ sh chronical.sh https chronical.info 443
-OK - chronical.info port 443 https available (HTTP/1.1 200 OK)</pre>
+        <p>ps. The script posts to <tt>https://secure.chronical.co</tt>.</p>
+        <pre>$ sh chronical.sh https chronical.co 443
+OK - chronical.co port 443 https available (HTTP/1.1 200 OK)</pre>
         <hr>
-        <h4>Getting jiggy with it</h4>
+        <h3>Getting jiggy with it</h3>
         <p>Customize the <tt>custom.chronical.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or daily.</p>
         <pre>c0hourly() {
   c1topic hourly
   c0diskspace
   c2notcp chronical 21
-  c2tcp chronical.info 80
-  c2https chronical.info 443
+  c2tcp chronical.co 80
+  c2https chronical.co 443
 }</pre><p>where the convention for naming functions indicates the number of parameters. Commands can be tested from the command-line, as follows.</p>
-        <pre>$ sh chronical.sh nohttp chronical.info 80
-OK - chronical.info (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
+        <pre>$ sh chronical.sh nohttp chronical.co 80
+OK - chronical.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
         <p>Add Nagios plugins and adhoc scripts as required.</p>
         <pre>c0minutely() {
   c1topic minutely
   c0load
-  c2httpsAuth secure.chronical.info 443 
+  c2httpsAuth secure.chronical.co 443 
   /usr/lib/nagios/plugins/check_pgsql -H localhost 
   ssh postgres@localhost scripts/check_replication.sh
 }</pre>
@@ -375,10 +384,10 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         <hr>
         <h4>Resources</h4>
         <p><a href="/sample/custom.chronical.sh">
-            https://chronical.info/sample/custom.chronical.sh</a> - customisable template
+            https://chronical.co/sample/custom.chronical.sh</a> - customisable template
         </p>
         <p><a href="/sample/chronical.sh">
-            https://chronical.info/sample/chronical.sh</a> - operational script
+            https://chronical.co/sample/chronical.sh</a> - operational script
         </p>
       </div>
     </div>
@@ -447,7 +456,7 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         </p>
 
         <p><b>What API does it use?</b>
-        <br>Text document with email-style headers, submitted via HTTPS POST. For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronical.info</tt>. Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. But the text is considered preformatted with line-breaks, and so is not strictly an HTML document.
+        <br>Text document with email-style headers, submitted via HTTPS POST. For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronical.co</tt>. Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. But the text is considered preformatted with line-breaks, and so is not strictly an HTML document.
         </p>
         
         <p><b>How are checks performed?</b>

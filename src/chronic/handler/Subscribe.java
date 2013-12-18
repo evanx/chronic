@@ -30,9 +30,9 @@ public class Subscribe {
         hx = new Httpx(httpExchange);
         String email = hx.readString().trim();
         if (Emails.matchesEmail(email)) {
-            String orgUrl = Certificates.getOrg(hx.getSSLSession().getPeerPrincipal());
-            new SubscribeTransaction().handle(app, orgUrl, email);
-            hx.sendPlainResponse("ok %s %s", orgUrl, email);
+            String orgDomain = Certificates.getOrg(hx.getSSLSession().getPeerPrincipal());
+            new SubscribeTransaction().handle(app, orgDomain, email);
+            hx.sendPlainResponse("ok %s %s", orgDomain, email);
         } else {
             hx.sendError("invalid email %s", email);
         }

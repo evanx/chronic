@@ -11,17 +11,17 @@ import vellum.data.ComparableTuple;
  * @author evan.summers
  */
 public class NetworkKey extends ComparableTuple {
-    String orgUrl;
+    String orgDomain;
     String networkName;
 
-    public NetworkKey(String orgUrl, String networkName) {
-        super(orgUrl, networkName);        
-        this.orgUrl = orgUrl;
+    public NetworkKey(String orgDomain, String networkName) {
+        super(orgDomain, networkName);        
+        this.orgDomain = orgDomain;
         this.networkName = networkName;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }        
 
     public String getNetworkName() {

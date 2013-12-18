@@ -25,7 +25,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
         CertKeyed, Timestamped, Enabled {
 
     Long id;
-    String orgUrl;
+    String orgDomain;
     String orgUnit;
     String commonName;
     String encoded;
@@ -37,22 +37,22 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
     public Cert() {
     }
 
-    public Cert(Long id, String orgUrl, String orgUnit, String commonName, String address) {
+    public Cert(Long id, String orgDomain, String orgUnit, String commonName, String address) {
         this.id = id;
-        this.orgUrl = orgUrl;
+        this.orgDomain = orgDomain;
         this.orgUnit = orgUnit;
         this.commonName = commonName;
         this.address = address;
     }
 
     public Cert(CertKey key) {
-        this.orgUrl = key.getOrgUrl();
+        this.orgDomain = key.getOrgDomain();
         this.orgUnit = key.getOrgUnit();
         this.commonName = key.getCommonName();
     }
     
-    public Cert(String orgUrl, String orgUnit, String commonName) {
-        this.orgUrl = orgUrl;
+    public Cert(String orgDomain, String orgUnit, String commonName) {
+        this.orgDomain = orgDomain;
         this.orgUnit = orgUnit;
         this.commonName = commonName;
     }
@@ -64,17 +64,17 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
 
     @Override
     public CertKey getCertKey() {
-        return new CertKey(orgUrl, orgUnit, commonName);
+        return new CertKey(orgDomain, orgUnit, commonName);
     }
     
     @Override
     public OrgKey getOrgKey() {
-        return new OrgKey(orgUrl);
+        return new OrgKey(orgDomain);
     }
 
     @Override
     public OrgUnitKey getOrgUnitKey() {
-        return new OrgUnitKey(orgUrl, orgUnit);
+        return new OrgUnitKey(orgDomain, orgUnit);
     }
     
     @Override
@@ -96,12 +96,12 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
         return enabled;
     }
 
-    public void setOrgUrl(String orgUrl) {
-        this.orgUrl = orgUrl;
+    public void setOrgDomain(String orgDomain) {
+        this.orgDomain = orgDomain;
     }
     
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }
 
     public void setOrgUnit(String orgUnit) {
@@ -148,7 +148,7 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
     public JMap getMap(boolean actionEnabled) {
         JMap map = new JMap();
         map.put("id", id);
-        map.put("orgUrl", orgUrl);
+        map.put("orgDomain", orgDomain);
         map.put("orgUnit", orgUnit);
         map.put("commonName", commonName);
         map.put("enabled", enabled);

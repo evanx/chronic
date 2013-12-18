@@ -28,7 +28,7 @@ import vellum.type.Enabled;
 public final class Subscriber extends AbstractIdEntity implements SubscriberKeyed, 
         OrgKeyed, UserKeyed, TopicKeyed, OrgTopicKeyed, CertKeyed, Enabled {
     Long id;
-    String orgUrl;
+    String orgDomain;
     String orgUnit;
     String commonName;
     String topicString;
@@ -39,7 +39,7 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
     }
 
     public Subscriber(SubscriberKey key) {
-        this.orgUrl = key.getOrgUrl();
+        this.orgDomain = key.getOrgDomain();
         this.orgUnit = key.getOrgUnit();
         this.commonName = key.getCommonName();
         this.topicString = key.getTopicString();
@@ -53,17 +53,17 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
 
     @Override
     public SubscriberKey getSubscriberKey() {
-        return new SubscriberKey(orgUrl, orgUnit, commonName, topicString, email);
+        return new SubscriberKey(orgDomain, orgUnit, commonName, topicString, email);
     }
 
     @Override
     public TopicKey getTopicKey() {
-        return new TopicKey(orgUrl, orgUnit, commonName, topicString);
+        return new TopicKey(orgDomain, orgUnit, commonName, topicString);
     }
 
     @Override
     public CertKey getCertKey() {
-        return new CertKey(orgUrl, orgUnit, commonName);
+        return new CertKey(orgDomain, orgUnit, commonName);
     }
     
     @Override
@@ -73,12 +73,12 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
 
     @Override
     public OrgKey getOrgKey() {
-        return new OrgKey(orgUrl);
+        return new OrgKey(orgDomain);
     }
 
     @Override
     public OrgTopicKey getOrgTopicKey() {
-        return new OrgTopicKey(orgUrl, topicString);
+        return new OrgTopicKey(orgDomain, topicString);
     }
     
     public void setEnabled(boolean enabled) {
@@ -104,8 +104,8 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
         return email;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }
     
     public String getTopicString() {
@@ -115,7 +115,7 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
-        map.put("orgUrl", orgUrl);
+        map.put("orgDomain", orgDomain);
         map.put("orgUnit", orgUnit);
         map.put("commonName", commonName);
         map.put("topicString", topicString);

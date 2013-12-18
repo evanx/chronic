@@ -20,7 +20,7 @@
 ### custom config 
 
 orgUnit="" # network or group
-orgUrl="" # URL of your organisation 
+orgDomain="" # URL of your organisation 
 admins="" # emails of chronical admins for this organisation
 commonName="" # name of this host or account
 subscribers="" # emails of invited subcribers for this topic
@@ -32,13 +32,13 @@ scheduledMinute="19" # minute of hour for daily check
 c0minutely() {
   c1topic minutely
   c0load
-  #c2tcp chronical.info 443
-  #c2nossl chronical.info 80
-  #c2nohttps chronical.info 80
+  #c2tcp chronical.co 443
+  #c2nossl chronical.co 80
+  #c2nohttps chronical.co 80
   #c2notcp chronical 21
   #c2notcp chronical 25
-  #c2https chronical.info 443 
-  #c2https chronical.info 8444
+  #c2https chronical.co 443 
+  #c2https chronical.co 8444
   #c2postgres localhost 5432
 }
 

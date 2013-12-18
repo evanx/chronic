@@ -12,17 +12,17 @@ import vellum.data.ComparableTuple;
  * @author evan.summers
  */
 public class OrgRoleTypeKey extends ComparableTuple {
-    String orgUrl;
+    String orgDomain;
     OrgRoleType roleType;
 
-    public OrgRoleTypeKey(String orgUrl, OrgRoleType roleType) {
-        super(orgUrl, roleType);        
-        this.orgUrl = orgUrl;
+    public OrgRoleTypeKey(String orgDomain, OrgRoleType roleType) {
+        super(orgDomain, roleType);        
+        this.orgDomain = orgDomain;
         this.roleType = roleType;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }        
 
     public OrgRoleType getRoleType() {

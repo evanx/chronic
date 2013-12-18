@@ -14,26 +14,26 @@ import vellum.jx.JMapException;
  */
 public final class CertKey extends ComparableTuple {
 
-    String orgUrl;
+    String orgDomain;
     String orgUnit;
     String commonName;
     String address;
 
     public CertKey(JMap map) throws JMapException {
-        this(map.getString("orgUrl"), 
+        this(map.getString("orgDomain"), 
                 map.getString("orgUnit"), 
                 map.getString("commonName"));
     }
     
-    public CertKey(String orgUrl, String orgUnit, String commonName) {
-        super(orgUrl, orgUnit, commonName);
-        this.orgUrl = orgUrl;
+    public CertKey(String orgDomain, String orgUnit, String commonName) {
+        super(orgDomain, orgUnit, commonName);
+        this.orgDomain = orgDomain;
         this.orgUnit = orgUnit;
         this.commonName = commonName;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }
 
     public String getOrgUnit() {

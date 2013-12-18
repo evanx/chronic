@@ -64,7 +64,7 @@ public class CertStore implements EntityStore<Cert> {
     private Cert create(ResultSet resultSet) throws SQLException {
         Cert cert = new Cert();
         cert.setId(resultSet.getLong("id"));
-        cert.setOrgUrl(resultSet.getString("org_url"));
+        cert.setOrgDomain(resultSet.getString("org_domain"));
         cert.setOrgUnit(resultSet.getString("org_unit"));
         cert.setCommonName(resultSet.getString("cn"));
         cert.setEncoded(resultSet.getString("encoded"));
@@ -84,7 +84,7 @@ public class CertStore implements EntityStore<Cert> {
     public void insert(Cert cert) throws StorageException {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = prepare(connection, "insert")) {
-            statement.setString(1, cert.getOrgUrl());
+            statement.setString(1, cert.getOrgDomain());
             statement.setString(2, cert.getOrgUnit());
             statement.setString(3, cert.getCommonName());
             statement.setString(4, cert.getEncoded());
@@ -124,7 +124,7 @@ public class CertStore implements EntityStore<Cert> {
                 PreparedStatement statement = prepare(connection, "delete")) {
             statement.setLong(1, (Long) key);
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_INSERTED, key);
+                throw new StorageException(StorageExceptionType.NOT_DELETED, key);
             }
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, key);
@@ -144,7 +144,7 @@ public class CertStore implements EntityStore<Cert> {
     private Cert selectKey(CertKey key) throws StorageException {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = prepare(connection, "select key")) {
-            statement.setString(1, key.getOrgUrl());
+            statement.setString(1, key.getOrgDomain());
             statement.setString(2, key.getOrgUnit());
             statement.setString(3, key.getCommonName());
             try (ResultSet resultSet = statement.getResultSet()) {
@@ -214,7 +214,7 @@ public class CertStore implements EntityStore<Cert> {
 
     private Collection<Cert> listOrgKey(OrgKey key) throws StorageException {
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "list org", key.getOrgUrl());
+                PreparedStatement statement = prepare(connection, "list org", key.getOrgDomain());
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
         } catch (SQLException sqle) {

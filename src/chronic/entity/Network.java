@@ -23,19 +23,19 @@ public class Network extends AbstractEntity implements NetworkKeyed, Labelled, E
     String label;
     String description;
     String address;
-    String orgUrl;
+    String orgDomain;
     boolean enabled = true;
     
     public Network() {
     }
 
     public Network(NetworkKey key) {
-        this.orgUrl = key.getOrgUrl();
+        this.orgDomain = key.getOrgDomain();
         this.networkName = key.getNetworkName();
     }
     
     public Network(String orgName, String networkName) {
-        this.orgUrl = orgName;
+        this.orgDomain = orgName;
         this.networkName = networkName;
     }
     
@@ -46,7 +46,7 @@ public class Network extends AbstractEntity implements NetworkKeyed, Labelled, E
 
     @Override
     public NetworkKey getNetworkKey() {
-        return new NetworkKey(orgUrl, networkName);
+        return new NetworkKey(orgDomain, networkName);
     }
     
     public String getNetworkName() {
@@ -57,8 +57,8 @@ public class Network extends AbstractEntity implements NetworkKeyed, Labelled, E
         this.networkName = networkName;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }
     
     public void setAddress(String address) {

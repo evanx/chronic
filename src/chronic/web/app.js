@@ -152,6 +152,8 @@ app.controller("alertsController", ["$scope", "$http",
 app.controller("topicsController", ["$scope", "$http",
    function($scope, $http) {
       $scope.loading = false;
+      $scope.actionAllDisabled = $scope.persona.demo;
+      $scope.actionNoneDisabled = $scope.persona.demo;
       $scope.topicsList = function() {
          console.log("topics", $scope.persona.email);
          $scope.topics = undefined;
@@ -224,6 +226,8 @@ app.controller("topicsController", ["$scope", "$http",
 app.controller("subscribersController", ["$scope", "$http",
    function($scope, $http) {
       $scope.loading = false;
+      $scope.actionAllDisabled = $scope.persona.demo;
+      $scope.actionNoneDisabled = $scope.persona.demo;
       $scope.subscribersList = function() {
          console.log("subscribers", $scope.persona.email);
          $scope.subscribers = undefined;
@@ -297,6 +301,8 @@ app.controller("subscribersController", ["$scope", "$http",
 app.controller("rolesController", ["$scope", "$http",
    function($scope, $http) {
       $scope.loading = false;
+      $scope.actionAllDisabled = $scope.persona.demo;
+      $scope.actionNoneDisabled = $scope.persona.demo;
       $scope.rolesList = function() {
          console.log("roles", $scope.persona.email);
          $scope.roles = undefined;
@@ -357,6 +363,8 @@ app.controller("rolesController", ["$scope", "$http",
 app.controller("certsController", ["$scope", "$http",
    function($scope, $http) {
       $scope.loading = false;
+      $scope.actionAllDisabled = $scope.persona.demo;
+      $scope.actionNoneDisabled = $scope.persona.demo;
       $scope.certsList = function() {
          console.log("certs", $scope.persona.email);
          $scope.certs = undefined;

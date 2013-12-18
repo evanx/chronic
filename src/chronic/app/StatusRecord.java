@@ -61,7 +61,7 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     String username;
     String hostname;
     String service;
-    String orgUrl;
+    String orgDomain;
     String orgUnit;
     String commonName;
     String[] subscribers;
@@ -70,7 +70,7 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     transient Collection<StatusCheck> checks = new LinkedList();
     
     public StatusRecord(CertKey certKey) {
-        this.orgUrl = certKey.getOrgUrl();
+        this.orgDomain = certKey.getOrgDomain();
         this.orgUnit = certKey.getOrgUnit();
         this.commonName = certKey.getCommonName();
     }
@@ -85,7 +85,7 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         this.hostname = record.hostname;
         this.username = record.username;
         this.service = record.service;
-        this.orgUrl = record.orgUrl;
+        this.orgDomain = record.orgDomain;
         this.orgUnit = record.orgUnit;
         this.commonName = record.commonName;
     }
@@ -96,22 +96,22 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
 
     @Override
     public TopicKey getTopicKey() {
-        return new TopicKey(orgUrl, orgUnit, commonName, topicString);
+        return new TopicKey(orgDomain, orgUnit, commonName, topicString);
     }
     
     @Override
     public OrgKey getOrgKey() {
-        return new OrgKey(orgUrl);
+        return new OrgKey(orgDomain);
     }
     
     @Override
     public OrgTopicKey getOrgTopicKey() {
-        return new OrgTopicKey(orgUrl, topicString);
+        return new OrgTopicKey(orgDomain, topicString);
     }
 
     @Override
     public CertKey getCertKey() {
-        return new CertKey(orgUrl, orgUnit, commonName);
+        return new CertKey(orgDomain, orgUnit, commonName);
     }
     
     public void setUsername(String username) {
@@ -130,12 +130,12 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         return timestamp;
     }
 
-    public void setOrgUrl(String orgUrl) {
-        this.orgUrl = orgUrl;
+    public void setOrgDomain(String orgDomain) {
+        this.orgDomain = orgDomain;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }
 
     public String getFrom() {
@@ -241,7 +241,7 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
 
     public boolean isAdmin(String email) {
         if (email != null) {
-            if (orgUrl != null && email.endsWith(orgUrl)) {
+            if (orgDomain != null && email.endsWith(orgDomain)) {
                 return true;
             }
         }
@@ -262,6 +262,6 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     
     @Override
     public String toString() {
-        return Args.format(alertType, orgUrl, topicString, statusType, periodMillis);
+        return Args.format(alertType, orgDomain, topicString, statusType, periodMillis);
     }
 }

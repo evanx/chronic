@@ -33,7 +33,7 @@ import vellum.util.Args;
 public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleTypeKeyed,
         OrgKeyed, OrgUserKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled {
     Long id;
-    String orgUrl;
+    String orgDomain;
     String email;
     OrgRoleType roleType;
     ChronicApp app; 
@@ -42,9 +42,9 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     transient Org org;
     transient User user; 
 
-    public OrgRole(ChronicApp app, String orgUrl, String email) {
+    public OrgRole(ChronicApp app, String orgDomain, String email) {
         this.app = app;
-        this.orgUrl = orgUrl;
+        this.orgDomain = orgDomain;
         this.email = email;
     }
     
@@ -52,12 +52,12 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
         this.org = org;
         this.user = user;
         this.roleType = roleType;
-        orgUrl = org.getOrgUrl();
+        orgDomain = org.getOrgDomain();
         email = user.getEmail();
     }
 
     public OrgRole(OrgRoleKey key) {
-        this.orgUrl = key.getOrgUrl();
+        this.orgDomain = key.getOrgDomain();
         this.email = key.getEmail();
         this.roleType = key.getRoleType();
     }
@@ -69,12 +69,12 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     
     @Override
     public OrgRoleKey getOrgRoleKey() {
-        return new OrgRoleKey(orgUrl, email, roleType);
+        return new OrgRoleKey(orgDomain, email, roleType);
     }
 
     @Override
     public OrgKey getOrgKey() {
-        return new OrgKey(orgUrl);
+        return new OrgKey(orgDomain);
     }
 
     
@@ -85,12 +85,12 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
 
     @Override
     public OrgUserKey getOrgUserKey() {
-        return new OrgUserKey(orgUrl, email);
+        return new OrgUserKey(orgDomain, email);
     }
 
     @Override
     public OrgRoleTypeKey getOrgRoleTypeKey() {
-        return new OrgRoleTypeKey(orgUrl, roleType);
+        return new OrgRoleTypeKey(orgDomain, roleType);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     
     public JMap getMap() throws StorageException {
         return new JMap(
-                JMaps.entry("orgUrl", orgUrl),
+                JMaps.entry("orgDomain", orgDomain),
                 JMaps.entry("email", email),
                 JMaps.entry("roleType", roleType),
                 JMaps.entry("roleTypeLabel", roleType.getLabel()),
@@ -131,12 +131,12 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
         return id;
     }
     
-    public void setOrgUrl(String orgUrl) {
-        this.orgUrl = orgUrl;
+    public void setOrgDomain(String orgDomain) {
+        this.orgDomain = orgDomain;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }
 
     public void setEmail(String email) {
@@ -159,14 +159,14 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     }
 
     public Org getOrg() throws StorageException {
-        if (org == null && orgUrl != null) {
-            org = app.storage().org().find(orgUrl);
+        if (org == null && orgDomain != null) {
+            org = app.storage().org().find(orgDomain);
         }
         return org;
     }    
 
     @Override
     public String toString() {
-        return Args.format(orgUrl, email, roleType);
+        return Args.format(orgDomain, email, roleType);
     }    
 }

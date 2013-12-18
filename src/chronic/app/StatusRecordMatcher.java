@@ -1,4 +1,3 @@
-package chronic.app;
 
 /*
  * Source https://github.com/evanx by @evanxsummers
@@ -21,6 +20,7 @@ package chronic.app;
  under the License.  
  */
 
+package chronic.app;
 
 import java.util.LinkedList;
 import java.util.List;

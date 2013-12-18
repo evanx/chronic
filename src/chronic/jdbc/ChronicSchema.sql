@@ -23,16 +23,16 @@ create table person (
 
 create table org (
   org_id int auto_increment primary key, 
-  org_url varchar(64) not null,
+  org_domain varchar(64) not null,
   label varchar(64),
   enabled boolean default false,
   inserted timestamp not null default now(),
-  unique key uniq_org_name (org_url)
+  unique key uniq_org_name (org_domain)
 );
 
 create table org_role (
   role_id int auto_increment primary key, 
-  org_url varchar(64), 
+  org_domain varchar(64), 
   email varchar(64),
   role_type varchar(32),
   enabled boolean default false,
@@ -42,13 +42,13 @@ create table org_role (
 
 create table cert (
   cert_id int auto_increment primary key,
-  org_url varchar(64) not null,
+  org_domain varchar(64) not null,
   org_unit varchar(64) not null,
   common_name varchar(64) not null,
   encoded varchar(8192),
   enabled boolean default false,
   inserted timestamp not null default now(),
-  unique key uniq_cert (org_url, org_unit, common_name)
+  unique key uniq_cert (org_domain, org_unit, common_name)
 );
 
 create table topic (
@@ -57,7 +57,7 @@ create table topic (
   label varchar(64), 
   enabled boolean default false,
   inserted timestamp not null default now(),
-  unique key uniq_cert (org_url, org_unit, common_name, label)
+  unique key uniq_cert (org_domain, org_unit, common_name, label)
 );
 
 create table topic_sub (

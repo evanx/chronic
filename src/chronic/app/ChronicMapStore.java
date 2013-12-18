@@ -58,7 +58,7 @@ public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
     @Override
     public Collection<E> list(Comparable key) {
         if (key instanceof Org) {
-            key = new OrgKey(((Org) key).getOrgUrl());
+            key = new OrgKey(((Org) key).getOrgDomain());
         }
         Collection list = new LinkedList();
         for (E entity : keyMap.values()) {

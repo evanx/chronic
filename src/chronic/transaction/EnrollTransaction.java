@@ -21,9 +21,9 @@ public class EnrollTransaction {
     
     static Logger logger = LoggerFactory.getLogger(EnrollTransaction.class);
     
-    public void handle(ChronicApp app, String orgUrl, String email) throws StorageException {
-        logger.info("enroll {} {}", orgUrl, email);
-        OrgRoleKey orgRoleKey = new OrgRoleKey(orgUrl, email, OrgRoleType.ADMIN);
+    public void handle(ChronicApp app, String orgDomain, String email) throws StorageException {
+        logger.info("enroll {} {}", orgDomain, email);
+        OrgRoleKey orgRoleKey = new OrgRoleKey(orgDomain, email, OrgRoleType.ADMIN);
         OrgRole orgRole = app.storage().role().select(orgRoleKey);
         if (orgRole == null) {
             boolean enabled = app.getProperties().isAdmin(email);
@@ -33,13 +33,13 @@ public class EnrollTransaction {
                 user.setEnabled(enabled);
                 app.storage().user().insert(user);
             }
-            Org org = app.storage().org().select(orgUrl);
+            Org org = app.storage().org().select(orgDomain);
             if (org == null) {
-                org = new Org(orgUrl);
+                org = new Org(orgDomain);
                 app.storage().org().insert(org);
                 enabled = true;
             } else if (!enabled) {
-                enabled = !app.storage().isOrgRoleType(orgUrl, OrgRoleType.ADMIN);
+                enabled = !app.storage().isOrgRoleType(orgDomain, OrgRoleType.ADMIN);
             }
             orgRole = new OrgRole(orgRoleKey);
             orgRole.setEnabled(enabled);

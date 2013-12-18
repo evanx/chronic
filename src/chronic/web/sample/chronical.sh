@@ -32,7 +32,7 @@ diskCriticalThreshold=90
 packetLossWarningThreshold=20
 packetLossCriticalThreshold=60
 
-server=secure.chronical.info:443
+server=secure.chronical.co:443
 
 periodSeconds=60
 
@@ -379,7 +379,7 @@ c0ensureKey() {
   then
     rm -f etc/cert.pem
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout etc/key.pem -out etc/cert.pem \
-      -subj "/CN=$commonName/O=$orgUrl/OU=$orgUnit"
+      -subj "/CN=$commonName/O=$orgDomain/OU=$orgUnit"
     openssl x509 -text -in etc/cert.pem | grep CN
   fi
 }

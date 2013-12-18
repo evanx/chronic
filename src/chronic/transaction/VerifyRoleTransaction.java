@@ -16,7 +16,7 @@ public class VerifyRoleTransaction {
     
     static Logger logger = LoggerFactory.getLogger(VerifyRoleTransaction.class);
 
-    public void handle(ChronicApp app, String orgUrl, String email) throws StorageException {
-        new EnrollTransaction().handle(app, orgUrl, email);
+    public void handle(ChronicApp app, String orgDomain, String email) throws StorageException {
+        new EnrollTransaction().handle(app, orgDomain, email);
     }
 }

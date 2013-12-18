@@ -13,24 +13,24 @@ import vellum.jx.JMapException;
  * @author evan.summers
  */
 public final class SubscriberKey extends ComparableTuple {
-    String orgUrl;
+    String orgDomain;
     String orgUnit;
     String commonName;
     String topicString;
     String email;
 
     public SubscriberKey(JMap map, String email) throws JMapException {
-        this(map.getString("orgUrl"), 
+        this(map.getString("orgDomain"), 
                 map.getString("orgUnit"), 
                 map.getString("commonName"),
                 map.getString("topicString"),
                 email);
     }
     
-    public SubscriberKey(String orgUrl, String orgUnit, String commonName, 
+    public SubscriberKey(String orgDomain, String orgUnit, String commonName, 
             String topicString, String email) {
-        super(orgUrl, orgUnit, commonName, topicString, email);
-        this.orgUrl = orgUrl;
+        super(orgDomain, orgUnit, commonName, topicString, email);
+        this.orgDomain = orgDomain;
         this.orgUnit = orgUnit;
         this.commonName = commonName;
         this.topicString = topicString;
@@ -39,15 +39,15 @@ public final class SubscriberKey extends ComparableTuple {
 
     
     public SubscriberKey(TopicKey key, String email) {
-        this(key.getOrgUrl(), key.getOrgUnit(), key.getCommonName(), key.getTopicString(), email);
+        this(key.getOrgDomain(), key.getOrgUnit(), key.getCommonName(), key.getTopicString(), email);
     }
     
     public SubscriberKey(CertKey certKey, String topicString, String email) {
         this(new TopicKey(certKey, topicString), email);
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }
 
     public String getOrgUnit() {

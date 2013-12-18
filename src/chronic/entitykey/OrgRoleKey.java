@@ -14,24 +14,24 @@ import vellum.jx.JMapException;
  * @author evan.summers
  */
 public class OrgRoleKey extends ComparableTuple {
-    String orgUrl;
+    String orgDomain;
     String email;
     OrgRoleType roleType;
 
     public OrgRoleKey(JMap map, String email) throws JMapException {
-        this(map.getString("orgUrl"), email,
+        this(map.getString("orgDomain"), email,
                 OrgRoleType.valueOf(map.getString("roleType")));
     }
     
-    public OrgRoleKey(String orgUrl, String email, OrgRoleType roleType) {
-        super(orgUrl, email, roleType);        
-        this.orgUrl = orgUrl;
+    public OrgRoleKey(String orgDomain, String email, OrgRoleType roleType) {
+        super(orgDomain, email, roleType);        
+        this.orgDomain = orgDomain;
         this.email = email;
         this.roleType = roleType;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }        
 
     public String getEmail() {

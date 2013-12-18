@@ -1,7 +1,7 @@
 
 -- insert
 insert into cert (
-  org_url,
+  org_domain,
   org_unit,
   common_name,
   encoded,
@@ -18,7 +18,7 @@ update cert set address = ? where cert_id = ?
 ;
 
 -- select key
-select * from cert where org_url = ? and org_unit = ? and common_name = ?
+select * from cert where org_domain = ? and org_unit = ? and common_name = ?
 ;
 
 -- select id
@@ -30,9 +30,9 @@ delete from cert where cert_id = ?
 ;
 
 -- list
-select * from cert order by org_url, org_unit, common_name
+select * from cert order by org_domain, org_unit, common_name
 ;
 
 -- list org
-select * from cert where org_url = ? order by org_unit, common_name
+select * from cert where org_domain = ? order by org_unit, common_name
 ;

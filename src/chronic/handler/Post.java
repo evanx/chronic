@@ -57,7 +57,7 @@ public class Post implements HttpHandler {
             String contentString = new String(content);
             logger.trace("content {}", contentString);
             StatusRecord status = new StatusRecordParser(cert.getCertKey()).parse(contentString);
-            status.setOrgUrl(cert.getOrgUrl());
+            status.setOrgDomain(cert.getOrgDomain());
             logger.trace("content lines {}: {}", status.getLineList().size(),
                     Strings.formatFirst(status.getLineList()));
             logger.debug("status {}", status);
@@ -65,8 +65,8 @@ public class Post implements HttpHandler {
             if (status.getSubscribers() != null) {
                 if (status.getSubscribers().length > 0) {
                     for (String subscriber : status.getSubscribers()) {
-                        new SubscribeTransaction().handle(app, status.getOrgUrl(), subscriber);
-                        new EnrollTransaction().handle(app, status.getOrgUrl(), subscriber);
+                        new SubscribeTransaction().handle(app, status.getOrgDomain(), subscriber);
+                        new EnrollTransaction().handle(app, status.getOrgDomain(), subscriber);
                     }
                 }
             }

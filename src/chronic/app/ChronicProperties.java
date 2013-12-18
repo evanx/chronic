@@ -55,7 +55,7 @@ public class ChronicProperties {
     private ExtendedProperties webServer;
     private Set<String> adminDomains;
     private Set<String> adminEmails;
-    private Set<String> allowedOrgUrls;
+    private Set<String> allowedOrgDomains;
     private Set<String> allowedAddresses;
     private Set<String> subscriberEmails;
     private final ExtendedProperties properties = new ExtendedProperties(System.getProperties());
@@ -74,7 +74,7 @@ public class ChronicProperties {
         adminEmails = object.getStringSet("adminEmails");
         subscriberEmails = object.getStringSet("subscriberEmails");
         subscriberEmails.addAll(adminEmails);
-        allowedOrgUrls = object.getStringSet("allowedOrgUrls");
+        allowedOrgDomains = object.getStringSet("allowedOrgDomains");
         allowedAddresses = object.getStringSet("allowedAddresses");
         allowedAddresses.add("127.0.0.1");
         if (object.hasProperties("httpRedirectServer")) {
@@ -85,7 +85,7 @@ public class ChronicProperties {
         webServer = object.getProperties("webServer");
         if (serverAddress.contains("chronical")) {
             byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app48.png"));
-            mailerProperties.init(bytes, "chronical.info", "alerts@chronical.info");
+            mailerProperties.init(bytes, "chronical.co", "alerts@chronical.co");
             logger.info("mailer {}", mailerProperties);
         }
     }
@@ -130,8 +130,8 @@ public class ChronicProperties {
         return adminEmails;
     }
 
-    public Set<String> getAllowedOrgUrls() {
-        return allowedOrgUrls;
+    public Set<String> getAllowedOrgDomains() {
+        return allowedOrgDomains;
     }   
     
     public Set<String> getAllowedAddresses() {

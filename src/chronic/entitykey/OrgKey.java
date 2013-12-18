@@ -11,15 +11,15 @@ import vellum.util.ComparableValue;
  * @author evan.summers
  */
 public class OrgKey extends ComparableValue {
-    String orgUrl;
+    String orgDomain;
 
-    public OrgKey(String orgUrl) {
-        super(orgUrl);
-        this.orgUrl = orgUrl;
+    public OrgKey(String orgDomain) {
+        super(orgDomain);
+        this.orgDomain = orgDomain;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }        
     
 }

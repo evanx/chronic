@@ -11,17 +11,17 @@ import vellum.data.ComparableTuple;
  * @author evan.summers
  */
 public class OrgUserKey extends ComparableTuple {
-    String orgUrl;
+    String orgDomain;
     String email;
 
-    public OrgUserKey(String orgUrl, String email) {
-        super(orgUrl, email);        
-        this.orgUrl = orgUrl;
+    public OrgUserKey(String orgDomain, String email) {
+        super(orgDomain, email);        
+        this.orgDomain = orgDomain;
         this.email = email;
     }
 
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }        
 
     public String getEmail() {

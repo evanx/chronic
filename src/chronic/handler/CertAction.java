@@ -27,7 +27,7 @@ public class CertAction implements ChronicHttpxHandler {
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         String email = app.getEmail(httpx);
         CertKey certKey = new CertKey(httpx.parseJsonMap().getMap("cert"));
-        OrgRoleKey roleKey = new OrgRoleKey(certKey.getOrgUrl(), email, OrgRoleType.ADMIN);
+        OrgRoleKey roleKey = new OrgRoleKey(certKey.getOrgDomain(), email, OrgRoleType.ADMIN);
         if (!app.storage().role().containsKey(roleKey)) {
             return JMaps.create("errorMessage", "no role");
         } else {

@@ -27,7 +27,7 @@ public class TopicAction implements ChronicHttpxHandler {
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         String email = app.getEmail(httpx);
         TopicKey key = new TopicKey(httpx.parseJsonMap());
-        OrgRoleKey roleKey = new OrgRoleKey(key.getOrgUrl(), email, OrgRoleType.ADMIN);
+        OrgRoleKey roleKey = new OrgRoleKey(key.getOrgDomain(), email, OrgRoleType.ADMIN);
         if (!app.storage().role().containsKey(roleKey)) {
             return JMaps.create("errorMessage", "no role");
         } else {

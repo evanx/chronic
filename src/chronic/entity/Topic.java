@@ -27,25 +27,25 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
         OrgUnitKeyed, CertKeyed, OrgTopicKeyed, Enabled {
 
     Long id;
-    String orgUrl;
+    String orgDomain;
     String orgUnit;
     String commonName;
     String topicString;
     boolean enabled = true;
 
-    public Topic(String orgUrl, String orgUnit, String commonName, String topicString) {
-        this.orgUrl = orgUrl;
+    public Topic(String orgDomain, String orgUnit, String commonName, String topicString) {
+        this.orgDomain = orgDomain;
         this.orgUnit = orgUnit;
         this.commonName = commonName;
         this.topicString = topicString;
     }
     
     public Topic(TopicKey key) {
-        this(key.getOrgUrl(), key.getOrgUnit(), key.getCommonName(), key.getTopicString());
+        this(key.getOrgDomain(), key.getOrgUnit(), key.getCommonName(), key.getTopicString());
     }
 
     public Topic(CertKey key, String topicString) {
-        this(key.getOrgUrl(), key.getOrgUnit(), key.getCommonName(), topicString);
+        this(key.getOrgDomain(), key.getOrgUnit(), key.getCommonName(), topicString);
     }
 
     @Override
@@ -55,27 +55,27 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
 
     @Override
     public TopicKey getTopicKey() {
-        return new TopicKey(orgUrl, orgUnit, commonName, topicString);
+        return new TopicKey(orgDomain, orgUnit, commonName, topicString);
     }    
 
     @Override
     public OrgTopicKey getOrgTopicKey() {
-        return new OrgTopicKey(orgUrl, topicString);
+        return new OrgTopicKey(orgDomain, topicString);
     }
     
     @Override
     public OrgKey getOrgKey() {
-        return new OrgKey(orgUrl);
+        return new OrgKey(orgDomain);
     }
     
     @Override
     public OrgUnitKey getOrgUnitKey() {
-        return new OrgUnitKey(orgUrl, orgUnit);
+        return new OrgUnitKey(orgDomain, orgUnit);
     }
 
     @Override
     public CertKey getCertKey() {
-        return new CertKey(orgUrl, orgUnit, commonName);
+        return new CertKey(orgDomain, orgUnit, commonName);
     }
     
     
@@ -98,8 +98,8 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
         return enabled;
     }
     
-    public String getOrgUrl() {
-        return orgUrl;
+    public String getOrgDomain() {
+        return orgDomain;
     }
 
     public String getTopicString() {
@@ -113,7 +113,7 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
-        map.put("orgUrl", orgUrl);
+        map.put("orgDomain", orgDomain);
         map.put("networkName", orgUnit);
         map.put("hostName", commonName);
         map.put("action", getAction());

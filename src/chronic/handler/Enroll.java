@@ -31,18 +31,18 @@ public class Enroll {
     
     public void handle(HttpExchange httpExchange) throws Exception {
         hx = new Httpx(httpExchange);
-        String orgUrl = Certificates.getOrg(hx.getSSLSession().getPeerPrincipal());
+        String orgDomain = Certificates.getOrg(hx.getSSLSession().getPeerPrincipal());
         String[] emails = Strings.split(hx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {
             if (Emails.matchesEmail(email)) {
-                new EnrollTransaction().handle(app, orgUrl, email);
+                new EnrollTransaction().handle(app, orgDomain, email);
             } else {
                 hx.sendError("invalid email %s", email);
                 hx.close();
                 return;
             }
         }
-        hx.sendPlainResponse("ok %s %s", orgUrl, Arrays.toString(emails));
+        hx.sendPlainResponse("ok %s %s", orgDomain, Arrays.toString(emails));
         hx.close();
     }
 }

@@ -23,7 +23,7 @@ public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
     Long id;
     String orgName;
     String label;
-    String orgUrl;
+    String orgDomain;
     String region;
     String locality;
     String country;
@@ -33,7 +33,7 @@ public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
     }
 
     public Org(String url, String orgName) {
-        this.orgUrl = url;
+        this.orgDomain = url;
         this.orgName = orgName;
     }
 
@@ -47,14 +47,14 @@ public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
     }
 
     public void update(JMap map) throws JMapException {
-        orgUrl = map.getString("url");
+        orgDomain = map.getString("url");
         orgName = map.getString("orgName");
         label = map.getString("label");
         region = map.getString("region");
         locality = map.getString("locality");
         country = map.getString("country");
         if (orgName == null) {
-            orgName = orgUrl;
+            orgName = orgDomain;
         }
         if (label == null) {
             label = orgName;
@@ -66,7 +66,7 @@ public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
         map.put("orgId", id);
         map.put("orgName", orgName);
         map.put("label", label);
-        map.put("url", orgUrl);
+        map.put("url", orgDomain);
         map.put("region", region);
         map.put("locality", locality);
         map.put("country", country);
@@ -76,12 +76,12 @@ public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
     
     @Override
     public String getKey() {
-        return orgUrl;
+        return orgDomain;
     }
 
     @Override
     public OrgKey getOrgKey() {
-        return new OrgKey(orgUrl);
+        return new OrgKey(orgDomain);
     }
     
     public void setId(long id) {
@@ -124,11 +124,11 @@ public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
         this.label = label;
     }
 
-    public void setOrgUrl(String orgUrl) {
-        this.orgUrl = orgUrl;
+    public void setOrgDomain(String orgDomain) {
+        this.orgDomain = orgDomain;
     }
     
-    public String getOrgUrl() {
+    public String getOrgDomain() {
         return orgName;
     }
 
@@ -149,8 +149,8 @@ public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
     }
     
     public void validate() throws ValidationException {
-        if (!Patterns.matchesDomain(orgUrl)) {
-            throw new ValidationException(ValidationExceptionType.INVALID_URL, orgUrl);
+        if (!Patterns.matchesDomain(orgDomain)) {
+            throw new ValidationException(ValidationExceptionType.INVALID_URL, orgDomain);
         }
     }
 
