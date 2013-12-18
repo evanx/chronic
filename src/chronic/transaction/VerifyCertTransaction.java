@@ -7,7 +7,6 @@ import chronic.app.ChronicApp;
 import chronic.entity.Cert;
 import chronic.entity.Org;
 import chronic.entitykey.CertKey;
-import static chronic.handler.Post.sendPlainResponse;
 import java.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
 import org.slf4j.Logger;

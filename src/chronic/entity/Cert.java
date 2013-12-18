@@ -28,10 +28,11 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
     String orgUrl;
     String orgUnit;
     String commonName;
-    String address;
     String encoded;
-    transient long timestamp;
     boolean enabled;
+    
+    transient long timestamp;
+    transient String address;
 
     public Cert() {
     }

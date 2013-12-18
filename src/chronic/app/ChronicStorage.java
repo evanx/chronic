@@ -87,7 +87,7 @@ public abstract class ChronicStorage {
         return list;
     }
 
-    public Iterable<OrgRole> listRoles(String email) {
+    public Iterable<OrgRole> listRoles(String email) throws StorageException {
         List list = new LinkedList();
         for (OrgRole orgRole : role().list(new UserKey(email))) {
             if (orgRole.getEmail().equals(email) || app.getProperties().isAdmin(email)) {
@@ -97,7 +97,7 @@ public abstract class ChronicStorage {
         return list;
     }
 
-    public Iterable<String> listOrgUrls(String email, OrgRoleType roleType) {
+    public Iterable<String> listOrgUrls(String email, OrgRoleType roleType) throws StorageException {
         List list = new LinkedList();
         for (OrgRole orgRole : role().list(new UserKey(email))) {
             if (orgRole.getEmail().equals(email)) {
@@ -109,7 +109,7 @@ public abstract class ChronicStorage {
         return list;
     }
 
-    public Map<OrgRoleType, OrgRole> mapOrgRole(String orgUrl, String email) {
+    public Map<OrgRoleType, OrgRole> mapOrgRole(String orgUrl, String email) throws StorageException {
         Map map = new HashMap();
         for (OrgRole orgRole : role().list(new OrgUserKey(orgUrl, email))) {
             map.put(orgRole.getRoleType(), orgRole);
@@ -117,7 +117,7 @@ public abstract class ChronicStorage {
         return map;
     }
 
-    public Collection<OrgRoleType> listOrgRoleType(String orgUrl, String email) {
+    public Collection<OrgRoleType> listOrgRoleType(String orgUrl, String email) throws StorageException {
         List<OrgRoleType> roleTypes = new LinkedList();
         for (OrgRole orgRole : role().list(new OrgUserKey(orgUrl, email))) {
             roleTypes.add(orgRole.getRoleType());
@@ -125,11 +125,11 @@ public abstract class ChronicStorage {
         return roleTypes;
     }
 
-    public boolean isOrgRoleType(String orgUrl, OrgRoleType roleType) {
+    public boolean isOrgRoleType(String orgUrl, OrgRoleType roleType) throws StorageException {
         return !role().list(new OrgRoleTypeKey(orgUrl, roleType)).isEmpty();
     }
 
-    public Iterable<OrgRole> listOrgRole(String orgUrl) {
+    public Iterable<OrgRole> listOrgRole(String orgUrl) throws StorageException {
         return role().list(new OrgKey(orgUrl));
     }
 
@@ -153,7 +153,7 @@ public abstract class ChronicStorage {
         return topics;
     }
     
-    public Iterable<String> listSubscriberEmails(AlertRecord alert) {
+    public Iterable<String> listSubscriberEmails(AlertRecord alert) throws StorageException {
         Set<String> set = new TreeSet();
         for (Subscriber subscriber : sub().list(alert.getStatus().getOrgTopicKey())) {
             set.add(subscriber.getEmail());
@@ -165,7 +165,7 @@ public abstract class ChronicStorage {
         return set;
     }
 
-    public Iterable<Subscriber> listSubscribers(String email) {
+    public Iterable<Subscriber> listSubscribers(String email) throws StorageException {
         Set set = new TreeSet();
         set.addAll(sub().list(new UserKey(email)));
         logger.info("listSubscriber {}", set);
@@ -176,16 +176,16 @@ public abstract class ChronicStorage {
     }
 
 
-    public boolean isSubscriber(String email, AlertRecord alert) {
+    public boolean isSubscriber(String email, AlertRecord alert) throws StorageException {
         return isSubscriber(email, alert.getStatus());
     }
 
-    public boolean isSubscriber(String email, StatusRecord status) {
+    public boolean isSubscriber(String email, StatusRecord status) throws StorageException {
         SubscriberKey key = new SubscriberKey(status.getTopicKey(), email);
         return sub().containsKey(key);
     }
 
-    public Iterable<Cert> listCerts(String email) {
+    public Iterable<Cert> listCerts(String email) throws StorageException {
         Set set = new TreeSet(TimestampedComparator.reverse());
         for (String orgUrl : listOrgUrls(email, OrgRoleType.ADMIN)) {
             logger.info("listCerts {}", orgUrl);

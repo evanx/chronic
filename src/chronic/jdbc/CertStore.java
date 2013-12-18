@@ -21,11 +21,12 @@
 package chronic.jdbc;
 
 import chronic.entity.Cert;
+import chronic.entitykey.CertKey;
+import chronic.entitykey.OrgKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -45,15 +46,44 @@ public abstract class CertStore implements EntityStore<Cert> {
     static Logger logger = LoggerFactory.getLogger(CertStore.class);
     static QueryMap queryMap = new QueryMap(CertStore.class);
     DataSource dataSource;
-    
+
     public CertStore(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    private PreparedStatement prepare(Connection connection, String queryKey,
+            Object... parameters) throws SQLException {
+        PreparedStatement statement = prepare(connection, queryKey);
+        int index = 0;
+        for (Object parameter : parameters) {
+            statement.setObject(++index, parameter);
+        }
+        return statement;
+    }
+
+    private Cert create(ResultSet resultSet) throws SQLException {
+        Cert cert = new Cert();
+        cert.setId(resultSet.getLong("id"));
+        cert.setOrgUrl(resultSet.getString("org_url"));
+        cert.setOrgUnit(resultSet.getString("org_unit"));
+        cert.setCommonName(resultSet.getString("cn"));
+        cert.setEncoded(resultSet.getString("encoded"));
+        cert.setEnabled(resultSet.getBoolean("enabled"));
+        return cert;
+    }
+
+    private Collection<Cert> list(ResultSet resultSet) throws SQLException {
+        Collection list = new LinkedList();
+        while (resultSet.next()) {
+            list.add(create(resultSet));
+        }
+        return list;
     }
     
     @Override
     public void insert(Cert cert) throws StorageException {
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(queryMap.get("insert"));
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = prepare(connection, "insert")) {
             statement.setString(1, cert.getOrgUrl());
             statement.setString(2, cert.getOrgUnit());
             statement.setString(3, cert.getCommonName());
@@ -67,73 +97,129 @@ public abstract class CertStore implements EntityStore<Cert> {
             cert.setId(generatedKeys.getLong((1)));
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
-        }        
+        }
     }
 
     @Override
-    public void update(Cert entity) throws StorageException {
+    public void update(Cert cert) throws StorageException {
+        updateEncoded(cert);
     }
 
-    @Override
-    public boolean containsKey(Comparable key) {
-        return false;
+    public void updateEncoded(Cert cert) throws StorageException {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = prepare(connection, "update encoded")) {
+            statement.setLong(1, cert.getId());
+            statement.setString(2, cert.getEncoded());
+            if (statement.executeUpdate() != 1) {
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, cert.getKey());
+            }
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
+        }
     }
-    
+
     @Override
     public void delete(Comparable key) throws StorageException {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = prepare(connection, "delete")) {
+            statement.setLong(1, (Long) key);
+            if (statement.executeUpdate() != 1) {
+                throw new StorageException(StorageExceptionType.NOT_INSERTED, key);
+            }
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL, key);
+        }
     }
 
     @Override
-    public Cert select(Comparable key) {
-        Cert entity = null;
-        return entity;
+    public Cert select(Comparable key) throws StorageException {
+        if (key instanceof Long) {
+            return selectId((Long) key);
+        } else if (key instanceof CertKey) {
+            return selectKey((CertKey) key);
+        }
+        throw new StorageException(StorageExceptionType.INVALID_KEY, key.getClass().getSimpleName());
+    }
+
+    private Cert selectKey(CertKey key) throws StorageException {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = prepare(connection, "select key")) {
+            statement.setString(1, key.getOrgUrl());
+            statement.setString(2, key.getOrgUnit());
+            statement.setString(3, key.getCommonName());
+            try (ResultSet resultSet = statement.getResultSet()) {
+                if (!resultSet.next()) {
+                    return null;
+                }
+                Cert cert = create(resultSet);
+                if (resultSet.next()) {
+                    throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, key);
+                }
+                return cert;
+            }
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL, key);
+        }
+    }
+
+    private Cert selectId(Long id) throws StorageException {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = prepare(connection, "select id", id);
+                ResultSet resultSet = statement.getResultSet()) {
+            if (!resultSet.next()) {
+                return null;
+            }
+            Cert cert = create(resultSet);
+            if (resultSet.next()) {
+                throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, id);
+            }
+            return cert;
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL, id);
+        }
+    }
+
+    @Override
+    public boolean containsKey(Comparable key) throws StorageException {
+        return select(key) != null;
     }
 
     @Override
     public Cert find(Comparable key) throws StorageException {
-        if (key instanceof Long) {
-            return findId((Long) key);
+        Cert cert = select(key);
+        if (cert == null) {
+            throw new StorageException(StorageExceptionType.NOT_FOUND, key);
         }
-        Cert entity = select(key);
-        if (entity == null) {
-            throw new StorageException(StorageExceptionType.NOT_FOUND, key);           
-        }
-        return entity;
-    }
-
-    public Cert findId(Long id) throws StorageException {
-        Cert entity = null;
-        if (entity == null) {
-            throw new StorageException(StorageExceptionType.NOT_FOUND, id);           
-        }
-        return entity;
-    }
-    
-    @Override
-    public Collection<Cert> list() {
-        Collection list = new LinkedList();
-        try (Connection connection = dataSource.getConnection(); 
-                Statement statement = connection.createStatement(); 
-                ResultSet resultSet = statement.executeQuery("select * from cert")) {
-            while (resultSet.next()) {
-                Cert cert = create(resultSet);
-                list.add(cert);
-            }
-        } catch (SQLException sqle) {
-            throw new RuntimeException(sqle);
-        }        
-        return list;
-    }
-    
-    private Cert create(ResultSet resultSet) throws SQLException {
-        Cert cert = new Cert();
-        cert.setId(resultSet.getLong("id"));
-        cert.setOrgUrl(resultSet.getString("org_url"));
-        cert.setOrgUnit(resultSet.getString("org_unit"));
-        cert.setCommonName(resultSet.getString("cn"));
-        cert.setEncoded(resultSet.getString("encoded"));
-        cert.setEnabled(resultSet.getBoolean("enabled"));
         return cert;
     }
-    
+
+    @Override
+    public Collection<Cert> list() throws StorageException {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = prepare(connection, "list");
+                ResultSet resultSet = statement.executeQuery()) {
+            return list(resultSet);
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL);
+        }
+    }
+
+    @Override
+    public Collection<Cert> list(Comparable key) throws StorageException {
+        if (key instanceof OrgKey) {
+            return listOrgKey((OrgKey) key);
+        }
+        throw new StorageException(StorageExceptionType.INVALID_KEY, key.getClass().getSimpleName());
+    }
+
+    private Collection<Cert> listOrgKey(OrgKey key) throws StorageException {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = prepare(connection, "list org", key.getOrgUrl());
+                ResultSet resultSet = statement.executeQuery()) {
+            return list(resultSet);
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL);
+        }
+    }
+
 }

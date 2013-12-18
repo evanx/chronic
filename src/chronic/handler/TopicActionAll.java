@@ -8,7 +8,6 @@ import chronic.app.ChronicHttpxHandler;
 import chronic.entity.Subscriber;
 import chronic.entity.Topic;
 import chronic.entitykey.SubscriberKey;
-import chronic.transaction.SubscribeTopicTransaction;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
