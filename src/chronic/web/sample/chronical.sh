@@ -290,15 +290,6 @@ c2nohttp() {
   fi
 }
 
-c2postgres() {
-  if timeout $databaseTimeout psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' 
-  then
-    echo "OK - PostgreSQL server is running on $1, port $2"
-  else
-    echo "CRITICAL - PostgreSQL server not running on $1, port $2"
-  fi
-}
-
 c2nosshpass() {
   if ! which sshpass > /dev/null
   then
@@ -325,6 +316,15 @@ c2sshkey() {
     else
       echo "CRITICAL - $1 port $2 ssh is not permission denied"
     fi
+  fi
+}
+
+c2postgres() {
+  if timeout $databaseTimeout psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' 
+  then
+    echo "OK - PostgreSQL server is running on $1, port $2"
+  else
+    echo "CRITICAL - PostgreSQL server not running on $1, port $2"
   fi
 }
 
