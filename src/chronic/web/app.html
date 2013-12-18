@@ -328,7 +328,9 @@ orgUrl="your.org"</pre>
         <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
           <i>(to <a href="https://chronical.info">https://chronical.info</a> 
             using Mozilla Persona)</i>
-        <p>ps. The script posts to HTTPS on port 8444, which might be blocked by your firewall?</p>
+        <p>ps. The script posts to <tt>secure.chronical.info</tt> on its HTTPS port, which should be accessible?</p>
+      <pre>$ sh chronical.sh https chronical.info 443
+OK - chronical.info port 443 https available (HTTP/1.1 200 OK)</pre>
         <hr>
         <h4>Getting jiggy with it</h4>
         <p>Customize the <tt>custom.chronical.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or only daily.</p>
