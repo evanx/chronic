@@ -173,9 +173,9 @@ c1ping() {
     echo "OK - $1 pingable ($packetLoss% packet loss)"
   elif [ $packetLoss -lt $packetLossCriticalThreshold ]
   then
-    echo "WARNING - $1 $packetLoss% packet loss"
+    echo "WARNING - $1: $packetLoss% packet loss"
   else
-    echo "CRITICAL - $1 $packetLoss% packet loss"
+    echo "CRITICAL - $1: $packetLoss% packet loss"
   fi
 }
 
@@ -184,9 +184,9 @@ c1noping() {
   packetLoss=`ping -qc2 $1 | grep 'packet loss' | sed 's/.* \([0-9]*\)% packet loss.*/\1/'`
   if [ $packetLoss -lt 100 ]
   then
-    echo "CRITICAL - $1 $packetLoss% packet loss"
+    echo "CRITICAL - $1: $packetLoss% packet loss"
   else
-    echo "OK - $1 $packetLoss% packet loss"
+    echo "OK - $1: $packetLoss% packet loss"
   fi
 }
 
@@ -194,9 +194,9 @@ c2tcp() {
   decho "nc -w$tcpTimeout $1 $2"
   if nc -w$tcpTimeout $1 $2
   then
-    echo "OK - $1 port $2 open"
+    echo "OK - $1 port $2 is open"
   else
-    echo "CRITICAL - $1 port $2 closed"
+    echo "CRITICAL - $1 port $2 is not open"
   fi
 }
 
@@ -204,9 +204,9 @@ c2notcp() {
   decho "nc -w$tcpTimeout $1 $2"
   if nc -w$tcpTimeout $1 $2
   then
-    echo "CRITICAL - $1 port $2 open"
+    echo "CRITICAL - $1 port $2 is not closed"
   else
-    echo "OK - $1 port $2 closed"
+    echo "OK - $1 port $2 is closed"
   fi
 }
 
@@ -216,7 +216,7 @@ c2ssl() {
   then
     echo "OK - $1 port $2 has SSL"
   else
-    echo "CRITICAL - $1 port $2 no SSL"
+    echo "CRITICAL - $1 port $2 does not have SSL"
   fi
 }
 
@@ -226,7 +226,7 @@ c2nossl() {
   then
     echo "CRITICAL - $1 port $2 has SSL"
   else
-    echo "OK - $1 port $2 no SSL"
+    echo "OK - $1 port $2 is not SSL"
   fi
 }
 
@@ -234,9 +234,9 @@ c2https() {
   decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
   if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
-    echo "OK - $1 port $2 https available" `bcat https`
+    echo "OK - $1 port $2 has HTTPS" `bcat https`
   else 
-    echo "CRITICAL - $1 port $2 https unavailable" `bcat https`
+    echo "CRITICAL - $1 port $2 HTTPS is unavailable" `bcat https`
   fi
 }
 
@@ -244,38 +244,58 @@ c2nohttps() {
   decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
   if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
-    echo "CRITICAL - $1 port $2 https available" `bcat https`
+    echo "CRITICAL - $1 port $2 has HTTPS available" `bcat https`
   else 
-    echo "OK - $1 port $2 https unavailable" `bcat https`
+    echo "OK - $1 port $2 HTTPS is unavailable" `bcat https`
+  fi
+}
+
+c2httpsAuth() {
+  decho "curl --connect-timeout $httpTimeout -s -I https://$1:$2"
+  if curl --connect-timeout $httpTimeout -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
+  then
+    echo "CRITICAL - $1 port $2 does not require HTTPS client auth" `bcat https`
+  else 
+    echo "OK - $1 port $2 unavailable for HTTPS without client auth" `bcat https`
+  fi
+}
+
+c2nohttpsAuth() {
+  decho "curl --connect-timeout $httpTimeout -s -I https://$1:$2"
+  if curl --connect-timeout $httpTimeout -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
+  then
+    echo "OK - $1 port $2 is available for HTTPS without client auth" `bcat https`
+  else 
+    echo "CRITICAL - $1 port $2 is unavailable for HTTPS without client auth" `bcat https`
   fi
 }
 
 c2http() {
-  decho "curl --connect-timeout $httpTimeout -k -s -I http://$1:$2"
-  if curl --connect-timeout $httpTimeout -k -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
+  decho "curl --connect-timeout $httpTimeout -s -I http://$1:$2"
+  if curl --connect-timeout $httpTimeout -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
   then
-    echo "OK - $1 port $2 http available" `bcat http`
+    echo "OK - $1 port $2 has HTTP available" `bcat http`
   else 
-    echo "CRITICAL - $1 port $2 http unavailable" `bcat http`
+    echo "CRITICAL - $1 port $2 HTTP is unavailable" `bcat http`
   fi
 }
 
 c2nohttp() {
-  decho "curl --connect-timeout $httpTimeout -k -s -I http://$1:$2"
-  if curl --connect-timeout $httpTimeout -k -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
+  decho "curl --connect-timeout $httpTimeout -s -I http://$1:$2"
+  if curl --connect-timeout $httpTimeout -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
   then
-    echo "CRITICAL - $1 (port $2) http available" `bcat http`
+    echo "CRITICAL - $1 port $2 has HTTP available" `bcat http`
   else 
-    echo "OK - $1 (port $2) http unavailable" `bcat http`
+    echo "OK - $1 port $2 HTTP is unavailable" `bcat http`
   fi
 }
 
 c2postgres() {
   if timeout $databaseTimeout psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' 
   then
-    echo "OK - $1 (port $2) postgres server"
+    echo "OK - PostgreSQL server is running on $1, port $2"
   else
-    echo "CRITICAL - $1 (port $2) postgres server not running"
+    echo "CRITICAL - PostgreSQL server not running on $1, port $2"
   fi
 }
 
