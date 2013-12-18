@@ -37,6 +37,11 @@ public class SubscriberList implements ChronicHttpxHandler {
                     subscribers.add(subscriber.getMap());
                 }
             }
+        } else if (app.getProperties().isDemo(httpx.getServerUrl())) {
+            String adminEmail = app.getProperties().getAdminEmails().iterator().next();
+            for (Subscriber subscriber : app.storage().sub().list(new UserKey(adminEmail))) {
+                subscriptions.add(subscriber.getMap());
+            }
         }
         return new JMap(JMaps.entry("subscribers", subscribers),
                 JMaps.entry("subscriptions", subscriptions));

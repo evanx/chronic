@@ -8,7 +8,7 @@ import chronic.handler.CertActionAll;
 import chronic.handler.CertActionNone;
 import chronic.handler.Enroll;
 import chronic.handler.EnrollOrg;
-import chronic.handler.ListAlerts;
+import chronic.handler.AlertList;
 import chronic.handler.CertList;
 import chronic.handler.SubscriberList;
 import chronic.handler.TopicList;
@@ -68,7 +68,7 @@ public class ChronicHttpHandler implements HttpHandler {
                 } else if (path.equals("/chronicapp/orgEnroll")) {
                     handle(new EnrollOrg(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/alertList")) {
-                    handle(new ListAlerts(), new Httpx(httpExchange));
+                    handle(new AlertList(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/topicList")) {
                     handle(new TopicList(), new Httpx(httpExchange));
                 } else if (path.equals("/chronicapp/topicActionAll")) {

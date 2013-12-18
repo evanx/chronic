@@ -20,9 +20,9 @@ import vellum.util.Lists;
  *
  * @author evan.summers
  */
-public class ListAlerts implements ChronicHttpxHandler {
+public class AlertList implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(ListAlerts.class);
+    Logger logger = LoggerFactory.getLogger(AlertList.class);
     
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
