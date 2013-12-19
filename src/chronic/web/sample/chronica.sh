@@ -326,7 +326,7 @@ c2postgres() {
 }
 
 c1md5sum() {
-  echo "$1" `curl -s $1 | md5sum`
+  echo `curl -s $1 | md5sum` "$1" 
 }
 
 c2certExpiry() {
