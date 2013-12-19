@@ -6,6 +6,7 @@ package chronic.handler;
 import chronic.app.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.AlertRecord;
+import chronic.entitykey.SubscriberKey;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -30,7 +31,8 @@ public class AlertList implements ChronicHttpxHandler {
         List alerts = new LinkedList();
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {
-            if (app.storage().isSubscriber(email, alert.getStatus().getTopic().getId())) {
+            if (app.storage().sub().containsKey(
+                    new SubscriberKey(alert.getStatus().getTopic().getId(), email))) {
                 alerts.add(alert.getlMap());
             } else if (app.getProperties().isAdmin(email)) {
                 alerts.add(alert.getlMap());

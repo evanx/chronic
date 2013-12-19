@@ -5,8 +5,6 @@
 package chronic.entitykey;
 
 import vellum.data.ComparableTuple;
-import vellum.jx.JMap;
-import vellum.jx.JMapException;
 
 /**
  *

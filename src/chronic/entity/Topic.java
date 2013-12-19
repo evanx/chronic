@@ -5,8 +5,9 @@
 package chronic.entity;
 
 import chronic.app.ChronicApp;
-import chronic.entitykey.TopicKey;
-import chronic.entitykey.TopicKeyed;
+import chronic.entitykey.CertTopicKey;
+import chronic.entitykey.CertTopicKeyed;
+import chronic.entitykey.TopicIdKeyed;
 import chronic.entitytype.ChronicApped;
 import chronic.entitytype.TopicActionType;
 import vellum.jx.JMap;
@@ -19,7 +20,8 @@ import vellum.type.Enabled;
  *
  * @author evan.summers
  */
-public final class Topic extends AbstractIdEntity implements TopicKeyed, JMapped, Enabled, ChronicApped {
+public final class Topic extends AbstractIdEntity implements CertTopicKeyed,  
+        JMapped, Enabled, ChronicApped {
 
     Long id;
     Long certId;
@@ -32,7 +34,7 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, JMapped
         this.topicLabel = topicLabel;
     }
     
-    public Topic(TopicKey key) {
+    public Topic(CertTopicKey key) {
         this(key.getCertId(), key.getTopicLabel());
     }
 
@@ -42,8 +44,8 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, JMapped
     }
 
     @Override
-    public TopicKey getTopicKey() {
-        return new TopicKey(certId, topicLabel);
+    public CertTopicKey getTopicKey() {
+        return new CertTopicKey(certId, topicLabel);
     }    
 
     @Override

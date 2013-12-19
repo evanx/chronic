@@ -6,7 +6,7 @@ insert into cert (
   common_name,
   encoded,
   enabled
-) values (?, ?, ?, ?)
+) values (?, ?, ?, ?, ?)
 ;
 
 -- update enabled
@@ -14,7 +14,7 @@ update cert set enabled = ? where cert_id = ?
 ;
 
 -- update encoded
-update cert set encoded = ? where cert_id = ?
+update cert set enabled = ?, encoded = ? where cert_id = ?
 ;
 
 -- update address

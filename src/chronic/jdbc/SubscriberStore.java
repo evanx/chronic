@@ -21,7 +21,8 @@
 package chronic.jdbc;
 
 import chronic.entity.Subscriber;
-import chronic.entitykey.TopicKey;
+import chronic.entitykey.SubscriberKey;
+import chronic.entitykey.TopicIdKey;
 import chronic.entitykey.UserKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -85,13 +86,12 @@ public class SubscriberStore implements EntityStore<Subscriber> {
             statement.setLong(1, subscriber.getTopicId());
             statement.setString(2, subscriber.getEmail());
             statement.setBoolean(3, subscriber.isEnabled());
-            int insertCount = statement.executeUpdate();
-            if (insertCount != 1) {
+            if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_INSERTED);
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             generatedKeys.next();
-            subscriber.setId(generatedKeys.getLong((1)));
+            subscriber.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());
         }
@@ -132,10 +132,31 @@ public class SubscriberStore implements EntityStore<Subscriber> {
     public Subscriber select(Comparable key) throws StorageException {
         if (key instanceof Long) {
             return selectId((Long) key);
+        } else if (key instanceof SubscriberKey) {
+            return selectKey((SubscriberKey) key);
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, key.getClass().getSimpleName());
     }
 
+    private Subscriber selectKey(SubscriberKey key) throws StorageException {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = prepare(connection, "select key")) {
+            statement.setLong(1, key.getTopicId());
+            statement.setString(2, key.getEmail());
+            try (ResultSet resultSet = statement.getResultSet()) {
+                if (!resultSet.next()) {
+                    return null;
+                }
+                Subscriber subscriber = create(resultSet);
+                if (resultSet.next()) {
+                    throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, key);
+                }
+                return subscriber;
+            }
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL, key);
+        }
+    }
     private Subscriber selectId(Long id) throws StorageException {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = prepare(connection, "select id", id);
@@ -186,13 +207,15 @@ public class SubscriberStore implements EntityStore<Subscriber> {
             return listTopic((Long) key);
         } else if (key instanceof UserKey) {
             return listUser(((UserKey) key).getEmail());
+        } else if (key instanceof TopicIdKey) {
+            return listTopic(((TopicIdKey) key).getTopicId());
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, key.getClass().getSimpleName());
     }
 
     private Collection<Subscriber> listTopic(Long topicId) throws StorageException {
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "list org", topicId);
+                PreparedStatement statement = prepare(connection, "list topic", topicId);
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
         } catch (SQLException sqle) {

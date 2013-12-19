@@ -6,7 +6,7 @@ package chronic.transaction;
 import chronic.app.ChronicApp;
 import chronic.entity.Cert;
 import chronic.entity.Topic;
-import chronic.entitykey.TopicKey;
+import chronic.entitykey.CertTopicKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.StorageException;
@@ -21,7 +21,7 @@ public class EnrollTopicTransaction {
 
     public Topic handle(ChronicApp app, Cert cert, String topicLabel) throws StorageException {
         logger.info("handle {} {}", topicLabel, cert);
-        TopicKey key = new TopicKey(cert.getId(), topicLabel);
+        CertTopicKey key = new CertTopicKey(cert.getId(), topicLabel);
         Topic topic = app.storage().topic().select(key);
         if (topic == null) {
             topic = new Topic(key);            

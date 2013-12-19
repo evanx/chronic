@@ -420,7 +420,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>What use cases?</b>
-          <br>We suggest you use Chronica to monitor your networks and applications, to ensure your IT performance and security. Be the first to know :)
+          <br>We suggest you use Chronica to monitor your networks and applications, to ensure your IT performance and security. When something is wrong, be the first to know :)
         </p>
 
         <p><b>How is this different from some other cloud-based monitoring services?</b>
@@ -440,11 +440,11 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>Why doesn't the site work on my phone's browser?</b>
-          <br>It will, soon! We use Twitter Bootstrap 3, which is "mobile first," and responsive to desktop, tablet and phone.
+          <br>It will, soon! We use Twitter Bootstrap 3, which is "mobile first" and responsive to desktop, tablet and phone.
         </p>
         
         <p><b>Windows or Linux?</b>
-          <br>We provide a "starter" script for Linux, which can be used out the box to actively monitor Windows machines remotely via TCP. However, you can expect integration with an opensource Windows agent in a few months, such as the Nagios Cross-Platform Agent (NCPA).
+          <br>We provide a "starter" script for Linux, which can be used out the box to actively monitor Windows machines remotely via TCP. However, you can expect integration with an opensource Windows agent in coming months, such as the Nagios Cross-Platform Agent (NCPA).
         </p>
         
         <p><b>What can be installed on Linux clients right now?</b>
@@ -452,7 +452,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>How is it run?</b>
-        <br>The script can be started from <tt>rc.local</tt>. It has built-in support for minutely, hourly and daily checks, without needing <tt>crond</tt>. However, you can pipe the output of cron jobs to our script also. Finally, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink), to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
+        <br>The script can be started, to run in the background. It has built-in support for minutely, hourly and daily checks, without needing <tt>crond</tt>. (It has a loop but sleeps most of the time.) Also, you can pipe the output of cron jobs to our script. Incidently, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
         </p>
 
         <p><b>What API does it use?</b>
@@ -463,7 +463,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. So it's totally customisable. As such, we will extend our script soon to satisfy PCI DSS compliancy, out of the box :)
         </p>
         
-        <p><b>How to manage client certs for my organisation?</b>
+        <p><b>How are client certs managed?</b>
         <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. By default the hostname of your machine is used for the cert's common name. It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved, and can confirm client certs, and grant admin priviledges to others, via the site.
         </p>
 

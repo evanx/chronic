@@ -6,8 +6,8 @@ package chronic.handler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicHttpxHandler;
 import chronic.entity.Cert;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httpserver.Httpx;
@@ -25,7 +25,7 @@ public class CertList implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         String email = app.getEmail(httpx);
-        List certs = new LinkedList();
+        Set certs = new TreeSet();
         for (Cert cert : app.storage().listCerts(email)) {
             certs.add(cert);
         }

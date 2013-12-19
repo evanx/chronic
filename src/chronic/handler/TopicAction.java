@@ -7,7 +7,7 @@ import chronic.app.ChronicApp;
 import chronic.app.ChronicHttpxHandler;
 import chronic.entity.Topic;
 import chronic.entitykey.OrgRoleKey;
-import chronic.entitykey.TopicKey;
+import chronic.entitykey.CertTopicKey;
 import chronic.entitytype.OrgRoleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class TopicAction implements ChronicHttpxHandler {
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         String email = app.getEmail(httpx);
         JMap topicMap = httpx.parseJsonMap().getMap("topic");
-        TopicKey key = new TopicKey(topicMap);
+        CertTopicKey key = new CertTopicKey(topicMap);
         OrgRoleKey roleKey = new OrgRoleKey(topicMap.getString("orgDomain"), email, OrgRoleType.ADMIN);
         if (!app.storage().role().containsKey(roleKey)) {
             return JMaps.mapValue("errorMessage", "no role");

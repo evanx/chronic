@@ -23,6 +23,18 @@ select * from topic_sub
 where topic_sub_id = ?
 ;
 
+-- select key
+select * 
+from topic_sub 
+where topic_id = ?
+and email = ?
+;
+
+-- list
+select * 
+from topic_sub 
+;
+
 -- list topic
 select * 
 from topic_sub
@@ -35,7 +47,3 @@ from topic_sub
 where email = ? 
 ;
 
--- list
-select * 
-from topic_sub 
-;

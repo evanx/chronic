@@ -133,7 +133,7 @@ public abstract class ChronicStorage {
     public Iterable<Topic> listTopics(String email) throws StorageException {
         logger.info("listTopics {} {}", email);
         Set<Topic> topics = new TreeSet();
-        for (Subscriber subscriber : sub().list(new UserKey(email))) {
+        for (Subscriber subscriber : sub().list(email)) {
             logger.info("listTopics subscriber {}", subscriber);
             topics.add(topic().find(subscriber.getTopicId()));
         }
@@ -143,7 +143,7 @@ public abstract class ChronicStorage {
     public Iterable<Topic> listTopics(String email, boolean enabled) throws StorageException {
         logger.info("listTopics {} {}", email);
         Set<Topic> topics = new TreeSet();
-        for (Subscriber subscriber : sub().list(new UserKey(email))) {
+        for (Subscriber subscriber : sub().list(email)) {
             logger.info("listTopics subscriber {}", subscriber);
             topics.add(topic().find(subscriber.getTopicId()));
         }
@@ -164,18 +164,12 @@ public abstract class ChronicStorage {
 
     public Iterable<Subscriber> listSubscribers(String email) throws StorageException {
         Set set = new TreeSet();
-        set.addAll(sub().list(new UserKey(email)));
+        set.addAll(sub().list(email));
         logger.info("listSubscriber {}", set);
         if (app.getProperties().isAdmin(email)) {
             set.addAll(sub().list());
         }
         return set;
-    }
-
-
-    public boolean isSubscriber(String email, Long topicId) throws StorageException {
-        SubscriberKey key = new SubscriberKey(topicId, email);
-        return sub().containsKey(key);
     }
 
     public Iterable<Cert> listCerts(String email) throws StorageException {

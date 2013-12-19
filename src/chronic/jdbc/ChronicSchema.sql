@@ -9,6 +9,7 @@ drop table topic_sub;
 
 drop table config;
 drop table history; 
+drop table tran; 
 drop table schema_revision;
 
 create table person (
@@ -92,5 +93,16 @@ create table config (
   key_ varchar(64),
   value_ varchar(128),
   unique key uniq_config (group_, key_)
+);
+
+create table entity_tran (
+  app_id int,
+  entity_tran_id int auto_increment primary key,
+  entity_id int,
+  entity_key array,
+  entity_data varchar(4096),
+  entity_datum varchar(32),
+  entity_value varchar(1024),
+  time_ timestamp not null default now(),
 );
 

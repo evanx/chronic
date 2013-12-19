@@ -66,7 +66,7 @@ public class CertStore implements EntityStore<Cert> {
         cert.setId(resultSet.getLong("id"));
         cert.setOrgDomain(resultSet.getString("org_domain"));
         cert.setOrgUnit(resultSet.getString("org_unit"));
-        cert.setCommonName(resultSet.getString("cn"));
+        cert.setCommonName(resultSet.getString("common_name"));
         cert.setEncoded(resultSet.getString("encoded"));
         cert.setEnabled(resultSet.getBoolean("enabled"));
         return cert;
@@ -88,13 +88,13 @@ public class CertStore implements EntityStore<Cert> {
             statement.setString(2, cert.getOrgUnit());
             statement.setString(3, cert.getCommonName());
             statement.setString(4, cert.getEncoded());
-            int insertCount = statement.executeUpdate();
-            if (insertCount != 1) {
+            statement.setBoolean(5, cert.isEnabled());
+            if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_INSERTED);
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             generatedKeys.next();
-            cert.setId(generatedKeys.getLong((1)));
+            cert.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
         }
@@ -105,11 +105,24 @@ public class CertStore implements EntityStore<Cert> {
         updateEncoded(cert);
     }
 
+    public void updateEnabled(Cert cert) throws StorageException {
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement statement = prepare(connection, "update enabled")) {
+            statement.setBoolean(1, cert.isEnabled());
+            statement.setLong(2, cert.getId());
+            if (statement.executeUpdate() != 1) {
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, cert.getKey());
+            }
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
+        }
+    }
     public void updateEncoded(Cert cert) throws StorageException {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = prepare(connection, "update encoded")) {
-            statement.setLong(1, cert.getId());
+            statement.setBoolean(1, cert.isEnabled());
             statement.setString(2, cert.getEncoded());
+            statement.setLong(3, cert.getId());
             if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_UPDATED, cert.getKey());
             }
@@ -121,8 +134,7 @@ public class CertStore implements EntityStore<Cert> {
     @Override
     public void delete(Comparable key) throws StorageException {
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "delete")) {
-            statement.setLong(1, (Long) key);
+                PreparedStatement statement = prepare(connection, "delete", key)) {
             if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_DELETED, key);
             }
@@ -207,12 +219,12 @@ public class CertStore implements EntityStore<Cert> {
     @Override
     public Collection<Cert> list(Comparable key) throws StorageException {
         if (key instanceof OrgKey) {
-            return listOrgKey((OrgKey) key);
+            return listOrg((OrgKey) key);
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, key.getClass().getSimpleName());
     }
 
-    private Collection<Cert> listOrgKey(OrgKey key) throws StorageException {
+    private Collection<Cert> listOrg(OrgKey key) throws StorageException {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = prepare(connection, "list org", key.getOrgDomain());
                 ResultSet resultSet = statement.executeQuery()) {

@@ -7,6 +7,8 @@ package chronic.entity;
 import chronic.app.ChronicApp;
 import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.SubscriberKeyed;
+import chronic.entitykey.TopicIdKey;
+import chronic.entitykey.TopicIdKeyed;
 import chronic.entitykey.UserKey;
 import chronic.entitykey.UserKeyed;
 import chronic.entitytype.ChronicApped;
@@ -21,8 +23,8 @@ import vellum.type.Enabled;
  *
  * @author evan.summers
  */
-public final class Subscriber extends AbstractIdEntity implements SubscriberKeyed, UserKeyed, Enabled,
-        JMapped, ChronicApped {
+public final class Subscriber extends AbstractIdEntity implements SubscriberKeyed, UserKeyed, 
+        TopicIdKeyed, Enabled, JMapped, ChronicApped {
     Long id;
     Long topicId;
     String email;
@@ -49,6 +51,11 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
     }
 
     @Override
+    public TopicIdKey getTopicIdKey() {
+        return new TopicIdKey(topicId);
+    }
+        
+    @Override        
     public UserKey getUserKey() {
         return new UserKey(email);
     }
