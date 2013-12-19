@@ -25,11 +25,11 @@ public class SubscriberAction implements ChronicHttpxHandler {
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         String email = app.getEmail(httpx);
         JMap map = httpx.parseJsonMap().getMap("subscriber");
-        SubscriberKey key = new SubscriberKey(map, email);
+        SubscriberKey key = new SubscriberKey(map.getLong("topicId"), email);
         Subscriber subscriber = app.storage().sub().select(key);
         subscriber.setEnabled(!subscriber.isEnabled());
         app.storage().sub().update(subscriber);
-        return JMaps.create("subscriber", subscriber.getMap());
+        return JMaps.mapValue("subscriber", subscriber.getMap());
     }
     
 }

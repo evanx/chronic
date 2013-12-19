@@ -33,14 +33,14 @@ import vellum.system.Executor;
  *
  * @author evan.summers
  */
-public class ChronicMessenger {
+public class ChronicMailMessenger {
 
-    static Logger logger = LoggerFactory.getLogger(ChronicMessenger.class);
+    static Logger logger = LoggerFactory.getLogger(ChronicMailMessenger.class);
     ChronicApp app;
     Mailer mailer;
     Map<String, AlertRecord> alertMap = new HashMap();
 
-    public ChronicMessenger(ChronicApp app) {
+    public ChronicMailMessenger(ChronicApp app) {
         this.app = app;
     }
 
@@ -51,21 +51,8 @@ public class ChronicMessenger {
 
     public synchronized void alert(AlertRecord alert) {
         logger.info("alert {}", alert.toString());
-        if (app.getProperties().getAlertScript() != null) {
-            try {
-                Executor executor = new Executor();
-                executor.exec(app.getProperties().getAlertScript(),
-                        new AlertMailBuilder(app).build(alert).getBytes(),
-                        alert.getAlertMap(true));
-                if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
-                    logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
-                }
-            } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
-            }
-        }
         try {
-            for (String email : app.storage().listSubscriberEmails(alert)) {
+            for (String email : app.storage().listSubscriberEmails(alert.getStatus().getTopic())) {
                 AlertRecord previous = alertMap.put(email, alert);
                 if (previous != null) {
                     long elapsed = Millis.elapsed(previous.getTimestamp());
@@ -74,7 +61,7 @@ public class ChronicMessenger {
                     }
                 }
                 mailer.sendEmail(email,
-                        alert.getStatus().getTopicString(),
+                        alert.getStatus().getTopicLabel(),
                         new AlertMailBuilder(app).build(alert));
             }
         } catch (StorageException e) {

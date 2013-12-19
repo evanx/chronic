@@ -126,7 +126,6 @@ app.controller("alertsController", ["$scope", "$http",
                $scope.alerts = response.data.alerts;
             } else {
                console.warn("alerts", response);
-               navigator.id.logout();
             }
          });
       };
@@ -168,7 +167,6 @@ app.controller("topicsController", ["$scope", "$http",
                $scope.topics = response.data.topics;
             } else {
                console.warn("topics", response);
-               navigator.id.logout();
             }
          });
       };
@@ -243,7 +241,6 @@ app.controller("subscribersController", ["$scope", "$http",
                $scope.subscribers = response.data.subscribers;
             } else {
                console.warn("subscribers", response);
-               //navigator.id.logout();
             }
          });
       };
@@ -317,7 +314,6 @@ app.controller("rolesController", ["$scope", "$http",
                $scope.roles = response.data.roles;
             } else {
                console.warn("roles", response);
-               //navigator.id.logout();
             }
          });
       };

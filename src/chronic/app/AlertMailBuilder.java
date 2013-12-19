@@ -128,7 +128,7 @@ public class AlertMailBuilder {
         logger.info("formatSubject {} {}", status.getStatusType());
         if (status.isStatusType()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
-                return status.getTopicString()
+                return status.getTopicLabel()
                         + " <i>" + status.getStatusType().getLabel() + "</i>";
             } else if (!status.getSubject().contains(status.getStatusType().name())) {
                 return status.getSubject()
@@ -138,7 +138,7 @@ public class AlertMailBuilder {
             }
         }
         if (status.getSubject() == null) {
-            return status.getTopicString();
+            return status.getTopicLabel();
         }
         return status.getSubject();
     }

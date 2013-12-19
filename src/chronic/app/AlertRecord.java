@@ -72,24 +72,34 @@ public class AlertRecord implements Timestamped {
         this.previousStatus = previous;
     }
 
-    public Map getAlertMap(boolean detail) {
+    public Map getlMap() {
+        JMap map = getPartialMap();
+        putExtra(map);
+        return map;
+    }
+        
+    public JMap getPartialMap() {
         AlertFormatter formatter = new AlertFormatter(status);
-        JMap map = status.getTopicKey().getMap();
+        JMap map = new JMap();
+        map.put("orgDomain", status.cert.getOrgDomain());
+        map.put("orgUnit", status.cert.getOrgUnit());
+        map.put("commonName", status.cert.getCommonName());
         map.put("from", status.from);
         map.put("statusType", status.statusType);
         map.put("alertType", status.alertType);
         map.put("alertTypeLabel", formatter.formatAlertTypeLabel());
-        map.put("topicString", status.topicString);
+        map.put("topicLabel", status.topicLabel);
         map.put("timestamp", status.timestamp);
         map.put("timestampLabel", Millis.formatTime(status.timestamp));
         map.put("message", formatter.formatAlertTypeLabel());
-        if (detail) {
-            new AlertWebContentBuilder().build(this);
-            map.put("htmlContent", htmlContent);
-            map.put("preContent", preContent);
-        }
         logger.trace("map {}", map);
         return map;
+    }
+
+    public void putExtra(JMap map) {
+        new AlertWebContentBuilder().build(this);
+        map.put("htmlContent", htmlContent);
+        map.put("preContent", preContent);
     }
 
     @Override

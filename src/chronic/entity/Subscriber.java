@@ -4,45 +4,37 @@
  */
 package chronic.entity;
 
-import chronic.entitykey.CertKey;
-import chronic.entitykey.CertKeyed;
-import chronic.entitykey.OrgKeyed;
-import chronic.entitykey.UserKeyed;
+import chronic.app.ChronicApp;
 import chronic.entitykey.SubscriberKey;
-import chronic.entitykey.UserKey;
-import chronic.entitykey.OrgTopicKey;
-import chronic.entitykey.OrgTopicKeyed;
 import chronic.entitykey.SubscriberKeyed;
-import chronic.entitykey.OrgKey;
-import chronic.entitykey.TopicKey;
-import chronic.entitykey.TopicKeyed;
+import chronic.entitykey.UserKey;
+import chronic.entitykey.UserKeyed;
+import chronic.entitytype.ChronicApped;
 import chronic.entitytype.SubscriberActionType;
 import vellum.jx.JMap;
+import vellum.jx.JMapped;
 import vellum.storage.AbstractIdEntity;
+import vellum.storage.StorageException;
 import vellum.type.Enabled;
 
 /**
  *
  * @author evan.summers
  */
-public final class Subscriber extends AbstractIdEntity implements SubscriberKeyed, 
-        OrgKeyed, UserKeyed, TopicKeyed, OrgTopicKeyed, CertKeyed, Enabled {
+public final class Subscriber extends AbstractIdEntity implements SubscriberKeyed, UserKeyed, Enabled,
+        JMapped, ChronicApped {
     Long id;
-    String orgDomain;
-    String orgUnit;
-    String commonName;
-    String topicString;
+    Long topicId;
     String email;
     boolean enabled = true;
-            
+    
+    transient Topic topic;
+    
     public Subscriber() {
     }
 
     public Subscriber(SubscriberKey key) {
-        this.orgDomain = key.getOrgDomain();
-        this.orgUnit = key.getOrgUnit();
-        this.commonName = key.getCommonName();
-        this.topicString = key.getTopicString();
+        this.topicId = key.getTopicId();
         this.email = key.getEmail();
     }
     
@@ -53,32 +45,12 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
 
     @Override
     public SubscriberKey getSubscriberKey() {
-        return new SubscriberKey(orgDomain, orgUnit, commonName, topicString, email);
+        return new SubscriberKey(topicId, email);
     }
 
-    @Override
-    public TopicKey getTopicKey() {
-        return new TopicKey(orgDomain, orgUnit, commonName, topicString);
-    }
-
-    @Override
-    public CertKey getCertKey() {
-        return new CertKey(orgDomain, orgUnit, commonName);
-    }
-    
     @Override
     public UserKey getUserKey() {
         return new UserKey(email);
-    }
-
-    @Override
-    public OrgKey getOrgKey() {
-        return new OrgKey(orgDomain);
-    }
-
-    @Override
-    public OrgTopicKey getOrgTopicKey() {
-        return new OrgTopicKey(orgDomain, topicString);
     }
     
     public void setEnabled(boolean enabled) {
@@ -104,25 +76,36 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
         return email;
     }
 
-    public String getOrgDomain() {
-        return orgDomain;
+    public Long getTopicId() {
+        return topicId;
     }
     
-    public String getTopicString() {
-        return topicString;
+    public void setTopicId(Long topicId) {
+        this.topicId = topicId;
     }
-        
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    @Override
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
-        map.put("orgDomain", orgDomain);
-        map.put("orgUnit", orgUnit);
-        map.put("commonName", commonName);
-        map.put("topicString", topicString);
+        map.put("topicId", topicId);
+        map.put("email", email);
         map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());
-        map.put("email", email);
+        map.put("topicLabel", topic.getTopicLabel());
+        map.put("orgDomain", topic.getCert().getOrgDomain());
+        topic.getCert().put(map);
         return map;
+    }
+
+    @Override
+    public void inject(ChronicApp app) throws StorageException {
+        topic = app.storage().topic().find(topicId);
+        topic.inject(app);
     }
 
     private SubscriberActionType getAction() {
@@ -131,7 +114,6 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
     
     @Override
     public String toString() {
-        return getMap().toString();
+        return getKey().toString();
     }
-    
 }

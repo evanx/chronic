@@ -26,15 +26,16 @@ public class TopicAction implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         String email = app.getEmail(httpx);
-        TopicKey key = new TopicKey(httpx.parseJsonMap());
-        OrgRoleKey roleKey = new OrgRoleKey(key.getOrgDomain(), email, OrgRoleType.ADMIN);
+        JMap topicMap = httpx.parseJsonMap().getMap("topic");
+        TopicKey key = new TopicKey(topicMap);
+        OrgRoleKey roleKey = new OrgRoleKey(topicMap.getString("orgDomain"), email, OrgRoleType.ADMIN);
         if (!app.storage().role().containsKey(roleKey)) {
-            return JMaps.create("errorMessage", "no role");
+            return JMaps.mapValue("errorMessage", "no role");
         } else {
             Topic topic = app.storage().topic().select(key);
             topic.setEnabled(true);
             app.storage().topic().update(topic);
-            return JMaps.create("topic", topic.getMap());
+            return JMaps.mapValue("topic", topic.getMap());
         }
     }
     

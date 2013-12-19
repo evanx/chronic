@@ -34,7 +34,7 @@ public class RoleList implements ChronicHttpxHandler {
                 roles.add(role.getMap());
             }
         }
-        return JMaps.create("roles", roles);
+        return JMaps.mapValue("roles", roles);
     }
     
 }

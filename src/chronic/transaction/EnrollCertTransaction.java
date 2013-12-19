@@ -8,9 +8,11 @@ import chronic.entity.Cert;
 import chronic.entity.Org;
 import chronic.entitykey.CertKey;
 import java.security.cert.CertificateException;
+import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.cert.X509Certificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.httpserver.Httpx;
 import vellum.security.Certificates;
 import vellum.security.X509Certificates;
 import vellum.storage.StorageException;
@@ -19,9 +21,14 @@ import vellum.storage.StorageException;
  *
  * @author evan.summers
  */
-public class VerifyCertTransaction {
+public class EnrollCertTransaction {
     
-    static Logger logger = LoggerFactory.getLogger(VerifyCertTransaction.class);
+    static Logger logger = LoggerFactory.getLogger(EnrollCertTransaction.class);
+    
+    public Cert handle(ChronicApp app, Httpx httpx) 
+            throws StorageException, CertificateException, SSLPeerUnverifiedException {
+        return handle(app, httpx.getRemoteHostAddress(), httpx.getPeerCertficate());
+    }
     
     public Cert handle(ChronicApp app, String hostAddress, X509Certificate certificate) 
             throws StorageException, CertificateException {
@@ -56,6 +63,7 @@ public class VerifyCertTransaction {
             app.storage().org().insert(org);
             logger.info("insert org {}", org);
         }
+        cert.setOrg(org);
         return cert;
     }
 }

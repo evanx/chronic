@@ -37,7 +37,7 @@ create table org_role (
   role_type varchar(32),
   enabled boolean default false,
   inserted timestamp not null default now(),
-  unique key uniq_role (email)
+  unique key uniq_role (org_domain, email)
 );
 
 create table cert (
@@ -61,13 +61,12 @@ create table topic (
 );
 
 create table topic_sub (
-  sub_id int auto_increment primary key, 
+  topic_sub_id int auto_increment primary key, 
   topic_id int, 
   email varchar(64),
-  sub_type varchar(32),
   enabled boolean default false,
   inserted timestamp not null default now(),
-  unique key uniq_sub (email)
+  unique key uniq_sub (topic_id, email)
 );
 
 create table schema_revision (

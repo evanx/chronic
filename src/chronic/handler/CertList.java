@@ -27,15 +27,15 @@ public class CertList implements ChronicHttpxHandler {
         String email = app.getEmail(httpx);
         List certs = new LinkedList();
         for (Cert cert : app.storage().listCerts(email)) {
-            certs.add(cert.getMap(false));
+            certs.add(cert);
         }
         if (certs.isEmpty() && app.getProperties().isDemo(httpx.getServerUrl())) {
             String adminEmail = app.getProperties().getAdminEmails().iterator().next();
             for (Cert cert : app.storage().listCerts(adminEmail)) {
-                certs.add(cert.getMap(false));
+                certs.add(cert);
             }
         } 
-        return JMaps.create("certs", certs);
+        return JMaps.map("certs", certs);
     }
     
 }

@@ -28,9 +28,9 @@ public class CertActionAll implements ChronicHttpxHandler {
         for (Cert cert : app.storage().listCerts(app.getEmail(httpx))) {
             cert.setEnabled(true);
             app.storage().cert().update(cert);            
-            certs.add(cert.getMap(true));
+            certs.add(cert);
         }
-        return JMaps.create("certs", certs);
+        return JMaps.map("certs", certs);
     }
     
 }

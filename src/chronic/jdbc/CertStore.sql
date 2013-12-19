@@ -9,6 +9,10 @@ insert into cert (
 ) values (?, ?, ?, ?)
 ;
 
+-- update enabled
+update cert set enabled = ? where cert_id = ?
+;
+
 -- update encoded
 update cert set encoded = ? where cert_id = ?
 ;

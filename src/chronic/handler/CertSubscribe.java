@@ -4,35 +4,37 @@
 package chronic.handler;
 
 import chronic.app.ChronicApp;
-import chronic.transaction.SubscribeTransaction;
+import chronic.entity.Cert;
+import chronic.transaction.EnrollCertSubscriberTransaction;
+import chronic.transaction.EnrollCertTransaction;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Emails;
 import vellum.httpserver.Httpx;
-import vellum.security.Certificates;
 
 /**
  *
  * @author evan.summers
  */
-public class Subscribe {
+public class CertSubscribe {
     
-    static Logger logger = LoggerFactory.getLogger(Subscribe.class);
+    static Logger logger = LoggerFactory.getLogger(CertSubscribe.class);
     ChronicApp app;
     Httpx hx;
     
-    public Subscribe(ChronicApp app) {
+    public CertSubscribe(ChronicApp app) {
         this.app = app;
     }
     
     public void handle(HttpExchange httpExchange) throws Exception {
         hx = new Httpx(httpExchange);
         String email = hx.readString().trim();
+        Cert cert = new EnrollCertTransaction().handle(app, 
+                hx.getRemoteHostAddress(), hx.getPeerCertficate());
         if (Emails.matchesEmail(email)) {
-            String orgDomain = Certificates.getOrg(hx.getSSLSession().getPeerPrincipal());
-            new SubscribeTransaction().handle(app, orgDomain, email);
-            hx.sendPlainResponse("ok %s %s", orgDomain, email);
+            new EnrollCertSubscriberTransaction().handle(app, cert, email);
+            hx.sendPlainResponse("ok %s %s", cert.getCommonName(), email);
         } else {
             hx.sendError("invalid email %s", email);
         }

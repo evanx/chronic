@@ -39,11 +39,11 @@ public class TopicActionAll implements ChronicHttpxHandler {
             app.storage().topic().update(topic);
             topics.add(topic.getMap());
         }
-        return JMaps.create("topics", topics);
+        return JMaps.mapValue("topics", topics);
     }
     
     public void handle(Topic topic) throws StorageException {
-        SubscriberKey key = new SubscriberKey(topic.getTopicKey(), email);
+        SubscriberKey key = new SubscriberKey(topic.getId(), email);
         Subscriber subscriber = app.storage().sub().select(key);
         if (subscriber == null) {
             subscriber = new Subscriber(key);

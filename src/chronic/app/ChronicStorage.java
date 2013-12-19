@@ -113,7 +113,8 @@ public abstract class ChronicStorage {
         return map;
     }
 
-    public Collection<OrgRoleType> listOrgRoleType(String orgDomain, String email) throws StorageException {
+    public Collection<OrgRoleType> listOrgRoleType(String orgDomain, String email) 
+            throws StorageException {
         List<OrgRoleType> roleTypes = new LinkedList();
         for (OrgRole orgRole : role().list(new OrgUserKey(orgDomain, email))) {
             roleTypes.add(orgRole.getRoleType());
@@ -134,7 +135,7 @@ public abstract class ChronicStorage {
         Set<Topic> topics = new TreeSet();
         for (Subscriber subscriber : sub().list(new UserKey(email))) {
             logger.info("listTopics subscriber {}", subscriber);
-            topics.add(topic().find(subscriber.getTopicKey()));
+            topics.add(topic().find(subscriber.getTopicId()));
         }
         return topics;
     }
@@ -144,20 +145,20 @@ public abstract class ChronicStorage {
         Set<Topic> topics = new TreeSet();
         for (Subscriber subscriber : sub().list(new UserKey(email))) {
             logger.info("listTopics subscriber {}", subscriber);
-            topics.add(topic().find(subscriber.getTopicKey()));
+            topics.add(topic().find(subscriber.getTopicId()));
         }
         return topics;
     }
     
-    public Iterable<String> listSubscriberEmails(AlertRecord alert) throws StorageException {
+    public Iterable<String> listSubscriberEmails(Topic topic) throws StorageException {
         Set<String> set = new TreeSet();
-        for (Subscriber subscriber : sub().list(alert.getStatus().getOrgTopicKey())) {
+        for (Subscriber subscriber : sub().list(topic.getId())) {
             set.add(subscriber.getEmail());
         }
-        logger.info("listSubscriberEmails {} {}", alert.getStatus().getTopicString(), set);
+        logger.info("listSubscriberEmails {} {}", topic.getTopicLabel(), set);
         set.clear();
         set.add(app.getProperties().getAdminEmails().iterator().next());
-        logger.info("listSubscriberEmails {} {}", alert.getStatus().getTopicString(), set);
+        logger.info("listSubscriberEmails {} {}", topic.getTopicLabel(), set);
         return set;
     }
 
@@ -172,12 +173,8 @@ public abstract class ChronicStorage {
     }
 
 
-    public boolean isSubscriber(String email, AlertRecord alert) throws StorageException {
-        return isSubscriber(email, alert.getStatus());
-    }
-
-    public boolean isSubscriber(String email, StatusRecord status) throws StorageException {
-        SubscriberKey key = new SubscriberKey(status.getTopicKey(), email);
+    public boolean isSubscriber(String email, Long topicId) throws StorageException {
+        SubscriberKey key = new SubscriberKey(topicId, email);
         return sub().containsKey(key);
     }
 

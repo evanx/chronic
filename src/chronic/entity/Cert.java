@@ -14,6 +14,7 @@ import chronic.entitytype.CertActionType;
 import vellum.data.Millis;
 import vellum.data.Timestamped;
 import vellum.jx.JMap;
+import vellum.jx.JMapped;
 import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
 
@@ -22,7 +23,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed, 
-        CertKeyed, Timestamped, Enabled {
+        CertKeyed, Timestamped, Enabled, JMapped {
 
     Long id;
     String orgDomain;
@@ -33,16 +34,9 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
     
     transient long timestamp;
     transient String address;
-
+    transient Org org;
+    
     public Cert() {
-    }
-
-    public Cert(Long id, String orgDomain, String orgUnit, String commonName, String address) {
-        this.id = id;
-        this.orgDomain = orgDomain;
-        this.orgUnit = orgUnit;
-        this.commonName = commonName;
-        this.address = address;
     }
 
     public Cert(CertKey key) {
@@ -87,6 +81,14 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
         return id;
     }
 
+    public void setOrg(Org org) {
+        this.org = org;
+    }
+
+    public Org getOrg() {
+        return org;
+    }
+    
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -145,27 +147,30 @@ public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKey
         return timestamp;
     }
         
-    public JMap getMap(boolean actionEnabled) {
+    public JMap getMap() {
         JMap map = new JMap();
-        map.put("id", id);
-        map.put("orgDomain", orgDomain);
-        map.put("orgUnit", orgUnit);
-        map.put("commonName", commonName);
+        put(map);
         map.put("enabled", enabled);
         map.put("address", address);
         map.put("timestampLabel", Millis.formatTime(timestamp));
         map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());
-        map.put("actionEnabled", actionEnabled);
         return map;
     }
 
+    public void put(JMap map) {
+        map.put("certId", id);
+        map.put("orgDomain", orgDomain);
+        map.put("orgUnit", orgUnit);
+        map.put("commonName", commonName);
+    }
+    
     private CertActionType getAction() {
         return enabled ? CertActionType.REVOKE : CertActionType.GRANT;
     }
     
     @Override
     public String toString() {
-        return getMap(true).toString();
+        return getKey().toString();
     }
 }

@@ -6,7 +6,7 @@ package chronic.app;
 import chronic.handler.CertAction;
 import chronic.handler.CertActionAll;
 import chronic.handler.CertActionNone;
-import chronic.handler.Enroll;
+import chronic.handler.AdminEnroll;
 import chronic.handler.EnrollOrg;
 import chronic.handler.AlertList;
 import chronic.handler.CertList;
@@ -16,7 +16,7 @@ import chronic.handler.RoleList;
 import chronic.handler.Post;
 import chronic.handler.RoleAction;
 import chronic.handler.RoleActionAll;
-import chronic.handler.Subscribe;
+import chronic.handler.CertSubscribe;
 import chronic.handler.SubscriberAction;
 import chronic.handler.SubscriberActionAll;
 import chronic.handler.SubscriberActionNone;
@@ -56,9 +56,9 @@ public class ChronicHttpHandler implements HttpHandler {
             if (path.equals("/post")) {
                 new Post(app).handle(httpExchange);
             } else if (path.equals("/enroll")) {
-                new Enroll(app).handle(httpExchange);
+                new AdminEnroll(app).handle(httpExchange);
             } else if (path.equals("/subscribe")) {
-                new Subscribe(app).handle(httpExchange);
+                new CertSubscribe(app).handle(httpExchange);
             } else if (path.startsWith("/chronicapp/")) {
                 logger.info("path {}", path);
                 if (path.equals("/chronicapp/personaLogin")) {

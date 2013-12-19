@@ -45,6 +45,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.data.ComparableTuple;
 import vellum.storage.AbstractEntity;
 import vellum.storage.MapStore;
 
@@ -120,7 +121,10 @@ public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
                 return matches((CertKeyed) entity, (CertKey) key);
             }
         }
-        return false;
+        if (entity.getKey() instanceof ComparableTuple) {
+            return ((ComparableTuple) entity.getKey()).contains(key);
+        }
+        return entity.getKey().equals(key);
     }
     
     private boolean matches(CertKeyed keyed, CertKey key) {

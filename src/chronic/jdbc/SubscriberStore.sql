@@ -1,38 +1,41 @@
 
 -- insert
 insert into topic_sub (
-  org_url,
-  org_unit,
-  common_name,
-  encoded,
+  topic_id,
+  email,
   enabled
-) values (?, ?, ?, ?)
-;
-
--- update encoded
-update topic_sub set encoded = ? where topic_sub_id = ?
-;
-
--- update address
-update topic_sub set address = ? where topic_sub_id = ?
-;
-
--- select key
-select * from topic_sub where org_url = ? and org_unit = ? and common_name = ?
-;
-
--- select id
-select * from topic_sub where topic_sub_id = ?
+) values (?, ?, ?)
 ;
 
 -- delete
-delete from topic_sub where topic_sub_id = ?
+delete from topic_sub 
+where topic_sub_id = ?
+;
+
+-- update enabled
+update topic_sub 
+set enabled = ? 
+where topic_sub_id = ?
+;
+
+-- select id
+select * from topic_sub 
+where topic_sub_id = ?
+;
+
+-- list topic
+select * 
+from topic_sub
+where topic_id = ? 
+;
+
+-- list email
+select * 
+from topic_sub
+where email = ? 
 ;
 
 -- list
-select * from topic_sub order by org_url, org_unit, common_name
-;
-
--- list org
-select * from topic_sub where org_url = ? order by org_unit, common_name
+select * 
+from topic_sub 
 ;

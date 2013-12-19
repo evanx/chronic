@@ -21,12 +21,10 @@
 package chronic.app;
 
 import chronic.check.StatusCheck;
-import chronic.entitykey.CertKey;
-import chronic.entitykey.CertKeyed;
+import chronic.entity.Cert;
+import chronic.entity.Topic;
 import chronic.entitykey.OrgKey;
 import chronic.entitykey.OrgKeyed;
-import chronic.entitykey.OrgTopicKey;
-import chronic.entitykey.OrgTopicKeyed;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicKeyed;
 import chronic.type.StatusType;
@@ -45,13 +43,13 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKeyed {
+public class StatusRecord implements TopicKeyed, OrgKeyed {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
     List<String> lineList = new ArrayList();
     AlertType alertType;
     AlertFormatType alertFormatType;
-    String topicString;
+    String topicLabel;
     StatusType statusType = StatusType.UNKNOWN;
     long timestamp = System.currentTimeMillis();
     long periodMillis;
@@ -61,33 +59,28 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     String username;
     String hostname;
     String service;
-    String orgDomain;
-    String orgUnit;
-    String commonName;
     String[] subscribers;
     List<String> changedLines;
+    transient Cert cert;
+    transient Topic topic;
 
     transient Collection<StatusCheck> checks = new LinkedList();
     
-    public StatusRecord(CertKey certKey) {
-        this.orgDomain = certKey.getOrgDomain();
-        this.orgUnit = certKey.getOrgUnit();
-        this.commonName = certKey.getCommonName();
+    public StatusRecord(Cert cert) {
+        this.cert = cert;
     }
 
     public StatusRecord(StatusRecord record) {
         this.alertType = record.alertType;
         this.alertFormatType = record.alertFormatType;
-        this.topicString = record.topicString;
+        this.topicLabel = record.topicLabel;
         this.periodMillis = record.periodMillis;
         this.from = record.from;
         this.subject = record.subject;
         this.hostname = record.hostname;
         this.username = record.username;
         this.service = record.service;
-        this.orgDomain = record.orgDomain;
-        this.orgUnit = record.orgUnit;
-        this.commonName = record.commonName;
+        this.cert = record.cert;
     }
 
     public ComparableTuple getKey() {
@@ -96,24 +89,26 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
 
     @Override
     public TopicKey getTopicKey() {
-        return new TopicKey(orgDomain, orgUnit, commonName, topicString);
+        return new TopicKey(cert.getId(), topicLabel);
     }
     
     @Override
     public OrgKey getOrgKey() {
-        return new OrgKey(orgDomain);
-    }
-    
-    @Override
-    public OrgTopicKey getOrgTopicKey() {
-        return new OrgTopicKey(orgDomain, topicString);
+        return new OrgKey(cert.getOrgDomain());
     }
 
-    @Override
-    public CertKey getCertKey() {
-        return new CertKey(orgDomain, orgUnit, commonName);
+    public Cert getCert() {
+        return cert;
     }
-    
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
+
+    public Topic getTopic() {
+        return topic;
+    }
+                
     public void setUsername(String username) {
         this.username = username;
     }
@@ -128,14 +123,6 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    public void setOrgDomain(String orgDomain) {
-        this.orgDomain = orgDomain;
-    }
-
-    public String getOrgDomain() {
-        return orgDomain;
     }
 
     public String getFrom() {
@@ -178,12 +165,12 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         return alertType;
     }
 
-    public void setTopicString(String topicString) {
-        this.topicString = topicString;
+    public void setTopicLabel(String topicLabel) {
+        this.topicLabel = topicLabel;
     }
 
-    public String getTopicString() {
-        return topicString;
+    public String getTopicLabel() {
+        return topicLabel;
     }
 
     public void setAlertFormatType(AlertFormatType alertFormatType) {
@@ -239,15 +226,6 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
         return false;
     }
 
-    public boolean isAdmin(String email) {
-        if (email != null) {
-            if (orgDomain != null && email.endsWith(orgDomain)) {
-                return true;
-            }
-        }
-        return true;
-    }
-
     public void setSubcribers(String[] subscribers) {
         this.subscribers = subscribers;
     }
@@ -262,6 +240,6 @@ public class StatusRecord implements OrgKeyed, OrgTopicKeyed, TopicKeyed, CertKe
     
     @Override
     public String toString() {
-        return Args.format(alertType, orgDomain, topicString, statusType, periodMillis);
+        return Args.format(alertType, topicLabel, statusType, periodMillis);
     }
 }

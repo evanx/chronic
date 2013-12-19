@@ -41,7 +41,7 @@ public class StatusRecordChecker {
     }    
 
     public boolean isAlertable(StatusRecord previous, AlertRecord alert) {
-        logger.info("isAlertable {}", Args.format(status.topicString, status.alertType, 
+        logger.info("isAlertable {}", Args.format(status.topicLabel, status.alertType, 
                 status.statusType, previous.statusType, status.matches(previous),
                 alert.getStatus().getStatusType()));
         if (status.alertType == AlertType.NEVER) {

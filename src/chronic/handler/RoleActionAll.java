@@ -41,7 +41,7 @@ public class RoleActionAll implements ChronicHttpxHandler {
             }
             roles.add(role.getMap());
         }
-        return JMaps.create("roles", roles);
+        return JMaps.mapValue("roles", roles);
     }
     
 }

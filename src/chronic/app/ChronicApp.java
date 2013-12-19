@@ -20,13 +20,14 @@
  */
 package chronic.app;
 
+import chronic.entitytype.ChronicApped;
 import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.io.IOException;
-import java.util.Deque;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -35,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.data.CapacityDeque;
+import vellum.collections.SynchronizedCapacityDeque;
 import vellum.data.Millis;
 import vellum.httpserver.Httpx;
 import vellum.httpserver.VellumHttpServer;
@@ -44,7 +45,6 @@ import vellum.jx.JMapException;
 import vellum.storage.StorageException;
 import vellum.data.ComparableTuple;
 import vellum.httphandler.RedirectHttpsHandler;
-import vellum.httphandler.WebHttpHandler;
 
 /**
  *
@@ -55,15 +55,15 @@ public class ChronicApp implements Runnable {
     Logger logger = LoggerFactory.getLogger(getClass());
     ChronicProperties properties = new ChronicProperties();
     ChronicStorage storage;
-    ChronicMessenger messenger = new ChronicMessenger(this);
+    ChronicMailMessenger messenger = new ChronicMailMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
     VellumHttpServer httpServer = new VellumHttpServer();
     Map<ComparableTuple, StatusRecord> recordMap = new ConcurrentHashMap();
     Map<ComparableTuple, AlertRecord> alertMap = new ConcurrentHashMap();
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    Deque statusDeque = new CapacityDeque(100);
-    Deque alertDeque = new CapacityDeque(100);
+    SynchronizedCapacityDeque statusDeque = new SynchronizedCapacityDeque(100);
+    SynchronizedCapacityDeque alertDeque = new SynchronizedCapacityDeque(100);
     DataSource dataSource = new DataSource();
     
     public ChronicApp() {
@@ -219,6 +219,12 @@ public class ChronicApp implements Runnable {
             app.start();
         } catch (Exception e) {
             e.printStackTrace(System.err);
+        }
+    }
+
+    public void inject(Collection<? extends ChronicApped> collection) throws Exception {
+        for (ChronicApped element : collection) {
+            element.inject(this);
         }
     }
 

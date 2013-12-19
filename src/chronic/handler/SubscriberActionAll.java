@@ -27,12 +27,12 @@ public class SubscriberActionAll implements ChronicHttpxHandler {
     public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
         String email = app.getEmail(httpx);
         List subscribers = new LinkedList();        
-        for (Subscriber subscriber : app.storage().sub().list(new UserKey(email))) {
+        for (Subscriber subscriber : app.storage().sub().list(email)) {
             subscriber.setEnabled(true);
             app.storage().sub().update(subscriber);
-            subscribers.add(subscriber.getMap());            
+            subscribers.add(subscriber);
         }
-        return JMaps.create("subscriptions", subscribers);
+        return JMaps.map("subscriptions", subscribers);
     }
     
 }

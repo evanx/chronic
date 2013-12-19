@@ -22,13 +22,12 @@ package chronic.app;
 
 import chronic.check.OpenPortChecker;
 import chronic.bundle.Bundle;
-import chronic.entitykey.CertKey;
+import chronic.entity.Cert;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
 import java.io.IOException;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
@@ -45,8 +44,8 @@ public class StatusRecordParser {
 
     StatusRecord record;
 
-    public StatusRecordParser(CertKey certKey) {
-        record = new StatusRecord(certKey);
+    public StatusRecordParser(Cert cert) {
+        record = new StatusRecord(cert);
     }
 
     private void parseAlertFormatType(String string) {
@@ -159,7 +158,7 @@ public class StatusRecordParser {
                 nagiosStatus = false;
                 parseStatusType(line.substring(8).trim());
             } else if (line.startsWith("Topic: ")) {
-                record.setTopicString(line.substring(7).trim());
+                record.setTopicLabel(line.substring(7).trim());
             } else if (line.startsWith("Alert: ")) {
                 parseAlertType(line.substring(7).trim());
             } else if (line.startsWith("Port: ")) {
@@ -198,12 +197,12 @@ public class StatusRecordParser {
                 record.service = record.service.substring(0, index);
             }
         }
-        if (record.topicString == null) {
-            record.topicString = createTopicString();
+        if (record.topicLabel == null) {
+            record.topicLabel = createTopicLabel();
         }
     }
 
-    public String createTopicString() {
+    public String createTopicLabel() {
         if (record.username != null && record.hostname != null && record.service != null) {
             if (record.service.matches("\\s")) {
                 return String.format("%s@%s '%s'", record.username, record.hostname, record.service);

@@ -4,8 +4,8 @@
 package chronic.transaction;
 
 import chronic.app.ChronicApp;
+import chronic.entity.Cert;
 import chronic.entity.Topic;
-import chronic.entitykey.CertKey;
 import chronic.entitykey.TopicKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,18 +15,20 @@ import vellum.storage.StorageException;
  *
  * @author evan.summers
  */
-public class TopicTransaction {
+public class EnrollTopicTransaction {
     
-    static Logger logger = LoggerFactory.getLogger(TopicTransaction.class);
+    static Logger logger = LoggerFactory.getLogger(EnrollTopicTransaction.class);
 
-    public void handle(ChronicApp app, CertKey certKey, String topicString) throws StorageException {
-        logger.info("handle {} {}", certKey, topicString);
-        TopicKey key = new TopicKey(certKey, topicString);
+    public Topic handle(ChronicApp app, Cert cert, String topicLabel) throws StorageException {
+        logger.info("handle {} {}", topicLabel, cert);
+        TopicKey key = new TopicKey(cert.getId(), topicLabel);
         Topic topic = app.storage().topic().select(key);
         if (topic == null) {
-            topic = new Topic(key);
+            topic = new Topic(key);            
             app.storage().topic().insert(topic);
-        }        
+        }
+        topic.setCert(cert);
+        return topic;
     }
 
 }

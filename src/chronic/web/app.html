@@ -93,7 +93,7 @@
                   {{alert.commonName}}
                 </td>
                 <td>
-                  <b>{{alert.topicString}}</b>
+                  <b>{{alert.topicLabel}}</b>
                 </td>
                 <td ng-click="setSelected()">
                   {{alert.message}}
@@ -104,7 +104,7 @@
         </div>
       </div>
       <div class="row">
-        <h4 ng-show="selected"><b>{{selected.topicString}}</b>
+        <h4 ng-show="selected"><b>{{selected.topicLabel}}</b>
           &nbsp;<i>{{selected.alertTypeLabel}}</i></h4>
         <div ng-show="selected.htmlContent" ng-bind-html="selected.htmlContent" 
              style="font-family: Ubuntu Mono">  
@@ -126,7 +126,7 @@
               <tr>
                 <th>Topic</th>
                 <th>Host</th>
-                <th>Network</th>
+                <th>Group</th>
                 <th>Organisation</th>
                 <th>
                   <input type="button" value="All" 
@@ -139,13 +139,13 @@
             <tbody>
               <tr ng-repeat="topic in topics">
                 <td ng-click="setSelected()">
-                  {{topic.topicString}}
+                  {{topic.topicLabel}}
                 </td>
                 <td>
-                  {{topic.hostName}}
+                  {{topic.commonName}}
                 </td>
                 <td>
-                  {{topic.networkName}}
+                  {{topic.orgUnit}}
                 </td>
                 <td>
                   {{topic.orgDomain}}
@@ -186,7 +186,7 @@
                   {{subscriber.orgDomain}}
                 </td>
                 <td>
-                  {{subscriber.topicString}}
+                  {{subscriber.topicLabel}}
                 </td>
                 <td>
                   <input type="button" value="{{subscriber.actionLabel}}" 
@@ -203,18 +203,18 @@
           <table class="table table-striped table-bordered table-condensed">
             <thead>
               <tr>
-                <th>Organisation</th>
                 <th>Topic</th>
+                <th>Organisation</th>
                 <th>Email</th>
               </tr>
             </thead>
             <tbody>
               <tr ng-repeat="subscriber in subscribers">
                 <td>
-                  {{subscriber.orgDomain}}
+                  {{subscriber.topicLabel}}
                 </td>
                 <td>
-                  {{subscriber.topicString}}
+                  {{subscriber.orgDomain}}
                 </td>
                 <td>
                   {{subscriber.email}}
@@ -236,8 +236,8 @@
             <thead>
               <tr>
                 <th>Organisation</th>
-                <th>Person</th>
                 <th>Role</th>
+                <th>Person</th>
                 <th>
                   <input type="button" value="All" 
                          ng-click="actionAll()" ng-disabled="actionAllDisabled">
@@ -246,14 +246,14 @@
             </thead>
             <tbody>
               <tr ng-repeat="role in roles">
-                <td ng-click="setSelected()">
+                <td>
                   {{role.orgDomain}}
                 </td>
                 <td>
-                  {{role.email}}
+                  {{role.roleTypeLabel}}
                 </td>
                 <td>
-                  {{role.roleTypeLabel}}
+                  {{role.email}}
                 </td>
                 <td>
                   <input type="button" value="{{role.actionLabel}}" 
@@ -355,7 +355,7 @@ OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
         <pre>c0hourly() {
   c1topic hourly
   c0diskspace
-  c2notcp chronica 21
+  c2notcp chronica.co 21
   c2tcp chronica.co 80
   c2https chronica.co 443
 }</pre><p>where the convention for naming functions indicates the number of parameters. Commands can be tested from the command-line, as follows.</p>

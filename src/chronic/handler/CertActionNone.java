@@ -29,7 +29,7 @@ public class CertActionNone implements ChronicHttpxHandler {
             cert.setEnabled(false);
             app.storage().cert().update(cert);
         }
-        return JMaps.create("certs", certs);
+        return JMaps.map("certs", certs);
     }
     
 }

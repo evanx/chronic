@@ -8,10 +8,10 @@ import chronic.app.StatusRecord;
 import chronic.app.StatusRecordParser;
 import chronic.check.StatusCheck;
 import chronic.entity.Cert;
-import chronic.transaction.EnrollTransaction;
-import chronic.transaction.SubscribeTransaction;
-import chronic.transaction.TopicTransaction;
-import chronic.transaction.VerifyCertTransaction;
+import chronic.entity.Topic;
+import chronic.transaction.EnrollSubscriberTransaction;
+import chronic.transaction.EnrollTopicTransaction;
+import chronic.transaction.EnrollCertTransaction;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpsExchange;
@@ -44,7 +44,7 @@ public class Post implements HttpHandler {
             X509Certificate certificate = ((HttpsExchange) httpExchange).getSSLSession().
                     getPeerCertificateChain()[0];
             String hostAddress = httpExchange.getRemoteAddress().getAddress().getHostAddress();
-            Cert cert = new VerifyCertTransaction().handle(app, hostAddress, certificate);
+            Cert cert = new EnrollCertTransaction().handle(app, hostAddress, certificate);
             int contentLength = Integer.parseInt(
                     httpExchange.getRequestHeaders().get("Content-length").get(0));
             logger.trace("contentLength {}", contentLength);
@@ -56,17 +56,16 @@ public class Post implements HttpHandler {
             httpExchange.getRequestBody().read(content);
             String contentString = new String(content);
             logger.trace("content {}", contentString);
-            StatusRecord status = new StatusRecordParser(cert.getCertKey()).parse(contentString);
-            status.setOrgDomain(cert.getOrgDomain());
+            StatusRecord status = new StatusRecordParser(cert).parse(contentString);
             logger.trace("content lines {}: {}", status.getLineList().size(),
                     Strings.formatFirst(status.getLineList()));
             logger.debug("status {}", status);
-            new TopicTransaction().handle(app, cert.getCertKey(), status.getTopicString());
+            Topic topic = new EnrollTopicTransaction().handle(app, cert, status.getTopicLabel());
+            status.setTopic(topic);
             if (status.getSubscribers() != null) {
                 if (status.getSubscribers().length > 0) {
                     for (String subscriber : status.getSubscribers()) {
-                        new SubscribeTransaction().handle(app, status.getOrgDomain(), subscriber);
-                        new EnrollTransaction().handle(app, status.getOrgDomain(), subscriber);
+                        new EnrollSubscriberTransaction().handle(app, topic, subscriber);
                     }
                 }
             }

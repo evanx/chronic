@@ -4,48 +4,36 @@
  */
 package chronic.entity;
 
-import chronic.entitykey.CertKey;
-import chronic.entitykey.CertKeyed;
-import chronic.entitykey.OrgKeyed;
-import chronic.entitykey.OrgTopicKey;
-import chronic.entitykey.OrgTopicKeyed;
-import chronic.entitykey.OrgKey;
-import chronic.entitykey.OrgUnitKey;
-import chronic.entitykey.OrgUnitKeyed;
+import chronic.app.ChronicApp;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicKeyed;
+import chronic.entitytype.ChronicApped;
 import chronic.entitytype.TopicActionType;
 import vellum.jx.JMap;
+import vellum.jx.JMapped;
 import vellum.storage.AbstractIdEntity;
+import vellum.storage.StorageException;
 import vellum.type.Enabled;
 
 /**
  *
  * @author evan.summers
  */
-public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeyed, 
-        OrgUnitKeyed, CertKeyed, OrgTopicKeyed, Enabled {
+public final class Topic extends AbstractIdEntity implements TopicKeyed, JMapped, Enabled, ChronicApped {
 
     Long id;
-    String orgDomain;
-    String orgUnit;
-    String commonName;
-    String topicString;
+    Long certId;
+    String topicLabel;
     boolean enabled = true;
-
-    public Topic(String orgDomain, String orgUnit, String commonName, String topicString) {
-        this.orgDomain = orgDomain;
-        this.orgUnit = orgUnit;
-        this.commonName = commonName;
-        this.topicString = topicString;
+    transient Cert cert;
+            
+    public Topic(Long certId, String topicLabel) {
+        this.certId = certId;
+        this.topicLabel = topicLabel;
     }
     
     public Topic(TopicKey key) {
-        this(key.getOrgDomain(), key.getOrgUnit(), key.getCommonName(), key.getTopicString());
-    }
-
-    public Topic(CertKey key, String topicString) {
-        this(key.getOrgDomain(), key.getOrgUnit(), key.getCommonName(), topicString);
+        this(key.getCertId(), key.getTopicLabel());
     }
 
     @Override
@@ -55,30 +43,9 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
 
     @Override
     public TopicKey getTopicKey() {
-        return new TopicKey(orgDomain, orgUnit, commonName, topicString);
+        return new TopicKey(certId, topicLabel);
     }    
 
-    @Override
-    public OrgTopicKey getOrgTopicKey() {
-        return new OrgTopicKey(orgDomain, topicString);
-    }
-    
-    @Override
-    public OrgKey getOrgKey() {
-        return new OrgKey(orgDomain);
-    }
-    
-    @Override
-    public OrgUnitKey getOrgUnitKey() {
-        return new OrgUnitKey(orgDomain, orgUnit);
-    }
-
-    @Override
-    public CertKey getCertKey() {
-        return new CertKey(orgDomain, orgUnit, commonName);
-    }
-    
-    
     @Override
     public void setId(Long id) {
         this.id = id;
@@ -89,6 +56,25 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
         return id;
     }
 
+    public Long getCertId() {
+        return certId;
+    }
+
+    public void setCertId(Long certId) {
+        this.certId = certId;
+    }
+    
+    public void setCert(Cert cert) {
+        this.cert = cert;
+        if (cert != null) {
+            certId = cert.getId();
+        }
+    }
+
+    public Cert getCert() {
+        return cert;
+    }
+    
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -98,27 +84,24 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
         return enabled;
     }
     
-    public String getOrgDomain() {
-        return orgDomain;
+    public String getTopicLabel() {
+        return topicLabel;
     }
 
-    public String getTopicString() {
-        return topicString;
-    }
-
-    public void setTopicString(String topicString) {
-        this.topicString = topicString;
+    public void setTopicLabel(String topicLabel) {
+        this.topicLabel = topicLabel;
     }
     
+    @Override
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
-        map.put("orgDomain", orgDomain);
-        map.put("networkName", orgUnit);
-        map.put("hostName", commonName);
+        map.put("orgDomain", cert.getOrgDomain());
+        map.put("orgUnit", cert.getOrgUnit());
+        map.put("commonName", cert.getCommonName());
         map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());
-        map.put("topicString", topicString);
+        map.put("topicLabel", topicLabel);
         return map;
     }
 
@@ -127,7 +110,12 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, OrgKeye
     }
 
     @Override
+    public void inject(ChronicApp app) throws StorageException {
+        cert = app.storage().cert().find(certId);
+    }
+    
+    @Override
     public String toString() {
-        return getMap().toString();
+        return getKey().toString();
     }
 }

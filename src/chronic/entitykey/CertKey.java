@@ -17,7 +17,6 @@ public final class CertKey extends ComparableTuple {
     String orgDomain;
     String orgUnit;
     String commonName;
-    String address;
 
     public CertKey(JMap map) throws JMapException {
         this(map.getString("orgDomain"), 
@@ -42,13 +41,5 @@ public final class CertKey extends ComparableTuple {
 
     public String getCommonName() {
         return commonName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 }

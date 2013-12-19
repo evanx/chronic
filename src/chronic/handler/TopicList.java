@@ -35,7 +35,8 @@ public class TopicList implements ChronicHttpxHandler {
                 topics.add(topic);
             }
         }
-        return JMaps.createMap("topics", topics);
+        app.inject(topics);
+        return JMaps.map("topics", topics);
     }
     
 }
