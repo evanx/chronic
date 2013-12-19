@@ -2,22 +2,22 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
 
-       Licensed to the Apache Software Foundation (ASF) under one
-       or more contributor license agreements. See the NOTICE file
-       distributed with this work for additional information
-       regarding copyright ownership.  The ASF licenses this file
-       to you under the Apache License, Version 2.0 (the
-       "License"); you may not use this file except in compliance
-       with the License.  You may obtain a copy of the License at
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements. See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
 
-         http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-       Unless required by applicable law or agreed to in writing,
-       software distributed under the License is distributed on an
-       "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-       KIND, either express or implied.  See the License for the
-       specific language governing permissions and limitations
-       under the License.  
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.  
  */
 package chronic;
 
@@ -44,28 +44,29 @@ import vellum.data.Patterns;
  * @author evans
  */
 public class ChronicTest {
+
     static Logger logger = LoggerFactory.getLogger(ChronicTest.class);
-    
+
     String orgDomain = "test.org";
     String orgUnit = "test";
     String commonName = "serverx.test.org";
-    CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);            
-    
+    CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);
+
     public ChronicTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -73,6 +74,11 @@ public class ChronicTest {
     @Test
     public void emailHeaderPattern() {
         Assert.assertTrue("X-from: test".matches("^\\S*: .*"));
+    }
+
+    @Test
+    public void mimicPattern() {
+        Assert.assertTrue("https://chronica/mimic".matches(".*\\Wmimic\\W*.*"));
     }
 
     @Test
@@ -98,7 +104,7 @@ public class ChronicTest {
                 "ServiceB OK - 100ms"
         ));
     }
-    
+
     @Test
     public void nagiosPatternDash() {
         Matcher matcher = StatusRecordPatterns.NAGIOS.matcher("CRITICAL - no connection");
@@ -116,7 +122,7 @@ public class ChronicTest {
         Assert.assertTrue(matcher.group(2).equals("CRITICAL"));
         Assert.assertTrue(matcher.group(3).equals("no connection"));
     }
-    
+
     @Test
     public void nagiosChanged() {
         Cert cert = new Cert(certKey);
@@ -132,7 +138,7 @@ public class ChronicTest {
         record2.getLineList().add("ACME CRITICAL - some detail");
         Assert.assertFalse(record1.matches(record2));
     }
-    
+
     @Test
     public void cronSubject() {
         Matcher matcher = StatusRecordPatterns.CRON_SUBJECT.matcher(
@@ -156,15 +162,15 @@ public class ChronicTest {
     }
 
     @Test
-    public void tagPattern() {        
+    public void tagPattern() {
         Assert.assertTrue(Patterns.matchesTag("test test <i>test</i> test"));
         Assert.assertFalse(Patterns.matchesTag("test"));
     }
-    
+
     private void sanitary(boolean expected, String line) {
         if (HtmlChecker.sanitary(line) != expected) {
             throw new AssertionFailedError(line);
         }
     }
-    
+
 }

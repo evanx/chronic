@@ -151,14 +151,13 @@ public class ChronicProperties {
         return subscriberEmails.contains(email) || isAdmin(email);
     }
 
-    public boolean isMimicEmail(String email) {
-        return getMimicEmail() != null && adminEmails.contains(email);
+    public boolean isMimicEmail(String email, String path) {
+        logger.info("isMimicEmail {} {}", email, path);
+        return adminEmails.contains(email) && path.matches(".*\\Wmimic\\W*.*") &&
+                mimic.getBoolean("enabled") && getMimicEmail() != null;
     }
 
     public String getMimicEmail() {
-        if (mimic.containsKey("enabled") && !mimic.getBoolean("enabled")) {
-            return null;
-        }
         return mimic.getString("email");
     }
 

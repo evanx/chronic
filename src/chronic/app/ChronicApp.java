@@ -194,7 +194,7 @@ public class ChronicApp implements Runnable {
             ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
             if (cookie.getEmail() != null) {
                 if (properties.isTesting()) {
-                    if (properties.isMimicEmail(cookie.getEmail())) {
+                    if (properties.isMimicEmail(cookie.getEmail(), httpx.getPath())) {
                         return properties.getMimicEmail();
                     } else {
                         return cookie.getEmail();
