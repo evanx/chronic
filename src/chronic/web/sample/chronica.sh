@@ -52,11 +52,11 @@ set -u
 cd `dirname $0`
 custom=`pwd`/custom.chronica.sh
 
-dir=~/.chronic
+dir=~/.chronica
 mkdir -p $dir/etc
 cd $dir
 
-if ! pwd | grep -q '/.chronic$'
+if ! pwd | grep -q '/.chronica$'
 then 
   echo "Chronica CRITICAL - pwd sanity check failed:" `pwd`
   exit 1
@@ -115,8 +115,6 @@ fi
 
 echo $$ > pid
 
-trap 'rm -f pid' EXIT
-
 ### util 
 
 bcat() {
@@ -162,8 +160,7 @@ c1topic() {
   echo "Subscribe: $subscribers"
 }
 
-
-### check util functions 
+### tcp check functions 
 
 c1ping() {
   decho "ping -qc$pingCount $1"
@@ -328,8 +325,16 @@ c2postgres() {
   fi
 }
 
+c1md5sum() {
+  echo "$1" `curl -s $1 | md5sum`
+}
 
-### typical checks
+c2certExpiry() {
+  openssl s_client -connect $1:$2 < /dev/null | openssl x509 -text | grep '^ *Not After :' |
+    sed 's/^ *Not After :\(.*\)/\1/'
+}
+
+### other common checks
 
 c0login() {
   echo "<br><b>login</b>"
@@ -371,7 +376,7 @@ c1curl() {
 }
 
 c0enroll() {
-  echo "$subscribers" | c1curl enroll 
+  echo "$admins" | c1curl enroll 
 }
 
 c0ensureKey() {
@@ -418,6 +423,7 @@ c0hourlyPost() {
 c0minutelyPost() {
   c0minutely 2>&1 | tee minutely | c0post
   dcat minutely
+  c0enroll
 }
 
 c0dailyPost() {
@@ -529,7 +535,7 @@ c0run() {
 c0restart() {
   debug=0  
   c0killall
-  c0run 2>run.err >run.out &
+  c0run 2> run.err > run.out < /dev/null & 
 }
 
 c0start() {
@@ -555,6 +561,7 @@ c0showpid() {
 if [ $# -gt 0 ]
 then
   command=$1
+  [ $command != "start" ] &&  trap 'rm -f pid' EXIT
   shift
   c$#$command $@  
 else 
