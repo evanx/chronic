@@ -46,7 +46,8 @@ public class ChronicProperties {
 
     static Logger logger = LoggerFactory.getLogger(ChronicProperties.class);
 
-    private String serverAddress = "https://localhost:8443";
+    private String siteUrl = "https://localhost:8443";
+    private String mimicEmail;
     private String alertScript = null;
     private long period = Millis.fromMinutes(3);
     private boolean testing = false;
@@ -54,7 +55,6 @@ public class ChronicProperties {
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
     private ExtendedProperties appServer;
     private ExtendedProperties webServer;
-    private ExtendedProperties mimic;
     private Set<String> adminDomains;
     private Set<String> adminEmails;
     private Set<String> allowedOrgDomains;
@@ -66,8 +66,9 @@ public class ChronicProperties {
     public void init() throws IOException {
         String jsonConfigFileName = properties.getString("config.json", "config.json");
         JsonObjectDelegate object = new JsonObjectDelegate(new File(jsonConfigFileName));
-        serverAddress = object.getString("serverAddress", serverAddress);
+        siteUrl = object.getString("siteUrl", siteUrl);
         alertScript = object.getString("alertScript", alertScript);
+        mimicEmail = object.getString("mimicEmail", null);
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
         mockStorage = object.getBoolean("mockStorage", testing);
@@ -82,18 +83,17 @@ public class ChronicProperties {
             httpRedirectServer = new HttpServerProperties(
                     object.getProperties("httpRedirectServer"));
         }
-        mimic = object.getProperties("mimic");
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
-        if (serverAddress.contains("chronica")) {
+        if (siteUrl.contains("chronica")) {
             byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app48.png"));
             mailerProperties.init(bytes, "chronica.co", "alerts@chronica.co");
             logger.info("mailer {}", mailerProperties);
         }
     }
 
-    public String getServerAddress() {
-        return serverAddress;
+    public String getSiteUrl() {
+        return siteUrl;
     }
 
     public String getAlertScript() {
@@ -128,6 +128,10 @@ public class ChronicProperties {
         return adminEmails;
     }
 
+    public String getAdminEmail() {
+        return adminEmails.iterator().next();
+    }
+    
     public Set<String> getAllowedOrgDomains() {
         return allowedOrgDomains;
     }
@@ -178,24 +182,20 @@ public class ChronicProperties {
         return mockStorage;
     }
 
-    public boolean isMimicEmail() {
-        return mimic.getBoolean("enabled") && getMimicEmail() != null;
-    }
-
-    public String getMimicEmail() {
-        return mimic.getString("email");
-    }
-    
     public boolean isDemo(Httpx httpx) {
         return httpx.getReferer().endsWith("/demo");
     }
 
     public boolean isMimic(Httpx httpx) {
-        return isMimicEmail() && httpx.getReferer().endsWith("/mimic");
+        return mimicEmail != null && httpx.getReferer().endsWith("/mimic");
     }
 
+    public String getMimicEmail() {
+        return mimicEmail;
+    }
+        
     @Override
     public String toString() {
-        return Args.format(serverAddress);
+        return Args.format(siteUrl);
     }    
 }

@@ -30,7 +30,7 @@ public class CertList implements ChronicHttpxHandler {
             certs.add(cert);
         }
         if (certs.isEmpty() && app.getProperties().isDemo(httpx)) {
-            String adminEmail = app.getProperties().getAdminEmails().iterator().next();
+            String adminEmail = app.getProperties().getAdminEmail();
             for (Cert cert : app.storage().listCerts(adminEmail)) {
                 certs.add(cert);
             }

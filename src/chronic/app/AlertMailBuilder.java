@@ -146,7 +146,7 @@ public class AlertMailBuilder {
     public String formatFooter() {
         String style = "font-size: 12px; font-color: gray";
         return String.format("<hr><a style='%s' href='%s'><img src='cid:image'/></a>", style,
-                app.getProperties().getServerAddress(), app.getProperties().getServerAddress());
+                app.getProperties().getSiteUrl(), app.getProperties().getSiteUrl());
     }
     
 }
