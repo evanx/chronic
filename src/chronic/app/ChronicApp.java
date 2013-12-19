@@ -44,6 +44,7 @@ import vellum.jx.JMapException;
 import vellum.storage.StorageException;
 import vellum.data.ComparableTuple;
 import vellum.httphandler.RedirectHttpsHandler;
+import vellum.httphandler.WebHttpHandler;
 
 /**
  *
