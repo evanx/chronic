@@ -96,6 +96,7 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, JMapped
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);
+        map.put("certId", cert.getId());
         map.put("orgDomain", cert.getOrgDomain());
         map.put("orgUnit", cert.getOrgUnit());
         map.put("commonName", cert.getCommonName());
@@ -106,7 +107,7 @@ public final class Topic extends AbstractIdEntity implements TopicKeyed, JMapped
     }
 
     private TopicActionType getAction() {
-        return enabled ? TopicActionType.DISABLE : TopicActionType.SUBSCRIBE;
+        return enabled ? TopicActionType.UNSUBSCRIBE : TopicActionType.SUBSCRIBE;
     }
 
     @Override

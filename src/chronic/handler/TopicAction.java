@@ -33,7 +33,7 @@ public class TopicAction implements ChronicHttpxHandler {
             return JMaps.mapValue("errorMessage", "no role");
         } else {
             Topic topic = app.storage().topic().select(key);
-            topic.setEnabled(true);
+            topic.setEnabled(!topic.isEnabled());
             app.storage().topic().update(topic);
             return JMaps.mapValue("topic", topic.getMap());
         }
