@@ -148,15 +148,6 @@ public class ChronicProperties {
         return subscriberEmails.contains(email) || isAdmin(email);
     }
 
-    public boolean isMimicEmail(String email) {
-        return adminEmails.contains(email) && 
-                mimic.getBoolean("enabled") && getMimicEmail() != null;
-    }
-
-    public String getMimicEmail() {
-        return mimic.getString("email");
-    }
-
     public PoolProperties getPoolProperties() {
         PoolProperties poolProperties = new PoolProperties();
         poolProperties.setUrl("jdbc:h2:mem");
@@ -183,21 +174,28 @@ public class ChronicProperties {
         return poolProperties;
     }
 
-    @Override
-    public String toString() {
-        return Args.format(serverAddress);
-    }
-
     public boolean isMockStorage() {
         return mockStorage;
     }
 
+    public boolean isMimicEmail() {
+        return mimic.getBoolean("enabled") && getMimicEmail() != null;
+    }
+
+    public String getMimicEmail() {
+        return mimic.getString("email");
+    }
+    
     public boolean isDemo(Httpx httpx) {
-        return httpx.getDelegate().getRequestURI().toString().endsWith("/demo");
+        return httpx.getReferer().endsWith("/demo");
     }
 
     public boolean isMimic(Httpx httpx) {
-        return httpx.getDelegate().getRequestURI().toString().endsWith("/mimic");
+        return isMimicEmail() && httpx.getReferer().endsWith("/mimic");
     }
-    
+
+    @Override
+    public String toString() {
+        return Args.format(serverAddress);
+    }    
 }

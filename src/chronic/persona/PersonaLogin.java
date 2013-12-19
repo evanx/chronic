@@ -51,12 +51,12 @@ public class PersonaLogin implements HttpHandler {
     ChronicCookie cookie;
     
     private void handle() throws Exception {
-        logger.info("address {}", httpx.getServerUrl());
+        logger.info("address {}", httpx.getHostUrl());
         if (ChronicCookie.matches(httpx.getCookieMap())) {
             cookie = new ChronicCookie(httpx.getCookieMap());
         }            
         PersonaUserInfo userInfo = new PersonaVerifier(app, cookie).getUserInfo(
-                httpx.getServerUrl(), assertion);
+                httpx.getHostUrl(), assertion);
         logger.trace("persona {}", userInfo);
         String email = userInfo.getEmail();
         User user = app.storage().user().select(email);
