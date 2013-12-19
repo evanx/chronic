@@ -74,8 +74,6 @@ public class PersonaLogin implements HttpHandler {
         cookie = new ChronicCookie(user.getEmail(), user.getLabel(), 
                 user.getLoginTime().getTime(), assertion);
         JMap cookieMap = cookie.toMap();
-        cookieMap.put("admin", app.getProperties().isAdmin(email));
-        cookieMap.put("demo",app.getProperties().isDemo(httpx.getServerUrl()));
         logger.trace("cookie {}", cookieMap);
         httpx.setCookie(cookieMap, ChronicCookie.MAX_AGE_MILLIS);
         httpx.sendResponse(cookieMap);

@@ -28,7 +28,7 @@ public class RoleList implements ChronicHttpxHandler {
         for (OrgRole role : app.storage().listRoles(app.getEmail(httpx))) {
             roles.add(role.getMap());
         }
-        if (roles.isEmpty() && app.getProperties().isDemo(httpx.getServerUrl())) {
+        if (roles.isEmpty() && app.getProperties().isDemo(httpx)) {
             String adminEmail = app.getProperties().getAdminEmails().iterator().next();
             for (OrgRole role : app.storage().listRoles(adminEmail)) {
                 roles.add(role.getMap());

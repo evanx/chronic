@@ -29,7 +29,7 @@ public class TopicList implements ChronicHttpxHandler {
         for (Topic topic : app.storage().listTopics(email)) {
             topics.add(topic);
         }
-        if (topics.isEmpty() && app.getProperties().isDemo(httpx.getServerUrl())) {
+        if (topics.isEmpty() && app.getProperties().isDemo(httpx)) {
             String adminEmail = app.getProperties().getAdminEmails().iterator().next();
             for (Topic topic : app.storage().listTopics(adminEmail)) {
                 topics.add(topic);

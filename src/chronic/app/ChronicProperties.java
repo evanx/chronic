@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.httpserver.HttpServerProperties;
+import vellum.httpserver.Httpx;
 import vellum.util.Args;
 import vellum.util.ExtendedProperties;
 import vellum.util.Streams;
@@ -143,17 +144,12 @@ public class ChronicProperties {
         return adminEmails.contains(email) || Strings.endsWith(email, adminDomains);
     }
 
-    public boolean isDemo(String serverUrl) {
-        return serverUrl.contains("demo");
-    }
-
     public boolean isSubscriber(String email) {
         return subscriberEmails.contains(email) || isAdmin(email);
     }
 
-    public boolean isMimicEmail(String email, String path) {
-        logger.info("isMimicEmail {} {}", email, path);
-        return adminEmails.contains(email) && path.matches(".*\\Wmimic\\W*.*") &&
+    public boolean isMimicEmail(String email) {
+        return adminEmails.contains(email) && 
                 mimic.getBoolean("enabled") && getMimicEmail() != null;
     }
 
@@ -196,4 +192,12 @@ public class ChronicProperties {
         return mockStorage;
     }
 
+    public boolean isDemo(Httpx httpx) {
+        return httpx.getDelegate().getRequestURI().toString().endsWith("/demo");
+    }
+
+    public boolean isMimic(Httpx httpx) {
+        return httpx.getDelegate().getRequestURI().toString().endsWith("/mimic");
+    }
+    
 }

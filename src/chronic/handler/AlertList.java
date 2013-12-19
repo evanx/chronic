@@ -34,7 +34,7 @@ public class AlertList implements ChronicHttpxHandler {
                 alerts.add(alert.getlMap());
             } else if (app.getProperties().isAdmin(email)) {
                 alerts.add(alert.getlMap());
-            } else if (app.getProperties().isDemo(httpx.getServerUrl())) {
+            } else if (app.getProperties().isDemo(httpx)) {
                 alerts.add(alert.getPartialMap());
             }
         }

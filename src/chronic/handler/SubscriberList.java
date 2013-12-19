@@ -37,7 +37,7 @@ public class SubscriberList implements ChronicHttpxHandler {
                     subscribers.add(subscriber);
                 }
             }
-        } else if (app.getProperties().isDemo(httpx.getServerUrl())) {
+        } else if (app.getProperties().isDemo(httpx)) {
             String adminEmail = app.getProperties().getAdminEmails().iterator().next();
             for (Subscriber subscriber : app.storage().sub().list(new UserKey(adminEmail))) {
                 subscriptions.add(subscriber);
