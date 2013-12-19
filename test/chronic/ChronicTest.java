@@ -25,6 +25,7 @@ import chronic.app.HtmlChecker;
 import chronic.app.StatusRecord;
 import chronic.app.StatusRecordMatcher;
 import chronic.app.StatusRecordPatterns;
+import chronic.entity.Cert;
 import chronic.entitykey.CertKey;
 import java.util.regex.Matcher;
 import junit.framework.AssertionFailedError;
@@ -118,15 +119,16 @@ public class ChronicTest {
     
     @Test
     public void nagiosChanged() {
-        StatusRecord record1 = new StatusRecord(certKey);
-        StatusRecord record2 = new StatusRecord(certKey);
+        Cert cert = new Cert(certKey);
+        StatusRecord record1 = new StatusRecord(cert);
+        StatusRecord record2 = new StatusRecord(cert);
         record1.getLineList().add("ACME OK - some detail");
         record2.getLineList().add("ACME OK - other detail");
         Assert.assertTrue(record1.matches(record2));
-        record2 = new StatusRecord(certKey);
+        record2 = new StatusRecord(cert);
         record2.getLineList().add("ACMY OK - other detail");
         Assert.assertFalse(record1.matches(record2));
-        record2 = new StatusRecord(certKey);
+        record2 = new StatusRecord(cert);
         record2.getLineList().add("ACME CRITICAL - some detail");
         Assert.assertFalse(record1.matches(record2));
     }
