@@ -19,7 +19,7 @@
 # specific language governing permissions and limitations
 # under the License.  
 
-# see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronical.sh
+# see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
 
 ### default settings
 
@@ -32,7 +32,7 @@ diskCriticalThreshold=90
 packetLossWarningThreshold=20
 packetLossCriticalThreshold=60
 
-server=secure.chronical.co:443
+server=secure.chronica.co:443
 
 periodSeconds=60
 
@@ -50,7 +50,7 @@ startTimestamp=`date '+%s'`
 set -u 
 
 cd `dirname $0`
-custom=`pwd`/custom.chronical.sh
+custom=`pwd`/custom.chronica.sh
 
 dir=~/.chronic
 mkdir -p $dir/etc
@@ -58,7 +58,7 @@ cd $dir
 
 if ! pwd | grep -q '/.chronic$'
 then 
-  echo "Chronical CRITICAL - pwd sanity check failed:" `pwd`
+  echo "Chronica CRITICAL - pwd sanity check failed:" `pwd`
   exit 1
 fi
 
@@ -71,15 +71,15 @@ rm -f debug
 decho() {
   if [ $debug -eq 1 ]
   then
-    echo "chronical: $*" 
+    echo "chronica: $*" 
   fi
   if [ $debug -eq 2 ]
   then
-    echo "chronical: $*" >&2
+    echo "chronica: $*" >&2
   fi
   if [ $debug -ge 1 ]
   then
-    echo "chronical: $*" >> debug
+    echo "chronica: $*" >> debug
   fi
 }
 
@@ -88,17 +88,17 @@ decho custom $custom
 dcat() {
   if [ $debug -eq 1 ]
   then
-    echo "chronical:" 
+    echo "chronica:" 
     cat "$1"
   fi
   if [ $debug -eq 2 ]
   then
-    echo "chronical:" >&2
+    echo "chronica:" >&2
     cat "$1" >&2
   fi
   if [ $debug -ge 1 ]
   then
-    echo "chronical:" >> debug
+    echo "chronica:" >> debug
     cat "$1" >> debug
   fi
 }
@@ -459,9 +459,9 @@ c0minutelyCron() {
 }
 
 c1killall() {
-  if pgrep -f "chronical.sh $1" | grep -v $$ 
+  if pgrep -f "chronica.sh $1" | grep -v $$ 
   then
-    kill `pgrep -f "chronical.sh $1" | grep -v $$`    
+    kill `pgrep -f "chronica.sh $1" | grep -v $$`    
   else
     return 1
   fi
@@ -539,14 +539,14 @@ c0start() {
 c0showpid() {
   if [ -n "$previousPid" ]
   then
-    echo "Chronical WARNING - another chronical.sh still running: $previousPid"
+    echo "Chronica WARNING - another chronica.sh still running: $previousPid"
   else 
     echo "INFO no previous pid file:" `pwd`/pid
   fi
   echo "INFO current pid: $$"
-  if ps x | grep "chronical.sh" | grep -v "$$\|grep" | grep '[0-9]'
+  if ps x | grep "chronica.sh" | grep -v "$$\|grep" | grep '[0-9]'
   then
-    echo "Chronical WARNING - another chronical.sh still running"
+    echo "Chronica WARNING - another chronica.sh still running"
   fi
 }
 

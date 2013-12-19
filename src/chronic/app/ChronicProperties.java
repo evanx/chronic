@@ -84,9 +84,9 @@ public class ChronicProperties {
         mimic = object.getProperties("mimic");
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
-        if (serverAddress.contains("chronical")) {
+        if (serverAddress.contains("chronica")) {
             byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app48.png"));
-            mailerProperties.init(bytes, "chronical.co", "alerts@chronical.co");
+            mailerProperties.init(bytes, "chronica.co", "alerts@chronica.co");
             logger.info("mailer {}", mailerProperties);
         }
     }

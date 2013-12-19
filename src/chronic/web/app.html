@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="favicon.png">
-    <title>Chronical.co</title>
+    <title>Chronica.co</title>
     <link href="bootstrap-3.0.2/css/bootstrap.css" rel="stylesheet" />
     <link href="css/bootstrap-switch.css" rel="stylesheet" />
     <link href="navbar.css" rel="stylesheet" />
@@ -25,7 +25,7 @@
         <div class="navbar-header">
           <ul class="nav navbar-nav">
             <li ng-class="getClass('faq')">
-              <a class="navbar-brand" href="#" ng-click="changeView('faq')">chronical.co</a>
+              <a class="navbar-brand" href="#" ng-click="changeView('faq')">chronica.co</a>
             </li>
           </ul>
         </div>
@@ -322,50 +322,50 @@
         <p><a href="#faq" class="btn btn-primary btn-lg" role="button"
               ng-cloak ng-show="!persona.email && false">Learn more &raquo;</a></p>
         <p>Step 1: <b>Get</b> two scripts, as an unpriviledged user.
-        <pre>wget https://chronical.co/sample/custom.chronical.sh
-wget https://chronical.co/sample/chronical.sh</pre>   
-        <p>Step 2: <b>Edit</b> <tt>custom.chronical.sh</tt> <i>(for you and yours)</i>
-        <pre>$ vi custom.chronical.sh
+        <pre>wget https://chronica.co/sample/custom.chronica.sh
+wget https://chronica.co/sample/chronica.sh</pre>   
+        <p>Step 2: <b>Edit</b> <tt>custom.chronica.sh</tt> <i>(for you and yours)</i>
+        <pre>$ vi custom.chronica.sh
 subscribers="you@your.org"
 admins="you@your.org"
 orgDomain="your.org"</pre>                  
         <p>
-          Step 3. <b>Review</b> <tt>chronical.sh</tt> <i>(so you know it's cool)</i>
+          Step 3. <b>Review</b> <tt>chronica.sh</tt> <i>(so you know it's cool)</i>
         </p>
         <p>
           Step 4: <b>Test</b>
         </p>
-        <pre>sh chronical.sh</pre>
+        <pre>sh chronica.sh</pre>
         <p>
           Step 5: <b>Run</b>
         </p>
-        <pre>sh chronical.sh run</pre>
+        <pre>sh chronica.sh run</pre>
         <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
-          <i>(to <a href="https://chronical.co">https://chronical.co</a> 
+          <i>(to <a href="https://chronica.co">https://chronica.co</a> 
             using Mozilla Persona)</i>
         </p>
-        <p>Click on alert rows to see their content (except on <a href="https://demo.chronical.co">https://demo.chronical.co</a> where you can preview sample alerts that are not your own.)
+        <p>Click on alert rows to see their content (except on <a href="https://chronica.co/demo">https://chronica.co/demo</a> where you can preview sample alerts that are not your own.)
         </p>
-        <p>ps. The script posts to <tt>https://secure.chronical.co</tt>.</p>
-        <pre>$ sh chronical.sh https chronical.co 443
-OK - chronical.co port 443 https available (HTTP/1.1 200 OK)</pre>
+        <p>ps. The script posts to <tt>https://secure.chronica.co</tt>.</p>
+        <pre>$ sh chronica.sh https chronica.co 443
+OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
         <hr>
         <h3>Getting jiggy with it</h3>
-        <p>Customize the <tt>custom.chronical.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or daily.</p>
+        <p>Customize the <tt>custom.chronica.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or daily.</p>
         <pre>c0hourly() {
   c1topic hourly
   c0diskspace
-  c2notcp chronical 21
-  c2tcp chronical.co 80
-  c2https chronical.co 443
+  c2notcp chronica 21
+  c2tcp chronica.co 80
+  c2https chronica.co 443
 }</pre><p>where the convention for naming functions indicates the number of parameters. Commands can be tested from the command-line, as follows.</p>
-        <pre>$ sh chronical.sh nohttp chronical.co 80
-OK - chronical.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
+        <pre>$ sh chronica.sh nohttp chronica.co 80
+OK - chronica.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
         <p>Add Nagios plugins and adhoc scripts as required.</p>
         <pre>c0minutely() {
   c1topic minutely
   c0load
-  c2httpsAuth secure.chronical.co 443 
+  c2httpsAuth secure.chronica.co 443 
   /usr/lib/nagios/plugins/check_pgsql -H localhost 
   ssh postgres@localhost scripts/check_replication.sh
 }</pre>
@@ -375,19 +375,19 @@ OK - chronical.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</p
     ssh postgres@localhost scripts/check_replication.sh
 }</pre>
         <p>Then you can test such functions individually from the command-line as follows.</p>
-        <pre>$ sh scripts/chronical.sh pgsql
+        <pre>$ sh scripts/chronica.sh pgsql
 CRITICAL - no connection</pre>        
-        <p>As good practice, run <tt>chronical.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>su</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
+        <p>As good practice, run <tt>chronica.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>su</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
         <pre>$ cat /etc/rc.local
-su - chronical -c 'scripts/chronical.sh start'</pre>
+su - chronica -c 'scripts/chronica.sh start'</pre>
         <p>Send your questions, bugs and suggestions to evan.summers@gmail.com.</p>
         <hr>
         <h4>Resources</h4>
-        <p><a href="/sample/custom.chronical.sh">
-            https://chronical.co/sample/custom.chronical.sh</a> - customisable template
+        <p><a href="/sample/custom.chronica.sh">
+            https://chronica.co/sample/custom.chronica.sh</a> - customisable template
         </p>
-        <p><a href="/sample/chronical.sh">
-            https://chronical.co/sample/chronical.sh</a> - operational script
+        <p><a href="/sample/chronica.sh">
+            https://chronica.co/sample/chronica.sh</a> - operational script
         </p>
       </div>
     </div>
@@ -420,7 +420,7 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         </p>
 
         <p><b>What use cases?</b>
-          <br>We suggest you use Chronical to monitor your networks and applications, to ensure your IT performance and security. Be the first to know :)
+          <br>We suggest you use Chronica to monitor your networks and applications, to ensure your IT performance and security. Be the first to know :)
         </p>
 
         <p><b>How is this different from some other cloud-based monitoring services?</b>
@@ -456,7 +456,7 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
         </p>
 
         <p><b>What API does it use?</b>
-        <br>Text document with email-style headers, submitted via HTTPS POST. For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronical.co</tt>. Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. But the text is considered preformatted with line-breaks, and so is not strictly an HTML document.
+        <br>Text document with email-style headers, submitted via HTTPS POST. For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronica.co</tt>. Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. But the text is considered preformatted with line-breaks, and so is not strictly an HTML document.
         </p>
         
         <p><b>How are checks performed?</b>
@@ -479,7 +479,7 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
       </p>
 
       <p><b>How do I to contribute my improvements for inclusion?</b>        
-        <br>Fork <a href="https://github.com/evanx/chronic">https://github.com/evanx/chronic</a>. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/sample/chronical.sh">chronical.sh</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/StatusRecordMatcher.java">StatusRecordMatcher</a>. Email us about your ASL-licensed shell functions and Java text processing classes. 
+        <br>Fork <a href="https://github.com/evanx/chronic">https://github.com/evanx/chronic</a>. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/sample/chronica.sh">chronica.sh</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/StatusRecordMatcher.java">StatusRecordMatcher</a>. Email us about your ASL-licensed shell functions and Java text processing classes. 
       </p>
 
       <p><b>Show me the code!</b>
@@ -517,10 +517,10 @@ su - chronical -c 'scripts/chronical.sh start'</pre>
           <i>2013-11-24</i> &nbsp;
           <b>Project inception</b> 
         </p>
-        <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Croc (on http://github.com/evanx/vellumapp). Chronical's mantra is "wonderfully simple, incredibly powerful." 
+        <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Croc (on http://github.com/evanx/vellumapp). Chronica's mantra is "wonderfully simple, incredibly powerful." 
         <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks.
-        <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronical. Its UI uses Bootstrap 2 and jQuery, and it used JDBC from word go, albeit using an H2 in-memory database. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed. 
-        <p>The result is Chronical, which uses the awesome AngularJS front-end framework (see <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>), and a pluggable SQL'esque storage engine mechanism (see <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/EntityStore.java">EntityStore</a> and <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/MapStore.java">MapStore</a>). Prototyping can forgo SQL, using "key" objects to support queries. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicMapStore.java">ChronicMapStore</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicStorage.java">ChronicStorage</a>. A JDBC implementation can enable persistence later, without changing the application. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/jdbc/CertStore.java">CertStore</a>.
+        <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica. Its UI uses Bootstrap 2 and jQuery, and it used JDBC from word go, albeit using an H2 in-memory database. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed. 
+        <p>The result is Chronica, which uses the awesome AngularJS front-end framework (see <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>), and a pluggable SQL'esque storage engine mechanism (see <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/EntityStore.java">EntityStore</a> and <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/MapStore.java">MapStore</a>). Prototyping can forgo SQL, using "key" objects to support queries. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicMapStore.java">ChronicMapStore</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicStorage.java">ChronicStorage</a>. A JDBC implementation can enable persistence later, without changing the application. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/jdbc/CertStore.java">CertStore</a>.
         <hr> 
         <p class="pull-right">
           <a href="https://www.positivessl.com" style=

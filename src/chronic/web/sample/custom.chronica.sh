@@ -21,7 +21,7 @@
 
 orgUnit="" # network or group
 orgDomain="" # URL of your organisation 
-admins="" # emails of chronical admins for this organisation
+admins="" # emails of chronica admins for this organisation
 commonName="" # name of this host or account
 subscribers="" # emails of invited subcribers for this topic
 scheduledHour="19" # hour of day for daily check
@@ -32,13 +32,13 @@ scheduledMinute="19" # minute of hour for daily check
 c0minutely() {
   c1topic minutely
   c0load
-  #c2tcp chronical.co 443
-  #c2nossl chronical.co 80
-  #c2nohttps chronical.co 80
-  #c2notcp chronical 21
-  #c2notcp chronical 25
-  #c2https chronical.co 443 
-  #c2https chronical.co 8444
+  #c2tcp chronica.co 443
+  #c2nossl chronica.co 80
+  #c2nohttps chronica.co 80
+  #c2notcp chronica 21
+  #c2notcp chronica 25
+  #c2https chronica.co 443 
+  #c2https chronica.co 8444
   #c2postgres localhost 5432
 }
 

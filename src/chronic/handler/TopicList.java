@@ -27,15 +27,15 @@ public class TopicList implements ChronicHttpxHandler {
         String email = app.getEmail(httpx);
         Set topics = new HashSet();
         for (Topic topic : app.storage().listTopics(email)) {
-            topics.add(topic.getMap());
+            topics.add(topic);
         }
         if (topics.isEmpty() && app.getProperties().isDemo(httpx.getServerUrl())) {
             String adminEmail = app.getProperties().getAdminEmails().iterator().next();
             for (Topic topic : app.storage().listTopics(adminEmail)) {
-                topics.add(topic.getMap());
+                topics.add(topic);
             }
         }
-        return JMaps.create("topics", topics);
+        return JMaps.createMap("topics", topics);
     }
     
 }
