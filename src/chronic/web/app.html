@@ -404,20 +404,12 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
           <br>A cloud-computing monitoring service.
         </p>
 
-        <p><b>What does it compute in the cloud?</b>
-          <br>Information from computers you want to monitor. Our server checks if the information has changed, and if so, will alert you. If it is changing all the time, we will ignore it for you. If the messages stop, we will alert you that something might be wrong.
+        <p><b>What does it compute?</b>
+          <br>Information about computers you want to monitor. Our server checks if the information has changed, and if so, will alert you. If it is changing all the time, we will ignore it for you. If the messages stop, we will alert you that something might be wrong.
         </p>
         
-        <p><b>What is it essentially?</b>
-          <br>Similar to email, except that "messages" are submitted using client-authenticated HTTPS, and "recipients" must subscribe to recieve alerts when the message changes e.g. "your website was up but now it is down."
-        </p>                
-
         <p><b>How much does it cost?</b>
           <br>It's free and open. Bits and bytes are priceless ;)
-        </p>
-
-        <p><b>What is its value proposition?</b>
-          <br>Any text output you can submit via HTTPS, you can monitor - instantly and freely :)
         </p>
 
         <p><b>What use cases?</b>
@@ -449,15 +441,15 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
         
         <p><b>What can be installed on Linux clients right now?</b>
-        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, the client uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. However, the system is specially engineered to support Nagios plugins, and custom checks.
+        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, this client script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. However, the system is specially engineered to support Nagios plugins, and custom checks.
         </p>
 
         <p><b>How is it run?</b>
-        <br>The script can be started, to run in the background. It has built-in support for minutely, hourly and daily checks, without needing <tt>crond</tt>. (It has a loop but sleeps most of the time.) Also, you can pipe the output of cron jobs to our script. Incidently, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
+        <br>The script can be run as a background process. It has built-in support for minutely, hourly and daily checks, without needing <tt>crond</tt>. (It has a loop but sleeps most of the time.) Also, you can pipe the output of cron jobs to this script. Incidently, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
         </p>
 
         <p><b>What API does it use?</b>
-        <br>Text document with email-style headers, submitted via HTTPS POST. For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronica.co</tt>. Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. But the text is considered preformatted with line-breaks, and so is not strictly an HTML document.
+        <br>Text document with email-style headers, submitted via HTTPS POST. For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronica.co</tt>. Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
         </p>
         
         <p><b>How are checks performed?</b>
@@ -469,12 +461,14 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
         <pre>$ sh chronica.sh rhttps mysite.net 443 | sh chronica.sh post
 OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
+
         <p><b>How are client certs managed?</b>
-        <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. By default the hostname of your machine is used for the cert's common name. It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved, and can confirm client certs, and grant admin priviledges to others, via the site.
+        <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. By default the hostname of your machine is used for the cert's common name. It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved. Admins can confirm client certs and approve other admins, via the site.
         </p>
 
         <p><b>How are subcribers managed?</b>
-          <br>The message content specifies its topic, and invites subscribers by their email addresses, via email-style headers, namely "Topic:" and "Subscribers:". If you have approved the topic's cert, then this topic will be published. However, invitees must themselves subscribe to specific topics. This is performed via the site, which validates their email address using Mozilla Persona. So you should advise them visit the site to subscribe to available topics. This way we don't send unsolicited email to unauthentified addresses.</p>
+          <br>The message content specifies its topic and invitees, via email-style headers. If you have approved the topic's cert, then this topic will be published. However, invitees must themselves subscribe to specific topics. This is performed via the site, which validates their email address using Mozilla Persona. So you should advise them visit the site to subscribe to available topics.
+        </p>
         
         <p><b>How do subcribers opt-out?</b>
           <br>Actually they have to opt-in themselves, and can unsubscribe and re-subscribe anytime.
