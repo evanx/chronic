@@ -496,8 +496,8 @@ c0refreshCheck() {
 
 c0refreshGitForce() {
   c0refreshCheck
-  echo curl -s -o $script https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
-  curl -s -o $script https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
+  echo curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script 
+  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script 
   md5sum $script
 }
 
@@ -509,7 +509,7 @@ c0refresh() {
       grep `curl -s https://chronica.co/sample/chronica.sh.md5sum | head -1`
     then
       echo "OK: https://chronica.co/sample/chronica.sh.md5sum"
-      curl -s -o $script https://chronica.co/sample/chronica.sh
+      curl -s https://chronica.co/sample/chronica.sh -o $script 
       md5sum $script
     else 
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.md5sum"
