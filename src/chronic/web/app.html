@@ -322,8 +322,8 @@
         <p><a href="#faq" class="btn btn-primary btn-lg" role="button"
               ng-cloak ng-show="!persona.email && false">Learn more &raquo;</a></p>
         <p>Step 1: <b>Get</b> two scripts, as an unpriviledged user.
-        <pre>curl -O https://chronica.co/sample/custom.chronica.sh
-curl -O https://chronica.co/sample/chronica.sh</pre>   
+        <pre>curl -s -O https://chronica.co/sample/custom.chronica.sh
+curl -s -O https://chronica.co/sample/chronica.sh</pre>   
         <p>Step 2: <b>Edit</b> <tt>custom.chronica.sh</tt> <i>(for you and yours)</i>
         <pre>$ vi custom.chronica.sh
 subscribers="you@your.org"
@@ -461,9 +461,9 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>How is it run?</b>
-        <br>The script can be run as a background process. It has built-in support for minutely, hourly and daily checks, without needing <tt>crond</tt>. (It has a loop in which it sleeps until the next minute.)
-        <br>Also, you can pipe the output of cron jobs to this script. 
-        <br>Incidently, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
+        <br>The script can be run as a background process, to run minutely, hourly and daily checks, without needing <tt>crond</tt>. (It sleeps in a loop.)
+        <br>Also, you can pipe the output of custom cron jobs to this script. 
+        <br>Finally, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
         </p>
 
         <p><b>What API does it use?</b>
@@ -488,7 +488,7 @@ OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
 
         <p><b>How are client certs managed?</b>
         <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. 
-        <br>By default the hostname of your machine is used for the cert's common name. 
+        <br>By default the user and hostname is used for the cert's common name. 
         <br>It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved. 
         <br>Admins can confirm client certs and approve other admins, via the site.
         </p>

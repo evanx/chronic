@@ -20,7 +20,7 @@
  */
 package chronic.app;
 
-import vellum.mail.Mailer;
+import chronic.mail.MailerTest;
 import vellum.mail.MailerProperties;
 import chronic.util.JsonObjectDelegate;
 import java.io.File;
@@ -86,7 +86,7 @@ public class ChronicProperties {
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
         if (siteUrl.contains("chronica")) {
-            byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app48.png"));
+            byte[] bytes = Streams.readBytes(MailerTest.class.getResourceAsStream("app48.png"));
             mailerProperties.init(bytes, "chronica.co", "alerts@chronica.co");
             logger.info("mailer {}", mailerProperties);
         }
