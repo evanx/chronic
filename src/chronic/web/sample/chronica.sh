@@ -483,8 +483,9 @@ c0minutelyCron() {
 ### 
 
 c0md5sum() {
+  echo "md5sums for chronica.sh - should be the same (github and website)"
   curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | md5sum
-  curl -s https://chronica.co/sample/chronica.sh | md5sum
+  curl -s https://chronica.co/sample/chronica.sh | md5sum` 
   curl -s https://chronica.co/sample/chronica.sh.md5sum
 }
 
