@@ -387,7 +387,7 @@ c0sshAuthKeys() {
 
 c1curl() {
   tee curl.txt | curl -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 # >curl.out 2>curl.err
+    --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 # > curl.out 2> curl.err
 }
 
 c0enroll() {
@@ -577,6 +577,11 @@ c0restart() {
 c0start() {
   c0restart
 }
+
+c0help() {
+  cat $0 | grep '^c[0-9]\S*() {'
+}
+
 
 if [ $# -gt 0 ]
 then
