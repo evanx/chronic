@@ -113,7 +113,6 @@ then
   decho "previousPid: $previousPid" 
 fi
 
-echo $$ > pid
 
 ### util 
 
@@ -481,7 +480,7 @@ c0minutelyCron() {
 }
 
 c0ps() {
-  echo "previous pid file: $previousPid"
+  [ -n "$previousPid" ] && echo "pid file: $previousPid"
   echo "this pid: $$"
   echo "ps aux:"
   ps aux | grep -v grep | grep "chronica"
@@ -529,6 +528,7 @@ c0stopped() {
 }
 
 c0run() {
+  echo $$ > pid
   debug=2
   c0enroll
   rm -f hourly minutely
@@ -557,33 +557,15 @@ c0run() {
 
 c0restart() {  
   debug=0  
-  [ -n "$previousPid" ] && echo "INFO: previousPid: $previousPid"
   c0kill
   c0run 2> run.err > run.out < /dev/null & 
   sleep 1
-  ps x | grep chronica
-  echo "INFO: current pid: $$"
+  c0ps
 }
 
 c0start() {
   c0restart
 }
-
-c0showpid() {
-  if [ -n "$previousPid" ]
-  then
-    echo "Chronica WARNING - another chronica.sh still running: $previousPid"
-  else 
-    echo "INFO no previous pid file:" `pwd`/pid
-  fi
-  echo "INFO current pid: $$"
-  if ps x | grep "chronica.sh" | grep -v "$$\|grep" | grep '[0-9]'
-  then
-    echo "Chronica WARNING - another chronica.sh still running"
-  fi
-}
-
-#c0showpid | grep 'WARNING'
 
 if [ $# -gt 0 ]
 then
