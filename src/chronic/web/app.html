@@ -469,13 +469,11 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         <pre>$ sh chronica.sh start</pre>
 
         <p><b>How is it updated?</b>
-          <br>The script itself will provide hints.
+          <br>The script itself will provide hints, to verify and update.
         </p>
         <pre>$ sh chronica.sh update
 curl -s https://chronica.co/sample/chronica.sh | sha1sum
-curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt
-curl -s https://chronica.co/sample/chronica.sh -o chronica.sh</pre>
-
+curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt</pre>
         <p><b>What API does it use?</b>
           <br>Text document with email-style headers, submitted via HTTPS POST. 
         <br>For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronica.co</tt>. 
