@@ -480,6 +480,28 @@ c0minutelyCron() {
   fi
 }
 
+c0ps() {
+  echo "previous pid file: $previousPid"
+  echo "this pid: $$"
+  echo "ps aux:"
+  ps aux | grep -v grep | grep "chronica"
+  echo "pgrep -f chronica.sh:"
+  pgrep -f chronica.sh
+}
+
+c0killall() {
+  c0ps
+  pids=`pgrep -f chronica.sh | grep -v $$`
+  for pid in $pids 
+  do
+    if ps x | grep $pid | grep -v grep | grep '[0-9]' 
+    then
+      kill "$pid"
+      echo "killed $pid"
+    fi
+  done
+}
+
 c0kill() {
   if [ -n "$previousPid" ] 
   then
@@ -533,10 +555,14 @@ c0run() {
   done
 }
 
-c0restart() {
+c0restart() {  
   debug=0  
+  [ -n "$previousPid" ] && echo "INFO: previousPid: $previousPid"
   c0kill
   c0run 2> run.err > run.out < /dev/null & 
+  sleep 1
+  ps x | grep chronica
+  echo "INFO: current pid: $$"
 }
 
 c0start() {
