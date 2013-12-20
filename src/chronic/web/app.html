@@ -472,8 +472,8 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
           <br>The script itself will provide hints.
         </p>
         <pre>$ sh chronica.sh update
-OK: https://chronica.co/sample/chronica.sh.sha1sum.txt
-Run the following command to update your script:
+curl -s https://chronica.co/sample/chronica.sh | sha1sum
+curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt
 curl -s https://chronica.co/sample/chronica.sh -o chronica.sh</pre>
 
         <p><b>What API does it use?</b>
