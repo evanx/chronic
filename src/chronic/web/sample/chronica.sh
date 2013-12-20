@@ -479,6 +479,14 @@ c0minutelyCron() {
   fi
 }
 
+### logging
+
+c0log() {
+  cat run.out
+}
+
+### lifecycle
+
 c0ps() {
   [ -n "$previousPid" ] && echo "pid file: $previousPid"
   echo "this pid: $$"
