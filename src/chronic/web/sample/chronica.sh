@@ -152,7 +152,7 @@ fi
 
 ### reviewable setup
 
-commonName=`hostname`
+commonName=$USER@`hostname`
 
 c1topic() {
   echo "Topic: $commonName $1"
