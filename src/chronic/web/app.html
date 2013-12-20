@@ -465,10 +465,10 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>What about checking my site from the outside?</b>
-        <p>Naturally you can use Chronica on a server in a different data center, or even your home computer, to monitor your site externally. But the easiest is to request the Chronica server to perform external checks for you, e.g. using the "rhttps" command.
+        <p>Naturally you can use Chronica from a server in a different data center, or even your home computer, to monitor your site externally. But the easiest is to request the Chronica server to perform external checks for you, e.g. using the "rhttps" command.
         </p>
         <pre>$ sh chronica.sh rhttps mysite.net 443 | sh chronica.sh post
-OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>where we post the request to chronica via curl.
+OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
         <p><b>How are client certs managed?</b>
         <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. By default the hostname of your machine is used for the cert's common name. It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved, and can confirm client certs, and grant admin priviledges to others, via the site.
         </p>
