@@ -346,8 +346,8 @@ c2certExpiry() {
 
 ### reverse checks
 
-c0rhttps() {
-  echo "r-https:"
+c2rhttps() {
+  echo "x-https: $1 $2"
 }
 
 ### other common checks
