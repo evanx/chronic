@@ -331,7 +331,7 @@ c1md5sum() {
 
 c2certExpiry() {
   expiryDate=`openssl s_client -connect $1:$2 2> /dev/null < /dev/null | openssl x509 -text | 
-    grep '^ *Not After :' | sed 's/^ *Not After : \(\S*) (\S*\) \S* \(20[0-9]*\) \(.*\)/\1 \2 \3/'`
+    grep '^ *Not After :' | sed 's/^ *Not After : \(\S*\) (\S*\) \S* \(20[0-9]*\) \(.*\)/\1 \2 \3/'`
   expiryMonth=`echo "$expiryDate" | cut -f1`
   if date -d '1 month' | grep -q "$expiryMonth"
   then
