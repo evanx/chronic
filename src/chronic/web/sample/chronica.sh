@@ -51,6 +51,7 @@ set -u
 
 cd `dirname $0`
 custom=`pwd`/custom.chronica.sh
+script=`pwd`/chronica.sh
 
 dir=~/.chronica
 mkdir -p $dir/etc
@@ -493,11 +494,10 @@ c0refreshCheck() {
 
 c0refreshGitForce() {
   c0refreshCheck
-  echo curl -s -o $0 https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
-  curl -s -o $0 https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
-  md5sum $0
+  echo curl -s -o $script https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
+  curl -s -o $script https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
+  md5sum $script
 }
-
 
 c0refresh() {
   if curl -s https://chronica.co/sample/chronica.sh.md5sum | grep -v ' '
@@ -507,8 +507,8 @@ c0refresh() {
       grep `curl -s https://chronica.co/sample/chronica.sh.md5sum | head -1`
     then
       echo "OK: https://chronica.co/sample/chronica.sh.md5sum"
-      curl -s https://chronica.co/sample/chronica.sh -o $0
-      md5sum $0
+      curl -s -o $script https://chronica.co/sample/chronica.sh
+      md5sum $script
     else 
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.md5sum"
     fi
