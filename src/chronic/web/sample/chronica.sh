@@ -532,6 +532,7 @@ c0run() {
   debug=2
   c0enroll
   rm -f hourly minutely
+  c0hourlyCron
   while [ 1 ]
   do
     time=`date +%s`
