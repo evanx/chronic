@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.jdbc;
+package chronicexp.jdbc;
 
 import chronic.entity.Subscriber;
 import chronic.entitykey.SubscriberKey;
@@ -30,7 +30,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
-import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.sql.QueryMap;
@@ -46,15 +45,15 @@ public class SubscriberService implements EntityService<Subscriber> {
 
     static Logger logger = LoggerFactory.getLogger(SubscriberService.class);
     static QueryMap queryMap = new QueryMap(SubscriberService.class);
-    DataSource dataSource;
+    Connection connection;
 
-    public SubscriberService(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public SubscriberService(Connection connection) {
+        this.connection = connection;
     }
 
-    private PreparedStatement prepare(Connection connection, String queryKey,
+    private PreparedStatement prepare(String queryKey,
             Object... parameters) throws SQLException {
-        PreparedStatement statement = prepare(connection, queryKey);
+        PreparedStatement statement = connection.prepareStatement(queryMap.get(queryKey));
         int index = 0;
         for (Object parameter : parameters) {
             statement.setObject(++index, parameter);
@@ -81,11 +80,8 @@ public class SubscriberService implements EntityService<Subscriber> {
     
     @Override
     public void add(Subscriber subscriber) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "insert")) {
-            statement.setLong(1, subscriber.getTopicId());
-            statement.setString(2, subscriber.getEmail());
-            statement.setBoolean(3, subscriber.isEnabled());
+        try (PreparedStatement statement = prepare("insert", subscriber.getTopicId(),
+                subscriber.getEmail(), subscriber.isEnabled())) {
             if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_INSERTED);
             }
@@ -103,10 +99,8 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     public void updateEnabled(Subscriber subscriber) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "update enabled")) {
-            statement.setBoolean(1, subscriber.isEnabled());
-            statement.setLong(2, subscriber.getId());
+        try (PreparedStatement statement = prepare("update enabled", 
+                subscriber.isEnabled(), subscriber.getId())) {
             if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_UPDATED, subscriber.getKey());
             }
@@ -117,9 +111,7 @@ public class SubscriberService implements EntityService<Subscriber> {
 
     @Override
     public void remove(Comparable key) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "delete")) {
-            statement.setLong(1, (Long) key);
+        try (PreparedStatement statement = prepare("delete", key)) {
             if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_DELETED, key);
             }
@@ -139,10 +131,8 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     private Subscriber findKey(SubscriberKey key) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "select key")) {
-            statement.setLong(1, key.getTopicId());
-            statement.setString(2, key.getEmail());
+        try (PreparedStatement statement = prepare("select key", 
+                key.getTopicId(), key.getEmail())) {
             try (ResultSet resultSet = statement.getResultSet()) {
                 if (!resultSet.next()) {
                     return null;
@@ -158,8 +148,7 @@ public class SubscriberService implements EntityService<Subscriber> {
         }
     }
     private Subscriber findId(Long id) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "select id", id);
+        try (PreparedStatement statement = prepare("select id", id);
                 ResultSet resultSet = statement.getResultSet()) {
             if (!resultSet.next()) {
                 return null;
@@ -190,8 +179,7 @@ public class SubscriberService implements EntityService<Subscriber> {
 
     @Override
     public Collection<Subscriber> list() throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "list");
+        try (PreparedStatement statement = prepare("list");
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
         } catch (SQLException sqle) {
@@ -214,8 +202,7 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     private Collection<Subscriber> listTopic(Long topicId) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "list topic", topicId);
+        try (PreparedStatement statement = prepare("list topic", topicId);
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
         } catch (SQLException sqle) {
@@ -224,8 +211,7 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
     
     private Collection<Subscriber> listUser(String email) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "list email", email);
+        try (PreparedStatement statement = prepare("list email", email);
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
         } catch (SQLException sqle) {

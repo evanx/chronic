@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.jdbc;
+package chronicexp.jdbc;
 
 import chronic.entity.Cert;
 import chronic.entitykey.CertKey;
@@ -45,15 +45,15 @@ public class CertService implements EntityService<Cert> {
 
     static Logger logger = LoggerFactory.getLogger(CertService.class);
     static QueryMap queryMap = new QueryMap(CertService.class);
-    DataSource dataSource;
-
-    public CertService(DataSource dataSource) {
-        this.dataSource = dataSource;
+    Connection connection;
+    
+    public CertService(Connection connection) {
+        this.connection = connection;
     }
 
-    private PreparedStatement prepare(Connection connection, String queryKey,
+    private PreparedStatement prepare(String queryKey,
             Object... parameters) throws SQLException {
-        PreparedStatement statement = prepare(connection, queryKey);
+        PreparedStatement statement = connection.prepareStatement(queryMap.get(queryKey));
         int index = 0;
         for (Object parameter : parameters) {
             statement.setObject(++index, parameter);
@@ -82,8 +82,7 @@ public class CertService implements EntityService<Cert> {
     
     @Override
     public void add(Cert cert) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "insert")) {
+        try (PreparedStatement statement = prepare("insert")) {
             statement.setString(1, cert.getOrgDomain());
             statement.setString(2, cert.getOrgUnit());
             statement.setString(3, cert.getCommonName());
@@ -106,8 +105,7 @@ public class CertService implements EntityService<Cert> {
     }
 
     public void updateEnabled(Cert cert) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "update enabled")) {
+        try (PreparedStatement statement = prepare("update enabled")) {
             statement.setBoolean(1, cert.isEnabled());
             statement.setLong(2, cert.getId());
             if (statement.executeUpdate() != 1) {
@@ -118,8 +116,7 @@ public class CertService implements EntityService<Cert> {
         }
     }
     public void updateEncoded(Cert cert) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "update encoded")) {
+        try (PreparedStatement statement = prepare("update encoded")) {
             statement.setBoolean(1, cert.isEnabled());
             statement.setString(2, cert.getEncoded());
             statement.setLong(3, cert.getId());
@@ -133,8 +130,7 @@ public class CertService implements EntityService<Cert> {
 
     @Override
     public void remove(Comparable key) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "delete", key)) {
+        try (PreparedStatement statement = prepare("delete", key)) {
             if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_DELETED, key);
             }
@@ -154,8 +150,7 @@ public class CertService implements EntityService<Cert> {
     }
 
     private Cert findKey(CertKey key) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "select key")) {
+        try (PreparedStatement statement = prepare("select key")) {
             statement.setString(1, key.getOrgDomain());
             statement.setString(2, key.getOrgUnit());
             statement.setString(3, key.getCommonName());
@@ -175,8 +170,7 @@ public class CertService implements EntityService<Cert> {
     }
 
     private Cert findId(Long id) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "select id", id);
+        try (PreparedStatement statement = prepare("select id", id);
                 ResultSet resultSet = statement.getResultSet()) {
             if (!resultSet.next()) {
                 return null;
@@ -207,8 +201,7 @@ public class CertService implements EntityService<Cert> {
 
     @Override
     public Collection<Cert> list() throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "list");
+        try (PreparedStatement statement = prepare("list");
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
         } catch (SQLException sqle) {
@@ -225,8 +218,7 @@ public class CertService implements EntityService<Cert> {
     }
 
     private Collection<Cert> listOrg(OrgKey key) throws StorageException {
-        try (Connection connection = dataSource.getConnection();
-                PreparedStatement statement = prepare(connection, "list org", key.getOrgDomain());
+        try (PreparedStatement statement = prepare("list org", key.getOrgDomain());
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
         } catch (SQLException sqle) {

@@ -2,7 +2,7 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.jdbc;
+package chronicexp.jdbc;
 
 import chronic.app.ChronicApp;
 import java.io.InputStream;
