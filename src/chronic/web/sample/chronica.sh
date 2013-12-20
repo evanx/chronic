@@ -488,22 +488,14 @@ c0updateCheck() {
   echo "Please also run the following commands manually to confirm:"
   echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
   echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt"
-  curl -s https://chronica.co/sample/chronica.sh | sha1sum 
-  curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt | head -1
-}
-
-c0updateGitCheck() {
-  echo "Please also run the following commands manually to confirm:"
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt"
-  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum
+  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1sum.txt"
   curl -s https://chronica.co/sample/chronica.sh | sha1sum 
   curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt
+  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1sum.txt
 }
 
 c0updateGit() {
-  c0updateGitCheck
+  c0updateCheck
   echo "Run the following commands to update your script:"
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script"
