@@ -20,8 +20,8 @@
  */
 package chronic.app;
 
-import chronic.mail.Mailer;
-import chronic.mail.MailerProperties;
+import vellum.mail.Mailer;
+import vellum.mail.MailerProperties;
 import chronic.util.JsonObjectDelegate;
 import java.io.File;
 import java.io.IOException;

@@ -4,7 +4,7 @@
 package chronic.handler;
 
 import chronic.app.ChronicApp;
-import chronic.app.ChronicHttpxHandler;
+import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Cert;
 import java.util.LinkedList;
 import java.util.List;

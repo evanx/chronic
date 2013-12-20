@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.app.ChronicHttpxHandler;
+import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

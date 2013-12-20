@@ -2,7 +2,7 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.mail;
+package vellum.mail;
 
 import vellum.data.Emails;
 import vellum.util.Args;

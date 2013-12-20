@@ -11,6 +11,12 @@ import chronic.entitykey.CertKeyed;
 import chronic.entitykey.OrgUnitKey;
 import chronic.entitykey.OrgUnitKeyed;
 import chronic.entitytype.CertActionType;
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import vellum.data.Millis;
 import vellum.data.Timestamped;
 import vellum.jx.JMap;
@@ -22,14 +28,27 @@ import vellum.type.Enabled;
  *
  * @author evan.summers
  */
-public final class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed, 
-        CertKeyed, Timestamped, Enabled, JMapped {
+@Entity
+public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed, 
+        CertKeyed, Timestamped, Enabled, JMapped, Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
+    
+    @Column(name = "org_domain")
     String orgDomain;
+    
+    @Column(name = "org_unit")
     String orgUnit;
+    
+    @Column(name = "common_name")
     String commonName;
+
+    @Column()
     String encoded;
+    
+    @Column()
     boolean enabled;
     
     transient long timestamp;

@@ -6,6 +6,12 @@ package chronic.entity;
 
 import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.OrgKey;
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import vellum.data.Patterns;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
@@ -19,15 +25,33 @@ import vellum.validation.ValidationExceptionType;
  *
  * @author evan.summers
  */
-public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
+@Entity
+public class Org extends AbstractEntity implements OrgKeyed, Enabled, Serializable {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    String orgName;
-    String label;
+
+    @Column(name = "org_domain")
     String orgDomain;
+    
+    @Column(name = "org_name")
+    String orgName;
+
+    @Column()
+    String label;
+
+    @Column()
     String region;
+
+    @Column()
     String locality;
+
+    @Column()
     String country;
-    boolean enabled = true;
+
+    @Column()
+    boolean enabled;
             
     public Org() {
     }
@@ -43,10 +67,6 @@ public final class Org extends AbstractEntity implements OrgKeyed, Enabled {
       
     
     public Org(JMap map) throws JMapException {
-        update(map);
-    }
-
-    public void update(JMap map) throws JMapException {
         orgDomain = map.getString("url");
         orgName = map.getString("orgName");
         label = map.getString("label");

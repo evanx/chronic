@@ -131,14 +131,14 @@ public class SubscriberService implements EntityService<Subscriber> {
     @Override
     public Subscriber find(Comparable key) throws StorageException {
         if (key instanceof Long) {
-            return selectId((Long) key);
+            return findId((Long) key);
         } else if (key instanceof SubscriberKey) {
-            return selectKey((SubscriberKey) key);
+            return findKey((SubscriberKey) key);
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, key.getClass().getSimpleName());
     }
 
-    private Subscriber selectKey(SubscriberKey key) throws StorageException {
+    private Subscriber findKey(SubscriberKey key) throws StorageException {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = prepare(connection, "select key")) {
             statement.setLong(1, key.getTopicId());
@@ -157,7 +157,7 @@ public class SubscriberService implements EntityService<Subscriber> {
             throw new StorageException(sqle, StorageExceptionType.SQL, key);
         }
     }
-    private Subscriber selectId(Long id) throws StorageException {
+    private Subscriber findId(Long id) throws StorageException {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = prepare(connection, "select id", id);
                 ResultSet resultSet = statement.getResultSet()) {

@@ -24,14 +24,11 @@ import chronic.app.ChronicApp;
 import chronic.entitymap.ChronicMapEntityService;
 import chronic.app.ChronicStorage;
 import chronic.entity.Cert;
-import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Subscriber;
 import chronic.entity.Topic;
 import chronic.entity.User;
-import chronic.jdbc.CertService;
-import chronic.jdbc.ChronicSchema;
 import org.h2.tools.Server;
 import vellum.storage.EntityService;
 
@@ -43,7 +40,6 @@ public class JdbcChronicStorage extends ChronicStorage {
     EntityService<User> users = new ChronicMapEntityService();
     EntityService<Org> orgs = new ChronicMapEntityService();
     EntityService<OrgRole> orgRoles = new ChronicMapEntityService();
-    EntityService<Network> nets = new ChronicMapEntityService();
     EntityService<Topic> topics = new ChronicMapEntityService();
     EntityService<Subscriber> subscribers = new ChronicMapEntityService();
     EntityService<Cert> certs;
@@ -83,11 +79,6 @@ public class JdbcChronicStorage extends ChronicStorage {
         return orgRoles;
     }
 
-    @Override
-    public EntityService<Network> net() {
-        return nets;
-    }
-    
     @Override
     public EntityService<Topic> topic() {
         return topics;

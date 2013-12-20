@@ -47,9 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.ComparableTuple;
 import vellum.storage.AbstractEntity;
-import vellum.storage.AbstractIdEntity;
 import vellum.storage.MapEntityService;
-import vellum.util.Comparables;
 
 /**
  *

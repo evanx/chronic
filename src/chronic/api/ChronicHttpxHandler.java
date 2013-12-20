@@ -1,8 +1,9 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.app;
+package chronic.api;
 
+import chronic.app.ChronicApp;
 import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 

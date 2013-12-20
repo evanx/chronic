@@ -3,6 +3,7 @@
  */
 package chronic.app;
 
+import chronic.api.ChronicHttpxHandler;
 import chronic.handler.CertAction;
 import chronic.handler.CertActionAll;
 import chronic.handler.CertActionNone;

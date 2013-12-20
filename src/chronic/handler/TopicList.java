@@ -4,7 +4,7 @@
 package chronic.handler;
 
 import chronic.app.ChronicApp;
-import chronic.app.ChronicHttpxHandler;
+import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Topic;
 import java.util.HashSet;
 import java.util.Set;

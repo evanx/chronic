@@ -20,7 +20,7 @@
  */
 package chronic.app;
 
-import chronic.mail.Mailer;
+import vellum.mail.Mailer;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;

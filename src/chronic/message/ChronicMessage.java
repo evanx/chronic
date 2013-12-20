@@ -1,5 +1,5 @@
 /*
- Source https://code.google.com/p/vellum by @evanxsummers
+ * Source https://github.com/evanx by @evanxsummers
 
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements. See the NOTICE file
@@ -18,19 +18,23 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package enbased.app;
+package chronic.message;
+
+import chronic.app.ChronicApp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author evan.summers
  */
-public enum EnbaseActionType {
-    ADD,
-    REPLACE,
-    REMOVE,
-    GET,
-    FIND,
-    MAP,
-    LIST;
+public class ChronicMessage {
+
+    static Logger logger = LoggerFactory.getLogger(ChronicMessage.class);
+    ChronicApp app;
+
+    public ChronicMessage(ChronicApp app) {
+        this.app = app;
+    }
     
 }

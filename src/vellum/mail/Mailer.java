@@ -2,7 +2,7 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.mail;
+package vellum.mail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,7 +23,6 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.util.Streams;
 
 /**
  *
@@ -89,18 +88,5 @@ public class Mailer {
         }
         message.setContent(multipart);
         Transport.send(message);
-    }
-    
-    public static void main(String[] args) {
-        try {
-            byte[] bytes = Streams.readBytes(Mailer.class.getResourceAsStream("app.png"));
-            MailerProperties mailerProperties = new MailerProperties();
-            mailerProperties.init(bytes, "appcentral.info", "alerts@appcentral.info");
-            Mailer mailer = new Mailer(mailerProperties);
-            mailer.sendEmail("evan.summers@gmail.com", "test subject", 
-                    "test body <hr> <img src='cid:image'/>");
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-        }
     }
 }

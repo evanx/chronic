@@ -146,14 +146,14 @@ public class CertService implements EntityService<Cert> {
     @Override
     public Cert find(Comparable key) throws StorageException {
         if (key instanceof Long) {
-            return selectId((Long) key);
+            return findId((Long) key);
         } else if (key instanceof CertKey) {
-            return selectKey((CertKey) key);
+            return findKey((CertKey) key);
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, key.getClass().getSimpleName());
     }
 
-    private Cert selectKey(CertKey key) throws StorageException {
+    private Cert findKey(CertKey key) throws StorageException {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = prepare(connection, "select key")) {
             statement.setString(1, key.getOrgDomain());
@@ -174,7 +174,7 @@ public class CertService implements EntityService<Cert> {
         }
     }
 
-    private Cert selectId(Long id) throws StorageException {
+    private Cert findId(Long id) throws StorageException {
         try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = prepare(connection, "select id", id);
                 ResultSet resultSet = statement.getResultSet()) {

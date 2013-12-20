@@ -18,8 +18,9 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.app;
+package chronic.message;
 
+import chronic.app.ChronicApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +28,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author evan.summers
  */
-public class ChronicMessage {
+public class ChronicMessageTracker {
 
-    static Logger logger = LoggerFactory.getLogger(ChronicMessage.class);
+    static Logger logger = LoggerFactory.getLogger(ChronicMessageTracker.class);
     ChronicApp app;
 
-    public ChronicMessage(ChronicApp app) {
+    public ChronicMessageTracker(ChronicApp app) {
         this.app = app;
     }
-    
 }

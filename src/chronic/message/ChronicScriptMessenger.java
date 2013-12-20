@@ -18,8 +18,11 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.app;
+package chronic.message;
 
+import chronic.app.AlertMailBuilder;
+import chronic.app.AlertRecord;
+import chronic.app.ChronicApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.system.Executor;

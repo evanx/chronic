@@ -24,7 +24,6 @@ import chronic.app.ChronicApp;
 import chronic.app.ChronicStorage;
 import chronic.entity.Cert;
 import chronic.entity.User;
-import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
@@ -40,7 +39,6 @@ public class MockChronicStorage extends ChronicStorage {
     MapEntityService<User> users = new ChronicMapEntityService();
     MapEntityService<Org> orgs = new ChronicMapEntityService();
     MapEntityService<OrgRole> orgRoles = new ChronicMapEntityService();
-    MapEntityService<Network> nets = new ChronicMapEntityService();
     MapEntityService<Topic> topics = new ChronicMapEntityService();
     MapEntityService<Subscriber> subscribers = new ChronicMapEntityService();
     MapEntityService<Cert> certs = new ChronicMapEntityService();
@@ -72,11 +70,6 @@ public class MockChronicStorage extends ChronicStorage {
         return orgRoles;
     }
 
-    @Override
-    public EntityService<Network> net() {
-        return nets;
-    }
-    
     @Override
     public EntityService<Topic> topic() {
         return topics;

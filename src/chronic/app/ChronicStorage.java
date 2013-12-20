@@ -23,7 +23,6 @@ package chronic.app;
 import chronic.entity.Cert;
 import chronic.entity.User;
 import chronic.entitytype.OrgRoleType;
-import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entitykey.OrgKey;
 import chronic.entity.OrgRole;
@@ -31,7 +30,6 @@ import chronic.entity.Topic;
 import chronic.entity.Subscriber;
 import chronic.entitykey.OrgRoleTypeKey;
 import chronic.entitykey.OrgUserKey;
-import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.UserKey;
 import java.util.Collection;
 import java.util.HashMap;
@@ -69,8 +67,6 @@ public abstract class ChronicStorage {
     public abstract EntityService<Org> org();
 
     public abstract EntityService<OrgRole> role();
-
-    public abstract EntityService<Network> net();
 
     public abstract EntityService<Topic> topic();
 
