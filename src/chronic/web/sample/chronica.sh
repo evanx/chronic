@@ -506,6 +506,7 @@ c0refresh() {
     then
       echo "OK: https://chronica.co/sample/chronica.sh.md5sum"
       curl -s https://chronica.co/sample/chronica.sh -o $0
+      md5sum $0
     else 
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.md5sum"
     fi
