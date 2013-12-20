@@ -77,7 +77,7 @@ public class ChronicApp implements Runnable {
             storage = new MockChronicStorage(this);
         } else {
             dataSource.setPoolProperties(properties.getPoolProperties());
-            storage = new JdbcChronicStorage(this);            
+            storage = new MockChronicStorage(this);
         }
         storage.init();
         messenger.init();
