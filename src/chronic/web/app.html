@@ -355,6 +355,7 @@ OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
         <pre>c0hourly() {
   c1topic hourly
   c0diskspace
+  c2rhttps bizswitch.net 443 # request external check by chronica server
   c2notcp chronica.co 21
   c2tcp chronica.co 80
   c2https chronica.co 443
@@ -463,10 +464,11 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. So it's totally customisable. As such, we will extend our script soon to satisfy PCI DSS compliancy, out of the box :)
         </p>
 
-        <p><b>What about external checks?</b>
-        One can use Chronica a server in a different data center, or even your home computer, to monitor your site externally, or use "reverse checks" as follows.
-        <pre>sh chronica.sh rhttps | sh chronica.sh post
-        </pre>
+        <p><b>What about checking my site from the outside?</b>
+        <p>Naturally you can use Chronica on a server in a different data center, or even your home computer, to monitor your site externally. But the easiest is to request the Chronica server to perform external checks for you, e.g. using the "rhttps" command.
+        </p>
+        <pre>$ sh chronica.sh rhttps mysite.net 443 | sh chronica.sh post
+OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>where we post the request to chronica via curl.
         <p><b>How are client certs managed?</b>
         <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. By default the hostname of your machine is used for the cert's common name. It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved, and can confirm client certs, and grant admin priviledges to others, via the site.
         </p>
