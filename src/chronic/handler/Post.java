@@ -69,23 +69,27 @@ public class Post implements HttpHandler {
                     }
                 }
             }
+            StringBuilder builder = new StringBuilder();
             for (StatusCheck check : status.getChecks()) {
-                status.getLineList().add(check.check());
+                String result = check.check();
+                logger.info("check {}: {}", check.getClass().getSimpleName(), result);
+                status.getLineList().add(result);
+                builder.append(result);
+                builder.append("\n");
             }
             app.putRecord(status);
-            sendPlainResponse(httpExchange, "ok");
+            sendPlainResponse(httpExchange, builder.toString());
         } catch (CertificateException | StorageException | NumberFormatException | IOException e) {
             logger.warn(e.getMessage(), e);
-            sendPlainResponse(httpExchange, "error: %s: %s", e.getClass(), e.getMessage());
+            sendPlainResponse(httpExchange, String.format("error: %s: %s\n", 
+                    e.getClass(), e.getMessage()));
         }
     }
 
-    public static void sendPlainResponse(HttpExchange httpExchange, String responseString,
-            Object... args) throws IOException {
-        responseString = String.format(responseString, args) + "\n";
+    public static void sendPlainResponse(HttpExchange httpExchange, String responseString)
+            throws IOException {
         byte[] responseBytes = responseString.getBytes();
-        httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR,
-                responseBytes.length);
+        httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, responseBytes.length);
         httpExchange.getResponseHeaders().set("Content-type", "text/plain");
         httpExchange.getResponseBody().write(responseBytes);
         httpExchange.close();

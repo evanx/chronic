@@ -22,6 +22,7 @@ package chronic.app;
 
 import chronic.check.OpenPortChecker;
 import chronic.bundle.Bundle;
+import chronic.check.HttpsChecker;
 import chronic.entity.Cert;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
@@ -124,13 +125,33 @@ public class StatusRecordParser {
         record.setSubcribers(Strings.split(string, DelimiterType.COMMA_OR_SPACE));
     }
 
-    private void parsePort(String string) {
+    private boolean parseTcp(String string) {
+        String pattern = "Check-tcp: ";
+        if (!string.startsWith(pattern)) {
+            return false;
+        }
+        string = string.substring(pattern.length());
         try {
             record.getChecks().add(OpenPortChecker.parse(string));
         } catch (Exception e) {
-            logger.warn("parsePort {}: {}", string, e.getMessage());
+            logger.warn("parseTcp {}: {}", string, e.getMessage());
         }
+        return true;
     }
+
+    private boolean parseHttps(String string) {
+        String pattern = "Check-https: ";
+        if (!string.startsWith(pattern)) {
+            return false;
+        }
+        string = string.substring(pattern.length());
+        try {
+            record.getChecks().add(HttpsChecker.parse(string));
+        } catch (Exception e) {
+            logger.warn("parseHttps {}: {}", string, e.getMessage());
+        }
+        return true;
+    }    
 
     public StatusRecord parse(String text) throws IOException {
         logger.trace("parse: {}", text);
@@ -161,8 +182,8 @@ public class StatusRecordParser {
                 record.setTopicLabel(line.substring(7).trim());
             } else if (line.startsWith("Alert: ")) {
                 parseAlertType(line.substring(7).trim());
-            } else if (line.startsWith("Port: ")) {
-                parsePort(line.substring(6).trim());
+            } else if (parseTcp(line)) {
+            } else if (parseHttps(line)) {
             } else if (inHeader && line.matches("^\\S*: .*")) {
                 logger.trace("header {}", line);
             } else if (inHeader && line.trim().isEmpty()) {
