@@ -326,8 +326,8 @@ c2postgres() {
   fi
 }
 
-c1md5sum() {
-  echo `curl -s $1 | md5sum` "$1" 
+c1sha1sum() {
+  echo `curl -s $1 | sha1sum` "$1" 
 }
 
 c2certExpiry() {
@@ -381,7 +381,7 @@ c0mdstat() {
 
 c0sshAuthKeys() {
   echo "<br><b>sshAuthKeys</b>"
-  md5sum `locate authorized_keys | /etc/ssh/sshd_config`
+  sha1sum `locate authorized_keys | /etc/ssh/sshd_config`
 }
 
 
@@ -482,47 +482,48 @@ c0minutelyCron() {
 }
 
 
-### refresh script
+### update script
 
-c0refreshCheck() {
+c0updateCheck() {
   echo "Please also run the following commands manually to confirm:"
-  echo "curl -s https://chronica.co/sample/chronica.sh | md5sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh.md5sum"
-  curl -s https://chronica.co/sample/chronica.sh | md5sum 
-  curl -s https://chronica.co/sample/chronica.sh.md5sum
+  echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
+  echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum"
+  curl -s https://chronica.co/sample/chronica.sh | sha1sum 
+  curl -s https://chronica.co/sample/chronica.sh.sha1sum
 }
 
-c0refreshGitCheck() {
+c0updateGitCheck() {
   echo "Please also run the following commands manually to confirm:"
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | md5sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh | md5sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh.md5sum"
-  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | md5sum
-  curl -s https://chronica.co/sample/chronica.sh | md5sum 
-  curl -s https://chronica.co/sample/chronica.sh.md5sum
+  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
+  echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
+  echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum"
+  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum
+  curl -s https://chronica.co/sample/chronica.sh | sha1sum 
+  curl -s https://chronica.co/sample/chronica.sh.sha1sum
 }
 
-c0refreshGit() {
-  c0refreshGitCheck
-  echo "Run the following commands:"
+c0updateGit() {
+  c0updateGitCheck
+  echo "Run the following commands to update your script:"
+  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script"
-  echo "md5sum $script"
+  echo "sha1sum $script"
 }
 
-c0refresh() {
-  c0refreshCheck
-  if curl -s https://chronica.co/sample/chronica.sh.md5sum | grep -v ' '
+c0update() {
+  c0updateCheck
+  if curl -s https://chronica.co/sample/chronica.sh.sha1sum | grep -v ' '
   then
-    curl -s https://chronica.co/sample/chronica.sh | md5sum
-    if curl -s https://chronica.co/sample/chronica.sh | md5sum | 
-      grep `curl -s https://chronica.co/sample/chronica.sh.md5sum | head -1`
+    curl -s https://chronica.co/sample/chronica.sh | sha1sum
+    if curl -s https://chronica.co/sample/chronica.sh | sha1sum | 
+      grep `curl -s https://chronica.co/sample/chronica.sh.sha1sum | head -1`
     then
-      echo "OK: https://chronica.co/sample/chronica.sh.md5sum"
-      echo "Run the following commands to update:"
+      echo "OK: https://chronica.co/sample/chronica.sh.sha1sum"
+      echo "Run the following commands to update your script:"
       echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
-      echo "md5sum $script"
+      echo "sha1sum $script"
     else 
-      echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.md5sum"
+      echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1sum"
     fi
   fi
 }
