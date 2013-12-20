@@ -608,7 +608,8 @@ c0start() {
 }
 
 c0help() {
-  cat script | grep '^c[0-9]\S*() {'
+  echo "commands and their required number of arguments:"
+  cat script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
 }
 
 if [ $# -gt 0 ]
