@@ -54,6 +54,7 @@ custom=`pwd`/custom.chronica.sh
 
 dir=~/.chronica
 mkdir -p $dir/etc
+cp -f $0 $dir/script
 cd $dir
 
 if ! pwd | grep -q '/.chronica$'
@@ -579,7 +580,7 @@ c0start() {
 }
 
 c0help() {
-  cat $0 | grep '^c[0-9]\S*() {'
+  cat script | grep '^c[0-9]\S*() {'
 }
 
 
