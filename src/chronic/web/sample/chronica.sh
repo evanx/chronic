@@ -483,7 +483,7 @@ c0minutelyCron() {
 c1killall() {
   echo pid $$
   pgrep -f "chronica.sh $1"
-  ps x | grep -v chronica | grep -v grep
+  ps x | grep chronica | grep -v grep
   pids=`pgrep -f "chronica.sh $1" | grep -v "$$\|grep"`
   if echo "$pids" | grep '[0-9]'
   then
