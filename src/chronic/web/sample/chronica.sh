@@ -480,6 +480,19 @@ c0minutelyCron() {
   fi
 }
 
+### 
+
+c0md5sum() {
+  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | md5sum
+  curl -s https://chronica.co/sample/chronica.sh | md5sum
+  curl -s https://chronica.co/sample/chronica.sh.md5sum
+}
+
+c0refreshgit() {
+  echo curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -O $0
+}
+
+
 ### logging
 
 c0log() {
@@ -582,7 +595,6 @@ c0start() {
 c0help() {
   cat script | grep '^c[0-9]\S*() {'
 }
-
 
 if [ $# -gt 0 ]
 then
