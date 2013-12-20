@@ -44,6 +44,7 @@ public class AlertRecord implements Timestamped {
     String htmlContent;
     String preContent;
     int ignoreCount;
+    AlertRecord ignoredAlert;
     
     public AlertRecord(StatusRecord status) {
         this.status = status;
@@ -62,6 +63,9 @@ public class AlertRecord implements Timestamped {
     
     @Override
     public long getTimestamp() {
+        if (ignoredAlert != null) {
+            return ignoredAlert.getTimestamp();
+        } 
         return status.getTimestamp();
     }    
     
