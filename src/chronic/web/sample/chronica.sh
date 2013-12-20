@@ -480,25 +480,6 @@ c0minutelyCron() {
   fi
 }
 
-c1killall() {
-  echo pid $$
-  pgrep -f "chronica.sh $1"
-  ps x | grep chronica | grep -v grep
-  pids=`pgrep -f "chronica.sh $1" | grep -v "$$\|grep"`
-  if echo "$pids" | grep '[0-9]'
-  then
-    kill $pids
-  else
-    return 1
-  fi
-}
-
-c0killall() {
-  c0kill
-  c1killall run
-  c1killall start
-}
-
 c0kill() {
   if [ -n "$previousPid" ] 
   then
@@ -554,7 +535,7 @@ c0run() {
 
 c0restart() {
   debug=0  
-  c0killall
+  c0kill
   c0run 2> run.err > run.out < /dev/null & 
 }
 
