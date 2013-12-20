@@ -344,6 +344,12 @@ c2certExpiry() {
   fi
 }
 
+### reverse checks
+
+c0rhttps() {
+  echo "r-https:"
+}
+
 ### other common checks
 
 c0login() {
