@@ -489,7 +489,7 @@ c0updateCheck() {
   echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
   echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum"
   curl -s https://chronica.co/sample/chronica.sh | sha1sum 
-  curl -s https://chronica.co/sample/chronica.sh.sha1sum
+  curl -s https://chronica.co/sample/chronica.sh.sha1sum | head -1
 }
 
 c0updateGitCheck() {
