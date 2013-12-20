@@ -330,7 +330,7 @@ c1md5sum() {
 }
 
 c2certExpiry() {
-  openssl s_client -connect $1:$2 < /dev/null | openssl x509 -text | grep '^ *Not After :' |
+  openssl s_client -connect $1:$2 2> /dev/null < /dev/null | openssl x509 -text | grep '^ *Not After :' |
     sed 's/^ *Not After :\(.*\)/\1/'
 }
 
