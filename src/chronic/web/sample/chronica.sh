@@ -486,6 +486,14 @@ c0minutelyCron() {
 
 c0refreshCheck() {
   echo "Please also run the following commands manually to confirm:"
+  echo "curl -s https://chronica.co/sample/chronica.sh | md5sum"
+  echo "curl -s https://chronica.co/sample/chronica.sh.md5sum"
+  curl -s https://chronica.co/sample/chronica.sh | md5sum 
+  curl -s https://chronica.co/sample/chronica.sh.md5sum
+}
+
+c0refreshGitCheck() {
+  echo "Please also run the following commands manually to confirm:"
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | md5sum"
   echo "curl -s https://chronica.co/sample/chronica.sh | md5sum"
   echo "curl -s https://chronica.co/sample/chronica.sh.md5sum"
@@ -495,7 +503,7 @@ c0refreshCheck() {
 }
 
 c0refreshGitForce() {
-  c0refreshCheck
+  c0refreshGitCheck
   echo "Running the following command:"
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script"
   curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script 
@@ -505,6 +513,7 @@ c0refreshGitForce() {
 }
 
 c0refresh() {
+  c0refreshCheck
   if curl -s https://chronica.co/sample/chronica.sh.md5sum | grep -v ' '
   then
     curl -s https://chronica.co/sample/chronica.sh | md5sum
