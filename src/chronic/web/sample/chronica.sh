@@ -500,10 +500,10 @@ c0refresh() {
   if curl -s https://chronica.co/sample/chronica.sh.md5sum | grep -v ' '
   then
     if curl -s https://chronica.co/sample/chronica.sh |
-      grep `curl -s https://chronica.co/sample/chronica.sh.md5sum`
+      grep `curl -s https://chronica.co/sample/chronica.sh.md5sum | head -1`
     then
       echo "OK: https://chronica.co/sample/chronica.sh.md5sum"
-      curl -s https://chronica.co/sample/chronica.sh -O $0
+      curl -s https://chronica.co/sample/chronica.sh -o $0
     else 
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.md5sum"
     fi
