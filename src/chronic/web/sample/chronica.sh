@@ -486,7 +486,7 @@ c0minutelyCron() {
 c0refreshCheck() {
   echo "md5sums for chronica.sh - github.com/evanx/chronic vs chronica.co website"
   curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | md5sum
-  curl -s https://chronica.co/sample/chronica.sh | md5sum` 
+  curl -s https://chronica.co/sample/chronica.sh | md5sum
   curl -s https://chronica.co/sample/chronica.sh.md5sum
 }
 
