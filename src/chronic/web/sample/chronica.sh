@@ -498,6 +498,7 @@ c0refreshGitForce() {
   md5sum $0
 }
 
+
 c0refresh() {
   if curl -s https://chronica.co/sample/chronica.sh.md5sum | grep -v ' '
   then
