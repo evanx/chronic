@@ -482,6 +482,8 @@ c0minutelyCron() {
 ### logging
 
 c0log() {
+  pwd
+  ls -l
   cat run.out
 }
 
