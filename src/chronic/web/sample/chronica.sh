@@ -501,7 +501,7 @@ c0refresh() {
   then
     curl -s https://chronica.co/sample/chronica.sh | md5sum
     if curl -s https://chronica.co/sample/chronica.sh | md5sum | 
-      grep `curl -s https://chronica.co/sample/chronica.sh.md5sum`
+      grep `curl -s https://chronica.co/sample/chronica.sh.md5sum | head -1`
     then
       echo "OK: https://chronica.co/sample/chronica.sh.md5sum"
       curl -s https://chronica.co/sample/chronica.sh -o $0
