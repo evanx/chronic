@@ -496,9 +496,10 @@ c0refreshCheck() {
 
 c0refreshGitForce() {
   c0refreshCheck
+  echo "Running the following command:"
+  echo curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script 
   curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script 
   md5sum $script
-  echo curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script 
 }
 
 c0refresh() {
