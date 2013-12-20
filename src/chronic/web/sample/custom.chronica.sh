@@ -21,8 +21,8 @@
 
 orgUnit="" # network or group
 orgDomain="" # URL of your organisation 
-admins="" # emails of chronica admins for this organisation
 commonName="" # name of this host or account
+admins="" # emails of chronica admins for this organisation
 subscribers="" # emails of invited subcribers for this topic
 scheduledHour="19" # hour of day for daily check
 scheduledMinute="19" # minute of hour for daily check
@@ -53,4 +53,5 @@ c0hourly() {
 c0daily() {
   c1topic daily
   c0login
+  #c2certExpiry chronica.co 443
 }
