@@ -540,7 +540,7 @@ c0refreshSafe() {
       grep `curl -s https://chronica.co/sample/chronica.sh.md5sum | head -1`
     then
       echo "OK: https://chronica.co/sample/chronica.sh.md5sum"
-      echo "Run the following commands:"
+      echo "Run the following commands to update:"
       echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
       echo "md5sum $script"
     else 
@@ -548,7 +548,6 @@ c0refreshSafe() {
     fi
   fi
 }
-
 
 ### logging
 
