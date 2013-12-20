@@ -500,6 +500,8 @@ c0refreshGitForce() {
   echo curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script 
   curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script 
   md5sum $script
+  echo "Please run the following command manually to confirm:"
+  echo "md5sum $script"
 }
 
 c0refresh() {
@@ -514,7 +516,7 @@ c0refresh() {
       echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
       curl -s https://chronica.co/sample/chronica.sh -o $script 
       md5sum $script
-      echo "Please also run the following command manually to confirm:"
+      echo "Please run the following command manually to confirm:"
       echo "md5sum $script"
     else 
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.md5sum"
