@@ -513,7 +513,6 @@ c0refreshGitForce() {
 }
 
 c0refresh() {
-  c0refreshCheck
   if curl -s https://chronica.co/sample/chronica.sh.md5sum | grep -v ' '
   then
     curl -s https://chronica.co/sample/chronica.sh | md5sum
@@ -526,6 +525,23 @@ c0refresh() {
       curl -s https://chronica.co/sample/chronica.sh -o $script 
       md5sum $script
       echo "Please run the following command manually to confirm:"
+      echo "md5sum $script"
+    else 
+      echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.md5sum"
+    fi
+  fi
+}
+
+c0refreshSafe() {
+  if curl -s https://chronica.co/sample/chronica.sh.md5sum | grep -v ' '
+  then
+    curl -s https://chronica.co/sample/chronica.sh | md5sum
+    if curl -s https://chronica.co/sample/chronica.sh | md5sum | 
+      grep `curl -s https://chronica.co/sample/chronica.sh.md5sum | head -1`
+    then
+      echo "OK: https://chronica.co/sample/chronica.sh.md5sum"
+      echo "Run the following commands:"
+      echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
       echo "md5sum $script"
     else 
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.md5sum"
