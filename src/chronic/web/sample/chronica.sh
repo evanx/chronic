@@ -492,6 +492,7 @@ c0refreshCheck() {
 
 c0refreshGitForce() {
   c0refreshCheck
+  echo curl -s -o $0 https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
   curl -s -o $0 https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
 }
 
