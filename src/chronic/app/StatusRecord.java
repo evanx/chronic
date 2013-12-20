@@ -81,6 +81,7 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         this.username = record.username;
         this.service = record.service;
         this.cert = record.cert;
+        this.timestamp = record.timestamp;
     }
 
     public ComparableTuple getKey() {

@@ -171,9 +171,16 @@ public class ChronicApp implements Runnable {
             }
         } else if (new StatusRecordChecker(status).isAlertable(previousStatus, alert)) {
             alert = new AlertRecord(status, previousStatus);
-            alertMap.put(status.getKey(), alert);
-            if (status.getAlertType() != AlertType.INITIAL) {
-                messenger.alert(alert);
+            AlertRecord previousAlert = alertMap.put(status.getKey(), alert);
+            if (status.getAlertType() == AlertType.INITIAL) {
+            } else {
+                long elapsed = alert.getTimestamp() - previousAlert.getTimestamp();
+                if (elapsed < properties.getAlertPeriod()) {
+                    logger.warn("elapsed {} alert {}", elapsed, alert);
+                    alert.ignoreCount = previousAlert.ignoreCount + 1;
+                } else {
+                    messenger.alert(alert);
+                }
             }
         } else {
             long period = status.getTimestamp() - previousStatus.getTimestamp();

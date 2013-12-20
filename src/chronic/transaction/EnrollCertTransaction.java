@@ -39,7 +39,7 @@ public class EnrollCertTransaction {
         if (!app.getProperties().getAllowedOrgDomains().contains(orgDomain)) {
             throw new CertificateException("org not allowed: " + orgDomain);
         } else if (!app.getProperties().getAllowedAddresses().contains(hostAddress)) {
-            logger.warn("remote hostAddress {}", hostAddress);
+            logger.info("remote hostAddress {}", hostAddress);
         }
         CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);
         Cert cert = app.storage().cert().find(certKey);

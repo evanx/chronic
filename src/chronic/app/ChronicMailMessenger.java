@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.storage.StorageException;
-import vellum.system.Executor;
 
 /**
  *
@@ -55,7 +54,7 @@ public class ChronicMailMessenger {
             for (String email : app.storage().listSubscriberEmails(alert.getStatus().getTopic())) {
                 AlertRecord previous = alertMap.put(email, alert);
                 if (previous != null) {
-                    long elapsed = Millis.elapsed(previous.getTimestamp());
+                    long elapsed = alert.getTimestamp() - previous.getTimestamp();
                     if (elapsed < Millis.fromMinutes(2)) {
                         logger.warn("elapsed {} {}", email, Millis.formatPeriod(elapsed));
                     }

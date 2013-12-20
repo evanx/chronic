@@ -49,6 +49,7 @@ public class ChronicProperties {
     private String siteUrl = "https://localhost:8443";
     private String mimicEmail;
     private String alertScript = null;
+    private long alertPeriod = Millis.fromMinutes(5);
     private long period = Millis.fromMinutes(3);
     private boolean testing = false;
     private boolean mockStorage = false;
@@ -104,6 +105,10 @@ public class ChronicProperties {
         return period;
     }
 
+    public long getAlertPeriod() {
+        return alertPeriod;
+    }
+    
     public boolean isTesting() {
         return testing;
     }

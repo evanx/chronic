@@ -43,6 +43,7 @@ public class AlertRecord implements Timestamped {
     List<String> changedLines;
     String htmlContent;
     String preContent;
+    int ignoreCount;
     
     public AlertRecord(StatusRecord status) {
         this.status = status;
