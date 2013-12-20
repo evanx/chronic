@@ -480,19 +480,27 @@ c0minutelyCron() {
   fi
 }
 
+
 ### refresh script
 
 c0refreshCheck() {
-  echo "md5sums for chronica.sh - should be the same (github and website)"
+  echo "md5sums for chronica.sh - github.com/evanx/chronic vs chronica.co website"
   curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | md5sum
   curl -s https://chronica.co/sample/chronica.sh | md5sum` 
   curl -s https://chronica.co/sample/chronica.sh.md5sum
 }
 
-c0refreshGit() {
+c0refreshGitForce() {
   c0refreshCheck
-  echo "run the following:"
-  echo curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -O $0
+  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -O $0
+}
+
+c0refresh() {
+  if curl -s https://chronica.co/sample/chronica.sh | 
+    grep `curl -s https://chronica.co/sample/chronica.sh.md5sum`
+  then
+    curl -s https://chronica.co/sample/chronica.sh -O $0
+  fi
 }
 
 
