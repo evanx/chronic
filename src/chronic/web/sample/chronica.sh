@@ -480,16 +480,18 @@ c0minutelyCron() {
   fi
 }
 
-### 
+### refresh script
 
-c0md5sum() {
+c0refreshCheck() {
   echo "md5sums for chronica.sh - should be the same (github and website)"
   curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | md5sum
   curl -s https://chronica.co/sample/chronica.sh | md5sum` 
   curl -s https://chronica.co/sample/chronica.sh.md5sum
 }
 
-c0refreshgit() {
+c0refreshGit() {
+  c0refreshCheck
+  echo "run the following:"
   echo curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -O $0
 }
 
@@ -608,3 +610,4 @@ else
   c0hourly
   c0daily
 fi
+"
