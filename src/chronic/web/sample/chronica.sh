@@ -487,19 +487,19 @@ c0minutelyCron() {
 c0updateCheck() {
   echo "Please also run the following commands manually to confirm:"
   echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum"
+  echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt"
   curl -s https://chronica.co/sample/chronica.sh | sha1sum 
-  curl -s https://chronica.co/sample/chronica.sh.sha1sum | head -1
+  curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt | head -1
 }
 
 c0updateGitCheck() {
   echo "Please also run the following commands manually to confirm:"
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
   echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum"
+  echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt"
   curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum
   curl -s https://chronica.co/sample/chronica.sh | sha1sum 
-  curl -s https://chronica.co/sample/chronica.sh.sha1sum
+  curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt
 }
 
 c0updateGit() {
@@ -512,18 +512,18 @@ c0updateGit() {
 
 c0update() {
   c0updateCheck
-  if curl -s https://chronica.co/sample/chronica.sh.sha1sum | grep -v ' '
+  if curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt | grep -v ' '
   then
     curl -s https://chronica.co/sample/chronica.sh | sha1sum
     if curl -s https://chronica.co/sample/chronica.sh | sha1sum | 
-      grep `curl -s https://chronica.co/sample/chronica.sh.sha1sum | head -1`
+      grep `curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt | head -1`
     then
-      echo "OK: https://chronica.co/sample/chronica.sh.sha1sum"
+      echo "OK: https://chronica.co/sample/chronica.sh.sha1sum.txt"
       echo "Run the following commands to update your script:"
       echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
       echo "sha1sum $script"
     else 
-      echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1sum"
+      echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1sum.txt"
     fi
   fi
 }
