@@ -27,7 +27,7 @@ public class CertActionNone implements ChronicHttpxHandler {
         List certs = new LinkedList();
         for (Cert cert : app.storage().listCerts(app.getEmail(httpx))) {
             cert.setEnabled(false);
-            app.storage().cert().update(cert);
+            app.storage().cert().replace(cert);
         }
         return JMaps.map("certs", certs);
     }

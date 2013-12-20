@@ -18,87 +18,79 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package chronic.app;
+package chronic.entitymap;
 
+import chronic.app.ChronicApp;
+import chronic.app.ChronicStorage;
 import chronic.entity.Cert;
+import chronic.entity.User;
 import chronic.entity.Network;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
-import chronic.entity.Subscriber;
 import chronic.entity.Topic;
-import chronic.entity.User;
-import chronic.jdbc.CertStore;
-import chronic.jdbc.ChronicSchema;
-import org.h2.tools.Server;
-import vellum.storage.EntityStore;
+import chronic.entity.Subscriber;
+import vellum.storage.EntityService;
+import vellum.storage.MapEntityService;
 
 /**
  *
  * @author evan.summers
  */
-public class JdbcChronicStorage extends ChronicStorage {
-    EntityStore<User> users = new ChronicMapStore();
-    EntityStore<Org> orgs = new ChronicMapStore();
-    EntityStore<OrgRole> orgRoles = new ChronicMapStore();
-    EntityStore<Network> nets = new ChronicMapStore();
-    EntityStore<Topic> topics = new ChronicMapStore();
-    EntityStore<Subscriber> subscribers = new ChronicMapStore();
-    EntityStore<Cert> certs;
+public class MockChronicStorage extends ChronicStorage {
+    MapEntityService<User> users = new ChronicMapEntityService();
+    MapEntityService<Org> orgs = new ChronicMapEntityService();
+    MapEntityService<OrgRole> orgRoles = new ChronicMapEntityService();
+    MapEntityService<Network> nets = new ChronicMapEntityService();
+    MapEntityService<Topic> topics = new ChronicMapEntityService();
+    MapEntityService<Subscriber> subscribers = new ChronicMapEntityService();
+    MapEntityService<Cert> certs = new ChronicMapEntityService();
 
-    Server h2Server;
-    
-    public JdbcChronicStorage(ChronicApp app) {
+    public MockChronicStorage(ChronicApp app) {
         super(app);
     }
         
     @Override
     public void init() throws Exception {
-        h2Server = Server.createTcpServer().start();
-        new ChronicSchema(app).verifySchema();
-        certs = new CertStore(app.getDataSource());
     }
 
     @Override
     public void shutdown() {
-        if (h2Server != null) {
-            h2Server.stop();
-        }
     }
 
     @Override
-    public EntityStore<User> user() {
+    public EntityService<User> user() {
         return users;
     }
 
     @Override
-    public EntityStore<Org> org() {
+    public EntityService<Org> org() {
         return orgs;
     }
     
     @Override
-    public EntityStore<OrgRole> role() {
+    public EntityService<OrgRole> role() {
         return orgRoles;
     }
 
     @Override
-    public EntityStore<Network> net() {
+    public EntityService<Network> net() {
         return nets;
     }
     
     @Override
-    public EntityStore<Topic> topic() {
+    public EntityService<Topic> topic() {
         return topics;
     }
 
     @Override
-    public EntityStore<Subscriber> sub() {
+    public EntityService<Subscriber> sub() {
         return subscribers;
     }
 
     @Override
-    public EntityStore<Cert> cert() {
+    public EntityService<Cert> cert() {
         return certs;
     }
-            
+    
     
 }

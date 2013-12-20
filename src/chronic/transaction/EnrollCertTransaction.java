@@ -42,12 +42,12 @@ public class EnrollCertTransaction {
             logger.warn("remote hostAddress {}", hostAddress);
         }
         CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);
-        Cert cert = app.storage().cert().select(certKey);
+        Cert cert = app.storage().cert().find(certKey);
         if (cert == null) {
             cert = new Cert(certKey);
             cert.setEncoded(encoded);
             cert.setAddress(hostAddress);
-            app.storage().cert().insert(cert);
+            app.storage().cert().add(cert);
             logger.info("certificate {}", certKey);
         } else if (!cert.getEncoded().equals(encoded)) {
             logger.warn("invalid public key {}", certKey);
@@ -57,10 +57,10 @@ public class EnrollCertTransaction {
             logger.warn("host address {}", hostAddress);
         }
         cert.setTimestamp(System.currentTimeMillis());
-        Org org = app.storage().org().select(cert.getOrgDomain());
+        Org org = app.storage().org().find(cert.getOrgDomain());
         if (org == null) {
             org = new Org(cert.getOrgDomain());
-            app.storage().org().insert(org);
+            app.storage().org().add(org);
             logger.info("insert org {}", org);
         }
         cert.setOrg(org);

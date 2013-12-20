@@ -28,11 +28,11 @@ public class EnrollRoleTransaction {
         User user = new EnrollUserTransaction().handle(app, email);        
         logger.info("user {}", user);
         OrgRoleKey orgRoleKey = new OrgRoleKey(cert.getOrgDomain(), email, roleType);
-        OrgRole orgRole = app.storage().role().select(orgRoleKey);
+        OrgRole orgRole = app.storage().role().find(orgRoleKey);
         if (orgRole == null) {
             orgRole = new OrgRole(orgRoleKey);
             orgRole.setEnabled(true);
-            app.storage().role().insert(orgRole);
+            app.storage().role().add(orgRole);
         }
         return orgRole;
     }

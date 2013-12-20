@@ -37,7 +37,7 @@ public class RoleActionAll implements ChronicHttpxHandler {
         for (OrgRole role : app.storage().listRoles(app.getEmail(httpx))) {
             if (!role.isEnabled()) {
                 role.setEnabled(true);
-                app.storage().role().update(role);
+                app.storage().role().replace(role);
             }
             roles.add(role.getMap());
         }

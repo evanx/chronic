@@ -29,7 +29,7 @@ public class SubscriberActionNone implements ChronicHttpxHandler {
         List subscribers = new LinkedList();        
         for (Subscriber subscriber : app.storage().sub().list(new UserKey(email))) {
             subscriber.setEnabled(false);
-            app.storage().sub().update(subscriber);
+            app.storage().sub().replace(subscriber);
             subscribers.add(subscriber);
         }
         return JMaps.map("subscriptions", subscribers);

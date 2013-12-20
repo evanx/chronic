@@ -19,10 +19,10 @@ public class EnrollUserTransaction {
     
     public User handle(ChronicApp app, String email) throws StorageException {
         logger.info("handle {}", email);
-        User user = app.storage().user().select(email);
+        User user = app.storage().user().find(email);
         if (user == null) {
             user = new User(email);
-            app.storage().user().insert(user);
+            app.storage().user().add(user);
         }
         return user;
     }

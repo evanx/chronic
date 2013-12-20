@@ -26,9 +26,9 @@ public class SubscriberAction implements ChronicHttpxHandler {
         String email = app.getEmail(httpx);
         JMap map = httpx.parseJsonMap().getMap("subscriber");
         SubscriberKey key = new SubscriberKey(map.getLong("topicId"), email);
-        Subscriber subscriber = app.storage().sub().select(key);
+        Subscriber subscriber = app.storage().sub().find(key);
         subscriber.setEnabled(!subscriber.isEnabled());
-        app.storage().sub().update(subscriber);
+        app.storage().sub().replace(subscriber);
         return JMaps.mapValue("subscriber", subscriber.getMap());
     }
     

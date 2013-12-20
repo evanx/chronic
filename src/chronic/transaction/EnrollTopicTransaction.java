@@ -22,10 +22,10 @@ public class EnrollTopicTransaction {
     public Topic handle(ChronicApp app, Cert cert, String topicLabel) throws StorageException {
         logger.info("handle {} {}", topicLabel, cert);
         CertTopicKey key = new CertTopicKey(cert.getId(), topicLabel);
-        Topic topic = app.storage().topic().select(key);
+        Topic topic = app.storage().topic().find(key);
         if (topic == null) {
             topic = new Topic(key);            
-            app.storage().topic().insert(topic);
+            app.storage().topic().add(topic);
         }
         topic.setCert(cert);
         return topic;

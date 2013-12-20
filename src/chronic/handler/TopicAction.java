@@ -29,12 +29,12 @@ public class TopicAction implements ChronicHttpxHandler {
         JMap topicMap = httpx.parseJsonMap().getMap("topic");
         CertTopicKey key = new CertTopicKey(topicMap);
         OrgRoleKey roleKey = new OrgRoleKey(topicMap.getString("orgDomain"), email, OrgRoleType.ADMIN);
-        if (!app.storage().role().containsKey(roleKey)) {
+        if (!app.storage().role().contains(roleKey)) {
             return JMaps.mapValue("errorMessage", "no role");
         } else {
-            Topic topic = app.storage().topic().select(key);
+            Topic topic = app.storage().topic().find(key);
             topic.setEnabled(!topic.isEnabled());
-            app.storage().topic().update(topic);
+            app.storage().topic().replace(topic);
             return JMaps.mapValue("topic", topic.getMap());
         }
     }

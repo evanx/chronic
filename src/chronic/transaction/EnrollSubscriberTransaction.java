@@ -21,10 +21,10 @@ public class EnrollSubscriberTransaction {
     
     public Subscriber handle(ChronicApp app, Topic topic, String email) throws StorageException {
         SubscriberKey key = new SubscriberKey(topic.getId(), email);
-        Subscriber subscriber = app.storage().sub().select(key);
+        Subscriber subscriber = app.storage().sub().find(key);
         if (subscriber == null) {
             subscriber = new Subscriber(key);
-            app.storage().sub().insert(subscriber);
+            app.storage().sub().add(subscriber);
         }
         return subscriber;
     }

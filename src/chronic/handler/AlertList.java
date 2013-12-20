@@ -31,7 +31,7 @@ public class AlertList implements ChronicHttpxHandler {
         List alerts = new LinkedList();
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {
-            if (app.storage().sub().containsKey(
+            if (app.storage().sub().contains(
                     new SubscriberKey(alert.getStatus().getTopic().getId(), email))) {
                 alerts.add(alert.getlMap());
             } else if (app.getProperties().isAdmin(email)) {

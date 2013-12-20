@@ -43,7 +43,7 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.TimestampedComparator;
-import vellum.storage.EntityStore;
+import vellum.storage.EntityService;
 import vellum.storage.StorageException;
 
 /**
@@ -64,19 +64,19 @@ public abstract class ChronicStorage {
 
     public abstract void shutdown();
 
-    public abstract EntityStore<User> user();
+    public abstract EntityService<User> user();
 
-    public abstract EntityStore<Org> org();
+    public abstract EntityService<Org> org();
 
-    public abstract EntityStore<OrgRole> role();
+    public abstract EntityService<OrgRole> role();
 
-    public abstract EntityStore<Network> net();
+    public abstract EntityService<Network> net();
 
-    public abstract EntityStore<Topic> topic();
+    public abstract EntityService<Topic> topic();
 
-    public abstract EntityStore<Subscriber> sub();
+    public abstract EntityService<Subscriber> sub();
 
-    public abstract EntityStore<Cert> cert();
+    public abstract EntityService<Cert> cert();
     
     public Iterable<User> listUsers(String email) {
         List list = new LinkedList();
@@ -135,7 +135,7 @@ public abstract class ChronicStorage {
         Set<Topic> topics = new TreeSet();
         for (Subscriber subscriber : sub().list(email)) {
             logger.info("listTopics subscriber {}", subscriber);
-            topics.add(topic().find(subscriber.getTopicId()));
+            topics.add(topic().retrieve(subscriber.getTopicId()));
         }
         return topics;
     }
@@ -145,7 +145,7 @@ public abstract class ChronicStorage {
         Set<Topic> topics = new TreeSet();
         for (Subscriber subscriber : sub().list(email)) {
             logger.info("listTopics subscriber {}", subscriber);
-            topics.add(topic().find(subscriber.getTopicId()));
+            topics.add(topic().retrieve(subscriber.getTopicId()));
         }
         return topics;
     }

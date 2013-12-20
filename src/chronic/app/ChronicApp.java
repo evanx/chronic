@@ -20,6 +20,8 @@
  */
 package chronic.app;
 
+import chronic.entitymap.MockChronicStorage;
+import chronic.jdbc.JdbcChronicStorage;
 import chronic.entitytype.ChronicApped;
 import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;

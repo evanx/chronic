@@ -111,7 +111,7 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
 
     @Override
     public void inject(ChronicApp app) throws StorageException {
-        topic = app.storage().topic().find(topicId);
+        topic = app.storage().topic().retrieve(topicId);
         topic.inject(app);
     }
 

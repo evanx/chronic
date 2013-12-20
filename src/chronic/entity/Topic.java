@@ -114,7 +114,7 @@ public final class Topic extends AbstractIdEntity implements CertTopicKeyed,
 
     @Override
     public void inject(ChronicApp app) throws StorageException {
-        cert = app.storage().cert().find(certId);
+        cert = app.storage().cert().retrieve(certId);
     }
     
     @Override

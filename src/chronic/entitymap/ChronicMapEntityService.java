@@ -18,7 +18,7 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package chronic.app;
+package chronic.entitymap;
 
 import chronic.entitykey.CertKey;
 import chronic.entitykey.CertKeyed;
@@ -48,15 +48,15 @@ import org.slf4j.LoggerFactory;
 import vellum.data.ComparableTuple;
 import vellum.storage.AbstractEntity;
 import vellum.storage.AbstractIdEntity;
-import vellum.storage.MapStore;
+import vellum.storage.MapEntityService;
 import vellum.util.Comparables;
 
 /**
  *
  * @author evan.summers
  */
-public class ChronicMapStore<E extends AbstractEntity> extends MapStore<E> {
-    Logger logger = LoggerFactory.getLogger(ChronicMapStore.class);
+public class ChronicMapEntityService<E extends AbstractEntity> extends MapEntityService<E> {
+    Logger logger = LoggerFactory.getLogger(ChronicMapEntityService.class);
 
     @Override
     public Collection<E> list(Comparable key) {
