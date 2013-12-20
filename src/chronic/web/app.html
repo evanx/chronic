@@ -405,7 +405,9 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>What does it compute?</b>
-          <br>Information about computers you want to monitor. Our server checks if the information has changed, and if so, will alert you. If it is changing all the time, we will ignore it for you. If the messages stop, we will alert you that something might be wrong.
+          <br>Information about computers you want to monitor. Our server checks if the information has changed, and if so, will alert you. 
+          <br>If the messages stop, we will alert you that something might be wrong.
+          <br>If it is changing all the time, we will ignore it for you, since something is probably wrong with your script.
         </p>
         
         <p><b>How much does it cost?</b>
@@ -413,23 +415,34 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>What use cases?</b>
-          <br>Use Chronica to monitor your networks and services, internally and externally, to ensure your IT performance and security. Add custom checks to monitor all aspects of your specific infrastructure and applications. When something is wrong, be the first to know :)
+          <br>Use Chronica to monitor your networks and services, internally and externally, to ensure your IT performance and security. 
+          <br>Add custom checks to monitor all aspects of your specific infrastructure and applications.
+          <br>When something is wrong, be the first to know :)
         </p>
 
+        <p><b>Who should try it?</b>
+          <br>Anyone who wants instant monitoring i.e. without any server setup or customistion required, e.g. to be up and running in less than a minute. 
+          <br>Someone who wants a monitoring solution that they can customise using shell scripts.
+        </p>
+        
         <p><b>How is this different from some other cloud-based monitoring services?</b>
           <br>It's simple yet powerful for custom monitoring. It's opensource, so you can own it.
         </p>
 
         <p><b>How is this different from some other opensource monitoring projects?</b>
-          <br>We provide a free multi-tenancy cloud service for instant monitoring without any server setup. Our solution supports Nagios plugins, and will be integrated with opensource agents, according to demand.
+          <br>We provide a free multi-tenancy cloud service for instant monitoring without any server setup. 
+          <br>Our solution supports Nagios plugins, and will be integrated with opensource agents, according to demand.
         </p>
 
         <p><b>What notification mechanisms are supported?</b>
-          <br>Only email. Support is envisaged for mobile push notifications, but not SMS. (Currently email is disabled for alpha testing.)
+          <br>Only email. Support is envisaged for mobile push notifications, but not SMS. 
+          <br>(Currently email is disabled for alpha testing.)
         </p>
 
         <p><b>What technologies are used?</b>
-          <br>AngularJS for the front-end, making JSON requests to a Java back-end. We use the JRE's built-in HTTPS server rather than Apache Tomcat. <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
+          <br>AngularJS for the front-end, making JSON requests to a Java back-end. 
+          <br>We use the JRE's built-in HTTPS server rather than Apache Tomcat. 
+          <br><a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
         </p>
 
         <p><b>Why doesn't the site work on my phone's browser?</b>
@@ -437,33 +450,47 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
         
         <p><b>Windows or Linux?</b>
-          <br>We provide a "starter" script for Linux, which can be used out the box to actively monitor Windows machines remotely via TCP. However, you can expect integration with an opensource Windows agent in coming months, such as the Nagios Cross-Platform Agent (NCPA).
+          <br>We provide a "starter" script for Linux, which can be used out the box to actively monitor Windows machines remotely via TCP. 
+          <br>We will integrate an opensource Windows agent, such as the Nagios Cross-Platform Agent (NCPA), and/or our own Chronica Java-based agent.
         </p>
         
         <p><b>What can be installed on Linux clients right now?</b>
-        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS. Out of the box, this client script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. However, the system is specially engineered to support Nagios plugins, and custom checks.
+        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS.
+        <br>Out of the box, this client script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. 
+        <br>However, the system is specially engineered to support Nagios plugins, and custom checks.
         </p>
 
         <p><b>How is it run?</b>
-        <br>The script can be run as a background process. It has built-in support for minutely, hourly and daily checks, without needing <tt>crond</tt>. (It has a loop but sleeps most of the time.) Also, you can pipe the output of cron jobs to this script. Incidently, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
+        <br>The script can be run as a background process. It has built-in support for minutely, hourly and daily checks, without needing <tt>crond</tt>. (It has a loop in which it sleeps until the next minute.)
+        <br>Also, you can pipe the output of cron jobs to this script. 
+        <br>Incidently, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
         </p>
 
         <p><b>What API does it use?</b>
-        <br>Text document with email-style headers, submitted via HTTPS POST. For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronica.co</tt>. Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
+        <br>Text document with email-style headers, submitted via HTTPS POST. 
+        <br>For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronica.co</tt>. 
+        <br>Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
+        <br>But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
         </p>
         
         <p><b>How are checks performed?</b>
-        <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. So it's totally customisable. As such, we will extend our script soon to satisfy PCI DSS compliancy, out of the box :)
+        <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. 
+        <br>For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. 
+        <br>So it's totally customisable. As such, we will extend our script soon to satisfy PCI DSS compliancy, out of the box :)
         </p>
 
         <p><b>What about checking my site from the outside?</b>
-        <br>Naturally you can use Chronica from a server in a different data center, or even your home computer, to monitor your site externally. But the easiest is to request the Chronica server to perform external checks for you, e.g. using the "rhttps" command.
+        <br>Naturally you can use Chronica from a server in a different data center, or even your home computer, to monitor your site externally. 
+        <br>But the easiest is to request the Chronica server to perform external checks for you, e.g. using the "rhttps" command.
         </p>
         <pre>$ sh chronica.sh rhttps mysite.net 443 | sh chronica.sh post
 OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
 
         <p><b>How are client certs managed?</b>
-        <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. By default the hostname of your machine is used for the cert's common name. It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved. Admins can confirm client certs and approve other admins, via the site.
+        <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. 
+        <br>By default the hostname of your machine is used for the cert's common name. 
+        <br>It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved. 
+        <br>Admins can confirm client certs and approve other admins, via the site.
         </p>
 
         <p><b>How are subcribers managed?</b>
@@ -475,7 +502,8 @@ OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
         </p>
                  
         <p><b>How are alerts triggered?</b>
-        <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore suprious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
+        <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore suprious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
+        <br>And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
       </p>
 
       <p><b>How do I to contribute my improvements for inclusion?</b>        
@@ -498,14 +526,15 @@ OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
         <p>
           <i>2013-12-20</i> &nbsp;
           <b>Experimenting with JPA, again</b> 
-          <br>Returning to my formerly beloved JPA, having used JDBC in recent years for cross-polination with my day job.
-          <br>See <a href="https://github.com/evanx/chronic/blob/master/src/enbased/app/Tran.java">Tran</a>.
+          <br>Returning to my formerly beloved JPA, having used JDBC in recent years for cross-polination with my employer's architecture.
+          See <a href="https://github.com/evanx/chronic/blob/master/src/enbased/app/Tran.java">Tran</a>.
         </p>
         
         <p>
           <i>2013-12-17</i> &nbsp;
           <b>JDBC in progress</b> 
-          <br>Work has started on JDBC persistence, to be ready for an alpha "launch" on the 1st of January :)<br>See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/jdbc/CertStore.java">CertStore</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/jdbc/SubscriberStore.java">SubscriberStore</a>.
+          <br>Work has started on JDBC persistence.
+          See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/jdbc/CertStore.java">CertStore</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/jdbc/SubscriberStore.java">SubscriberStore</a>.
         </p>
 
         <p>
@@ -526,8 +555,8 @@ OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
         </p>
         <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Croc (on http://github.com/evanx/vellumapp). Chronica's mantra is "wonderfully simple, incredibly powerful." 
         <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks.
-        <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica. Its UI uses Bootstrap 2 and jQuery, and it used JDBC for persistence. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed, probably JPA.
-        <p>The result is Chronica, which uses the awesome AngularJS front-end framework (see <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>), and a pluggable SQL'esque storage engine mechanism (see <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/EntityStore.java">EntityStore</a> and <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/MapStore.java">MapStore</a>). Prototyping can forgo SQL, using "key" objects to support queries. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicMapStore.java">ChronicMapStore</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicStorage.java">ChronicStorage</a>. A JDBC implementation can enable persistence later, without changing the application, or indeed JPA.
+        <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica. Its UI uses Bootstrap 2 and jQuery, and it used JDBC for persistence. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed e.g. JPA for back-end persistence, and a Javascript data-binding framework for the front-end.
+        <p>The result is Chronica, which uses the awesome AngularJS front-end framework (see <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>), and a pluggable SQL'esque storage engine mechanism (see <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/EntityStore.java">EntityStore</a> and <a href="https://github.com/evanx/vellumcore/blob/master/src/vellum/storage/MapStore.java">MapStore</a>). Prototyping can forgo SQL, using "key" objects to support queries. See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicMapStore.java">ChronicMapStore</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicStorage.java">ChronicStorage</a>. A JDBC implementation can enable persistence later, without changing the application.
         <hr> 
         <p class="pull-right">
           <a href="https://www.positivessl.com" style=
