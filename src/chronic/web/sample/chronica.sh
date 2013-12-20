@@ -510,8 +510,12 @@ c0refresh() {
       grep `curl -s https://chronica.co/sample/chronica.sh.md5sum | head -1`
     then
       echo "OK: https://chronica.co/sample/chronica.sh.md5sum"
+      echo "Running the following command:"
+      echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
       curl -s https://chronica.co/sample/chronica.sh -o $script 
       md5sum $script
+      echo "Please also run the following command manually to confirm:"
+      echo "md5sum $script"
     else 
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.md5sum"
     fi
