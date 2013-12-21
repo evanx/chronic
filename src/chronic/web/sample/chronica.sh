@@ -385,6 +385,7 @@ c0sshAuthKeys() {
 }
 
 
+
 ### standard functionality
 
 c1curl() {
@@ -480,7 +481,6 @@ c0minutelyCron() {
     fi
   fi
 }
-
 
 ### update script
 
@@ -624,12 +624,28 @@ c0help() {
   cat script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
 }
 
+postheaders() {
+  headers="-H 'Content-Type: text/plain'"
+  for header in $@
+  do
+    echo "header: $header"
+    headers="$headers -H '$header'"
+  done
+    tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+      --data-binary @- $headers https://$server/post 
+}
+
 if [ $# -gt 0 ]
 then
   command=$1
   [ $command != "start" ] &&  trap 'rm -f pid' EXIT
   shift
-  c$#$command $@  
+  if [ $command = "postheaders" ]
+  then
+    postheaders "$@"
+  else
+    c$#$command $@  
+  fi
 else 
   c0minutely
   c0hourly
