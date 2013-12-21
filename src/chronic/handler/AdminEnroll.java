@@ -32,11 +32,11 @@ public class AdminEnroll implements ChronicHttpxHandler {
         String[] emails = Strings.split(hx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {
             if (!Emails.matchesEmail(email)) {
-                return new JMap(String.format("ERROR: invalid email %s", email));
+                return new JMap(String.format("ERROR: invalid email: %s\n", email));
             } else {
                 new EnrollRoleTransaction().handle(hx, cert, email, OrgRoleType.ADMIN);
             }
         }
-        return new JMap(String.format("OK: %s %s", cert.getOrgDomain(), Arrays.toString(emails)));
+        return new JMap(String.format("OK: %s: %s\n", cert.getOrgDomain(), Arrays.toString(emails)));
     }
 }

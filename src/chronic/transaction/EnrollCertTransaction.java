@@ -27,32 +27,33 @@ public class EnrollCertTransaction {
     public Cert handle(ChronicHttpx httpx) throws StorageException, CertificateException,
             SSLPeerUnverifiedException {
         X509Certificate certificate = httpx.getPeerCertficate();
-        String hostAddress = httpx.getRemoteHostAddress();
+        String remoteHostAddress = httpx.getRemoteHostAddress();
         String encoded = X509Certificates.getEncodedPublicKey(certificate);
         String commonName = Certificates.getCommonName(certificate.getSubjectDN());
         String orgDomain = Certificates.getOrg(certificate.getSubjectDN());
         String orgUnit = Certificates.getOrgUnit(certificate.getSubjectDN());
         if (!httpx.app.getProperties().getAllowedOrgDomains().contains(orgDomain)) {
             throw new CertificateException("org not allowed: " + orgDomain);
-        } else if (!httpx.app.getProperties().getAllowedAddresses().contains(hostAddress)) {
-            logger.info("remote hostAddress {}", hostAddress);
+        } else if (!httpx.app.getProperties().getAllowedAddresses().contains(remoteHostAddress)) {
+            logger.info("remote hostAddress {}", remoteHostAddress);
         }
         CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);
         Cert cert = httpx.db.cert().find(certKey);
         if (cert == null) {
             cert = new Cert(certKey);
             cert.setEncoded(encoded);
-            cert.setAddress(hostAddress);
+            cert.setAddress(remoteHostAddress);
             httpx.db.cert().add(cert);
             logger.info("certificate {}", certKey);
         } else if (!cert.getEncoded().equals(encoded)) {
             logger.warn("invalid public key {}", certKey);
         } else if (!cert.isEnabled()) {
             logger.warn("cert disabled {}", certKey);
-        } else if (!cert.getAddress().equals(hostAddress)) {
-            logger.warn("host address {}", hostAddress);
+        } else if (!cert.getAddress().equals(remoteHostAddress)) {
+            logger.warn("host address {}", remoteHostAddress);
         }
         cert.setTimestamp(System.currentTimeMillis());
+        cert.setAddress(remoteHostAddress);
         Org org = httpx.db.org().find(cert.getOrgDomain());
         if (org == null) {
             org = new Org(cert.getOrgDomain());

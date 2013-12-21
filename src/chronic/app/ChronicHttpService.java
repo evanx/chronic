@@ -84,10 +84,17 @@ public class ChronicHttpService implements HttpHandler {
             em.getTransaction().commit();
         } catch (Exception e) {
             httpx.sendError(e);
-        } finally {
+            try {
+                if (connection != null) {
+                    connection.rollback();
+                }
+            } catch (SQLException sqle) {
+                logger.warn("connection rollback", sqle);
+            }
             if (em != null) {
                 em.getTransaction().rollback();
             }
+        } finally {
             try {
                 if (connection != null) {
                     connection.close();
@@ -95,8 +102,10 @@ public class ChronicHttpService implements HttpHandler {
             } catch (SQLException sqle) {
                 logger.warn("connection close", sqle);
             }
+            if (em != null) {
+                em.close();
+            }
             httpx.close();
         }
     }
-
 }

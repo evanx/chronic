@@ -43,10 +43,10 @@ public class HttpsChecker implements StatusCheck {
         try (SSLSocket socket = (SSLSocket) 
                 SSLContext.getDefault().getSocketFactory().createSocket(address, port)) {
             socket.setSoTimeout(timeout);
-            return String.format("OK - %s port %d https: %s", address, port, 
+            return String.format("OK: %s port %d https: %s", address, port, 
                     socket.getSession().getPeerPrincipal().getName());
         } catch (Exception e) {
-            return String.format("WARNING - %s port %d https error: %s", address, port, e.getMessage());
+            return String.format("WARNING: %s port %d https error: %s", address, port, e.getMessage());
         } 
     }
 

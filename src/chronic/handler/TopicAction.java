@@ -28,7 +28,7 @@ public class TopicAction implements ChronicHttpxHandler {
         JMap topicMap = httpx.parseJsonMap().getMap("topic");
         CertTopicKey key = new CertTopicKey(topicMap);
         OrgRoleKey roleKey = new OrgRoleKey(topicMap.getString("orgDomain"), email, OrgRoleType.ADMIN);
-        if (!httpx.db.role().contains(roleKey)) {
+        if (!httpx.db.role().containsKey(roleKey)) {
             return JMaps.mapValue("errorMessage", "no role");
         } else {
             Topic topic = httpx.db.topic().find(key);

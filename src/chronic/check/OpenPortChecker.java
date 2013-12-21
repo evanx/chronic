@@ -41,9 +41,9 @@ public class OpenPortChecker implements StatusCheck {
     public String check() {
         try (Socket socket = new Socket(address, port)) {
             socket.setSoTimeout(timeout);            
-            return String.format("OK - %s port %d: %s", address, port, socket.toString());
+            return String.format("OK: %s port %d: %s", address, port, socket.toString());
         } catch (Exception e) {
-            return String.format("WARNING - %s port %d: %s", address, port, e.getMessage());
+            return String.format("WARNING: %s port %d: %s", address, port, e.getMessage());
         } 
     }
 

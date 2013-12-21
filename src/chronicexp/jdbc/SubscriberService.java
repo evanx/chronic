@@ -168,7 +168,7 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     @Override
-    public boolean contains(Comparable key) throws StorageException {
+    public boolean containsKey(Comparable key) throws StorageException {
         return find(key) != null;
     }
 

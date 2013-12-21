@@ -59,15 +59,14 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
     }
 
     public Cert(CertKey key) {
-        this.orgDomain = key.getOrgDomain();
-        this.orgUnit = key.getOrgUnit();
-        this.commonName = key.getCommonName();
+        this(key.getOrgDomain(), key.getOrgUnit(), key.getCommonName());
     }
     
     public Cert(String orgDomain, String orgUnit, String commonName) {
         this.orgDomain = orgDomain;
         this.orgUnit = orgUnit;
         this.commonName = commonName;
+        timestamp = System.currentTimeMillis();
     }
 
     @Override
@@ -166,12 +165,14 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
         return timestamp;
     }
         
+    @Override
     public JMap getMap() {
         JMap map = new JMap();
         put(map);
         map.put("enabled", enabled);
         map.put("address", address);
         map.put("timestampLabel", Millis.formatTime(timestamp));
+        map.put("address", address);
         map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());
         return map;

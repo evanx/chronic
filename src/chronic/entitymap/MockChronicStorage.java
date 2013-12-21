@@ -28,6 +28,7 @@ import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
+import vellum.storage.EntityMatcher;
 import vellum.storage.EntityService;
 import vellum.storage.MapEntityService;
 
@@ -36,12 +37,13 @@ import vellum.storage.MapEntityService;
  * @author evan.summers
  */
 public class MockChronicStorage extends ChronicDatabase {
-    MapEntityService<User> users = new ChronicMapEntityService(User.class);
-    MapEntityService<Org> orgs = new ChronicMapEntityService(Org.class);
-    MapEntityService<OrgRole> orgRoles = new ChronicMapEntityService(OrgRole.class);
-    MapEntityService<Topic> topics = new ChronicMapEntityService(Topic.class);
-    MapEntityService<Subscriber> subscribers = new ChronicMapEntityService(Subscriber.class);
-    MapEntityService<Cert> certs = new ChronicMapEntityService(Cert.class);
+    EntityMatcher matcher = new ChronicMatcher();
+    MapEntityService<User> users = new MapEntityService(matcher);
+    MapEntityService<Org> orgs = new MapEntityService(matcher);
+    MapEntityService<OrgRole> orgRoles = new MapEntityService(matcher);
+    MapEntityService<Topic> topics = new MapEntityService(matcher);
+    MapEntityService<Subscriber> subscribers = new MapEntityService(matcher);
+    MapEntityService<Cert> certs = new MapEntityService(matcher);
 
     public MockChronicStorage(ChronicApp app) {
         super(app);

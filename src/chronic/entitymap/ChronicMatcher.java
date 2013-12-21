@@ -43,31 +43,23 @@ import chronic.entitykey.UserRoleTypeKey;
 import chronic.entitykey.UserRoleTypeKeyed;
 import java.util.Collection;
 import java.util.LinkedList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import vellum.data.ComparableTuple;
 import vellum.storage.AbstractEntity;
-import vellum.storage.MapEntityService;
+import vellum.storage.EntityMatcher;
 
 /**
  *
  * @author evan.summers
  */
-public class ChronicMapEntityService<E extends AbstractEntity> extends MapEntityService<E> {
-    Logger logger = LoggerFactory.getLogger(ChronicMapEntityService.class);
-    Class entityType;
-    
-    public ChronicMapEntityService(Class entityType) {
-        this.entityType = entityType;
-    }
-    
+public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E> {
+        
     @Override
-    public Collection<E> list(Comparable key) {
+    public Collection<E> matches(Collection<E> entities, Comparable key) {
         if (key instanceof Org) {
             key = new OrgKey(((Org) key).getOrgDomain());
         }
-        Collection list = new LinkedList();
-        for (E entity : keyMap.values()) {
+        Collection<E> list = new LinkedList();
+        for (E entity : entities) {
             if (matches(key, entity)) {
                 list.add(entity);
             }

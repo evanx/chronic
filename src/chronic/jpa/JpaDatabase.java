@@ -27,7 +27,7 @@ import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
-import chronic.entitymap.ChronicMapEntityService;
+import chronic.entitymap.ChronicMatcher;
 import chronicexp.jdbc.CertService;
 import chronicexp.jdbc.SubscriberService;
 import java.sql.Connection;
@@ -35,7 +35,10 @@ import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.storage.CachingEntityService;
+import vellum.storage.DelegatingEntityService;
 import vellum.storage.EntityService;
+import vellum.storage.MapEntityService;
 
 /**
  *
@@ -45,32 +48,29 @@ public class JpaDatabase extends ChronicDatabase {
 
     static Logger logger = LoggerFactory.getLogger(ChronicDatabase.class);
 
-    protected ChronicApp app;
-    protected EntityManager em;
-    protected Connection connection;
-
+    static final ChronicMatcher matcher = new ChronicMatcher();
+    static final CachingEntityService<Cert> certCache = new CachingEntityService(100, matcher);
+    
+    private final EntityManager em;
+    private final Connection connection;
+    
     public EntityService<User> user;        
-
     public EntityService<Org> org;
-
     public EntityService<OrgRole> role;
-
     public EntityService<Topic> topic;
-
     public EntityService<Subscriber> sub;
-
     public EntityService<Cert> cert;
     
     public JpaDatabase(ChronicApp app, Connection connection, EntityManager em) {
         super(app);
         this.connection = connection;
         this.em = em;
-        user = new ChronicMapEntityService(User.class);
-        org = new ChronicMapEntityService(Org.class);
-        role = new ChronicMapEntityService(OrgRole.class);
-        topic = new ChronicMapEntityService(Topic.class);
+        user = new MapEntityService(matcher);
+        org = new MapEntityService(matcher);
+        role = new MapEntityService(matcher);
+        topic = new MapEntityService(matcher);
         sub = new SubscriberService(connection);
-        cert = new CertService(connection);
+        cert = new DelegatingEntityService(certCache, new CertService(connection));
     }
 
     @Override

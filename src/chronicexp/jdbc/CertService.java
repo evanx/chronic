@@ -185,7 +185,7 @@ public class CertService implements EntityService<Cert> {
     }
 
     @Override
-    public boolean contains(Comparable key) throws StorageException {
+    public boolean containsKey(Comparable key) throws StorageException {
         return find(key) != null;
     }
 

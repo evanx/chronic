@@ -27,7 +27,7 @@ public class CertAction implements ChronicHttpxHandler {
         String email = httpx.app.getEmail(httpx);
         CertKey certKey = new CertKey(httpx.parseJsonMap().getMap("cert"));
         OrgRoleKey roleKey = new OrgRoleKey(certKey.getOrgDomain(), email, OrgRoleType.ADMIN);
-        if (!httpx.db.role().contains(roleKey)) {
+        if (!httpx.db.role().containsKey(roleKey)) {
             return JMaps.mapValue("errorMessage", "no role");
         } else {
             Cert cert = httpx.db.cert().find(certKey);

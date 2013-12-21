@@ -404,10 +404,12 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
           <br>A cloud-computing monitoring service.
         </p>
 
-        <p><b>What does it compute?</b>
-          <br>Information about computers you want to monitor. Our server checks if the information has changed, and if so, will alert you. 
-          <br>If the messages stop, we will alert you that something might be wrong.
-          <br>If it is changing all the time, we will ignore it for you, since something is probably wrong with your script.
+        <p><b>What is it essentially?</b>
+          <br>A secure messaging plaform, that uses SSL certificates to authenticate publishers, and Mozilla Persona to authenticate subscribers.
+        </p>
+        
+        <p><b>What does it compute for me?</b>
+          <br>Information you submit that you want to monitor, e.g. scheduled checks. As a default criterion, our server checks if the information has changed, and if so, will alert you. If the messages stop, we will alert you that something might be wrong. If it is changing all the time, we will ignore it for you, since alerts are not useful in that case.
         </p>
 
         <p><b>How much does it cost?</b>
@@ -421,7 +423,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>Who should try it?</b>
-          <br>Anyone who wants instant monitoring i.e. without any server setup or customistion required, e.g. to be up and running in less than a minute. 
+          <br>At this stage, anyone who wants instant monitoring i.e. without any server setup or customistion required, e.g. to be up and running in less than a minute. 
           <br>Someone who wants a monitoring solution that they can customise using shell scripts.
         </p>
 
@@ -513,6 +515,10 @@ OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
         <p><b>How are alerts triggered?</b>
         <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore suprious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
         <br>And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
+        </p>
+
+        <p><b>What other applications?</b>
+          <br>We are looking at using the platform for scheduling reminders.
         </p>
 
         <p><b>How do I to contribute my improvements for inclusion?</b>        
