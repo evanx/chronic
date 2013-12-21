@@ -34,15 +34,15 @@ public class ChronicHttpService implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String path = httpExchange.getRequestURI().getPath();
-        logger.info("handle {} {}", path, httpExchange.getRequestURI().getHost());
+        logger.info("handle {}", path);
         try {
             Class<ChronicHttpxHandler> handlerClass = app.getHandlerClasses().get(path);
-            logger.info("handlerClass {} {}", path, handlerClass);
+            logger.trace("handlerClass {} {}", path, handlerClass);
             if (handlerClass != null) {
                 handle(handlerClass.newInstance(), httpExchange);
             } else {
                 String handlerName = getHandlerName(path);
-                logger.info("handlerName {} {}", path, handlerName);
+                logger.trace("handlerName {} {}", path, handlerName);
                 if (handlerName != null) {
                     handle(getHandler(handlerName), httpExchange);
                 } else {

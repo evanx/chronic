@@ -20,14 +20,17 @@
  */
 package chronic.app;
 
-import chronic.check.OpenPortChecker;
+import chronic.check.TcpChecker;
 import chronic.bundle.Bundle;
 import chronic.check.HttpsChecker;
 import chronic.entity.Cert;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
+import com.sun.net.httpserver.Headers;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,13 +45,100 @@ import vellum.util.Strings;
 public class StatusRecordParser {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecordParser.class);
+    
+    static final String tcpPattern = "Check-tcp: ";
+    static final String httpsPattern = "Check-https: ";
 
     StatusRecord record;
 
-    public StatusRecordParser(Cert cert) {
-        record = new StatusRecord(cert);
+    boolean inHeader = true;
+    boolean nagiosStatus = true;
+    
+    public StatusRecordParser() {
     }
 
+    public StatusRecord parse(Cert cert, Headers headers, String text) throws IOException {
+        record = new StatusRecord(cert);
+        logger.trace("parse: {}", text);
+        for (String key : headers.keySet()) {
+            parseHeader(key, headers.get(key));
+        }
+        for (String line : text.split("\n")) {
+            parseLine(Strings.trimEnd(line));
+        }
+        normalize();
+        return record;
+    }
+    
+    private void parseHeader(String header, List<String> strings) {
+        logger.info("parseHeader {} {}", header, strings.toString());
+        for (String string: strings) {
+            parseHeader(header, string);
+        }
+    }
+
+    private void parseHeader(String header, String value) {
+        if (header.equals("Alert")) {
+            parseAlertType(value);
+        } else if (header.equals("AlertFormat")) {
+            parseAlertFormatType(value);
+        } else if (header.equals("Subscribe")) {
+            parseSubscribe(value);
+        } else if (header.equals("Topic")) {
+            parseTopic(value);
+        } else if (header.equals("Period")) {
+            parsePeriod(value);
+        } else if (header.equals("Check-tcp")) {
+            parseTcp(value);
+        } else if (header.equals("Check-https")) {
+            parseHttps(value);
+        }
+    }
+    
+    private void parseLine(String line) {
+        if (line.startsWith("From: ")) {
+            parseFromLine(line);
+        } else if (line.startsWith("Subject: ")) {
+            parseSubjectLine(line);
+        } else if (line.startsWith("Content-Type: ")) {
+            parseContentTypeLine(line);
+        } else if (line.startsWith("Alert: ")) {
+            parseAlertType(line.substring(7).trim());
+        } else if (line.startsWith("AlertFormat: ")) {
+            parseAlertFormatType(line.substring(13).trim());
+        } else if (line.startsWith("Subscribe: ")) {
+            parseSubscribe(line.substring(11).trim());
+        } else if (line.startsWith("Service: ")) {
+            record.setService(line.substring(9).trim());
+            nagiosStatus = false;
+        } else if (line.startsWith("Period: ")) {
+            parsePeriod(line.substring(8).trim());
+        } else if (line.startsWith("Status: ")) {
+            nagiosStatus = false;
+            parseStatusType(line.substring(8).trim());
+        } else if (line.startsWith("Topic: ")) {
+            record.setTopicLabel(line.substring(7).trim());
+        } else if (line.startsWith(tcpPattern)) {
+            parseTcp(line.substring(tcpPattern.length()));
+        } else if (line.startsWith(httpsPattern)) {
+            parseHttps(line.substring(httpsPattern.length()));
+        } else if (inHeader && line.matches("^\\S*: .*")) {
+            logger.trace("header {}", line);
+        } else if (inHeader && line.trim().isEmpty()) {
+            inHeader = false;
+        } else {
+            inHeader = false;
+            if (nagiosStatus) {
+                parseNagiosStatus(line);
+            }
+            if (HtmlChecker.sanitary(line)) {
+                record.getLineList().add(line);
+            } else {
+                logger.warn("omit not sanitary: {}", line);
+            }
+        }
+    }
+    
     private void parseAlertFormatType(String string) {
         try {
             record.setAlertFormatType(AlertFormatType.valueOf(string));
@@ -66,7 +156,7 @@ public class StatusRecordParser {
         }
     }
 
-    public void parseFromLine(String fromLine) {
+    private void parseFromLine(String fromLine) {
         Matcher matcher = StatusRecordPatterns.FROM_CRON.matcher(fromLine);
         if (matcher.find()) {
             record.setUsername(matcher.group(1));
@@ -74,7 +164,7 @@ public class StatusRecordParser {
         }
     }
 
-    public void parseSubjectLine(String subjectLine) {
+    private void parseSubjectLine(String subjectLine) {
         Matcher matcher = StatusRecordPatterns.CRON_SUBJECT.matcher(subjectLine);
         if (matcher.find()) {
             record.setUsername(matcher.group(1));
@@ -86,7 +176,7 @@ public class StatusRecordParser {
         }
     }
 
-    public boolean parseNagiosStatus(String line) {
+    private boolean parseNagiosStatus(String line) {
         Matcher matcher = StatusRecordPatterns.NAGIOS.matcher(line);
         if (matcher.find()) {
             String service = matcher.group(1).trim();
@@ -100,7 +190,7 @@ public class StatusRecordParser {
         return false;
     }
 
-    public void parseContentTypeLine(String contentTypeLine) {
+    private void parseContentTypeLine(String contentTypeLine) {
         int index = contentTypeLine.indexOf(";");
         if (index > 14) {
             record.setContentType(contentTypeLine.substring(14, index));
@@ -122,87 +212,30 @@ public class StatusRecordParser {
     }
 
     private void parseSubscribe(String string) {
-        record.setSubcribers(Strings.split(string, DelimiterType.COMMA_OR_SPACE));
+        record.getSubscribers().addAll(Arrays.asList(
+                Strings.split(string, DelimiterType.COMMA_OR_SPACE)));
     }
 
-    private boolean parseTcp(String string) {
-        String pattern = "Check-tcp: ";
-        if (!string.startsWith(pattern)) {
-            return false;
-        }
-        string = string.substring(pattern.length());
+    private void parseTopic(String string) {
+        record.setTopicLabel(string);
+        nagiosStatus = false;        
+    }
+    
+    private void parseTcp(String string) {
         try {
-            record.getChecks().add(OpenPortChecker.parse(string));
+            record.getChecks().add(TcpChecker.parse(string));
         } catch (Exception e) {
             logger.warn("parseTcp {}: {}", string, e.getMessage());
         }
-        return true;
     }
 
-    private boolean parseHttps(String string) {
-        String pattern = "Check-https: ";
-        if (!string.startsWith(pattern)) {
-            return false;
-        }
-        string = string.substring(pattern.length());
+    private void parseHttps(String string) {
         try {
             record.getChecks().add(HttpsChecker.parse(string));
         } catch (Exception e) {
             logger.warn("parseHttps {}: {}", string, e.getMessage());
         }
-        return true;
     }    
-
-    public StatusRecord parse(String text) throws IOException {
-        logger.trace("parse: {}", text);
-        String[] lines = text.split("\n");
-        boolean inHeader = true;
-        boolean nagiosStatus = true;
-        for (int i = 0; i < lines.length; i++) {
-            String line = Strings.trimEnd(lines[i]);
-            if (line.startsWith("From: ")) {
-                parseFromLine(line);
-            } else if (line.startsWith("Subject: ")) {
-                parseSubjectLine(line);
-            } else if (line.startsWith("Content-Type: ")) {
-                parseContentTypeLine(line);
-            } else if (line.startsWith("AlertFormat: ")) {
-                parseAlertFormatType(line.substring(13).trim());
-            } else if (line.startsWith("Subscribe: ")) {
-                parseSubscribe(line.substring(11).trim());
-            } else if (line.startsWith("Service: ")) {
-                record.setService(line.substring(9).trim());
-                nagiosStatus = false;
-            } else if (line.startsWith("Period: ")) {
-                parsePeriod(line.substring(8).trim());
-            } else if (line.startsWith("Status: ")) {
-                nagiosStatus = false;
-                parseStatusType(line.substring(8).trim());
-            } else if (line.startsWith("Topic: ")) {
-                record.setTopicLabel(line.substring(7).trim());
-            } else if (line.startsWith("Alert: ")) {
-                parseAlertType(line.substring(7).trim());
-            } else if (parseTcp(line)) {
-            } else if (parseHttps(line)) {
-            } else if (inHeader && line.matches("^\\S*: .*")) {
-                logger.trace("header {}", line);
-            } else if (inHeader && line.trim().isEmpty()) {
-                inHeader = false;
-            } else {
-                inHeader = false;
-                if (nagiosStatus) {
-                    parseNagiosStatus(line);
-                }
-                if (HtmlChecker.sanitary(line)) {
-                    record.getLineList().add(line);
-                } else {
-                    logger.warn("omit not sanitary: {}", line);
-                }
-            }
-        }
-        normalize();
-        return record;
-    }
 
     private void normalize() {
         if (record.alertType == null) {
@@ -223,7 +256,7 @@ public class StatusRecordParser {
         }
     }
 
-    public String createTopicLabel() {
+    private String createTopicLabel() {
         if (record.username != null && record.hostname != null && record.service != null) {
             if (record.service.matches("\\s")) {
                 return String.format("%s@%s '%s'", record.username, record.hostname, record.service);

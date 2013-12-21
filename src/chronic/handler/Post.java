@@ -32,7 +32,7 @@ public class Post implements ChronicHttpxHandler {
         try {
             Cert cert = httpx.persistCert();
             int contentLength = Integer.parseInt(httpx.getRequestHeader("Content-length"));
-            logger.info("contentLength {}", contentLength);
+            logger.trace("contentLength {}", contentLength);
             if (contentLength > contentLengthLimit) {
                 throw new Exception("Content length limit exceeded");
             }
@@ -40,14 +40,15 @@ public class Post implements ChronicHttpxHandler {
             httpx.getDelegate().getRequestBody().read(content);
             String contentString = new String(content);
             logger.trace("content {}", contentString);
-            StatusRecord status = new StatusRecordParser(cert).parse(contentString);
+            StatusRecord status = new StatusRecordParser().parse(
+                    cert, httpx.getRequestHeaders(), contentString);
             logger.trace("content lines {}: {}", status.getLineList().size(),
                     Strings.formatFirst(status.getLineList()));
             logger.debug("status {}", status);
             Topic topic = httpx.persistTopic(cert, status.getTopicLabel());
             status.setTopic(topic);
             if (status.getSubscribers() != null) {
-                if (status.getSubscribers().length > 0) {
+                if (status.getSubscribers().size() > 0) {
                     for (String subscriber : status.getSubscribers()) {
                         httpx.persistTopicSubscriber(topic, subscriber);
                     }

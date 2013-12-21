@@ -27,12 +27,12 @@ import vellum.data.Patterns;
  *
  * @author evan.summers
  */
-public class OpenPortChecker implements StatusCheck {
+public class TcpChecker implements StatusCheck {
     String address;
     int port;
     int timeout = 4000;
 
-    public OpenPortChecker(String address, int port) {
+    public TcpChecker(String address, int port) {
         this.address = address;
         this.port = port;
     }   
@@ -47,12 +47,12 @@ public class OpenPortChecker implements StatusCheck {
         } 
     }
 
-    public static OpenPortChecker parse(String string) {
+    public static TcpChecker parse(String string) {
         String[] fields = string.split("\\s+");
         if (fields.length == 2 && 
                 Patterns.matchesDomain(fields[0]) &&
                 Patterns.matchesInteger(fields[1])) {
-             return new OpenPortChecker(fields[0], Integer.parseInt(fields[1]));
+             return new TcpChecker(fields[0], Integer.parseInt(fields[1]));
         }
         throw new IllegalArgumentException(string);
     }
