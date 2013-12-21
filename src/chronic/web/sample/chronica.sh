@@ -626,7 +626,7 @@ c0help() {
 
 postheaders() {
   headers="-H 'Content-Type: text/plain'"
-  for header in $@
+  for header in "$@"
   do
     echo "header: $header"
     headers="$headers -H '$header'"
