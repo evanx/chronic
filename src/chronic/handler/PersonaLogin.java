@@ -2,12 +2,14 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.persona;
+package chronic.handler;
 
 import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.User;
 import chronic.app.ChronicCookie;
+import chronic.persona.PersonaUserInfo;
+import chronic.persona.PersonaVerifier;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

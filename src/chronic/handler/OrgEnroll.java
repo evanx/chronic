@@ -13,9 +13,9 @@ import vellum.jx.JMap;
  *
  * @author evan.summers
  */
-public class EnrollOrg implements ChronicHttpxHandler {
+public class OrgEnroll implements ChronicHttpxHandler {
     
-    Logger logger = LoggerFactory.getLogger(EnrollOrg.class);
+    Logger logger = LoggerFactory.getLogger(OrgEnroll.class);
  
     
     @Override

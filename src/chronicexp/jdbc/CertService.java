@@ -29,7 +29,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
-import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.sql.QueryMap;
@@ -154,7 +153,7 @@ public class CertService implements EntityService<Cert> {
             statement.setString(1, key.getOrgDomain());
             statement.setString(2, key.getOrgUnit());
             statement.setString(3, key.getCommonName());
-            try (ResultSet resultSet = statement.getResultSet()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 if (!resultSet.next()) {
                     return null;
                 }
@@ -171,7 +170,7 @@ public class CertService implements EntityService<Cert> {
 
     private Cert findId(Long id) throws StorageException {
         try (PreparedStatement statement = prepare("select id", id);
-                ResultSet resultSet = statement.getResultSet()) {
+                ResultSet resultSet = statement.executeQuery()) {
             if (!resultSet.next()) {
                 return null;
             }

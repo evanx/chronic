@@ -20,16 +20,20 @@
  */
 package chronic.app;
 
+import chronic.handler.AdminEnroll;
+import chronic.handler.CertSubscribe;
+import chronic.handler.Post;
 import chronic.jpa.JpaDatabase;
 import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
+import chronicexp.jdbc.ChronicSchema;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -68,6 +72,7 @@ public class ChronicApp {
     SynchronizedCapacityDeque<AlertRecord> alertDeque = new SynchronizedCapacityDeque(100);
     LinkedBlockingQueue<AlertRecord> alertQueue = new LinkedBlockingQueue(100);
     LinkedBlockingQueue<StatusRecord> statusQueue = new LinkedBlockingQueue(100);
+    Map<String, Class> handlerClasses = new HashMap();
     DataSource dataSource = new DataSource();
     EntityManagerFactory emf;
     boolean running = true;
@@ -81,19 +86,23 @@ public class ChronicApp {
     public void init() throws Exception {
         properties.init();
         logger.info("properties {}", properties);
-        dataSource.setPoolProperties(properties.getPoolProperties());
-        emf = Persistence.createEntityManagerFactory("chronicPU");;
-        messenger.init();
-        messenger.alertAdmins("Chronic restarted");
-        httpServer.start(properties.getHttpRedirectServer(),
-                new RedirectHttpsHandler());
         webServer.start(properties.getWebServer(),
                 new ChronicTrustManager(this),
                 new ChronicHttpService(this));
+        dataSource.setPoolProperties(properties.getPoolProperties());
+        emf = Persistence.createEntityManagerFactory("chronicPU");;
         appServer.start(properties.getAppServer(),
                 new ChronicTrustManager(this),
                 new ChronicHttpService(this));
+        new ChronicSchema(this).verifySchema();
+        httpServer.start(properties.getHttpRedirectServer(),
+                new RedirectHttpsHandler());
         logger.info("initialized");
+        messenger.init();
+        messenger.alertAdmins("Chronic restarted");
+        handlerClasses.put("/post", Post.class);
+        handlerClasses.put("/enroll", AdminEnroll.class);
+        handlerClasses.put("/subscribe", CertSubscribe.class);
     }
 
     public ChronicProperties getProperties() {
@@ -293,6 +302,10 @@ public class ChronicApp {
         return alertMap;
     }
 
+    public Map<String, Class> getHandlerClasses() {
+        return handlerClasses;
+    }
+    
     public static void main(String[] args) throws Exception {
         try {
             ChronicApp app = new ChronicApp();

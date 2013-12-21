@@ -131,25 +131,24 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     private Subscriber findKey(SubscriberKey key) throws StorageException {
-        try (PreparedStatement statement = prepare("select key", 
-                key.getTopicId(), key.getEmail())) {
-            try (ResultSet resultSet = statement.getResultSet()) {
-                if (!resultSet.next()) {
-                    return null;
-                }
-                Subscriber subscriber = create(resultSet);
-                if (resultSet.next()) {
-                    throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, key);
-                }
-                return subscriber;
+        try (PreparedStatement statement = prepare("select key",
+                key.getTopicId(), key.getEmail());
+                ResultSet resultSet = statement.executeQuery()) {
+            if (!resultSet.next()) {
+                return null;
             }
+            Subscriber subscriber = create(resultSet);
+            if (resultSet.next()) {
+                throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, key);
+            }
+            return subscriber;
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, key);
         }
     }
     private Subscriber findId(Long id) throws StorageException {
         try (PreparedStatement statement = prepare("select id", id);
-                ResultSet resultSet = statement.getResultSet()) {
+                ResultSet resultSet = statement.executeQuery()) {
             if (!resultSet.next()) {
                 return null;
             }

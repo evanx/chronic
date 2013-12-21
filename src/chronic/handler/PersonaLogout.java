@@ -2,7 +2,7 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.persona;
+package chronic.handler;
 
 import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
