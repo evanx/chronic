@@ -631,8 +631,9 @@ postheaders() {
     echo "header: $header"
     headers="$headers -H '$header'"
   done
-    tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
-      --data-binary @- $headers https://$server/post 
+  echo "server $server"
+  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+    --data-binary @- $headers https://$server/post 
 }
 
 if [ $# -gt 0 ]
