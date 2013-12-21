@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.exception.Exceptions;
 import vellum.httphandler.WebHttpHandler;
+import vellum.jx.JMap;
 
 /**
  *
@@ -42,6 +43,7 @@ public class ChronicHttpService implements HttpHandler {
                 handle(handlerClass.newInstance(), httpExchange);
             } else {
                 String handlerName = getHandlerName(path);
+                logger.info("handlerName {} {}", path, handlerName);
                 if (handlerName != null) {
                     handle(getHandler(handlerName), httpExchange);
                 } else {
@@ -67,6 +69,7 @@ public class ChronicHttpService implements HttpHandler {
             InstantiationException, IllegalAccessException {
         String className = "chronic.handler."
                 + Character.toUpperCase(handlerName.charAt(0)) + handlerName.substring(1);
+        logger.info("handler {}", className);
         return (ChronicHttpxHandler) Class.forName(className).newInstance();
     }
 
@@ -75,12 +78,15 @@ public class ChronicHttpService implements HttpHandler {
         EntityManager em = null;
         Connection connection = null;
         try {
+            app.ensureInitialized();
             connection = app.getDataSource().getConnection();
             em = app.getEntityManagerFactory().createEntityManager();
             ChronicDatabase database = new JpaDatabase(app, connection, em);
             httpx.setDatabase(database);
             em.getTransaction().begin();
-            httpx.sendResponse(handler.handle(httpx));
+            JMap responseMap = handler.handle(httpx);
+            logger.info("response {}", responseMap);
+            httpx.sendResponse(responseMap);
             em.getTransaction().commit();
         } catch (Exception e) {
             httpx.sendError(e);
@@ -94,6 +100,7 @@ public class ChronicHttpService implements HttpHandler {
             if (em != null) {
                 em.getTransaction().rollback();
             }
+            e.printStackTrace(System.out);
         } finally {
             try {
                 if (connection != null) {

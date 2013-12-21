@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.transaction;
+package chronic.persistence;
 
 import chronic.api.ChronicHttpx;
 import chronic.entity.Cert;
@@ -17,14 +17,14 @@ import vellum.storage.StorageException;
  *
  * @author evan.summers
  */
-public class EnrollRoleTransaction {
+public class PersistOrgRole {
     
-    static Logger logger = LoggerFactory.getLogger(EnrollRoleTransaction.class);
+    static Logger logger = LoggerFactory.getLogger(PersistOrgRole.class);
     
     public OrgRole handle(ChronicHttpx httpx, Cert cert, String email, OrgRoleType roleType) 
             throws StorageException {
         logger.info("enroll {} {}", cert, email);
-        User user = new EnrollUserTransaction().handle(httpx, email);        
+        User user = new PersistUser().handle(httpx, email);        
         logger.info("user {}", user);
         OrgRoleKey orgRoleKey = new OrgRoleKey(cert.getOrgDomain(), email, roleType);
         OrgRole orgRole = httpx.db.role().find(orgRoleKey);

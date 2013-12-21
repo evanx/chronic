@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import vellum.storage.CachingEntityService;
 import vellum.storage.DelegatingEntityService;
 import vellum.storage.EntityService;
-import vellum.storage.MapEntityService;
 
 /**
  *
@@ -50,6 +49,11 @@ public class JpaDatabase extends ChronicDatabase {
 
     static final ChronicMatcher matcher = new ChronicMatcher();
     static final CachingEntityService<Cert> certCache = new CachingEntityService(100, matcher);
+    static final CachingEntityService<User> userCache = new CachingEntityService(100, matcher);
+    static final CachingEntityService<Org> orgCache = new CachingEntityService(100, matcher);
+    static final CachingEntityService<OrgRole> roleCache = new CachingEntityService(100, matcher);
+    static final CachingEntityService<Topic> topicCache = new CachingEntityService(100, matcher);
+    static final CachingEntityService<Subscriber> subCache = new CachingEntityService(100, matcher);
     
     private final EntityManager em;
     private final Connection connection;
@@ -65,11 +69,11 @@ public class JpaDatabase extends ChronicDatabase {
         super(app);
         this.connection = connection;
         this.em = em;
-        user = new MapEntityService(matcher);
-        org = new MapEntityService(matcher);
-        role = new MapEntityService(matcher);
-        topic = new MapEntityService(matcher);
-        sub = new SubscriberService(connection);
+        user = userCache;
+        org = orgCache;
+        role = roleCache;
+        topic = topicCache;
+        sub = new DelegatingEntityService(subCache, new SubscriberService(connection));
         cert = new DelegatingEntityService(certCache, new CertService(connection));
     }
 

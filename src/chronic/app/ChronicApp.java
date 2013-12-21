@@ -39,6 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -65,7 +66,7 @@ public class ChronicApp {
     ChronicMailMessenger messenger = new ChronicMailMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
-    VellumHttpServer httpServer = new VellumHttpServer();
+    VellumHttpServer httpRedirectServer = new VellumHttpServer();
     Map<ComparableTuple, StatusRecord> recordMap = new ConcurrentHashMap();
     Map<ComparableTuple, AlertRecord> alertMap = new ConcurrentHashMap();
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
@@ -75,9 +76,11 @@ public class ChronicApp {
     Map<String, Class> handlerClasses = new HashMap();
     DataSource dataSource = new DataSource();
     EntityManagerFactory emf;
+    boolean initalized = false;
     boolean running = true;
-    Thread alertThread;
-    Thread statusThread;
+    Thread alertThread = new AlertThread();
+    Thread statusThread = new StatusThread();
+    Thread initThread = new InitThread();
 
     public ChronicApp() {
         super();
@@ -89,22 +92,58 @@ public class ChronicApp {
         webServer.start(properties.getWebServer(),
                 new ChronicTrustManager(this),
                 new ChronicHttpService(this));
-        dataSource.setPoolProperties(properties.getPoolProperties());
-        emf = Persistence.createEntityManagerFactory("chronicPU");;
+        httpRedirectServer.start(properties.getHttpRedirectServer(),
+                new RedirectHttpsHandler());
         appServer.start(properties.getAppServer(),
                 new ChronicTrustManager(this),
                 new ChronicHttpService(this));
-        new ChronicSchema(this).verifySchema();
-        httpServer.start(properties.getHttpRedirectServer(),
-                new RedirectHttpsHandler());
-        logger.info("initialized");
-        messenger.init();
-        messenger.alertAdmins("Chronic restarted");
         handlerClasses.put("/post", Post.class);
         handlerClasses.put("/enroll", AdminEnroll.class);
         handlerClasses.put("/subscribe", CertSubscribe.class);
+        messenger.init();
+        initThread.start();
     }
 
+    public void ensureInitialized() throws InterruptedException {
+        if (!initalized) {
+            initThread.join();
+        }
+    }
+    
+    public void initDeferred() throws Exception {
+        dataSource.setPoolProperties(properties.getPoolProperties());
+        emf = Persistence.createEntityManagerFactory("chronicPU");;
+        new ChronicSchema(this).verifySchema();
+        initalized = true;
+        logger.info("initialized");
+    }
+
+    public void startApp() throws Exception {
+        logger.info("schedule {}", properties.getPeriod());
+        elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(), properties.getPeriod(),
+                properties.getPeriod(), TimeUnit.MILLISECONDS);
+        alertThread.start();
+        statusThread.start();
+        logger.info("started");
+        if (properties.isTesting()) {
+            test();
+        }
+        messenger.alertAdmins("Chronic restarted");
+    }
+    
+    class InitThread extends Thread {
+
+        @Override
+        public void run() {
+            try {
+                initDeferred();
+                startApp();
+            } catch (Exception e) {
+                logger.warn("init", e);
+            }
+        }
+    }
+    
     public ChronicProperties getProperties() {
         return properties;
     }
@@ -121,18 +160,6 @@ public class ChronicApp {
         return new JpaDatabase(this, dataSource.getConnection(), emf.createEntityManager());
     }
 
-    public void startApp() throws Exception {
-        logger.info("schedule {}", properties.getPeriod());
-        elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(), properties.getPeriod(),
-                properties.getPeriod(), TimeUnit.MILLISECONDS);
-        alertThread = new Thread(new AlertRunnable());
-        statusThread = new Thread(new StatusRunnable());
-        logger.info("started");
-        if (properties.isTesting()) {
-            test();
-        }
-    }
-
     public void test() throws Exception {
     }
 
@@ -142,8 +169,8 @@ public class ChronicApp {
         if (webServer != null) {
             webServer.shutdown();
         }
-        if (httpServer != null) {
-            httpServer.shutdown();
+        if (httpRedirectServer != null) {
+            httpRedirectServer.shutdown();
         }
         if (statusThread != null) {
             statusThread.interrupt();
@@ -155,7 +182,7 @@ public class ChronicApp {
         }
     }
 
-    class AlertRunnable implements Runnable {
+    class AlertThread extends Thread {
 
         @Override
         public void run() {
@@ -182,7 +209,7 @@ public class ChronicApp {
         return statusQueue;
     }
     
-    class StatusRunnable implements Runnable {
+    class StatusThread extends Thread {
 
         @Override
         public void run() {
@@ -310,7 +337,6 @@ public class ChronicApp {
         try {
             ChronicApp app = new ChronicApp();
             app.init();
-            app.startApp();
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }

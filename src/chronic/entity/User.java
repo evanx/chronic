@@ -10,14 +10,14 @@ import java.util.Date;
 import vellum.data.Emails;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
-import vellum.storage.AbstractEntity;
+import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
 
 /**
  *
  * @author evan.summers
  */
-public class User extends AbstractEntity implements UserKeyed, Enabled {
+public class User extends AbstractIdEntity implements UserKeyed, Enabled {
 
     Long id;
     String email;
@@ -55,10 +55,16 @@ public class User extends AbstractEntity implements UserKeyed, Enabled {
         return new UserKey(email);
     }
     
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+    
     public String getLabel() {
         return label;
     }

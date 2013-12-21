@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.transaction;
+package chronic.persistence;
 
 import chronic.api.ChronicHttpx;
 import chronic.entity.Cert;
@@ -20,9 +20,9 @@ import vellum.storage.StorageException;
  *
  * @author evan.summers
  */
-public class EnrollCertTransaction {
+public class PersistCert {
     
-    static Logger logger = LoggerFactory.getLogger(EnrollCertTransaction.class);
+    static Logger logger = LoggerFactory.getLogger(PersistCert.class);
     
     public Cert handle(ChronicHttpx httpx) throws StorageException, CertificateException,
             SSLPeerUnverifiedException {

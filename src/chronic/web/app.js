@@ -135,7 +135,7 @@ app.controller("alertsController", ["$scope", "$http",
       };
       $scope.$on("loggedOn", function(email) {
          console.log("loggedOn", email);
-         $scope.changeView("alerts");
+         $scope.changeView("info");
       });
       $scope.$on("changeView", function(event, view) {
          console.log("alerts changeView", view);

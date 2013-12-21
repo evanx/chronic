@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.transaction;
+package chronic.persistence;
 
 import chronic.api.ChronicHttpx;
 import chronic.entity.Cert;
@@ -15,9 +15,9 @@ import vellum.storage.StorageException;
  *
  * @author evan.summers
  */
-public class EnrollCertSubscriberTransaction {
+public class PersistCertSubscriber {
     
-    static Logger logger = LoggerFactory.getLogger(EnrollCertSubscriberTransaction.class);
+    static Logger logger = LoggerFactory.getLogger(PersistCertSubscriber.class);
     
     public void handle(ChronicHttpx httpx, Cert cert, String email) throws StorageException {
         logger.info("handle {} {}", cert, email);
@@ -27,7 +27,7 @@ public class EnrollCertSubscriberTransaction {
             httpx.db.user().add(user);
         }
         for (Topic topic : httpx.db.topic().list(cert.getKey())) {
-            new EnrollSubscriberTransaction().handle(httpx, topic, email);
+            new PersistSubscriber().handle(httpx, topic, email);
         }
         
     }

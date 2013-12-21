@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.transaction;
+package chronic.persistence;
 
 import chronic.api.ChronicHttpx;
 import chronic.entity.User;
@@ -13,9 +13,9 @@ import vellum.storage.StorageException;
  *
  * @author evan.summers
  */
-public class EnrollUserTransaction {
+public class PersistUser {
     
-    static Logger logger = LoggerFactory.getLogger(EnrollUserTransaction.class);
+    static Logger logger = LoggerFactory.getLogger(PersistUser.class);
     
     public User handle(ChronicHttpx httpx, String email) throws StorageException {
         logger.info("handle {}", email);

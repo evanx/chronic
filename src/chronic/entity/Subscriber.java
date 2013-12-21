@@ -13,6 +13,8 @@ import chronic.entitykey.UserKey;
 import chronic.entitykey.UserKeyed;
 import chronic.entitytype.ChronicDatabaseInjectable;
 import chronic.entitytype.SubscriberActionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
 import vellum.storage.AbstractIdEntity;
@@ -25,6 +27,9 @@ import vellum.type.Enabled;
  */
 public final class Subscriber extends AbstractIdEntity implements SubscriberKeyed, UserKeyed, 
         TopicIdKeyed, Enabled, JMapped, ChronicDatabaseInjectable {
+    
+    Logger logger = LoggerFactory.getLogger(Subscriber.class);
+
     Long id;
     Long topicId;
     String email;
@@ -111,7 +116,9 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
 
     @Override
     public void inject(ChronicDatabase db) throws StorageException {
+        logger.info("inject topicId {}", topicId);
         topic = db.topic().retrieve(topicId);
+        logger.info("inject topic {}", topic);
         topic.inject(db);
     }
 

@@ -6,8 +6,8 @@ package chronic.handler;
 import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Cert;
-import chronic.transaction.EnrollCertSubscriberTransaction;
-import chronic.transaction.EnrollCertTransaction;
+import chronic.persistence.PersistCertSubscriber;
+import chronic.persistence.PersistCert;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +26,13 @@ public class CertSubscribe implements ChronicHttpxHandler {
 
     @Override
     public JMap handle(ChronicHttpx hx) throws Exception {
-        Cert cert = new EnrollCertTransaction().handle(hx);
+        Cert cert = new PersistCert().handle(hx);
         String[] emails = Strings.split(hx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {
             if (!Emails.matchesEmail(email)) {
                 return new JMap(String.format("ERROR: invalid email: %s\n", email));
             } else {
-                new EnrollCertSubscriberTransaction().handle(hx, cert, email);
+                new PersistCertSubscriber().handle(hx, cert, email);
             }
         }
         return new JMap(String.format("OK: %s: %s\n", cert.getCommonName(), Arrays.toString(emails)));

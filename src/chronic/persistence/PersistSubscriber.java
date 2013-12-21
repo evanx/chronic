@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.transaction;
+package chronic.persistence;
 
 import chronic.api.ChronicHttpx;
 import chronic.entity.Topic;
@@ -15,9 +15,9 @@ import vellum.storage.StorageException;
  *
  * @author evan.summers
  */
-public class EnrollSubscriberTransaction {
+public class PersistSubscriber {
     
-    static Logger logger = LoggerFactory.getLogger(EnrollSubscriberTransaction.class);
+    static Logger logger = LoggerFactory.getLogger(PersistSubscriber.class);
     
     public Subscriber handle(ChronicHttpx httpx, Topic topic, String email) throws StorageException {
         SubscriberKey key = new SubscriberKey(topic.getId(), email);

@@ -16,7 +16,7 @@ import vellum.data.Patterns;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.security.Certificates;
-import vellum.storage.AbstractEntity;
+import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
 import vellum.validation.ValidationException;
 import vellum.validation.ValidationExceptionType;
@@ -26,7 +26,7 @@ import vellum.validation.ValidationExceptionType;
  * @author evan.summers
  */
 @Entity
-public class Org extends AbstractEntity implements OrgKeyed, Enabled, Serializable {
+public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -104,9 +104,16 @@ public class Org extends AbstractEntity implements OrgKeyed, Enabled, Serializab
         return new OrgKey(orgDomain);
     }
     
-    public void setId(long id) {
+    @Override
+    public void setId(Long id) {
         this.id = id;
     }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+        
 
     public String getOrgName() {
         return orgName;

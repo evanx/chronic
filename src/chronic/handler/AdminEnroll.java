@@ -7,14 +7,13 @@ import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Cert;
 import chronic.entitytype.OrgRoleType;
-import chronic.transaction.EnrollRoleTransaction;
-import chronic.transaction.EnrollCertTransaction;
+import chronic.persistence.PersistOrgRole;
+import chronic.persistence.PersistCert;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Emails;
 import vellum.enumtype.DelimiterType;
-import vellum.exception.DisplayException;
 import vellum.jx.JMap;
 import vellum.util.Strings;
 
@@ -28,13 +27,13 @@ public class AdminEnroll implements ChronicHttpxHandler {
     
     @Override
     public JMap handle(ChronicHttpx hx) throws Exception {
-        Cert cert = new EnrollCertTransaction().handle(hx);
+        Cert cert = new PersistCert().handle(hx);
         String[] emails = Strings.split(hx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {
             if (!Emails.matchesEmail(email)) {
                 return new JMap(String.format("ERROR: invalid email: %s\n", email));
             } else {
-                new EnrollRoleTransaction().handle(hx, cert, email, OrgRoleType.ADMIN);
+                new PersistOrgRole().handle(hx, cert, email, OrgRoleType.ADMIN);
             }
         }
         return new JMap(String.format("OK: %s: %s\n", cert.getOrgDomain(), Arrays.toString(emails)));
