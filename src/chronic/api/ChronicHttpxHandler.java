@@ -3,8 +3,6 @@
  */
 package chronic.api;
 
-import chronic.app.ChronicApp;
-import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 
 /**
@@ -13,5 +11,5 @@ import vellum.jx.JMap;
  */
 public interface ChronicHttpxHandler {
     
-    public JMap handle(ChronicApp app, Httpx httpx) throws Exception;
+    public JMap handle(ChronicHttpx httpx) throws Exception;
 }

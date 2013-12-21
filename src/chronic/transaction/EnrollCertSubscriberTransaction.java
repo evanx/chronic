@@ -3,7 +3,7 @@
  */
 package chronic.transaction;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.entity.Cert;
 import chronic.entity.User;
 import chronic.entity.Topic;
@@ -19,15 +19,15 @@ public class EnrollCertSubscriberTransaction {
     
     static Logger logger = LoggerFactory.getLogger(EnrollCertSubscriberTransaction.class);
     
-    public void handle(ChronicApp app, Cert cert, String email) throws StorageException {
+    public void handle(ChronicHttpx httpx, Cert cert, String email) throws StorageException {
         logger.info("handle {} {}", cert, email);
-        User user = app.storage().user().find(email);
+        User user = httpx.db.user().find(email);
         if (user == null) {
             user = new User(email);
-            app.storage().user().add(user);
+            httpx.db.user().add(user);
         }
-        for (Topic topic : app.storage().topic().list(cert.getKey())) {
-            new EnrollSubscriberTransaction().handle(app, topic, email);
+        for (Topic topic : httpx.db.topic().list(cert.getKey())) {
+            new EnrollSubscriberTransaction().handle(httpx, topic, email);
         }
         
     }

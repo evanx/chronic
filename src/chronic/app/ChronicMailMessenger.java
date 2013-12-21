@@ -4,10 +4,10 @@
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements. See the NOTICE file
  distributed with this work for additional information
- regarding copyright ownership.  The ASF licenses this file
- to you under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance
- with the License.  You may obtain a copy of the License at
+ regarding copyright ownership. The ASF licenses this file to
+ you under the Apache License, Version 2.0 (the "License").
+ You may not use this file except in compliance with the
+ License. You may obtain a copy of the License at:
 
  http://www.apache.org/licenses/LICENSE-2.0
 
@@ -49,10 +49,10 @@ public class ChronicMailMessenger {
         mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
-    public synchronized void alert(AlertRecord alert) {
+    public synchronized void alert(ChronicDatabase db, AlertRecord alert) {
         logger.warn("alert {}", alert.toString());
         try {
-            for (String email : app.storage().listSubscriberEmails(alert.getStatus().getTopic())) {
+            for (String email : db.listSubscriberEmails(alert.getStatus().getTopic())) {
                 AlertRecord previous = alertMap.put(email, alert);
                 if (previous != null) {
                     long elapsed = alert.getTimestamp() - previous.getTimestamp();
@@ -62,6 +62,7 @@ public class ChronicMailMessenger {
                                 alert.getStatus().getKey()));
                     }
                 }
+                alert.setAlertedStatus(alert.getStatus());
                 mailer.sendEmail(email,
                         alert.getStatus().getTopicLabel(),
                         new AlertMailBuilder(app).build(alert));

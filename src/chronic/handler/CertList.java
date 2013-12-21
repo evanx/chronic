@@ -3,14 +3,13 @@
  */
 package chronic.handler;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Cert;
 import java.util.Set;
 import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 
@@ -23,15 +22,15 @@ public class CertList implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(CertList.class);
   
     @Override
-    public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
-        String email = app.getEmail(httpx);
+    public JMap handle(ChronicHttpx httpx) throws Exception {
+        String email = httpx.app.getEmail(httpx);
         Set certs = new TreeSet();
-        for (Cert cert : app.storage().listCerts(email)) {
+        for (Cert cert : httpx.db.listCerts(email)) {
             certs.add(cert);
         }
-        if (certs.isEmpty() && app.getProperties().isDemo(httpx)) {
-            String adminEmail = app.getProperties().getAdminEmail();
-            for (Cert cert : app.storage().listCerts(adminEmail)) {
+        if (certs.isEmpty() && httpx.app.getProperties().isDemo(httpx)) {
+            String adminEmail = httpx.app.getProperties().getAdminEmail();
+            for (Cert cert : httpx.db.listCerts(adminEmail)) {
                 certs.add(cert);
             }
         } 

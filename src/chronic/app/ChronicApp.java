@@ -4,10 +4,10 @@
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements. See the NOTICE file
  distributed with this work for additional information
- regarding copyright ownership.  The ASF licenses this file
- to you under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance
- with the License.  You may obtain a copy of the License at
+ regarding copyright ownership. The ASF licenses this file to
+ you under the Apache License, Version 2.0 (the "License").
+ You may not use this file except in compliance with the
+ License. You may obtain a copy of the License at:
 
  http://www.apache.org/licenses/LICENSE-2.0
 
@@ -20,20 +20,23 @@
  */
 package chronic.app;
 
-import chronic.entitymap.MockChronicStorage;
-import chronic.entitytype.ChronicApped;
+import chronic.jpa.JpaDatabase;
 import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.io.IOException;
-import java.util.Collection;
+import java.sql.SQLException;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,45 +54,45 @@ import vellum.httphandler.RedirectHttpsHandler;
  *
  * @author evan.summers
  */
-public class ChronicApp implements Runnable {
+public class ChronicApp {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
+    Logger logger = LoggerFactory.getLogger(ChronicApp.class);
     ChronicProperties properties = new ChronicProperties();
-    ChronicStorage storage;
     ChronicMailMessenger messenger = new ChronicMailMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
     VellumHttpServer httpServer = new VellumHttpServer();
     Map<ComparableTuple, StatusRecord> recordMap = new ConcurrentHashMap();
     Map<ComparableTuple, AlertRecord> alertMap = new ConcurrentHashMap();
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    SynchronizedCapacityDeque statusDeque = new SynchronizedCapacityDeque(100);
-    SynchronizedCapacityDeque alertDeque = new SynchronizedCapacityDeque(100);
+    ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
+    SynchronizedCapacityDeque<AlertRecord> alertDeque = new SynchronizedCapacityDeque(100);
+    LinkedBlockingQueue<AlertRecord> alertQueue = new LinkedBlockingQueue(100);
+    LinkedBlockingQueue<StatusRecord> statusQueue = new LinkedBlockingQueue(100);
     DataSource dataSource = new DataSource();
-    
+    EntityManagerFactory emf;
+    boolean running = true;
+    Thread alertThread;
+    Thread statusThread;
+
     public ChronicApp() {
+        super();
     }
 
     public void init() throws Exception {
         properties.init();
         logger.info("properties {}", properties);
-        if (properties.isMockStorage()) {
-            storage = new MockChronicStorage(this);
-        } else {
-            dataSource.setPoolProperties(properties.getPoolProperties());
-            storage = new MockChronicStorage(this);
-        }
-        storage.init();
+        dataSource.setPoolProperties(properties.getPoolProperties());
+        emf = Persistence.createEntityManagerFactory("chronicPU");;
         messenger.init();
         messenger.alertAdmins("Chronic restarted");
         httpServer.start(properties.getHttpRedirectServer(),
                 new RedirectHttpsHandler());
         webServer.start(properties.getWebServer(),
                 new ChronicTrustManager(this),
-                new ChronicHttpHandler(this));
+                new ChronicHttpService(this));
         appServer.start(properties.getAppServer(),
                 new ChronicTrustManager(this),
-                new ChronicHttpHandler(this));
+                new ChronicHttpService(this));
         logger.info("initialized");
     }
 
@@ -100,11 +103,21 @@ public class ChronicApp implements Runnable {
     public DataSource getDataSource() {
         return dataSource;
     }
-    
-    public void start() throws Exception {
+
+    public EntityManagerFactory getEntityManagerFactory() {
+        return emf;
+    }
+
+    public ChronicDatabase getDatabase() throws SQLException {
+        return new JpaDatabase(this, dataSource.getConnection(), emf.createEntityManager());
+    }
+
+    public void startApp() throws Exception {
         logger.info("schedule {}", properties.getPeriod());
-        executorService.scheduleAtFixedRate(this, properties.getPeriod(),
+        elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(), properties.getPeriod(),
                 properties.getPeriod(), TimeUnit.MILLISECONDS);
+        alertThread = new Thread(new AlertRunnable());
+        statusThread = new Thread(new StatusRunnable());
         logger.info("started");
         if (properties.isTesting()) {
             test();
@@ -114,30 +127,82 @@ public class ChronicApp implements Runnable {
     public void test() throws Exception {
     }
 
-    public void stop() throws Exception {
+    public void stopApp() throws Exception {
+        running = false;
+        elapsedExecutorService.shutdown();
         if (webServer != null) {
             webServer.shutdown();
         }
         if (httpServer != null) {
             httpServer.shutdown();
         }
-        executorService.shutdown();
+        if (statusThread != null) {
+            statusThread.interrupt();
+            statusThread.join(2000);
+        }
+        if (alertThread != null) {
+            alertThread.interrupt();
+            alertThread.join(2000);
+        }
     }
 
-    public ChronicStorage storage() {
-        return storage;
+    class AlertRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            ChronicDatabase db = null;
+            while (running) {
+                try {
+                    if (db == null) {
+                        db = getDatabase();
+                    }
+                    AlertRecord alert = alertQueue.poll(60, TimeUnit.SECONDS);
+                    if (alert == null) {
+                    } else {
+                        messenger.alert(db, alert);
+                    }
+                } catch (InterruptedException | SQLException e) {
+                    logger.warn("run", e);
+                    db = null;
+                }
+            }
+        }
     }
 
-    public Map<ComparableTuple, AlertRecord> getAlertMap() {
-        return alertMap;
+    public LinkedBlockingQueue<StatusRecord> getStatusQueue() {
+        return statusQueue;
+    }
+    
+    class StatusRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    StatusRecord status = statusQueue.poll(60, TimeUnit.SECONDS);
+                    if (status == null) {
+                    } else {
+                        checkStatus(status);
+                    }
+                } catch (InterruptedException | StorageException e) {
+                    logger.warn("run", e);
+                }
+            }
+        }
     }
 
-    @Override
-    public synchronized void run() {
-        logger.info("run {}", properties.getPeriod());
-        for (StatusRecord statusRecord : recordMap.values()) {
-            if (statusRecord.getPeriodMillis() != 0) {
-                checkElapsed(statusRecord);
+    class ElapsedRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                for (StatusRecord statusRecord : recordMap.values()) {
+                    if (statusRecord.getPeriodMillis() != 0) {
+                        checkElapsed(statusRecord);
+                    }
+                }
+            } catch (Exception e) {
+                logger.warn("run", e);
             }
         }
     }
@@ -152,13 +217,13 @@ public class ChronicApp implements Runnable {
                 status.setStatusType(StatusType.ELAPSED);
                 AlertRecord alert = new AlertRecord(status);
                 alertMap.put(status.getKey(), alert);
-                messenger.alert(alert);
+                alertQueue.add(alert);
             }
         }
     }
 
-    public synchronized void putRecord(StatusRecord status) throws StorageException {
-        logger.info("putRecord {}", status);
+    private void checkStatus(StatusRecord status) throws StorageException {
+        logger.info("handleStatus {}", status);
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
         AlertRecord alert = alertMap.get(status.getKey());
         if (previousStatus == null) {
@@ -167,7 +232,7 @@ public class ChronicApp implements Runnable {
             status.setAlertType(AlertType.INITIAL);
             alertMap.put(status.getKey(), alert);
             if (properties.isTesting()) {
-                messenger.alert(alert);
+                alertQueue.add(alert);
             }
         } else if (new StatusRecordChecker(status).isAlertable(previousStatus, alert)) {
             alert = new AlertRecord(status, previousStatus);
@@ -182,7 +247,7 @@ public class ChronicApp implements Runnable {
                     previousAlert.ignoredAlert = alert;
                 } else {
                     alertMap.put(status.getKey(), alert);
-                    messenger.alert(alert);
+                    alertQueue.add(alert);
                 }
             }
         } else {
@@ -205,8 +270,8 @@ public class ChronicApp implements Runnable {
             ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
             if (cookie.getEmail() != null) {
                 if (properties.isTesting()) {
-                    if (properties.isMimic(httpx) &&
-                            properties.isAdmin(cookie.getEmail())) {
+                    if (properties.isMimic(httpx)
+                            && properties.isAdmin(cookie.getEmail())) {
                         return properties.getMimicEmail();
                     } else {
                         return cookie.getEmail();
@@ -224,19 +289,17 @@ public class ChronicApp implements Runnable {
         throw new PersonaException("no verified email");
     }
 
+    public Map<ComparableTuple, AlertRecord> getAlertMap() {
+        return alertMap;
+    }
+
     public static void main(String[] args) throws Exception {
         try {
             ChronicApp app = new ChronicApp();
             app.init();
-            app.start();
+            app.startApp();
         } catch (Exception e) {
             e.printStackTrace(System.err);
-        }
-    }
-
-    public void inject(Collection<? extends ChronicApped> collection) throws Exception {
-        for (ChronicApped element : collection) {
-            element.inject(this);
         }
     }
 

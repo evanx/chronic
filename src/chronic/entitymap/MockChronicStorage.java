@@ -4,10 +4,10 @@
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements. See the NOTICE file
        distributed with this work for additional information
-       regarding copyright ownership.  The ASF licenses this file
-       to you under the Apache License, Version 2.0 (the
-       "License"); you may not use this file except in compliance
-       with the License.  You may obtain a copy of the License at
+       regarding copyright ownership. The ASF licenses this file to
+       you under the Apache License, Version 2.0 (the "License").
+       You may not use this file except in compliance with the
+       License. You may obtain a copy of the License at:
 
          http://www.apache.org/licenses/LICENSE-2.0
 
@@ -21,7 +21,7 @@
 package chronic.entitymap;
 
 import chronic.app.ChronicApp;
-import chronic.app.ChronicStorage;
+import chronic.app.ChronicDatabase;
 import chronic.entity.Cert;
 import chronic.entity.User;
 import chronic.entity.Org;
@@ -35,24 +35,20 @@ import vellum.storage.MapEntityService;
  *
  * @author evan.summers
  */
-public class MockChronicStorage extends ChronicStorage {
-    MapEntityService<User> users = new ChronicMapEntityService();
-    MapEntityService<Org> orgs = new ChronicMapEntityService();
-    MapEntityService<OrgRole> orgRoles = new ChronicMapEntityService();
-    MapEntityService<Topic> topics = new ChronicMapEntityService();
-    MapEntityService<Subscriber> subscribers = new ChronicMapEntityService();
-    MapEntityService<Cert> certs = new ChronicMapEntityService();
+public class MockChronicStorage extends ChronicDatabase {
+    MapEntityService<User> users = new ChronicMapEntityService(User.class);
+    MapEntityService<Org> orgs = new ChronicMapEntityService(Org.class);
+    MapEntityService<OrgRole> orgRoles = new ChronicMapEntityService(OrgRole.class);
+    MapEntityService<Topic> topics = new ChronicMapEntityService(Topic.class);
+    MapEntityService<Subscriber> subscribers = new ChronicMapEntityService(Subscriber.class);
+    MapEntityService<Cert> certs = new ChronicMapEntityService(Cert.class);
 
     public MockChronicStorage(ChronicApp app) {
         super(app);
     }
         
     @Override
-    public void init() throws Exception {
-    }
-
-    @Override
-    public void shutdown() {
+    public void close() {
     }
 
     @Override

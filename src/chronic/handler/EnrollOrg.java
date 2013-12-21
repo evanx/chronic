@@ -3,11 +3,10 @@
  */
 package chronic.handler;
 
+import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
-import chronic.app.ChronicApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 
 /**
@@ -20,7 +19,7 @@ public class EnrollOrg implements ChronicHttpxHandler {
  
     
     @Override
-    public JMap handle(ChronicApp app, Httpx hx) throws Exception {
+    public JMap handle(ChronicHttpx hx) throws Exception {
         return new JMap();
     }
 

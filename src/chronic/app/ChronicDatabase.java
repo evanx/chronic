@@ -4,10 +4,10 @@
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements. See the NOTICE file
  distributed with this work for additional information
- regarding copyright ownership.  The ASF licenses this file
- to you under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance
- with the License.  You may obtain a copy of the License at
+ regarding copyright ownership. The ASF licenses this file to
+ you under the Apache License, Version 2.0 (the "License").
+ You may not use this file except in compliance with the
+ License. You may obtain a copy of the License at:
 
  http://www.apache.org/licenses/LICENSE-2.0
 
@@ -48,19 +48,17 @@ import vellum.storage.StorageException;
  *
  * @author evan.summers
  */
-public abstract class ChronicStorage {
+public abstract class ChronicDatabase {
 
-    static Logger logger = LoggerFactory.getLogger(ChronicStorage.class);
+    static Logger logger = LoggerFactory.getLogger(ChronicDatabase.class);
 
     protected ChronicApp app;
-
-    public ChronicStorage(ChronicApp app) {
+    
+    public ChronicDatabase(ChronicApp app) {
         this.app = app;
     }
 
-    public abstract void init() throws Exception;
-
-    public abstract void shutdown();
+    public abstract void close();
 
     public abstract EntityService<User> user();
 

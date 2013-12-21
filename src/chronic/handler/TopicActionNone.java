@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Subscriber;
 import chronic.entity.Topic;
@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 import vellum.storage.StorageException;
@@ -25,18 +24,18 @@ public class TopicActionNone implements ChronicHttpxHandler {
 
     Logger logger = LoggerFactory.getLogger(TopicActionNone.class);
   
-    ChronicApp app;
+    ChronicHttpx httpx;
     String email;
 
     @Override
-    public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
-        this.app = app;
-        email = app.getEmail(httpx);
+    public JMap handle(ChronicHttpx httpx) throws Exception {
+        this.httpx = httpx;
+        email = httpx.app.getEmail(httpx);
         List topics = new LinkedList();
-        for (Topic topic : app.storage().listTopics(email)) {
+        for (Topic topic : httpx.db.listTopics(email)) {
             handle(topic);
             topic.setEnabled(false);
-            app.storage().topic().replace(topic);
+            httpx.db.topic().replace(topic);
             topics.add(topic.getMap());
         }
         return JMaps.mapValue("topics", topics);
@@ -44,10 +43,10 @@ public class TopicActionNone implements ChronicHttpxHandler {
     
     public void handle(Topic topic) throws StorageException {
         SubscriberKey key = new SubscriberKey(topic.getId(), email);
-        Subscriber subscriber = app.storage().sub().find(key);
+        Subscriber subscriber = httpx.db.sub().find(key);
         if (subscriber != null) {
             subscriber.setEnabled(false);
-            app.storage().sub().replace(subscriber);
+            httpx.db.sub().replace(subscriber);
         }
     }
     

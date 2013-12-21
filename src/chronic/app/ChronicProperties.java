@@ -4,10 +4,10 @@
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements. See the NOTICE file
  distributed with this work for additional information
- regarding copyright ownership.  The ASF licenses this file
- to you under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance
- with the License.  You may obtain a copy of the License at
+ regarding copyright ownership. The ASF licenses this file to
+ you under the Apache License, Version 2.0 (the "License").
+ You may not use this file except in compliance with the
+ License. You may obtain a copy of the License at:
 
  http://www.apache.org/licenses/LICENSE-2.0
 
@@ -70,9 +70,10 @@ public class ChronicProperties {
         siteUrl = object.getString("siteUrl", siteUrl);
         alertScript = object.getString("alertScript", alertScript);
         mimicEmail = object.getString("mimicEmail", null);
+        alertPeriod = object.getMillis("alertPeriod", alertPeriod);
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
-        mockStorage = object.getBoolean("mockStorage", testing);
+        mockStorage = object.getBoolean("mockStorage", false);
         adminDomains = object.getStringSet("adminDomains");
         adminEmails = object.getStringSet("adminEmails");
         subscriberEmails = object.getStringSet("subscriberEmails");

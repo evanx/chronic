@@ -3,7 +3,7 @@
  */
 package chronic.transaction;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +17,12 @@ public class EnrollUserTransaction {
     
     static Logger logger = LoggerFactory.getLogger(EnrollUserTransaction.class);
     
-    public User handle(ChronicApp app, String email) throws StorageException {
+    public User handle(ChronicHttpx httpx, String email) throws StorageException {
         logger.info("handle {}", email);
-        User user = app.storage().user().find(email);
+        User user = httpx.db.user().find(email);
         if (user == null) {
             user = new User(email);
-            app.storage().user().add(user);
+            httpx.db.user().add(user);
         }
         return user;
     }

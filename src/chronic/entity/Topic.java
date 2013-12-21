@@ -4,11 +4,10 @@
  */
 package chronic.entity;
 
-import chronic.app.ChronicApp;
+import chronic.app.ChronicDatabase;
 import chronic.entitykey.CertTopicKey;
 import chronic.entitykey.CertTopicKeyed;
-import chronic.entitykey.TopicIdKeyed;
-import chronic.entitytype.ChronicApped;
+import chronic.entitytype.ChronicDatabaseInjectable;
 import chronic.entitytype.TopicActionType;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
@@ -21,7 +20,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 public final class Topic extends AbstractIdEntity implements CertTopicKeyed,  
-        JMapped, Enabled, ChronicApped {
+        JMapped, Enabled, ChronicDatabaseInjectable {
 
     Long id;
     Long certId;
@@ -113,8 +112,8 @@ public final class Topic extends AbstractIdEntity implements CertTopicKeyed,
     }
 
     @Override
-    public void inject(ChronicApp app) throws StorageException {
-        cert = app.storage().cert().retrieve(certId);
+    public void inject(ChronicDatabase db) throws StorageException {
+        cert = db.cert().retrieve(certId);
     }
     
     @Override

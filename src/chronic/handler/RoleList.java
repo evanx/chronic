@@ -3,14 +3,13 @@
  */
 package chronic.handler;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.OrgRole;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 
@@ -23,14 +22,14 @@ public class RoleList implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(RoleList.class);
   
     @Override
-    public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
+    public JMap handle(ChronicHttpx httpx) throws Exception {
         List roles = new LinkedList();
-        for (OrgRole role : app.storage().listRoles(app.getEmail(httpx))) {
+        for (OrgRole role : httpx.db.listRoles(httpx.app.getEmail(httpx))) {
             roles.add(role.getMap());
         }
-        if (roles.isEmpty() && app.getProperties().isDemo(httpx)) {
-            String adminEmail = app.getProperties().getAdminEmails().iterator().next();
-            for (OrgRole role : app.storage().listRoles(adminEmail)) {
+        if (roles.isEmpty() && httpx.app.getProperties().isDemo(httpx)) {
+            String adminEmail = httpx.app.getProperties().getAdminEmails().iterator().next();
+            for (OrgRole role : httpx.db.listRoles(adminEmail)) {
                 roles.add(role.getMap());
             }
         }

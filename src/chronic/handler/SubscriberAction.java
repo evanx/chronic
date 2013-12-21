@@ -3,13 +3,12 @@
  */
 package chronic.handler;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Subscriber;
 import chronic.entitykey.SubscriberKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 
@@ -22,13 +21,13 @@ public class SubscriberAction implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(SubscriberAction.class);
   
     @Override
-    public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
-        String email = app.getEmail(httpx);
+    public JMap handle(ChronicHttpx httpx) throws Exception {
+        String email = httpx.app.getEmail(httpx);
         JMap map = httpx.parseJsonMap().getMap("subscriber");
         SubscriberKey key = new SubscriberKey(map.getLong("topicId"), email);
-        Subscriber subscriber = app.storage().sub().find(key);
+        Subscriber subscriber = httpx.db.sub().find(key);
         subscriber.setEnabled(!subscriber.isEnabled());
-        app.storage().sub().replace(subscriber);
+        httpx.db.sub().replace(subscriber);
         return JMaps.mapValue("subscriber", subscriber.getMap());
     }
     

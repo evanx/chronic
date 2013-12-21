@@ -3,20 +3,15 @@
  */
 package chronic.handler;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.OrgRole;
-import chronic.entity.Subscriber;
-import chronic.entity.Topic;
-import chronic.entitykey.SubscriberKey;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
-import vellum.storage.StorageException;
 
 /**
  *
@@ -26,18 +21,18 @@ public class RoleActionAll implements ChronicHttpxHandler {
 
     Logger logger = LoggerFactory.getLogger(RoleActionAll.class);
   
-    ChronicApp app;
+    ChronicHttpx httpx;
     String email;
     
     @Override
-    public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
-        this.app = app;
-        email = app.getEmail(httpx);
+    public JMap handle(ChronicHttpx httpx) throws Exception {
+        this.httpx = httpx;
+        email = httpx.app.getEmail(httpx);
         List roles = new LinkedList();
-        for (OrgRole role : app.storage().listRoles(app.getEmail(httpx))) {
+        for (OrgRole role : httpx.db.listRoles(httpx.app.getEmail(httpx))) {
             if (!role.isEnabled()) {
                 role.setEnabled(true);
-                app.storage().role().replace(role);
+                httpx.db.role().replace(role);
             }
             roles.add(role.getMap());
         }

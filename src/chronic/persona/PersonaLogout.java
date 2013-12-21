@@ -4,67 +4,48 @@
  */
 package chronic.persona;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
+import chronic.api.ChronicHttpxHandler;
 import chronic.entity.User;
 import chronic.app.ChronicCookie;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import vellum.httpserver.Httpx;
-import java.io.IOException;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.jx.JMap;
 
 /**
  *
  * @author evan.summers
  */
-public class PersonaLogout implements HttpHandler {
+public class PersonaLogout implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
-    ChronicApp app;
-    Httpx httpExchangeInfo;
+    static Logger logger = LoggerFactory.getLogger(PersonaLogout.class);
     ChronicCookie cookie;
-
-    public PersonaLogout(ChronicApp app) {
-        super();
-        this.app = app;
-    }
     
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        httpExchangeInfo = new Httpx(httpExchange);
-        logger.info("handle", getClass().getSimpleName(), httpExchangeInfo.getPath());
+    public JMap handle(ChronicHttpx httpx) throws Exception {
+        logger.info("handle", getClass().getSimpleName(), httpx.getPath());
         try {
-            String email = httpExchangeInfo.parseJsonMap().getString("email");
-            if (ChronicCookie.matches(httpExchangeInfo.getCookieMap())) {
-                cookie = new ChronicCookie(httpExchangeInfo.getCookieMap());
+            String email = httpx.parseJsonMap().getString("email");
+            if (ChronicCookie.matches(httpx.getCookieMap())) {
+                cookie = new ChronicCookie(httpx.getCookieMap());
                 logger.debug("cookie {}", cookie.getEmail());
                 if (!cookie.getEmail().equals(email)) {
                     logger.warn("email {}", email);
                 }
-                httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
-                if (app.getProperties().isTesting()) {
+                httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
+                if (httpx.app.getProperties().isTesting()) {
                     logger.info("testing mode: ignoring logout");
-                    httpExchangeInfo.sendEmptyOkResponse();
                 } else {
-                    handle();
+                    logger.info("cookie", cookie.getEmail());
+                    User user = httpx.db.user().retrieve(cookie.getEmail());
+                    user.setLogoutTime(new Date());
+                    httpx.db.user().replace(user);
                 }
-            } else {
-                httpExchangeInfo.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
-                httpExchangeInfo.sendEmptyOkResponse();
             }
-        } catch (Exception e) {
-            httpExchangeInfo.sendError(e);
+            return new JMap();
+        } finally {
+            httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
         }
-        httpExchange.close();
     }
-
-    private void handle() throws Exception {
-        logger.info("cookie", cookie.getEmail());
-        User user = app.storage().user().retrieve(cookie.getEmail());
-        user.setLogoutTime(new Date());
-        app.storage().user().replace(user);
-        httpExchangeInfo.sendEmptyOkResponse();
-    } 
 }

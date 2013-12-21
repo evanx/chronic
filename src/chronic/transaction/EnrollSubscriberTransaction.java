@@ -3,7 +3,7 @@
  */
 package chronic.transaction;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
 import chronic.entitykey.SubscriberKey;
@@ -19,12 +19,12 @@ public class EnrollSubscriberTransaction {
     
     static Logger logger = LoggerFactory.getLogger(EnrollSubscriberTransaction.class);
     
-    public Subscriber handle(ChronicApp app, Topic topic, String email) throws StorageException {
+    public Subscriber handle(ChronicHttpx httpx, Topic topic, String email) throws StorageException {
         SubscriberKey key = new SubscriberKey(topic.getId(), email);
-        Subscriber subscriber = app.storage().sub().find(key);
+        Subscriber subscriber = httpx.db.sub().find(key);
         if (subscriber == null) {
             subscriber = new Subscriber(key);
-            app.storage().sub().add(subscriber);
+            httpx.db.sub().add(subscriber);
         }
         return subscriber;
     }

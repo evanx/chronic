@@ -3,7 +3,7 @@
  */
 package chronic.transaction;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.entity.Cert;
 import chronic.entity.Topic;
 import chronic.entitykey.CertTopicKey;
@@ -19,13 +19,13 @@ public class EnrollTopicTransaction {
     
     static Logger logger = LoggerFactory.getLogger(EnrollTopicTransaction.class);
 
-    public Topic handle(ChronicApp app, Cert cert, String topicLabel) throws StorageException {
+    public Topic handle(ChronicHttpx httpx, Cert cert, String topicLabel) throws StorageException {
         logger.info("handle {} {}", topicLabel, cert);
         CertTopicKey key = new CertTopicKey(cert.getId(), topicLabel);
-        Topic topic = app.storage().topic().find(key);
+        Topic topic = httpx.db.topic().find(key);
         if (topic == null) {
             topic = new Topic(key);            
-            app.storage().topic().add(topic);
+            httpx.db.topic().add(topic);
         }
         topic.setCert(cert);
         return topic;

@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.app.ChronicApp;
+import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Subscriber;
 import chronic.entitykey.UserKey;
@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.httpserver.Httpx;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 
@@ -24,27 +23,27 @@ public class SubscriberList implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(SubscriberList.class);
   
     @Override
-    public JMap handle(ChronicApp app, Httpx httpx) throws Exception {
-        String email = app.getEmail(httpx);
+    public JMap handle(ChronicHttpx httpx) throws Exception {
+        String email = httpx.app.getEmail(httpx);
         List subscriptions = new LinkedList();
-        for (Subscriber subscriber : app.storage().sub().list(new UserKey(email))) {
+        for (Subscriber subscriber : httpx.db.sub().list(new UserKey(email))) {
             subscriptions.add(subscriber);
         }
         List subscribers = new LinkedList();
-        if (app.getProperties().isAdmin(email)) {
-            for (Subscriber subscriber : app.storage().sub().list()) {
+        if (httpx.app.getProperties().isAdmin(email)) {
+            for (Subscriber subscriber : httpx.db.sub().list()) {
                 if (!subscriber.getEmail().equals(email)) {
                     subscribers.add(subscriber);
                 }
             }
-        } else if (app.getProperties().isDemo(httpx)) {
-            String adminEmail = app.getProperties().getAdminEmails().iterator().next();
-            for (Subscriber subscriber : app.storage().sub().list(new UserKey(adminEmail))) {
+        } else if (httpx.app.getProperties().isDemo(httpx)) {
+            String adminEmail = httpx.app.getProperties().getAdminEmails().iterator().next();
+            for (Subscriber subscriber : httpx.db.sub().list(new UserKey(adminEmail))) {
                 subscriptions.add(subscriber);
             }
         }
-        app.inject(subscribers);
-        app.inject(subscriptions);
+        httpx.injectDatabase(subscribers);
+        httpx.injectDatabase(subscriptions);
         return new JMap(
                 JMaps.entry("subscribers", subscribers),
                 JMaps.entry("subscriptions", subscriptions));

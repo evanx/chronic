@@ -4,14 +4,14 @@
  */
 package chronic.entity;
 
-import chronic.app.ChronicApp;
+import chronic.app.ChronicDatabase;
 import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.SubscriberKeyed;
 import chronic.entitykey.TopicIdKey;
 import chronic.entitykey.TopicIdKeyed;
 import chronic.entitykey.UserKey;
 import chronic.entitykey.UserKeyed;
-import chronic.entitytype.ChronicApped;
+import chronic.entitytype.ChronicDatabaseInjectable;
 import chronic.entitytype.SubscriberActionType;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
@@ -24,7 +24,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 public final class Subscriber extends AbstractIdEntity implements SubscriberKeyed, UserKeyed, 
-        TopicIdKeyed, Enabled, JMapped, ChronicApped {
+        TopicIdKeyed, Enabled, JMapped, ChronicDatabaseInjectable {
     Long id;
     Long topicId;
     String email;
@@ -110,9 +110,9 @@ public final class Subscriber extends AbstractIdEntity implements SubscriberKeye
     }
 
     @Override
-    public void inject(ChronicApp app) throws StorageException {
-        topic = app.storage().topic().retrieve(topicId);
-        topic.inject(app);
+    public void inject(ChronicDatabase db) throws StorageException {
+        topic = db.topic().retrieve(topicId);
+        topic.inject(db);
     }
 
     private SubscriberActionType getAction() {
