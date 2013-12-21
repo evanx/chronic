@@ -62,7 +62,7 @@ public class CertService implements EntityService<Cert> {
 
     private Cert create(ResultSet resultSet) throws SQLException {
         Cert cert = new Cert();
-        cert.setId(resultSet.getLong("id"));
+        cert.setId(resultSet.getLong("cert_id"));
         cert.setOrgDomain(resultSet.getString("org_domain"));
         cert.setOrgUnit(resultSet.getString("org_unit"));
         cert.setCommonName(resultSet.getString("common_name"));
@@ -94,7 +94,7 @@ public class CertService implements EntityService<Cert> {
             generatedKeys.next();
             cert.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, Cert.class, cert.getKey());
         }
     }
 
@@ -111,7 +111,7 @@ public class CertService implements EntityService<Cert> {
                 throw new StorageException(StorageExceptionType.NOT_UPDATED, cert.getKey());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, Cert.class, cert.getKey());
         }
     }
     public void updateEncoded(Cert cert) throws StorageException {
@@ -123,7 +123,7 @@ public class CertService implements EntityService<Cert> {
                 throw new StorageException(StorageExceptionType.NOT_UPDATED, cert.getKey());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, Cert.class, cert.getKey());
         }
     }
 
@@ -134,7 +134,7 @@ public class CertService implements EntityService<Cert> {
                 throw new StorageException(StorageExceptionType.NOT_DELETED, key);
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, key);
+            throw new StorageException(sqle, StorageExceptionType.SQL, Cert.class, key);
         }
     }
 
@@ -164,7 +164,7 @@ public class CertService implements EntityService<Cert> {
                 return cert;
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, key);
+            throw new StorageException(sqle, StorageExceptionType.SQL, Cert.class, key);
         }
     }
 
@@ -180,7 +180,7 @@ public class CertService implements EntityService<Cert> {
             }
             return cert;
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, id);
+            throw new StorageException(sqle, StorageExceptionType.SQL, Cert.class, id);
         }
     }
 

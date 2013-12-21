@@ -89,7 +89,8 @@ public class SubscriberService implements EntityService<Subscriber> {
             generatedKeys.next();
             subscriber.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, 
+                    Subscriber.class, subscriber.getKey());
         }
     }
 
@@ -105,7 +106,8 @@ public class SubscriberService implements EntityService<Subscriber> {
                 throw new StorageException(StorageExceptionType.NOT_UPDATED, subscriber.getKey());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, 
+                    Subscriber.class, subscriber.getKey());
         }
     }
 
@@ -116,7 +118,8 @@ public class SubscriberService implements EntityService<Subscriber> {
                 throw new StorageException(StorageExceptionType.NOT_DELETED, key);
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, key);
+            throw new StorageException(sqle, StorageExceptionType.SQL, 
+                    Subscriber.class, key);
         }
     }
 
@@ -143,7 +146,8 @@ public class SubscriberService implements EntityService<Subscriber> {
             }
             return subscriber;
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, key);
+            throw new StorageException(sqle, StorageExceptionType.SQL, 
+                    Subscriber.class, key);
         }
     }
     private Subscriber findId(Long id) throws StorageException {
@@ -158,7 +162,8 @@ public class SubscriberService implements EntityService<Subscriber> {
             }
             return subscriber;
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, id);
+            throw new StorageException(sqle, StorageExceptionType.SQL, 
+                    Subscriber.class, id);
         }
     }
 

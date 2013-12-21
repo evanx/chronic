@@ -34,9 +34,10 @@ public class ChronicHttpService implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String path = httpExchange.getRequestURI().getPath();
-        logger.trace("handle {} {}", path, httpExchange.getRequestURI().getHost());
+        logger.info("handle {} {}", path, httpExchange.getRequestURI().getHost());
         try {
             Class<ChronicHttpxHandler> handlerClass = app.getHandlerClasses().get(path);
+            logger.info("handlerClass {} {}", path, handlerClass);
             if (handlerClass != null) {
                 handle(handlerClass.newInstance(), httpExchange);
             } else {
@@ -83,6 +84,7 @@ public class ChronicHttpService implements HttpHandler {
             em.getTransaction().commit();
         } catch (Exception e) {
             httpx.sendError(e);
+        } finally {
             if (em != null) {
                 em.getTransaction().rollback();
             }
@@ -93,8 +95,8 @@ public class ChronicHttpService implements HttpHandler {
             } catch (SQLException sqle) {
                 logger.warn("connection close", sqle);
             }
+            httpx.close();
         }
-        httpx.close();
     }
 
 }

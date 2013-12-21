@@ -13,15 +13,11 @@ import chronic.entity.Topic;
 import chronic.transaction.EnrollSubscriberTransaction;
 import chronic.transaction.EnrollTopicTransaction;
 import chronic.transaction.EnrollCertTransaction;
-import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
-import vellum.jx.JMaps;
 import vellum.storage.StorageException;
 import vellum.util.Strings;
 
@@ -32,14 +28,14 @@ import vellum.util.Strings;
 public class Post implements ChronicHttpxHandler {
 
     final static int contentLengthLimit = 4000;
-    Logger logger = LoggerFactory.getLogger(Post.class);
+    final static Logger logger = LoggerFactory.getLogger(Post.class);
 
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
         try {
             Cert cert = new EnrollCertTransaction().handle(httpx);
             int contentLength = Integer.parseInt(httpx.getRequestHeader("Content-length"));
-            logger.trace("contentLength {}", contentLength);
+            logger.info("contentLength {}", contentLength);
             if (contentLength > contentLengthLimit) {
                 throw new Exception("Content length limit exceeded");
             }
@@ -68,9 +64,14 @@ public class Post implements ChronicHttpxHandler {
                 builder.append(result);
                 builder.append("\n");
             }
+            if (builder.length() == 0) {
+                builder.append(String.format("OK: %s: %s\n", cert.getCommonName(), topic.getTopicLabel()));
+            }
             httpx.app.getStatusQueue().add(status);
             return new JMap(builder.toString());
-        } catch (CertificateException | StorageException | NumberFormatException | IOException e) {
+        } catch (StorageException se) {
+            return new JMap(String.format("error: %s\n", se.getMessage()));
+        } catch (CertificateException | NumberFormatException | IOException e) {
             logger.warn(e.getMessage(), e);
             return new JMap(String.format("error: %s: %s\n", 
                     e.getClass(), e.getMessage()));
