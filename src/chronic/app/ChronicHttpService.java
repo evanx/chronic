@@ -3,7 +3,6 @@
  */
 package chronic.app;
 
-import chronic.api.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.jpa.JpaDatabase;
 import com.sun.net.httpserver.HttpExchange;

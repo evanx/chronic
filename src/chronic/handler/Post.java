@@ -3,16 +3,13 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.StatusRecord;
 import chronic.app.StatusRecordParser;
 import chronic.check.StatusCheck;
 import chronic.entity.Cert;
 import chronic.entity.Topic;
-import chronic.persistence.PersistCert;
-import chronic.persistence.PersistSubscriber;
-import chronic.persistence.PersistTopic;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import org.slf4j.Logger;
@@ -33,7 +30,7 @@ public class Post implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
         try {
-            Cert cert = new PersistCert().handle(httpx);
+            Cert cert = httpx.persistCert();
             int contentLength = Integer.parseInt(httpx.getRequestHeader("Content-length"));
             logger.info("contentLength {}", contentLength);
             if (contentLength > contentLengthLimit) {
@@ -47,12 +44,12 @@ public class Post implements ChronicHttpxHandler {
             logger.trace("content lines {}: {}", status.getLineList().size(),
                     Strings.formatFirst(status.getLineList()));
             logger.debug("status {}", status);
-            Topic topic = new PersistTopic().handle(httpx, cert, status.getTopicLabel());
+            Topic topic = httpx.persistTopic(cert, status.getTopicLabel());
             status.setTopic(topic);
             if (status.getSubscribers() != null) {
                 if (status.getSubscribers().length > 0) {
                     for (String subscriber : status.getSubscribers()) {
-                        new PersistSubscriber().handle(httpx, topic, subscriber);
+                        httpx.persistTopicSubscriber(topic, subscriber);
                     }
                 }
             }

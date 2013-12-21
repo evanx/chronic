@@ -4,7 +4,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.User;
 import chronic.app.ChronicCookie;

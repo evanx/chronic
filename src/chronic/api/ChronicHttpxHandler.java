@@ -3,6 +3,7 @@
  */
 package chronic.api;
 
+import chronic.app.ChronicHttpx;
 import vellum.jx.JMap;
 
 /**

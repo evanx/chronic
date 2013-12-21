@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.AlertRecord;
 import chronic.entitykey.SubscriberKey;
@@ -26,7 +26,7 @@ public class AlertList implements ChronicHttpxHandler {
     
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
-        String email = httpx.app.getEmail(httpx);
+        String email = httpx.getEmail();
         List alerts = new LinkedList();
         for (AlertRecord alert : Lists.sortedLinkedList(httpx.app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {
@@ -35,7 +35,7 @@ public class AlertList implements ChronicHttpxHandler {
                 alerts.add(alert.getlMap());
             } else if (httpx.app.getProperties().isAdmin(email)) {
                 alerts.add(alert.getlMap());
-            } else if (httpx.app.getProperties().isDemo(httpx)) {
+            } else if (httpx.getReferer().endsWith("/demo")) {
                 alerts.add(alert.getPartialMap());
             }
         }

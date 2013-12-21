@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Subscriber;
 import chronic.entitykey.UserKey;
@@ -24,7 +24,7 @@ public class SubscriberList implements ChronicHttpxHandler {
   
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
-        String email = httpx.app.getEmail(httpx);
+        String email = httpx.getEmail();
         logger.info("email {}", email);
         List subscriptions = new LinkedList();
         for (Subscriber subscriber : httpx.db.sub().list(new UserKey(email))) {
@@ -39,7 +39,7 @@ public class SubscriberList implements ChronicHttpxHandler {
                     subscribers.add(subscriber);
                 }
             }
-        } else if (httpx.app.getProperties().isDemo(httpx)) {
+        } else if (httpx.getReferer().endsWith("/demo")) {
             String adminEmail = httpx.app.getProperties().getAdminEmails().iterator().next();
             for (Subscriber subscriber : httpx.db.sub().list(new UserKey(adminEmail))) {
                 logger.info("demo subscriber {}", subscriber);

@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Subscriber;
 import chronic.entity.Topic;
@@ -30,15 +30,15 @@ public class TopicActionNone implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
         this.httpx = httpx;
-        email = httpx.app.getEmail(httpx);
+        email = httpx.getEmail();
         List topics = new LinkedList();
         for (Topic topic : httpx.db.listTopics(email)) {
             handle(topic);
             topic.setEnabled(false);
             httpx.db.topic().replace(topic);
-            topics.add(topic.getMap());
+            topics.add(topic);
         }
-        return JMaps.mapValue("topics", topics);
+        return JMaps.map("topics", topics);
     }
     
     public void handle(Topic topic) throws StorageException {

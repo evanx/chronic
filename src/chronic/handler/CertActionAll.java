@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Cert;
 import java.util.LinkedList;
@@ -24,7 +24,7 @@ public class CertActionAll implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
         List certs = new LinkedList();
-        for (Cert cert : httpx.db.listCerts(httpx.app.getEmail(httpx))) {
+        for (Cert cert : httpx.db.listCerts(httpx.getEmail())) {
             cert.setEnabled(true);
             httpx.db.cert().replace(cert);            
             certs.add(cert);

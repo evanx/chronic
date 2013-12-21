@@ -301,30 +301,6 @@ public class ChronicApp {
         }
     }
 
-    public String getEmail(Httpx httpx) throws JMapException, IOException, PersonaException {
-        if (ChronicCookie.matches(httpx.getCookieMap())) {
-            ChronicCookie cookie = new ChronicCookie(httpx.getCookieMap());
-            if (cookie.getEmail() != null) {
-                if (properties.isTesting()) {
-                    if (properties.isMimic(httpx)
-                            && properties.isAdmin(cookie.getEmail())) {
-                        return properties.getMimicEmail();
-                    } else {
-                        return cookie.getEmail();
-                    }
-                }
-                PersonaUserInfo userInfo = new PersonaVerifier(this, cookie).
-                        getUserInfo(httpx.getHostUrl(), cookie.getAssertion());
-                if (cookie.getEmail().equals(userInfo.getEmail())) {
-                    return userInfo.getEmail();
-                }
-            }
-        }
-        logger.warn("getEmail cookie {}", httpx.getCookieMap());
-        httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
-        throw new PersonaException("no verified email");
-    }
-
     public Map<ComparableTuple, AlertRecord> getAlertMap() {
         return alertMap;
     }

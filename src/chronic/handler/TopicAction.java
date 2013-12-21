@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Topic;
 import chronic.entitykey.OrgRoleKey;
@@ -24,7 +24,7 @@ public class TopicAction implements ChronicHttpxHandler {
   
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
-        String email = httpx.app.getEmail(httpx);
+        String email = httpx.getEmail();
         JMap topicMap = httpx.parseJsonMap().getMap("topic");
         CertTopicKey key = new CertTopicKey(topicMap);
         OrgRoleKey roleKey = new OrgRoleKey(topicMap.getString("orgDomain"), email, OrgRoleType.ADMIN);

@@ -188,14 +188,6 @@ public class ChronicProperties {
         return mockStorage;
     }
 
-    public boolean isDemo(Httpx httpx) {
-        return httpx.getReferer().endsWith("/demo");
-    }
-
-    public boolean isMimic(Httpx httpx) {
-        return mimicEmail != null && httpx.getReferer().endsWith("/mimic");
-    }
-
     public String getMimicEmail() {
         return mimicEmail;
     }

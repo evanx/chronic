@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Cert;
 import chronic.entitykey.CertKey;
@@ -24,7 +24,7 @@ public class CertAction implements ChronicHttpxHandler {
   
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
-        String email = httpx.app.getEmail(httpx);
+        String email = httpx.getEmail();
         CertKey certKey = new CertKey(httpx.parseJsonMap().getMap("cert"));
         OrgRoleKey roleKey = new OrgRoleKey(certKey.getOrgDomain(), email, OrgRoleType.ADMIN);
         if (!httpx.db.role().containsKey(roleKey)) {

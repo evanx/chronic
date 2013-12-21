@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Topic;
 import java.util.HashSet;
@@ -23,12 +23,12 @@ public class TopicList implements ChronicHttpxHandler {
   
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
-        String email = httpx.app.getEmail(httpx);
+        String email = httpx.getEmail();
         Set topics = new HashSet();
         for (Topic topic : httpx.db.listTopics(email)) {
             topics.add(topic);
         }
-        if (topics.isEmpty() && httpx.app.getProperties().isDemo(httpx)) {
+        if (topics.isEmpty() && httpx.getReferer().endsWith("/demo")) {
             String adminEmail = httpx.app.getProperties().getAdminEmails().iterator().next();
             for (Topic topic : httpx.db.listTopics(adminEmail)) {
                 topics.add(topic);

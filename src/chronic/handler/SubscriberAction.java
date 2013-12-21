@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Subscriber;
 import chronic.entitykey.SubscriberKey;
@@ -22,7 +22,7 @@ public class SubscriberAction implements ChronicHttpxHandler {
   
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
-        String email = httpx.app.getEmail(httpx);
+        String email = httpx.getEmail();
         JMap map = httpx.parseJsonMap().getMap("subscriber");
         SubscriberKey key = new SubscriberKey(map.getLong("topicId"), email);
         Subscriber subscriber = httpx.db.sub().find(key);

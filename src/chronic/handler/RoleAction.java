@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.OrgRole;
 import chronic.entitykey.OrgRoleKey;
@@ -22,7 +22,7 @@ public class RoleAction implements ChronicHttpxHandler {
   
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
-        String email = httpx.app.getEmail(httpx);
+        String email = httpx.getEmail();
         OrgRoleKey roleKey = new OrgRoleKey(httpx.parseJsonMap().getMap("role"), email);
         if (!httpx.db.role().containsKey(roleKey)) {
             return JMaps.mapValue("errorMessage", "no role");

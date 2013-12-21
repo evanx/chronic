@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.OrgRole;
 import java.util.LinkedList;
@@ -24,10 +24,10 @@ public class RoleList implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
         List roles = new LinkedList();
-        for (OrgRole role : httpx.db.listRoles(httpx.app.getEmail(httpx))) {
+        for (OrgRole role : httpx.db.listRoles(httpx.getEmail())) {
             roles.add(role.getMap());
         }
-        if (roles.isEmpty() && httpx.app.getProperties().isDemo(httpx)) {
+        if (roles.isEmpty() && httpx.getReferer().endsWith("/demo")) {
             String adminEmail = httpx.app.getProperties().getAdminEmails().iterator().next();
             for (OrgRole role : httpx.db.listRoles(adminEmail)) {
                 roles.add(role.getMap());

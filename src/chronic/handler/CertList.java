@@ -3,7 +3,7 @@
  */
 package chronic.handler;
 
-import chronic.api.ChronicHttpx;
+import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.entity.Cert;
 import java.util.Set;
@@ -23,12 +23,12 @@ public class CertList implements ChronicHttpxHandler {
   
     @Override
     public JMap handle(ChronicHttpx httpx) throws Exception {
-        String email = httpx.app.getEmail(httpx);
+        String email = httpx.getEmail();
         Set certs = new TreeSet();
         for (Cert cert : httpx.db.listCerts(email)) {
             certs.add(cert);
         }
-        if (certs.isEmpty() && httpx.app.getProperties().isDemo(httpx)) {
+        if (certs.isEmpty() && httpx.getReferer().endsWith("/demo")) {
             String adminEmail = httpx.app.getProperties().getAdminEmail();
             for (Cert cert : httpx.db.listCerts(adminEmail)) {
                 certs.add(cert);
