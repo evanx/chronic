@@ -397,6 +397,15 @@ c0enroll() {
   echo "$admins" | c1curl enroll 
 }
 
+c0ensurePubKey() {
+  if [ ! -f etc/chronica.pub.pem ] 
+  then
+    curl -s https://chronica.co/sample/chronica.pub.pem -o chronica.pub.pem
+    echo "Fetched public key: https://chronica.co/sample/chronica.pub.pem"
+    cat chronica.pub.pem
+  fi 
+}
+
 c0ensureKey() {
   if [ ! -f etc/key.pem ] 
   then
@@ -485,13 +494,21 @@ c0minutelyCron() {
 ### update script
 
 c0updateCheck() {
+  c0ensurePubKey
   echo "Please run the following commands manually and verify that all hashes match:"
   echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt"
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1sum.txt"
+  echo "curl -s https://chronica.co/sample/chronica.sh.sha1.txt"
+  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
+  echo "curl -O -s https://chronica.co/sample/chronica.pub.pem"
+  echo "curl -O -s https://chronica.co/sample/chronica.sh.sha1.sig.txt"
+  echo "cat chronica.sh.sha1.sig.txt | openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem"
+  echo "Checking signature: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
+  curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
+    openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem
   curl -s https://chronica.co/sample/chronica.sh | sha1sum 
-  curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt
-  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1sum.txt
+  curl -s https://chronica.co/sample/chronica.sh.sha1.txt
+  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt
+
 }
 
 c0updateGit() {
@@ -505,18 +522,21 @@ c0updateGit() {
 
 c0update() {
   c0updateCheck
-  if curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt | grep -v ' '
+  if ! curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
+    openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem |
+    grep `curl -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
   then
-    curl -s https://chronica.co/sample/chronica.sh | sha1sum
-    if curl -s https://chronica.co/sample/chronica.sh | sha1sum | 
-      grep `curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt | head -1`
+      echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
+  else 
+    if ! curl -s https://chronica.co/sample/chronica.sh | sha1sum | 
+      grep `curl -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
     then
-      echo "OK: https://chronica.co/sample/chronica.sh.sha1sum.txt"
+      echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.txt"
+    else 
+      echo "OK: https://chronica.co/sample/chronica.sh.sha1.txt"
       echo "Run the following command to update your script:"
       echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
       echo "INFO: hashes match on github.com and chronica.co."
-    else 
-      echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1sum.txt"
     fi
   fi
 }
@@ -643,20 +663,6 @@ c0help() {
   echo "commands and their required number of arguments:"
   cat script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
 }
-
-rm -f chronica.pem
-if [ ! -f chronica.pem ] 
-then
-  curl -s https://chronica.co/sample/chronica.pem -o chronica.pem
-  echo "Fetched public key: https://chronica.co/sample/chronica.pem"
-  cat chronica.pem
-fi 
-
-echo "Checking signature: https://chronica.co/sample/chronica.sh.signature.txt"
-curl -s https://chronica.co/sample/chronica.sh.signature.txt |
-  openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pem
-
-exit 1
 
 if [ $# -gt 0 ]
 then
