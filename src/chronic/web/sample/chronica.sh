@@ -331,7 +331,7 @@ c1sha1sum() {
 }
 
 c2certExpiry() {
-  expiryDate=`openssl s_client -connect $1:$2 2> /dev/null < /dev/null | openssl x509 -text | 
+  expiryDate=`openssl s_client -connect $1:$2 2> /dev/null < /dev/null | openssl x509 -text |
     grep '^ *Not After :' | sed 's/^ *Not After : \(\S*\) \(\S*\) \S* \(20[0-9]*\) \(.*\)/\1 \2 \3/'`
   expiryMonth=`echo "$expiryDate" | cut -f1`
   if date -d '1 month' | grep -q "$expiryMonth"
@@ -385,6 +385,49 @@ c0sshAuthKeys() {
 }
 
 
+### crypto 
+
+c0ensurePubKey() {
+  if [ ! -f etc/chronica.pub.pem ]
+  then
+    curl -s https://chronica.co/sample/chronica.pub.pem -o etc/chronica.pub.pem
+    echo 'Fetched public key: https://chronica.co/sample/chronica.pub.pem'
+    cat etc/chronica.pub.pem
+    ls etc/chronica.pub.pem
+  fi 
+}
+
+c0ensureKey() {
+  if [ ! -f etc/key.pem ] 
+  then
+    rm -f etc/cert.pem
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout etc/key.pem -out etc/cert.pem \
+      -subj "/CN=$commonName/O=$orgDomain/OU=$orgUnit"
+    echo 'Generated client certficate:'
+    openssl x509 -text -in etc/cert.pem | grep CN
+    ls etc/cert.pem
+  fi
+}
+
+c0ensureCert() {
+  echo "2"
+  if [ ! -f etc/server.pem ]
+  then
+   echo "3"
+    if openssl s_client -connect $server 2>/dev/null </dev/null | grep -q 'BEGIN CERT'
+    then
+      openssl s_client -connect $server 2>/dev/null |
+        sed -n -e '/BEGIN CERT/,/END CERT/p' > etc/server.pem
+      echo "Fetched server certificate:"
+      openssl x509 -text -in etc/server.pem | grep 'CN='
+      ls etc/server.pem
+    fi
+  fi
+}
+
+c0ensurePubKey
+c0ensureKey
+c0ensureCert
 
 ### standard functionality
 
@@ -396,41 +439,6 @@ c1curl() {
 c0enroll() {
   echo "$admins" | c1curl enroll 
 }
-
-c0ensurePubKey() {
-  if [ ! -f etc/chronica.pub.pem ] 
-  then
-    curl -s https://chronica.co/sample/chronica.pub.pem -o chronica.pub.pem
-    echo "Fetched public key: https://chronica.co/sample/chronica.pub.pem"
-    cat chronica.pub.pem
-  fi 
-}
-
-c0ensureKey() {
-  if [ ! -f etc/key.pem ] 
-  then
-    rm -f etc/cert.pem
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout etc/key.pem -out etc/cert.pem \
-      -subj "/CN=$commonName/O=$orgDomain/OU=$orgUnit"
-    openssl x509 -text -in etc/cert.pem | grep CN
-  fi
-}
-
-c0ensureCert() {
-  if [ ! -f etc/server.pem ]
-  then
-    if echo | openssl s_client -connect $server 2>/dev/null | grep -q 'BEGIN CERT'
-    then
-      openssl s_client -connect $server 2>/dev/null | 
-        sed -n -e '/BEGIN CERT/,/END CERT/p' > etc/server.pem
-      openssl x509 -text -in etc/server.pem | grep 'CN='
-      ls -l etc/server.pem
-    fi
-  fi
-}
-
-c0ensureKey
-c0ensureCert
 
 c0reset() {
   rm -f etc/cert.pem etc/key.pem etc/server.pem
@@ -491,14 +499,24 @@ c0minutelyCron() {
   fi
 }
 
+
 ### update script
+
+c0updateGit() {
+  c0updateCheck
+  echo "Run the following commands to update your script:"
+  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
+  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script"
+  echo "sha1sum $script"
+  echo "WARNING: In this case you are trusting that our github.com repository is not compromised."
+}
 
 c0updateCheck() {
   c0ensurePubKey
   echo "Please run the following commands manually and verify that all hashes match:"
   echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
   echo "curl -s https://chronica.co/sample/chronica.sh.sha1.txt"
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
+  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh"
   echo "curl -O -s https://chronica.co/sample/chronica.pub.pem"
   echo "curl -O -s https://chronica.co/sample/chronica.sh.sha1.sig.txt"
   echo "cat chronica.sh.sha1.sig.txt | openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem"
@@ -511,15 +529,6 @@ c0updateCheck() {
 
 }
 
-c0updateGit() {
-  c0updateCheck
-  echo "Run the following commands to update your script:"
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script"
-  echo "sha1sum $script"
-  echo "WARNING: In this case you are trusting that our github.com repository is not compromised."
-}
-
 c0update() {
   c0updateCheck
   if ! curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
@@ -528,7 +537,7 @@ c0update() {
   then
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
   else 
-    if ! curl -s https://chronica.co/sample/chronica.sh | sha1sum | 
+    if ! curl -s https://chronica.co/sample/chronica.sh | sha1sum |
       grep `curl -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
     then
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.txt"
@@ -609,11 +618,11 @@ c0stop() {
 c0stopped() {
   if [ ! -f pid ]
   then
-    decho "cancelled (pid file removed)"
+    decho 'cancelled (pid file removed)'
     exit 1
   elif [ `head -1 pid` -ne $$ ]
   then
-    decho "cancelled (pid file changed)"
+    decho 'cancelled (pid file changed)'
     exit 1
   fi
 }
