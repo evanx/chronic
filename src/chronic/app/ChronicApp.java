@@ -24,13 +24,9 @@ import chronic.handler.AdminEnroll;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
 import chronic.jpa.JpaDatabase;
-import chronic.persona.PersonaException;
-import chronic.persona.PersonaUserInfo;
-import chronic.persona.PersonaVerifier;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import chronicexp.jdbc.ChronicSchema;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +35,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -47,10 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.collections.SynchronizedCapacityDeque;
 import vellum.data.Millis;
-import vellum.httpserver.Httpx;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
-import vellum.jx.JMapException;
 import vellum.storage.StorageException;
 import vellum.data.ComparableTuple;
 import vellum.httphandler.RedirectHttpsHandler;
@@ -109,7 +102,7 @@ public class ChronicApp {
             initThread.join();
         }
     }
-    
+
     public void initDeferred() throws Exception {
         dataSource.setPoolProperties(properties.getPoolProperties());
         emf = Persistence.createEntityManagerFactory("chronicPU");;
@@ -130,7 +123,7 @@ public class ChronicApp {
         }
         messenger.alertAdmins("Chronic restarted");
     }
-    
+
     class InitThread extends Thread {
 
         @Override
@@ -143,7 +136,7 @@ public class ChronicApp {
             }
         }
     }
-    
+
     public ChronicProperties getProperties() {
         return properties;
     }
@@ -197,8 +190,8 @@ public class ChronicApp {
                     }
                 } catch (InterruptedException | SQLException e) {
                     logger.warn("run", e);
-                    ChronicDatabase.close(db);
                 }
+                ChronicDatabase.close(db);
             }
         }
     }
@@ -206,7 +199,7 @@ public class ChronicApp {
     public LinkedBlockingQueue<StatusRecord> getStatusQueue() {
         return statusQueue;
     }
-    
+
     class StatusThread extends Thread {
 
         @Override
@@ -306,7 +299,7 @@ public class ChronicApp {
     public Map<String, Class> getHandlerClasses() {
         return handlerClasses;
     }
-    
+
     public static void main(String[] args) throws Exception {
         try {
             ChronicApp app = new ChronicApp();

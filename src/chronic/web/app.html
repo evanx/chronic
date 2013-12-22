@@ -476,11 +476,10 @@ curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt
 curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1sum.txt</pre>
 
         <p><b>What API does it use?</b>
-          <br>Text document with email-style headers, submitted via HTTPS POST. (HTTP headers are parsed as well).
-        <br>For example, a shell script can pipe to <tt>curl</tt> to post to <tt>https://secure.chronica.co</tt>, with headers in the content, such as "Topic:", "Subscriber:", "Alert:", "Period:". Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
+          <br>Text document with email-style headers, submitted via HTTPS POST. (HTTP headers are parsed as well). This means we can pipe the output of a shell script to <tt>curl</tt>, to post to <tt>https://secure.chronica.co</tt>. The content typically contains headers such as "Topic" and "Subscribe." Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
         But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
         </p>
-        <pre>$ echo -e "<h2>Status</h2>\nOK - <i>nothing wrong</i>" | sh chronica.sh postheaders \
+        <pre>$ echo "OK - &lt;i&gt;nothing wrong&lt;/i&gt;" | sh chronica.sh postheaders \
   'Topic: System Health' 'Alert: STATUS_CHANGED' 'Subscribe: me@mine.org'</pre>
         <p><b>How are checks performed?</b>
           <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. 
