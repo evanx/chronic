@@ -42,6 +42,7 @@ sslTimeout=3
 httpTimeout=4
 databaseTimeout=2
 
+
 ### init 
 
 startTimestamp=`date '+%s'`
@@ -170,6 +171,7 @@ c1topic() {
   echo "Topic: $commonName $1"
   echo "Subscribe: $subscribers"
 }
+
 
 ### tcp check functions 
 
@@ -355,11 +357,17 @@ c2certExpiry() {
   fi
 }
 
+
 ### reverse checks
 
 c2rhttps() {
   echo "Check-https: $1 $2"
 }
+
+c2rtcp() {
+  echo "Check-tcp: $1 $2"
+}
+
 
 ### other common checks
 
@@ -436,6 +444,7 @@ c0ensureCert() {
 c0ensurePubKey
 c0ensureKey
 c0ensureCert
+
 
 ### standard functionality
 
@@ -523,19 +532,18 @@ c0updateCheck() {
   c0ensurePubKey
   echo 'Run the following commands manually and verify that all hashes match:'
   echo '('
+  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
   echo 'curl -s https://chronica.co/sample/chronica.sh | sha1sum'
   echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.txt'
-  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
   echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |'
   echo '  openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem'
   echo ')'
   echo 'Checking signature: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
+  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt
   curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem
   curl -s https://chronica.co/sample/chronica.sh | sha1sum 
   curl -s https://chronica.co/sample/chronica.sh.sha1.txt
-  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt
-
 }
 
 c0update() {
