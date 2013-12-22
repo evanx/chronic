@@ -95,7 +95,6 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     public OrgKey getOrgKey() {
         return new OrgKey(orgDomain);
     }
-
     
     @Override
     public UserKey getUserKey() {
@@ -166,6 +165,10 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
         return email;
     }
 
+    public void setRoleType(OrgRoleType roleType) {
+        this.roleType = roleType;
+    }
+    
     public OrgRoleType getRoleType() {
         return roleType;
     }

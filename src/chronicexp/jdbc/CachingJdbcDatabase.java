@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.jpa;
+package chronicexp.jdbc;
 
 import chronic.app.*;
 import chronic.entity.Cert;
@@ -28,11 +28,6 @@ import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
 import chronic.entitymap.ChronicMatcher;
-import chronicexp.jdbc.CertService;
-import chronicexp.jdbc.OrgService;
-import chronicexp.jdbc.SubscriberService;
-import chronicexp.jdbc.TopicService;
-import chronicexp.jdbc.UserService;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.persistence.EntityManager;
@@ -75,7 +70,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
         this.em = em;
         user = new DelegatingEntityService(userCache, new UserService(connection));
         org = new DelegatingEntityService(orgCache, new OrgService(connection));
-        role = roleCache;
+        role = new DelegatingEntityService(roleCache, new OrgRoleService(connection));
         topic = new DelegatingEntityService(topicCache, new TopicService(connection));
         sub = new DelegatingEntityService(subCache, new SubscriberService(connection));
         cert = new DelegatingEntityService(certCache, new CertService(connection));

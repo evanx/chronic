@@ -23,7 +23,7 @@ package chronic.app;
 import chronic.handler.AdminEnroll;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
-import chronic.jpa.CachingJdbcDatabase;
+import chronicexp.jdbc.CachingJdbcDatabase;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import chronicexp.jdbc.ChronicSchema;

@@ -5,31 +5,26 @@ insert into org_role (
 ) values (?, ?, ?, ?)
 ;
 
--- update (enabled, org_role_id)
+-- delete
+delete from org_role where org_role_id = ?
+;
+
+-- update enabled
 update org_role set enabled = ? where org_role_id = ?
 ;
 
--- select (org_domain, email)
-select * from org where org_domain = ? and email = ?
+-- select id
+select * from org_role where org_role_id = ?
 ;
 
--- select (org_id, email)
-select * from org where org_id = ? and email = ?
+-- select key
+select * from org_role where org_domain = ? and email = ?
 ;
 
--- select (org_role_id)
-select * from org where org_role_id = ?
+-- list org
+select * from org_role where org_domain = ? order by email 
 ;
 
--- delete (org_role_id)
-delete from org where org_role_id = ?
+-- list email
+select * from org_role where email = ? 
 ;
-
--- list (org_domain)
-select * from org where org_domain = ? order by email 
-;
-
--- list (org_id)
-select * from org where org_id = ? order by email 
-;
-

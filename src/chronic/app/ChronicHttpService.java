@@ -4,7 +4,7 @@
 package chronic.app;
 
 import chronic.api.ChronicHttpxHandler;
-import chronic.jpa.CachingJdbcDatabase;
+import chronicexp.jdbc.CachingJdbcDatabase;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;

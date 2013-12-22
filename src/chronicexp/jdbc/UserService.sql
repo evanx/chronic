@@ -1,34 +1,34 @@
 
 -- insert
-insert into user (
+insert into person (
   email, label, enabled
 ) values (?, ?, ?)
 ;
 
 -- delete
-delete from user where user_id = ?
+delete from person where person_id = ?
 ;
 
 -- update enabled
-update user set enabled = ? where user_id = ?
+update person set enabled = ? where person_id = ?
 ;
 
 -- update label
-update user set label = ? where user_id = ?
+update person set label = ? where person_id = ?
 ;
 
 -- select id
-select * from user where user_id = ?
+select * from person where person_id = ?
 ;
 
 -- select key
-select * from user where email = ?
+select * from person where email = ?
 ;
 
 -- list
-select * from user order by email
+select * from person order by email
 ;
 
 -- list enabled
-select * from user where enabled order by email
+select * from person where enabled order by email
 ;

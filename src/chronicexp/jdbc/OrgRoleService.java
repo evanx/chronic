@@ -9,7 +9,7 @@
  You may not use this file except in compliance with the
  License. You may obtain a copy of the License at:
 
- http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.orgRole/licenses/LICENSE-2.0
 
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
@@ -20,8 +20,13 @@
  */
 package chronicexp.jdbc;
 
-import chronic.entity.Org;
+import chronic.entity.OrgRole;
 import chronic.entitykey.OrgKey;
+import chronic.entitykey.OrgRoleKey;
+import chronic.entitykey.OrgRoleTypeKey;
+import chronic.entitykey.UserKey;
+import chronic.entitykey.UserRoleTypeKey;
+import chronic.entitytype.OrgRoleType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,7 +44,7 @@ import vellum.storage.StorageExceptionType;
  *
  * @author evan.summers
  */
-public class OrgRoleService implements EntityService<Org> {
+public class OrgRoleService implements EntityService<OrgRole> {
 
     static Logger logger = LoggerFactory.getLogger(OrgRoleService.class);
     static QueryMap queryMap = new QueryMap(OrgRoleService.class);
@@ -59,16 +64,17 @@ public class OrgRoleService implements EntityService<Org> {
         return statement;
     }
 
-    private Org create(ResultSet resultSet) throws SQLException {
-        Org org = new Org();
-        org.setId(resultSet.getLong("org_id"));
-        org.setOrgDomain(resultSet.getString("org_domain"));
-        org.setLabel(resultSet.getString("label"));
-        org.setEnabled(resultSet.getBoolean("enabled"));
-        return org;
+    private OrgRole create(ResultSet resultSet) throws SQLException {
+        OrgRole orgRole = new OrgRole();
+        orgRole.setId(resultSet.getLong("org_role_id"));
+        orgRole.setOrgDomain(resultSet.getString("org_domain"));
+        orgRole.setEmail(resultSet.getString("email"));
+        orgRole.setRoleType(OrgRoleType.valueOf(resultSet.getString("role_type")));
+        orgRole.setEnabled(resultSet.getBoolean("enabled"));
+        return orgRole;
     }
 
-    private Collection<Org> list(ResultSet resultSet) throws SQLException {
+    private Collection<OrgRole> list(ResultSet resultSet) throws SQLException {
         Collection list = new LinkedList();
         while (resultSet.next()) {
             list.add(create(resultSet));
@@ -77,19 +83,20 @@ public class OrgRoleService implements EntityService<Org> {
     }
     
     @Override
-    public void persist(Org org) throws StorageException {
+    public void persist(OrgRole orgRole) throws StorageException {
         try (PreparedStatement statement = prepare("insert")) {
-            statement.setString(1, org.getOrgDomain());
-            statement.setString(2, org.getLabel());
-            statement.setBoolean(3, org.isEnabled());
+            statement.setString(1, orgRole.getOrgDomain());
+            statement.setString(2, orgRole.getEmail());
+            statement.setString(3, orgRole.getRoleType().name());
+            statement.setBoolean(4, orgRole.isEnabled());
             if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_INSERTED);
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             generatedKeys.next();
-            org.setId(generatedKeys.getLong(1));
+            orgRole.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, orgRole.getKey());
         }
     }
 
@@ -105,77 +112,63 @@ public class OrgRoleService implements EntityService<Org> {
     }
     
     @Override
-    public void update(Org org) throws StorageException {
-        updateEnabled(org);
+    public void update(OrgRole orgRole) throws StorageException {
+        updateEnabled(orgRole);
     }
 
-    public void updateEnabled(Org org) throws StorageException {
+    public void updateEnabled(OrgRole orgRole) throws StorageException {
         try (PreparedStatement statement = prepare("update enabled")) {
-            statement.setBoolean(1, org.isEnabled());
-            statement.setLong(2, org.getId());
+            statement.setBoolean(1, orgRole.isEnabled());
+            statement.setLong(2, orgRole.getId());
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, org.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, orgRole.getKey());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, orgRole.getKey());
         }
     }
     
-    public void updateLabel(Org org) throws StorageException {
-        try (PreparedStatement statement = prepare("update label")) {
-            statement.setString(1, org.getLabel());
-            statement.setLong(2, org.getId());
-            if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, org.getKey());
-            }
-        } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());
-        }
-    }
-
     @Override
-    public Org find(Comparable key) throws StorageException {
+    public OrgRole find(Comparable key) throws StorageException {
         if (key instanceof Long) {
             return findId((Long) key);
-        } else if (key instanceof String) {
-            return findKey((String) key);
-        } else if (key instanceof OrgKey) {
-            return findKey(((OrgKey) key).getOrgDomain());
+        } else if (key instanceof OrgRoleKey) {
+            return findKey((OrgRoleKey) key);
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, 
                 key.getClass().getSimpleName());
     }
 
-    private Org findKey(String orgDomain) throws StorageException {
-        try (PreparedStatement statement = prepare("select key", orgDomain)) {
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (!resultSet.next()) {
-                    return null;
-                }
-                Org org = create(resultSet);
-                if (resultSet.next()) {
-                    throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, orgDomain);
-                }
-                return org;
-            }
-        } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, orgDomain);
-        }
-    }
-
-    private Org findId(Long id) throws StorageException {
+    private OrgRole findId(Long id) throws StorageException {
         try (PreparedStatement statement = prepare("select id", id);
                 ResultSet resultSet = statement.executeQuery()) {
             if (!resultSet.next()) {
                 return null;
             }
-            Org org = create(resultSet);
+            OrgRole orgRole = create(resultSet);
             if (resultSet.next()) {
                 throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, id);
             }
-            return org;
+            return orgRole;
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, id);
+        }
+    }
+    private OrgRole findKey(OrgRoleKey key) throws StorageException {
+        try (PreparedStatement statement = prepare("select key", 
+                key.getOrgDomain(), key.getEmail())) {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (!resultSet.next()) {
+                    return null;
+                }
+                OrgRole orgRole = create(resultSet);
+                if (resultSet.next()) {
+                    throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, key);
+                }
+                return orgRole;
+            }
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL, key);
         }
     }
 
@@ -185,17 +178,31 @@ public class OrgRoleService implements EntityService<Org> {
     }
 
     @Override
-    public Org retrieve(Comparable key) throws StorageException {
-        Org org = find(key);
-        if (org != null) {
-            return org;
+    public OrgRole retrieve(Comparable key) throws StorageException {
+        OrgRole orgRole = find(key);
+        if (orgRole != null) {
+            return orgRole;
         }
         throw new StorageException(StorageExceptionType.NOT_FOUND, key);
     }
 
     @Override
-    public Collection<Org> list() throws StorageException {
-        try (PreparedStatement statement = prepare("list");
+    public Collection<OrgRole> list(Comparable key) throws StorageException {
+        if (key instanceof OrgKey) {
+            return list((OrgKey) key);
+        } else if (key instanceof OrgRoleTypeKey) {
+            return list((OrgRoleTypeKey) key);
+        } else if (key instanceof UserKey) {
+            return list((UserKey) key);            
+        } else if (key instanceof UserRoleTypeKey) {
+            return list((UserRoleTypeKey) key);            
+        }
+        throw new StorageException(StorageExceptionType.INVALID_KEY, 
+                key.getClass().getSimpleName());
+    }
+    
+    public Collection<OrgRole> list(OrgKey key) throws StorageException {
+        try (PreparedStatement statement = prepare("list org", key.getOrgDomain());
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
         } catch (SQLException sqle) {
@@ -203,10 +210,42 @@ public class OrgRoleService implements EntityService<Org> {
         }
     }
 
-    @Override
-    public Collection<Org> list(Comparable key) throws StorageException {
-        throw new StorageException(StorageExceptionType.INVALID_KEY, 
-                key.getClass().getSimpleName());
+    public Collection<OrgRole> list(OrgRoleTypeKey key) throws StorageException {
+        try (PreparedStatement statement = prepare("list org role", key.getOrgDomain(),
+                key.getRoleType().name());
+                ResultSet resultSet = statement.executeQuery()) {
+            return list(resultSet);
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL);
+        }
+    }
+    
+    public Collection<OrgRole> list(UserKey key) throws StorageException {
+        try (PreparedStatement statement = prepare("list email", key.getEmail());
+                ResultSet resultSet = statement.executeQuery()) {
+            return list(resultSet);
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL);
+        }
     }
 
+    public Collection<OrgRole> list(UserRoleTypeKey key) throws StorageException {
+        try (PreparedStatement statement = prepare("list user role", key.getEmail(),
+                key.getRoleType().name());
+                ResultSet resultSet = statement.executeQuery()) {
+            return list(resultSet);
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL);
+        }
+    }
+    
+    @Override
+    public Collection<OrgRole> list() throws StorageException {
+        try (PreparedStatement statement = prepare("list");
+                ResultSet resultSet = statement.executeQuery()) {
+            return list(resultSet);
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL);
+        }
+    }        
 }
