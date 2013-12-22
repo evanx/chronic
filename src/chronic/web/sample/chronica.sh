@@ -410,10 +410,8 @@ c0ensureKey() {
 }
 
 c0ensureCert() {
-  echo "2"
   if [ ! -f etc/server.pem ]
   then
-   echo "3"
     if openssl s_client -connect $server 2>/dev/null </dev/null | grep -q 'BEGIN CERT'
     then
       openssl s_client -connect $server 2>/dev/null |
