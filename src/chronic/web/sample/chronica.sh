@@ -624,9 +624,19 @@ c0help() {
   cat script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
 }
 
+c1postheaders() {
+  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+    --data-binary @- -H 'Content-Type: text/plain' -H "$1" https://$server/post 
+}
+
 c2postheaders() {
   tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
     --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" https://$server/post 
+}
+
+c3postheaders() {
+  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+    --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" -H "$3" https://$server/post 
 }
 
 if [ $# -gt 0 ]
