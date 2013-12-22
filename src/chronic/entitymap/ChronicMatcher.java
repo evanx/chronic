@@ -43,7 +43,9 @@ import chronic.entitykey.UserRoleTypeKey;
 import chronic.entitykey.UserRoleTypeKeyed;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import vellum.data.ComparableTuple;
+import static vellum.jx.JMaps.list;
 import vellum.storage.AbstractEntity;
 import vellum.storage.EntityMatcher;
 
@@ -67,7 +69,8 @@ public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E
         return list;
     }
 
-    private boolean matches(Comparable key, E entity) {
+    @Override
+    public boolean matches(Comparable key, E entity) {
         if (key instanceof UserKey) {
             if (entity instanceof UserKeyed)  {
                 return matches((UserKeyed) entity, (UserKey) key);
@@ -122,6 +125,42 @@ public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E
             return ((ComparableTuple) entity.getKey()).contains(key);
         }
         return entity.getKey().equals(key);
+    }
+
+    @Override
+    public Collection<Comparable> getKeys(E entity) {
+        List<Comparable> list = new LinkedList();
+        if (entity instanceof UserKeyed) {
+            list.add(((UserKeyed) entity).getUserKey());
+        }
+        if (entity instanceof UserRoleTypeKeyed) {
+            list.add(((UserRoleTypeKeyed) entity).getUserRoleTypeKey());
+        }
+        if (entity instanceof OrgKeyed) {
+            list.add(((OrgKeyed) entity).getOrgKey());
+        }
+        if (entity instanceof OrgUserKeyed) {
+            list.add(((OrgUserKeyed) entity).getOrgUserKey());
+        }
+        if (entity instanceof OrgUnitKeyed) {
+            list.add(((OrgUnitKeyed) entity).getOrgUnitKey());
+        }
+        if (entity instanceof OrgRoleTypeKeyed) {
+            list.add(((OrgRoleTypeKeyed) entity).getOrgRoleTypeKey());
+        }
+        if (entity instanceof CertTopicKeyed) {
+            list.add(((CertTopicKeyed) entity).getTopicKey());
+        }
+        if (entity instanceof OrgTopicKeyed) {
+            list.add(((OrgTopicKeyed) entity).getOrgTopicKey());
+        }
+        if (entity instanceof SubscriberKeyed) {
+            list.add(((SubscriberKeyed) entity).getSubscriberKey());
+        }
+        if (entity instanceof CertKeyed) {
+            list.add(((CertKeyed) entity).getCertKey());
+        }
+        return list;
     }
     
     private boolean matches(CertKeyed keyed, CertKey key) {

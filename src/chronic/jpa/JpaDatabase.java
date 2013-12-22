@@ -30,6 +30,7 @@ import chronic.entity.Subscriber;
 import chronic.entitymap.ChronicMatcher;
 import chronicexp.jdbc.CertService;
 import chronicexp.jdbc.SubscriberService;
+import chronicexp.jdbc.TopicService;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.persistence.EntityManager;
@@ -73,7 +74,7 @@ public class JpaDatabase extends ChronicDatabase {
         user = userCache;
         org = orgCache;
         role = roleCache;
-        topic = topicCache;
+        topic = new DelegatingEntityService(topicCache, new TopicService(connection));
         sub = new DelegatingEntityService(subCache, new SubscriberService(connection));
         cert = new DelegatingEntityService(certCache, new CertService(connection));
     }

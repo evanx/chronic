@@ -89,7 +89,7 @@ public class OrgService implements EntityService<Org> {
             generatedKeys.next();
             org.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, Org.class, org.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());
         }
     }
 
@@ -100,7 +100,7 @@ public class OrgService implements EntityService<Org> {
                 throw new StorageException(StorageExceptionType.NOT_DELETED, key);
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, Org.class, key);
+            throw new StorageException(sqle, StorageExceptionType.SQL, key);
         }
     }
     
@@ -117,7 +117,7 @@ public class OrgService implements EntityService<Org> {
                 throw new StorageException(StorageExceptionType.NOT_UPDATED, org.getKey());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, Org.class, org.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());
         }
     }
     
@@ -129,7 +129,7 @@ public class OrgService implements EntityService<Org> {
                 throw new StorageException(StorageExceptionType.NOT_UPDATED, org.getKey());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, Org.class, org.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());
         }
     }
 
@@ -159,7 +159,7 @@ public class OrgService implements EntityService<Org> {
                 return org;
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, Org.class, orgDomain);
+            throw new StorageException(sqle, StorageExceptionType.SQL, orgDomain);
         }
     }
 
@@ -175,7 +175,7 @@ public class OrgService implements EntityService<Org> {
             }
             return org;
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, Org.class, id);
+            throw new StorageException(sqle, StorageExceptionType.SQL, id);
         }
     }
 

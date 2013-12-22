@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
 import vellum.storage.StorageException;
-import vellum.util.Strings;
 
 /**
  *
@@ -72,11 +71,13 @@ public class Post implements ChronicHttpxHandler {
                 builder.append("\n");
             }
             if (builder.length() == 0) {
-                builder.append(String.format("OK: %s: %s\n", cert.getCommonName(), topic.getTopicLabel()));
+                builder.append(String.format("OK: %s: %s\n", 
+                        cert.getCommonName(), topic.getTopicLabel()));
             }
             httpx.app.getStatusQueue().add(status);
             return new JMap(builder.toString());
         } catch (StorageException se) {
+            se.printStackTrace(System.err);
             return new JMap(String.format("error: %s\n", se.getMessage()));
         } catch (CertificateException | NumberFormatException | IOException e) {
             logger.warn(e.getMessage(), e);

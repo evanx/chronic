@@ -21,6 +21,7 @@
 package chronicexp.jdbc;
 
 import chronic.entity.Subscriber;
+import chronic.entity.Topic;
 import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.TopicIdKey;
 import chronic.entitykey.UserKey;
@@ -89,8 +90,7 @@ public class TopicService implements EntityService<Subscriber> {
             generatedKeys.next();
             subscriber.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, 
-                    Subscriber.class, subscriber.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());
         }
     }
 
@@ -106,8 +106,7 @@ public class TopicService implements EntityService<Subscriber> {
                 throw new StorageException(StorageExceptionType.NOT_UPDATED, subscriber.getKey());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, 
-                    Subscriber.class, subscriber.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());
         }
     }
 
@@ -118,8 +117,7 @@ public class TopicService implements EntityService<Subscriber> {
                 throw new StorageException(StorageExceptionType.NOT_DELETED, key);
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, 
-                    Subscriber.class, key);
+            throw new StorageException(sqle, StorageExceptionType.SQL, key);
         }
     }
 
@@ -147,8 +145,7 @@ public class TopicService implements EntityService<Subscriber> {
             }
             return subscriber;
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, 
-                    Subscriber.class, key);
+            throw new StorageException(sqle, StorageExceptionType.SQL, key);
         }
     }
     private Subscriber findId(Long id) throws StorageException {
@@ -163,8 +160,7 @@ public class TopicService implements EntityService<Subscriber> {
             }
             return subscriber;
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, 
-                    Subscriber.class, id);
+            throw new StorageException(sqle, StorageExceptionType.SQL, id);
         }
     }
 
