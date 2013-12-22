@@ -24,8 +24,6 @@ orgDomain="" # URL of your organisation
 commonName="" # name of this host or account
 admins="" # emails of chronica admins for this organisation
 subscribers="" # emails of invited subcribers for this topic
-scheduledHour="19" # hour of day for daily check
-scheduledMinute="19" # minute of hour for daily check
 
 ### customizable jobs
 

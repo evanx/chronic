@@ -42,7 +42,6 @@ sslTimeout=3
 httpTimeout=4
 databaseTimeout=2
 
-
 ### init 
 
 startTimestamp=`date '+%s'`
@@ -63,6 +62,7 @@ then
   echo "Chronica CRITICAL - pwd sanity check failed:" `pwd`
   exit 1
 fi
+
 
 ### debug 
 
@@ -150,6 +150,16 @@ then
 fi
 
 . $custom
+
+if ! set | grep -q '^scheduledHour='
+then
+  scheduledHour=`date +%H`
+fi
+
+if ! set | grep -q '^scheduledMinute='
+then
+  scheduledMinute=`date -d '1 minute' +%M`
+fi
 
 
 ### reviewable setup
@@ -529,6 +539,7 @@ c0updateCheck() {
 }
 
 c0update() {
+  ls -l $script
   c0updateCheck
   if ! curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem |
