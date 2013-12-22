@@ -504,24 +504,24 @@ c0minutelyCron() {
 
 c0updateGit() {
   c0updateCheck
-  echo "Run the following commands to update your script:"
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
+  echo 'Run the following commands to update your script:'
+  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script"
   echo "sha1sum $script"
-  echo "WARNING: In this case you are trusting that our github.com repository is not compromised."
+  echo 'WARNING: In this case you are trusting that our github.com repository is not compromised.'
 }
 
 c0updateCheck() {
   c0ensurePubKey
-  echo "Run the following commands manually and verify that all hashes match:"
-  echo "--"
-  echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh.sha1.txt"
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
-  echo "curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |"
-  echo "  openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem"
-  echo "--"
-  echo "Checking signature: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
+  echo 'Run the following commands manually and verify that all hashes match:'
+  echo '('
+  echo 'curl -s https://chronica.co/sample/chronica.sh | sha1sum'
+  echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.txt'
+  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
+  echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |'
+  echo '  openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem'
+  echo ')'
+  echo 'Checking signature: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
   curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem
   curl -s https://chronica.co/sample/chronica.sh | sha1sum 
