@@ -80,7 +80,7 @@ public class CertService implements EntityService<Cert> {
     }
     
     @Override
-    public void add(Cert cert) throws StorageException {
+    public void insert(Cert cert) throws StorageException {
         try (PreparedStatement statement = prepare("insert")) {
             statement.setString(1, cert.getOrgDomain());
             statement.setString(2, cert.getOrgUnit());
@@ -99,7 +99,7 @@ public class CertService implements EntityService<Cert> {
     }
 
     @Override
-    public void replace(Cert cert) throws StorageException {
+    public void update(Cert cert) throws StorageException {
         updateEncoded(cert);
     }
 
@@ -185,7 +185,7 @@ public class CertService implements EntityService<Cert> {
     }
 
     @Override
-    public boolean containsKey(Comparable key) throws StorageException {
+    public boolean retrievable(Comparable key) throws StorageException {
         return find(key) != null;
     }
 

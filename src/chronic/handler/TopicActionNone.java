@@ -35,7 +35,7 @@ public class TopicActionNone implements ChronicHttpxHandler {
         for (Topic topic : httpx.db.listTopics(email)) {
             handle(topic);
             topic.setEnabled(false);
-            httpx.db.topic().replace(topic);
+            httpx.db.topic().update(topic);
             topics.add(topic);
         }
         return JMaps.map("topics", topics);
@@ -46,7 +46,7 @@ public class TopicActionNone implements ChronicHttpxHandler {
         Subscriber subscriber = httpx.db.sub().find(key);
         if (subscriber != null) {
             subscriber.setEnabled(false);
-            httpx.db.sub().replace(subscriber);
+            httpx.db.sub().update(subscriber);
         }
     }
     

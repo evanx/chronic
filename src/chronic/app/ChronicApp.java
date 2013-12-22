@@ -252,24 +252,26 @@ public class ChronicApp {
     private void checkStatus(StatusRecord status) throws StorageException {
         logger.info("handleStatus {}", status);
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
-        AlertRecord alert = alertMap.get(status.getKey());
+        AlertRecord previousAlert = alertMap.get(status.getKey());
         if (previousStatus == null) {
             logger.info("putRecord: no previous status");
-            alert = new AlertRecord(status);
+            AlertRecord alert = new AlertRecord(status);
             status.setAlertType(AlertType.INITIAL);
             alertMap.put(status.getKey(), alert);
             if (properties.isTesting()) {
                 alertQueue.add(alert);
             }
-        } else if (new StatusRecordChecker(status).isAlertable(previousStatus, alert)) {
-            alert = new AlertRecord(status, previousStatus);
-            AlertRecord previousAlert = alertMap.get(status.getKey());
+        } else if (status.getAlertType() == AlertType.ONCE) {
+            AlertRecord alert = new AlertRecord(status, previousStatus);
+            alertMap.put(status.getKey(), alert);            
+        } else if (new StatusRecordChecker(status).isAlertable(previousStatus, previousAlert)) {
+            AlertRecord alert = new AlertRecord(status, previousStatus);
             if (status.getAlertType() == AlertType.INITIAL) {
                 alertMap.put(status.getKey(), alert);
             } else {
                 long elapsed = alert.getTimestamp() - previousAlert.getTimestamp();
                 if (elapsed < properties.getAlertPeriod()) {
-                    logger.warn("elapsed {}: {}", elapsed, alert);
+                    logger.warn("elapsed {}: {}", elapsed, previousAlert);
                     previousAlert.ignoreCount++;
                     previousAlert.ignoredAlert = alert;
                 } else {

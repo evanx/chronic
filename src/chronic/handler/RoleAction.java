@@ -24,12 +24,12 @@ public class RoleAction implements ChronicHttpxHandler {
     public JMap handle(ChronicHttpx httpx) throws Exception {
         String email = httpx.getEmail();
         OrgRoleKey roleKey = new OrgRoleKey(httpx.parseJsonMap().getMap("role"), email);
-        if (!httpx.db.role().containsKey(roleKey)) {
+        if (!httpx.db.role().retrievable(roleKey)) {
             return JMaps.mapValue("errorMessage", "no role");
         } else {
             OrgRole orgRole = httpx.db.role().find(roleKey);
             orgRole.setEnabled(!orgRole.isEnabled());
-            httpx.db.role().replace(orgRole);
+            httpx.db.role().update(orgRole);
             return JMaps.mapValue("role", orgRole.getMap());
         }
     }

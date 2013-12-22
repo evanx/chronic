@@ -109,7 +109,7 @@ public class ChronicHttpx extends Httpx {
             cert = new Cert(certKey);
             cert.setEncoded(encoded);
             cert.setAddress(remoteHostAddress);
-            db.cert().add(cert);
+            db.cert().insert(cert);
             logger.info("certificate {}", certKey);
         } else if (!cert.getEncoded().equals(encoded)) {
             logger.warn("invalid public key {}", certKey);
@@ -123,7 +123,7 @@ public class ChronicHttpx extends Httpx {
         Org org = db.org().find(cert.getOrgDomain());
         if (org == null) {
             org = new Org(cert.getOrgDomain());
-            db.org().add(org);
+            db.org().insert(org);
             logger.info("insert org {}", org);
         }
         cert.setOrg(org);
@@ -135,7 +135,7 @@ public class ChronicHttpx extends Httpx {
         User user = db.user().find(email);
         if (user == null) {
             user = new User(email);
-            db.user().add(user);
+            db.user().insert(user);
         }
         return user;
     }
@@ -146,7 +146,7 @@ public class ChronicHttpx extends Httpx {
         User user = db.user().find(email);
         if (user == null) {
             user = new User(email);
-            db.user().add(user);
+            db.user().insert(user);
         }
         for (Topic topic : db.topic().list(cert.getKey())) {
             persistTopicSubscriber(topic, email);
@@ -164,7 +164,7 @@ public class ChronicHttpx extends Httpx {
         if (orgRole == null) {
             orgRole = new OrgRole(orgRoleKey);
             orgRole.setEnabled(true);
-            db.role().add(orgRole);
+            db.role().insert(orgRole);
         }
         return orgRole;
     }
@@ -176,7 +176,7 @@ public class ChronicHttpx extends Httpx {
         Topic topic = db.topic().find(key);
         if (topic == null) {
             topic = new Topic(key);            
-            db.topic().add(topic);
+            db.topic().insert(topic);
         }
         topic.setCert(cert);
         return topic;
@@ -188,7 +188,7 @@ public class ChronicHttpx extends Httpx {
         Subscriber subscriber = db.sub().find(key);
         if (subscriber == null) {
             subscriber = new Subscriber(key);
-            db.sub().add(subscriber);
+            db.sub().insert(subscriber);
         }
         return subscriber;
     }

@@ -44,12 +44,12 @@ public class PersonaLogin implements ChronicHttpxHandler {
             user = new User(email);
             user.setEnabled(true);
             user.setLoginTime(new Date());
-            httpx.db.user().add(user);
+            httpx.db.user().insert(user);
             logger.info("insert user {}", email);
         } else {
             user.setEnabled(true);
             user.setLoginTime(new Date());
-            httpx.db.user().replace(user);
+            httpx.db.user().update(user);
         }
         cookie = new ChronicCookie(user.getEmail(), user.getLabel(),
                 user.getLoginTime().getTime(), assertion);

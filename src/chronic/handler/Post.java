@@ -10,6 +10,7 @@ import chronic.app.StatusRecordParser;
 import chronic.check.StatusCheck;
 import chronic.entity.Cert;
 import chronic.entity.Topic;
+import chronic.type.AlertType;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import org.slf4j.Logger;
@@ -31,19 +32,27 @@ public class Post implements ChronicHttpxHandler {
     public JMap handle(ChronicHttpx httpx) throws Exception {
         try {
             Cert cert = httpx.persistCert();
+            StatusRecord status = new StatusRecord(cert);
             int contentLength = Integer.parseInt(httpx.getRequestHeader("Content-length"));
-            logger.trace("contentLength {}", contentLength);
             if (contentLength > contentLengthLimit) {
-                throw new Exception("Content length limit exceeded");
+                logger.warn("contentLength {} {}", contentLength, cert);
+                status.setAlertType(AlertType.ONCE);
+                status.setTopicLabel("Chronical");
+                status.getLineList().add("INFO: Content length limit exceeded");
+                Topic topic = httpx.persistTopic(cert, status.getTopicLabel());
+                status.setTopic(topic);
+                httpx.app.getStatusQueue().add(status);
+                cert.setEnabled(false);
+                httpx.db.cert().update(cert);
+                throw new Exception("Content length limit exceeded: " + cert);
             }
             byte[] content = new byte[contentLength];
             httpx.getDelegate().getRequestBody().read(content);
             String contentString = new String(content);
             logger.trace("content {}", contentString);
-            StatusRecord status = new StatusRecordParser().parse(
-                    cert, httpx.getRequestHeaders(), contentString);
-            logger.trace("content lines {}: {}", status.getLineList().size(),
-                    Strings.formatFirst(status.getLineList()));
+            status = new StatusRecordParser().parse(cert,
+                    httpx.getRequestHeaders(),
+                    contentString);
             logger.debug("status {}", status);
             Topic topic = httpx.persistTopic(cert, status.getTopicLabel());
             status.setTopic(topic);

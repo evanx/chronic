@@ -21,7 +21,9 @@ public enum AlertType implements Labelled {
     CONTENT_CHANGED,
     SERVER_RESTARTED,
     INITIAL,
+    ONCE,
     ALWAYS;
+    
     
     public static AlertType parse(String string) {
         for (AlertType type : values()) {

@@ -51,7 +51,7 @@ public class ChronicScriptMessenger {
                 Executor executor = new Executor();
                 executor.exec(app.getProperties().getAlertScript(),
                         new AlertMailBuilder(app).build(alert).getBytes(),
-                        alert.getlMap());
+                        alert.getMap());
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
                 }

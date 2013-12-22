@@ -27,7 +27,7 @@ public class SubscriberActionAll implements ChronicHttpxHandler {
         List subscribers = new LinkedList();        
         for (Subscriber subscriber : httpx.db.sub().list(email)) {
             subscriber.setEnabled(true);
-            httpx.db.sub().replace(subscriber);
+            httpx.db.sub().update(subscriber);
             subscribers.add(subscriber);
         }
         httpx.injectDatabase(subscribers);

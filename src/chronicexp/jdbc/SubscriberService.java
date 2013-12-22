@@ -79,7 +79,7 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
     
     @Override
-    public void add(Subscriber subscriber) throws StorageException {
+    public void insert(Subscriber subscriber) throws StorageException {
         try (PreparedStatement statement = prepare("insert", subscriber.getTopicId(),
                 subscriber.getEmail(), subscriber.isEnabled())) {
             if (statement.executeUpdate() != 1) {
@@ -95,7 +95,7 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     @Override
-    public void replace(Subscriber subscriber) throws StorageException {
+    public void update(Subscriber subscriber) throws StorageException {
         updateEnabled(subscriber);
     }
 
@@ -168,7 +168,7 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     @Override
-    public boolean containsKey(Comparable key) throws StorageException {
+    public boolean retrievable(Comparable key) throws StorageException {
         return find(key) != null;
     }
 

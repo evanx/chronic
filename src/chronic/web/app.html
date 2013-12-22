@@ -489,16 +489,16 @@ curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chron
 
         <p><b>What about checking my site from the outside?</b>
           <br>Naturally you can use Chronica from a server in a different data center, or even your home computer, to monitor your site externally. 
-          <br>But the easiest is to request the Chronica server to perform external checks for you, e.g. using the "rhttps" command.
+          But the easiest is to request the Chronica server to perform external checks for you.
         </p>
-        <pre>$ sh chronica.sh rhttps mysite.net 443 | sh chronica.sh post
-OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
+        <pre>$ echo "Check-https: www.google.com 443" | sh chronica.sh post
+OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain View,ST=California,C=US</pre>
 
         <p><b>How are client certs managed?</b>
           <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. 
-          <br>By default the user and hostname is used for the cert's common name. 
-          <br>It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved. 
-          <br>Admins can confirm client certs and approve other admins, via the site.
+          By default the user and hostname is used for the cert's common name. 
+          It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved. 
+          Admins can confirm client certs and approve other admins, via the site.
         </p>
 
         <p><b>How are subcribers managed?</b>
@@ -511,7 +511,7 @@ OK - mysite.net port 443 https: CN=mysite.net,OU=Domain Control Validated</pre>
 
         <p><b>How are alerts triggered?</b>
         <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore suprious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
-        <br>And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
+        And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
         </p>
 
         <p><b>What other applications?</b>

@@ -23,18 +23,18 @@ package chronic.app;
 
 
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.data.Timestamped;
 import vellum.jx.JMap;
+import vellum.jx.JMapped;
 
 /**
  *
  * @author evan.summers
  */
-public class AlertRecord implements Timestamped {
+public class AlertRecord implements Timestamped, JMapped {
 
     static Logger logger = LoggerFactory.getLogger(AlertRecord.class);
     StatusRecord status;
@@ -78,7 +78,8 @@ public class AlertRecord implements Timestamped {
         this.previousStatus = previous;
     }
 
-    public Map getlMap() {
+    @Override
+    public JMap getMap() {
         JMap map = getPartialMap();
         putExtra(map);
         return map;
