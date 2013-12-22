@@ -3,9 +3,6 @@
  */
 package chronic.app;
 
-import chronic.app.ChronicApp;
-import chronic.app.ChronicCookie;
-import chronic.app.ChronicDatabase;
 import chronic.entity.Cert;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
@@ -21,12 +18,10 @@ import chronic.entitytype.OrgRoleType;
 import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
-import java.util.List;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.cert.X509Certificate;
 import org.slf4j.Logger;
