@@ -624,9 +624,9 @@ c0help() {
   cat script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
 }
 
-c3postheaders() {
+c2postheaders() {
   tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" -H "$3" https://$server/post 
+    --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" https://$server/post 
 }
 
 if [ $# -gt 0 ]
@@ -634,7 +634,7 @@ then
   command=$1
   [ $command != "start" ] &&  trap 'rm -f pid' EXIT
   shift
-  c$#$command $@  
+  c$#$command "$@"
 else 
   c0minutely
   c0hourly
