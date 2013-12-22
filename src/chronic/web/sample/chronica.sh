@@ -513,13 +513,14 @@ c0updateGit() {
 
 c0updateCheck() {
   c0ensurePubKey
-  echo "Please run the following commands manually and verify that all hashes match:"
+  echo "Run the following commands manually and verify that all hashes match:"
+  echo "--"
   echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
   echo "curl -s https://chronica.co/sample/chronica.sh.sha1.txt"
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh"
-  echo "curl -O -s https://chronica.co/sample/chronica.pub.pem"
-  echo "curl -O -s https://chronica.co/sample/chronica.sh.sha1.sig.txt"
-  echo "cat chronica.sh.sha1.sig.txt | openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem"
+  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
+  echo "curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |"
+  echo "  openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem"
+  echo "--"
   echo "Checking signature: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
   curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem
