@@ -37,7 +37,7 @@ public class Post implements ChronicHttpxHandler {
             if (contentLength > contentLengthLimit) {
                 logger.warn("contentLength {} {}", contentLength, cert);
                 status.setAlertType(AlertType.ONCE);
-                status.setTopicLabel("Chronical");
+                status.setTopicLabel("Chronica");
                 status.getLineList().add("INFO: Content length limit exceeded");
                 Topic topic = httpx.persistTopic(cert, status.getTopicLabel());
                 status.setTopic(topic);
