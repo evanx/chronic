@@ -644,9 +644,19 @@ c0help() {
   cat script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
 }
 
-[ -f chronica.pem ] || curl -s https://chronica.co/sample/chronica.pem -o chronica.pem
+rm -f chronica.pem
+if [ ! -f chronica.pem ] 
+then
+  curl -s https://chronica.co/sample/chronica.pem -o chronica.pem
+  echo "Fetched public key: https://chronica.co/sample/chronica.pem"
+  cat chronica.pem
+fi 
+
+echo "Checking signature: https://chronica.co/sample/chronica.sh.signature.txt"
 curl -s https://chronica.co/sample/chronica.sh.signature.txt |
   openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pem
+
+exit 1
 
 if [ $# -gt 0 ]
 then
