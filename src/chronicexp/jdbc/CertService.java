@@ -87,11 +87,10 @@ public class CertService implements EntityService<Cert> {
             statement.setString(3, cert.getCommonName());
             statement.setString(4, cert.getEncoded());
             statement.setBoolean(5, cert.isEnabled());
-            if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_INSERTED);
+            ResultSet generatedKeys = statement.executeQuery();
+            if (!generatedKeys.next()) {
+                throw new StorageException(StorageExceptionType.NOT_PERSISTED);
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            generatedKeys.next();
             cert.setId(generatedKeys.getLong(1));
             assert(cert.getId() != null);
         } catch (SQLException sqle) {

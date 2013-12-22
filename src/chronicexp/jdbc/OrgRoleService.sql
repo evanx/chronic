@@ -3,6 +3,7 @@
 insert into org_role (
   org_domain, email, role_type, enabled
 ) values (?, ?, ?, ?)
+returning org_role_id
 ;
 
 -- delete

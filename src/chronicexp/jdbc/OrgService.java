@@ -82,11 +82,10 @@ public class OrgService implements EntityService<Org> {
             statement.setString(1, org.getOrgDomain());
             statement.setString(2, org.getLabel());
             statement.setBoolean(3, org.isEnabled());
-            if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_INSERTED);
+            ResultSet generatedKeys = statement.executeQuery();
+            if (!generatedKeys.next()) {
+                throw new StorageException(StorageExceptionType.NOT_PERSISTED);
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            generatedKeys.next();
             org.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());

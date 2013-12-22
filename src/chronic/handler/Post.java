@@ -74,6 +74,7 @@ public class Post implements ChronicHttpxHandler {
                 builder.append(String.format("OK: %s: %s\n", 
                         cert.getCommonName(), topic.getTopicLabel()));
             }
+            httpx.db.commit();
             httpx.app.getStatusQueue().add(status);
             return new JMap(builder.toString());
         } catch (StorageException se) {

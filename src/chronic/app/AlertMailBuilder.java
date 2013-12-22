@@ -57,7 +57,9 @@ public class AlertMailBuilder {
             builder.append('\n');
         } else if (alert.status.getAlertType() == AlertType.STATUS_CHANGED) {
             append(alert.status);
-            appendPrevious(alert.previousStatus);
+            if (alert.previousStatus != null) {
+                appendPrevious(alert.previousStatus);
+            }
         } else {            
             append(alert.status);
         }

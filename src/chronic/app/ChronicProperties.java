@@ -160,10 +160,10 @@ public class ChronicProperties {
 
     public PoolProperties getPoolProperties() {
         PoolProperties poolProperties = new PoolProperties();
-        poolProperties.setUrl("jdbc:h2:mem");
-        poolProperties.setDriverClassName("org.h2.Driver");
-        poolProperties.setUsername("sa");
-        poolProperties.setPassword("sa");
+        poolProperties.setUrl("jdbc:postgresql://localhost:5432/chronica");
+        poolProperties.setDriverClassName("org.postgresql.Driver");
+        poolProperties.setUsername("chronica");
+        poolProperties.setPassword("chronica");
         poolProperties.setJmxEnabled(true);
         poolProperties.setTestWhileIdle(false);
         poolProperties.setTestOnBorrow(true);

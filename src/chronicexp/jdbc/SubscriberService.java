@@ -82,11 +82,10 @@ public class SubscriberService implements EntityService<Subscriber> {
     public void persist(Subscriber subscriber) throws StorageException {
         try (PreparedStatement statement = prepare("insert", subscriber.getTopicId(),
                 subscriber.getEmail(), subscriber.isEnabled())) {
-            if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_INSERTED);
+            ResultSet generatedKeys = statement.executeQuery();
+            if (!generatedKeys.next()) {
+                throw new StorageException(StorageExceptionType.NOT_PERSISTED);
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            generatedKeys.next();
             subscriber.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());

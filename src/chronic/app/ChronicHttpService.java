@@ -1,5 +1,6 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
+
  */
 package chronic.app;
 
@@ -8,9 +9,6 @@ import chronicexp.jdbc.CachingJdbcDatabase;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.exception.Exceptions;
@@ -68,50 +66,29 @@ public class ChronicHttpService implements HttpHandler {
             InstantiationException, IllegalAccessException {
         String className = "chronic.handler."
                 + Character.toUpperCase(handlerName.charAt(0)) + handlerName.substring(1);
-        logger.info("handler {}", className);
+        logger.trace("handler {}", className);
         return (ChronicHttpxHandler) Class.forName(className).newInstance();
     }
 
     private void handle(ChronicHttpxHandler handler, HttpExchange httpe) {
-        ChronicHttpx httpx = new ChronicHttpx(app, httpe);
-        EntityManager em = null;
-        Connection connection = null;
+        ChronicHttpx httpx = new ChronicHttpx(app, httpe);        
+        CachingJdbcDatabase database = new CachingJdbcDatabase(app);
         try {
             app.ensureInitialized();
-            connection = app.getDataSource().getConnection();
-            em = app.getEntityManagerFactory().createEntityManager();
-            ChronicDatabase database = new CachingJdbcDatabase(app, connection, em);
+            database.open();
+            database.begin();
             httpx.setDatabase(database);
-            em.getTransaction().begin();
             JMap responseMap = handler.handle(httpx);
-            logger.info("response {}", responseMap);
+            logger.trace("response {}", responseMap);
             httpx.sendResponse(responseMap);
-            em.getTransaction().commit();
+            database.commit();
         } catch (Exception e) {
             httpx.sendError(e);
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (SQLException sqle) {
-                logger.warn("connection rollback", sqle);
-            }
-            if (em != null) {
-                em.getTransaction().rollback();
-            }
+            database.rollback();
             e.printStackTrace(System.out);
         } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException sqle) {
-                logger.warn("connection close", sqle);
-            }
-            if (em != null) {
-                em.close();
-            }
             httpx.close();
+            database.close();
         }
     }
 }

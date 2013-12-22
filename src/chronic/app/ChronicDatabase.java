@@ -63,7 +63,6 @@ public abstract class ChronicDatabase {
             db.close();
         }
     }
-    
     public abstract void close();
 
     public abstract EntityService<User> user();
@@ -93,7 +92,8 @@ public abstract class ChronicDatabase {
         return list;
     }
 
-    public Iterable<String> listOrgDomains(String email, OrgRoleType roleType) throws StorageException {
+    public Iterable<String> listOrgDomains(String email, OrgRoleType roleType) 
+            throws StorageException {
         List list = new LinkedList();
         for (OrgRole orgRole : role().list(new UserKey(email))) {
             if (orgRole.getEmail().equals(email)) {
@@ -105,7 +105,8 @@ public abstract class ChronicDatabase {
         return list;
     }
 
-    public Map<OrgRoleType, OrgRole> mapOrgRole(String orgDomain, String email) throws StorageException {
+    public Map<OrgRoleType, OrgRole> mapOrgRole(String orgDomain, String email) 
+            throws StorageException {
         Map map = new HashMap();
         for (OrgRole orgRole : role().list(new OrgUserKey(orgDomain, email))) {
             map.put(orgRole.getRoleType(), orgRole);
@@ -122,7 +123,8 @@ public abstract class ChronicDatabase {
         return roleTypes;
     }
 
-    public boolean isOrgRoleType(String orgDomain, OrgRoleType roleType) throws StorageException {
+    public boolean isOrgRoleType(String orgDomain, OrgRoleType roleType) 
+            throws StorageException {
         return !role().list(new OrgRoleTypeKey(orgDomain, roleType)).isEmpty();
     }
 
@@ -140,7 +142,8 @@ public abstract class ChronicDatabase {
         return topics;
     }
 
-    public Iterable<Topic> listTopics(String email, boolean enabled) throws StorageException {
+    public Iterable<Topic> listTopics(String email, boolean enabled) 
+            throws StorageException {
         logger.info("listTopics {} {}", email);
         Set<Topic> topics = new TreeSet();
         for (Subscriber subscriber : sub().list(email)) {
@@ -183,5 +186,4 @@ public abstract class ChronicDatabase {
         }
         return set;
     }
-
 }

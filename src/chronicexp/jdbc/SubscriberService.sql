@@ -5,6 +5,7 @@ insert into topic_sub (
   email,
   enabled
 ) values (?, ?, ?)
+returning topic_sub_id
 ;
 
 -- delete

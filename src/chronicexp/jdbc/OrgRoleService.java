@@ -89,11 +89,10 @@ public class OrgRoleService implements EntityService<OrgRole> {
             statement.setString(2, orgRole.getEmail());
             statement.setString(3, orgRole.getRoleType().name());
             statement.setBoolean(4, orgRole.isEnabled());
-            if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_INSERTED);
+            ResultSet generatedKeys = statement.executeQuery();
+            if (!generatedKeys.next()) {
+                throw new StorageException(StorageExceptionType.NOT_PERSISTED);
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            generatedKeys.next();
             orgRole.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, orgRole.getKey());

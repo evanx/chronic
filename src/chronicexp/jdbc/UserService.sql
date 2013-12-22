@@ -3,6 +3,7 @@
 insert into person (
   email, label, enabled
 ) values (?, ?, ?)
+returning person_id
 ;
 
 -- delete

@@ -79,7 +79,8 @@ public class ChronicSchema {
                     try {
                         connection.createStatement().execute(sqlStatement);
                     } catch (SQLException e) {
-                        logger.warn(sqlStatement, e);
+                        logger.error("create {}", e.getMessage());
+                        logger.info("sqlStatement {}", sqlStatement);
                     }
                 }
             }

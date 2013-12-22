@@ -83,11 +83,10 @@ public class UserService implements EntityService<User> {
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getLabel());
             statement.setBoolean(3, user.isEnabled());
-            if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_INSERTED);
+            ResultSet generatedKeys = statement.executeQuery();
+            if (!generatedKeys.next()) {
+                throw new StorageException(StorageExceptionType.NOT_PERSISTED);
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            generatedKeys.next();
             user.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, user.getKey());

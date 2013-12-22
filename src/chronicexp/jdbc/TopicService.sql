@@ -3,6 +3,7 @@
 insert into topic (
   cert_id, topic_label, enabled
 ) values (?, ?, ?)
+returning topic_id
 ;
 
 -- delete

@@ -109,18 +109,12 @@ public class ChronicApp {
         new ChronicSchema(this).verifySchema();
         initalized = true;
         logger.info("initialized");
-    }
-
-    public void startApp() throws Exception {
+        statusThread.start();
+        alertThread.start();
         logger.info("schedule {}", properties.getPeriod());
         elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(), properties.getPeriod(),
                 properties.getPeriod(), TimeUnit.MILLISECONDS);
-        alertThread.start();
-        statusThread.start();
         logger.info("started");
-        if (properties.isTesting()) {
-            test();
-        }
         messenger.alertAdmins("Chronic restarted");
     }
 
@@ -130,7 +124,6 @@ public class ChronicApp {
         public void run() {
             try {
                 initDeferred();
-                startApp();
             } catch (Exception e) {
                 logger.warn("init", e);
             }
@@ -149,14 +142,11 @@ public class ChronicApp {
         return emf;
     }
 
-    public ChronicDatabase getDatabase() throws SQLException {
-        return new CachingJdbcDatabase(this, dataSource.getConnection(), emf.createEntityManager());
+    public CachingJdbcDatabase getDatabase() {
+        return new CachingJdbcDatabase(this);
     }
 
-    public void test() throws Exception {
-    }
-
-    public void stopApp() throws Exception {
+    public void shutdown() throws Exception {
         running = false;
         elapsedExecutorService.shutdown();
         if (webServer != null) {
@@ -180,18 +170,21 @@ public class ChronicApp {
         @Override
         public void run() {
             while (running) {
-                ChronicDatabase db = null;
+                CachingJdbcDatabase db = getDatabase();
                 try {
                     AlertRecord alert = alertQueue.poll(60, TimeUnit.SECONDS);
                     if (alert == null) {
                     } else {
-                        db = getDatabase();
+                        db.open();
                         messenger.alert(db, alert);
                     }
                 } catch (InterruptedException | SQLException e) {
                     logger.warn("run", e);
+                } catch (Throwable t) {
+                    logger.error("run", t);
+                } finally {
+                    db.close();
                 }
-                ChronicDatabase.close(db);
             }
         }
     }

@@ -3,6 +3,7 @@
 insert into org (
   org_domain, label, enabled
 ) values (?, ?, ?)
+returning org_id;
 ;
 
 -- delete

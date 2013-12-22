@@ -7,6 +7,7 @@ insert into cert (
   encoded,
   enabled
 ) values (?, ?, ?, ?, ?)
+returning cert_id
 ;
 
 -- update enabled

@@ -86,11 +86,10 @@ public class TopicService implements EntityService<Topic> {
             statement.setLong(1, topic.getCertId());
             statement.setString(2, topic.getTopicLabel());
             statement.setBoolean(3, topic.isEnabled());
-            if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_INSERTED);
+            ResultSet generatedKeys = statement.executeQuery();
+            if (!generatedKeys.next()) {
+                throw new StorageException(StorageExceptionType.NOT_PERSISTED);
             }
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            generatedKeys.next();
             topic.setId(generatedKeys.getLong(1));
             assert(topic.getId() != null);
         } catch (SQLException sqle) {

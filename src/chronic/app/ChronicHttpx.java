@@ -18,6 +18,7 @@ import chronic.entitytype.OrgRoleType;
 import chronic.persona.PersonaException;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
+import chronicexp.jdbc.CachingJdbcDatabase;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.security.cert.CertificateException;
@@ -40,24 +41,11 @@ public class ChronicHttpx extends Httpx {
     Logger logger = LoggerFactory.getLogger(ChronicHttpx.class);
 
     public ChronicApp app;
-    public ChronicDatabase db;
+    public CachingJdbcDatabase db;
 
     public ChronicHttpx(ChronicApp app, HttpExchange delegate) {
         super(delegate);
         this.app = app;
-    }
-
-    public void setDatabase(ChronicDatabase database) {
-        this.db = database;
-    }
-    
-    public void injectDatabase(Collection<? extends ChronicDatabaseInjectable> collection) 
-            throws Exception {
-        logger.info("injectDatabase collection {}", collection);
-        for (ChronicDatabaseInjectable element : collection) {
-            logger.info("injectDatabase element {} {}", element.getClass(), element);
-            element.inject(db);
-        }
     }
 
     public String getEmail() throws JMapException, IOException, PersonaException {
@@ -84,7 +72,20 @@ public class ChronicHttpx extends Httpx {
         setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
         throw new PersonaException("no verified email");
     }
+        
+    public void setDatabase(CachingJdbcDatabase db) {
+        this.db = db;
+    }
     
+    public void injectDatabase(Collection<? extends ChronicDatabaseInjectable> collection) 
+            throws Exception {
+        logger.info("injectDatabase collection {}", collection);
+        for (ChronicDatabaseInjectable element : collection) {
+            logger.info("injectDatabase element {} {}", element.getClass(), element);
+            element.inject(db);
+        }
+    }
+
     public Cert persistCert() throws StorageException, CertificateException,
             SSLPeerUnverifiedException {
         X509Certificate certificate = getPeerCertficate();
@@ -98,10 +99,19 @@ public class ChronicHttpx extends Httpx {
         } else if (!app.getProperties().getAllowedAddresses().contains(remoteHostAddress)) {
             logger.info("remote hostAddress {}", remoteHostAddress);
         }
+        boolean enabled = false;
+        Org org = db.org().find(orgDomain);
+        if (org == null) {
+            enabled = true;
+            org = new Org(orgDomain);
+            db.org().persist(org);
+            logger.info("persist org {}", org);
+        }
         CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);
         Cert cert = db.cert().find(certKey);
         if (cert == null) {
             cert = new Cert(certKey);
+            cert.setEnabled(enabled);
             cert.setEncoded(encoded);
             cert.setAddress(remoteHostAddress);
             db.cert().persist(cert);
@@ -115,12 +125,6 @@ public class ChronicHttpx extends Httpx {
         }
         cert.setTimestamp(System.currentTimeMillis());
         cert.setAddress(remoteHostAddress);
-        Org org = db.org().find(cert.getOrgDomain());
-        if (org == null) {
-            org = new Org(cert.getOrgDomain());
-            db.org().persist(org);
-            logger.info("insert org {}", org);
-        }
         cert.setOrg(org);
         return cert;
     }
@@ -188,5 +192,4 @@ public class ChronicHttpx extends Httpx {
         }
         return subscriber;
     }
-
 }

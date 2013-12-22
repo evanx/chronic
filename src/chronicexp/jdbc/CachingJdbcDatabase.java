@@ -30,6 +30,7 @@ import chronic.entity.Subscriber;
 import chronic.entitymap.ChronicMatcher;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,21 +54,23 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     static final CachingEntityService<Topic> topicCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<Subscriber> subCache = new CachingEntityService(100, matcher);
     
-    private boolean closed = false;
-    private final EntityManager em;
-    private final Connection connection;
-    
-    public EntityService<User> user;        
+    private EntityManager em;
+    private Connection connection;
+
+    public EntityService<User> user;
     public EntityService<Org> org;
     public EntityService<OrgRole> role;
     public EntityService<Topic> topic;
     public EntityService<Subscriber> sub;
     public EntityService<Cert> cert;
-    
-    public CachingJdbcDatabase(ChronicApp app, Connection connection, EntityManager em) {
+
+    public CachingJdbcDatabase(ChronicApp app) {
         super(app);
-        this.connection = connection;
-        this.em = em;
+    }
+    
+    public void open() throws SQLException {
+        connection = app.getDataSource().getConnection();
+        em = app.getEntityManagerFactory().createEntityManager();
         user = new DelegatingEntityService(userCache, new UserService(connection));
         org = new DelegatingEntityService(orgCache, new OrgService(connection));
         role = new DelegatingEntityService(roleCache, new OrgRoleService(connection));
@@ -76,19 +79,45 @@ public class CachingJdbcDatabase extends ChronicDatabase {
         cert = new DelegatingEntityService(certCache, new CertService(connection));
     }
 
+    public void begin() throws SQLException {
+        connection.setAutoCommit(false);
+        em.getTransaction().begin();
+    }
+    
+    public void rollback() {
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            logger.warn("rollback connection {}", e);
+        }
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+    }
+
+    public void commit() {
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            logger.warn("commit connection {}", e);
+        }
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().commit();
+        }
+    }
+
     @Override
     public void close() {
-        if (!closed) {
-            try {
-                if (connection != null && !connection.isClosed()) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                logger.warn("close connection {}", e);
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
             }
+        } catch (SQLException e) {
+            logger.warn("close connection {}", e);
+        }
+        if (em != null) {
             em.close();
         }
-        closed = true;
     }
 
     @Override
@@ -100,7 +129,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     public EntityService<Org> org() {
         return org;
     }
-    
+
     @Override
     public EntityService<OrgRole> role() {
         return role;
@@ -119,6 +148,5 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     @Override
     public EntityService<Cert> cert() {
         return cert;
-    }   
-
+    }
 }
