@@ -538,7 +538,7 @@ c0updateCheck() {
   echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |'
   echo '  openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem'
   echo ')'
-  echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using chronica.pub.pem:'
+  echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using' `pwd`/'chronica.pub.pem:'
   if curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem 
   then
@@ -546,9 +546,9 @@ c0updateCheck() {
   else
     echo 'CRITICAL: verification failed: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
   fi
-  echo `curl -s https://chronica.co/sample/chronica.sh | sha1sum` 'https://chronica.co/sample/chronica.sh.sha1.sig.txt' 
+  echo `curl -s https://chronica.co/sample/chronica.sh | sha1sum` 'sha1sum https://chronica.co/sample/chronica.sh' 
   echo `curl -s https://chronica.co/sample/chronica.sh.sha1.txt` '- https://chronica.co/sample/chronica.sh.sha1.txt'
-  echo `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` '- Github chronica.sh.sha1.txt'
+  echo `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` '- chronica.sh.sha1.txt on github (may be different)'
 }
 
 c0update() {
