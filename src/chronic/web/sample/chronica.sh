@@ -624,17 +624,9 @@ c0help() {
   cat script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
 }
 
-postheaders() {
-  headers="-H 'Content-Type: text/plain'"
-  for header in "$@"
-  do
-    echo "header: $header"
-    headers="$headers -H '$header'"
-  done
-  echo "server $server"
-  echo "$headers"
+c3postheaders() {
   tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
-    --data-binary @- $headers https://$server/post 
+    --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" -H "$3" https://$server/post 
 }
 
 if [ $# -gt 0 ]
@@ -642,12 +634,7 @@ then
   command=$1
   [ $command != "start" ] &&  trap 'rm -f pid' EXIT
   shift
-  if [ $command = "postheaders" ]
-  then
-    postheaders "$@"
-  else
-    c$#$command $@  
-  fi
+  c$#$command $@  
 else 
   c0minutely
   c0hourly
