@@ -118,7 +118,7 @@ public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, Use
     
     @Override
     public JMap getMap() {
-        JMap map = new JMap();
+        JMap map = topic.getCert().getKeyMap();
         map.put("id", id);
         map.put("topicId", topicId);
         map.put("email", email);
@@ -126,10 +126,13 @@ public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, Use
         map.put("actionLabel", getAction().getLabel());
         map.put("topicLabel", topic.getTopicLabel());
         map.put("orgDomain", topic.getCert().getOrgDomain());
-        topic.getCert().put(map);
         return map;
     }
 
+    private SubscriberActionType getAction() {
+        return enabled ? SubscriberActionType.UNSUBSCRIBE : SubscriberActionType.SUBSCRIBE;
+    }
+        
     @Override
     public void inject(ChronicDatabase db) throws StorageException {
         logger.info("inject topicId {}", topicId);
@@ -138,10 +141,6 @@ public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, Use
         topic.inject(db);
     }
 
-    private SubscriberActionType getAction() {
-        return enabled ? SubscriberActionType.UNSUBSCRIBE : SubscriberActionType.SUBSCRIBE;
-    }
-    
     @Override
     public String toString() {
         return getKey().toString();

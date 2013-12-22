@@ -168,8 +168,7 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
         
     @Override
     public JMap getMap() {
-        JMap map = new JMap();
-        put(map);
+        JMap map = getKeyMap();
         map.put("enabled", enabled);
         map.put("address", address);
         map.put("timestampLabel", Millis.formatTime(timestamp));
@@ -179,19 +178,21 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
         return map;
     }
 
-    public void put(JMap map) {
-        map.put("certId", id);
-        map.put("orgDomain", orgDomain);
-        map.put("orgUnit", orgUnit);
-        map.put("commonName", commonName);
-    }
-    
     private CertActionType getAction() {
         return enabled ? CertActionType.REVOKE : CertActionType.GRANT;
     }
     
+    public JMap getKeyMap() {
+        JMap map = new JMap();
+        map.put("certId", id);
+        map.put("orgDomain", orgDomain);
+        map.put("orgUnit", orgUnit);
+        map.put("commonName", commonName);
+        return map;
+    }
+    
     @Override
     public String toString() {
-        return getKey().toString();
+        return getKeyMap().toString();
     }
 }

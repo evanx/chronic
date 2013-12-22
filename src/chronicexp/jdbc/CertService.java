@@ -108,7 +108,7 @@ public class CertService implements EntityService<Cert> {
             statement.setBoolean(1, cert.isEnabled());
             statement.setLong(2, cert.getId());
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, cert.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, cert);
             }
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());

@@ -25,8 +25,10 @@ public class CertActionAll implements ChronicHttpxHandler {
     public JMap handle(ChronicHttpx httpx) throws Exception {
         List certs = new LinkedList();
         for (Cert cert : httpx.db.listCerts(httpx.getEmail())) {
-            cert.setEnabled(true);
-            httpx.db.cert().update(cert);            
+            if (!cert.isEnabled()) {
+                cert.setEnabled(true);
+                httpx.db.cert().update(cert);
+            }
             certs.add(cert);
         }
         return JMaps.map("certs", certs);
