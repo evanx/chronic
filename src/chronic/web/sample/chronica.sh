@@ -633,6 +633,7 @@ postheaders() {
   done
   echo "server $server"
   echo "$headers"
+  headers=""
   tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
     --data-binary @- $headers https://$server/post 
 }
