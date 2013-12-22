@@ -528,18 +528,23 @@ c0updateGit() {
   echo 'WARNING: In this case you are trusting that our github.com repository is not compromised.'
 }
 
-c0updateCheck() {
+c0updateInfo() {
   c0ensurePubKey
-  echo 'Run the following commands manually and verify digest and signature:'
+  echo 'Run the following commands to verify the digest and signature:'
   echo '('
-  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
   echo 'curl -s https://chronica.co/sample/chronica.sh | sha1sum'
   echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.txt'
   echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |'
   echo '  openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem'
   echo ')'
   echo "Then run the following command to update your script:"
+  echo '('
   echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
+  echo ')'
+}
+
+c0updateCheck() {
+  c0updateInfo
   echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using' `pwd`/'chronica.pub.pem:'
   if curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem 
@@ -548,14 +553,16 @@ c0updateCheck() {
   else
     echo 'CRITICAL: verification failed: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
   fi
-  echo `curl -s https://chronica.co/sample/chronica.sh | sha1sum` 'sha1sum https://chronica.co/sample/chronica.sh' 
-  echo `curl -s https://chronica.co/sample/chronica.sh.sha1.txt` '- https://chronica.co/sample/chronica.sh.sha1.txt'
+  echo -n `curl -s https://chronica.co/sample/chronica.sh | sha1sum` 
+  echo ' sha1sum https://chronica.co/sample/chronica.sh' 
+  echo -n `curl -s https://chronica.co/sample/chronica.sh.sha1.txt` 
+  echo ' - https://chronica.co/sample/chronica.sh.sha1.txt'
   echo `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` '- chronica.sh.sha1.txt on github (may be different)'
 }
 
 c0update() {
-  ls -l $script
-  c0updateCheck
+  c0updateInfo
+  echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using' `pwd`/'chronica.pub.pem:'
   if ! curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem |
     grep `curl -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
@@ -569,8 +576,10 @@ c0update() {
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.txt"
     else 
       echo "OK: matches: https://chronica.co/sample/chronica.sh.sha1.txt"
-      echo "Run the following command to update your script:"
+      echo "Running the following command to update your script:"
       echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
+      curl -s https://chronica.co/sample/chronica.sh -o $script
+      exit $?
     fi
   fi
 }
