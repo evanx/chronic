@@ -485,7 +485,7 @@ c0minutelyCron() {
 ### update script
 
 c0updateCheck() {
-  echo "Please run the following commands manually to confirm all hashes match:"
+  echo "Please run the following commands manually and verify that all hashes match:"
   echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
   echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt"
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1sum.txt"
@@ -500,6 +500,7 @@ c0updateGit() {
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum"
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script"
   echo "sha1sum $script"
+  echo "WARNING: In this case you are trusting that our github.com repository is not compromised."
 }
 
 c0update() {
@@ -514,6 +515,7 @@ c0update() {
       echo "Run the following commands to update your script:"
       echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
       echo "sha1sum $script"
+      echo "INFO: hashes match on github.com and chronica.co."
     else 
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1sum.txt"
     fi
