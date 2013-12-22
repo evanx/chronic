@@ -55,10 +55,10 @@ create table cert (
 create table topic (
   topic_id int auto_increment primary key,
   cert_id int,
-  label varchar(64), 
+  topic_label varchar(64), 
   enabled boolean default false,
   inserted timestamp not null default now(),
-  unique key uniq_topic (cert_id, label)
+  unique key uniq_topic (cert_id, topic_label)
 );
 
 create table topic_sub (

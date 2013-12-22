@@ -167,6 +167,7 @@ public class ChronicHttpx extends Httpx {
     public Topic persistTopic(Cert cert, String topicLabel)
             throws StorageException {
         logger.info("handle {} {}", topicLabel, cert);
+        assert(cert.getId() != null);
         CertTopicKey key = new CertTopicKey(cert.getId(), topicLabel);
         Topic topic = db.topic().find(key);
         if (topic == null) {

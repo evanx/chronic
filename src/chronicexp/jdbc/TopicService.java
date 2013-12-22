@@ -20,10 +20,9 @@
  */
 package chronicexp.jdbc;
 
-import chronic.entity.Subscriber;
 import chronic.entity.Topic;
-import chronic.entitykey.SubscriberKey;
-import chronic.entitykey.TopicIdKey;
+import chronic.entitykey.CertIdKey;
+import chronic.entitykey.CertTopicKey;
 import chronic.entitykey.UserKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,7 +41,7 @@ import vellum.storage.StorageExceptionType;
  *
  * @author evan.summers
  */
-public class TopicService implements EntityService<Subscriber> {
+public class TopicService implements EntityService<Topic> {
 
     static Logger logger = LoggerFactory.getLogger(TopicService.class);
     static QueryMap queryMap = new QueryMap(TopicService.class);
@@ -54,24 +53,26 @@ public class TopicService implements EntityService<Subscriber> {
 
     private PreparedStatement prepare(String queryKey,
             Object... parameters) throws SQLException {
+        logger.trace("prepare {} {}", queryMap.get(queryKey), parameters);
         PreparedStatement statement = connection.prepareStatement(queryMap.get(queryKey));
         int index = 0;
         for (Object parameter : parameters) {
+            assert(parameter != null);
             statement.setObject(++index, parameter);
         }
         return statement;
     }
 
-    private Subscriber create(ResultSet resultSet) throws SQLException {
-        Subscriber subscriber = new Subscriber();
-        subscriber.setId(resultSet.getLong("topic_sub_id"));
-        subscriber.setTopicId(resultSet.getLong("topic_id"));
-        subscriber.setEmail(resultSet.getString("email"));
-        subscriber.setEnabled(resultSet.getBoolean("enabled"));
-        return subscriber;
+    private Topic create(ResultSet resultSet) throws SQLException {
+        Topic topic = new Topic();
+        topic.setId(resultSet.getLong("topic_id"));
+        topic.setCertId(resultSet.getLong("cert_id"));
+        topic.setTopicLabel(resultSet.getString("topic_label"));
+        topic.setEnabled(resultSet.getBoolean("enabled"));
+        return topic;
     }
 
-    private Collection<Subscriber> list(ResultSet resultSet) throws SQLException {
+    private Collection<Topic> list(ResultSet resultSet) throws SQLException {
         Collection list = new LinkedList();
         while (resultSet.next()) {
             list.add(create(resultSet));
@@ -80,33 +81,36 @@ public class TopicService implements EntityService<Subscriber> {
     }
     
     @Override
-    public void persist(Subscriber subscriber) throws StorageException {
-        try (PreparedStatement statement = prepare("insert", subscriber.getTopicId(),
-                subscriber.getEmail(), subscriber.isEnabled())) {
+    public void persist(Topic topic) throws StorageException {
+        try (PreparedStatement statement = prepare("insert")) {
+            statement.setLong(1, topic.getCertId());
+            statement.setString(2, topic.getTopicLabel());
+            statement.setBoolean(3, topic.isEnabled());
             if (statement.executeUpdate() != 1) {
                 throw new StorageException(StorageExceptionType.NOT_INSERTED);
             }
             ResultSet generatedKeys = statement.getGeneratedKeys();
             generatedKeys.next();
-            subscriber.setId(generatedKeys.getLong(1));
+            topic.setId(generatedKeys.getLong(1));
+            assert(topic.getId() != null);
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, topic.getKey());
         }
     }
 
     @Override
-    public void update(Subscriber subscriber) throws StorageException {
-        updateEnabled(subscriber);
+    public void update(Topic topic) throws StorageException {
+        updateEnabled(topic);
     }
 
-    public void updateEnabled(Subscriber subscriber) throws StorageException {
+    public void updateEnabled(Topic topic) throws StorageException {
         try (PreparedStatement statement = prepare("update enabled", 
-                subscriber.isEnabled(), subscriber.getId())) {
+                topic.isEnabled(), topic.getId())) {
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, subscriber.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, topic.getKey());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, topic.getKey());
         }
     }
 
@@ -122,45 +126,47 @@ public class TopicService implements EntityService<Subscriber> {
     }
 
     @Override
-    public Subscriber find(Comparable key) throws StorageException {
+    public Topic find(Comparable key) throws StorageException {
         if (key instanceof Long) {
             return findId((Long) key);
-        } else if (key instanceof SubscriberKey) {
-            return findKey((SubscriberKey) key);
+        } else if (key instanceof CertTopicKey) {
+            return findKey((CertTopicKey) key);
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, 
                 key.getClass().getSimpleName());
     }
 
-    private Subscriber findKey(SubscriberKey key) throws StorageException {
-        try (PreparedStatement statement = prepare("select key",
-                key.getTopicId(), key.getEmail());
-                ResultSet resultSet = statement.executeQuery()) {
-            if (!resultSet.next()) {
-                return null;
-            }
-            Subscriber subscriber = create(resultSet);
-            if (resultSet.next()) {
-                throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, key);
-            }
-            return subscriber;
-        } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, key);
-        }
-    }
-    private Subscriber findId(Long id) throws StorageException {
+    private Topic findId(Long id) throws StorageException {
         try (PreparedStatement statement = prepare("select id", id);
                 ResultSet resultSet = statement.executeQuery()) {
             if (!resultSet.next()) {
                 return null;
             }
-            Subscriber subscriber = create(resultSet);
+            Topic topic = create(resultSet);
             if (resultSet.next()) {
                 throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, id);
             }
-            return subscriber;
+            return topic;
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, id);
+        }
+    }
+
+    private Topic findKey(CertTopicKey key) throws StorageException {
+        logger.info("findKey {}", key);
+        try (PreparedStatement statement = prepare("select key",
+                key.getCertId(), key.getTopicLabel());
+                ResultSet resultSet = statement.executeQuery()) {
+            if (!resultSet.next()) {
+                return null;
+            }
+            Topic topic = create(resultSet);
+            if (resultSet.next()) {
+                throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, key);
+            }
+            return topic;
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL, key);
         }
     }
 
@@ -170,16 +176,16 @@ public class TopicService implements EntityService<Subscriber> {
     }
 
     @Override
-    public Subscriber retrieve(Comparable key) throws StorageException {
-        Subscriber subscriber = find(key);
-        if (subscriber == null) {
+    public Topic retrieve(Comparable key) throws StorageException {
+        Topic topic = find(key);
+        if (topic == null) {
             throw new StorageException(StorageExceptionType.NOT_FOUND, key);
         }
-        return subscriber;
+        return topic;
     }
 
     @Override
-    public Collection<Subscriber> list() throws StorageException {
+    public Collection<Topic> list() throws StorageException {
         try (PreparedStatement statement = prepare("list");
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
@@ -189,21 +195,21 @@ public class TopicService implements EntityService<Subscriber> {
     }
 
     @Override
-    public Collection<Subscriber> list(Comparable key) throws StorageException {
+    public Collection<Topic> list(Comparable key) throws StorageException {
         if (key instanceof String) {
             return listUser((String) key);
         } else if (key instanceof Long) {
-            return listTopic((Long) key);
+            return listCert((Long) key);
         } else if (key instanceof UserKey) {
             return listUser(((UserKey) key).getEmail());
-        } else if (key instanceof TopicIdKey) {
-            return listTopic(((TopicIdKey) key).getTopicId());
+        } else if (key instanceof CertIdKey) {
+            return listCert(((CertIdKey) key).getId());
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, key.getClass().getSimpleName());
     }
 
-    private Collection<Subscriber> listTopic(Long topicId) throws StorageException {
-        try (PreparedStatement statement = prepare("list topic", topicId);
+    private Collection<Topic> listCert(Long certId) throws StorageException {
+        try (PreparedStatement statement = prepare("list cert", certId);
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
         } catch (SQLException sqle) {
@@ -211,7 +217,7 @@ public class TopicService implements EntityService<Subscriber> {
         }
     }
     
-    private Collection<Subscriber> listUser(String email) throws StorageException {
+    private Collection<Topic> listUser(String email) throws StorageException {
         try (PreparedStatement statement = prepare("list email", email);
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);

@@ -10,36 +10,39 @@ delete from topic
 where topic_id = ?
 ;
 
--- update (enabled, topic_id)
-update topic_sub 
+-- update enabled
+update topic
 set enabled = ? 
 where topic_id = ?
 ;
 
 -- select
-select * from sub 
+select * 
+from topic
 where topic_id = ?
 ;
 
--- select email
+-- select key
 select * 
 from topic
+where cert_id = ?
+and topic_label = ?
 ;
 
 -- list
 select * 
-from topic_sub 
+from topic 
 ;
 
--- list (topic_id)
+-- list cert
 select * 
-from topic_sub
-where topic_id = ? 
+from topic
+where cert_id = ? 
 ;
 
--- list (email)
+-- list email
 select * 
-from topic_sub
+from topic
 where email = ? 
 ;
 

@@ -58,7 +58,7 @@ public class ChronicSchema {
                 return false;
             }
         } catch (SQLException e) {
-            logger.warn(e.getMessage());
+            logger.warn("verify", e);
             return false;
         }
     }
