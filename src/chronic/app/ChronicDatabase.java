@@ -58,6 +58,12 @@ public abstract class ChronicDatabase {
         this.app = app;
     }
 
+    public static void close(ChronicDatabase db) {
+        if (db != null) {
+            db.close();
+        }
+    }
+    
     public abstract void close();
 
     public abstract EntityService<User> user();

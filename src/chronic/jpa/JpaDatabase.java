@@ -55,6 +55,7 @@ public class JpaDatabase extends ChronicDatabase {
     static final CachingEntityService<Topic> topicCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<Subscriber> subCache = new CachingEntityService(100, matcher);
     
+    private boolean closed = false;
     private final EntityManager em;
     private final Connection connection;
     
@@ -78,15 +79,18 @@ public class JpaDatabase extends ChronicDatabase {
     }
 
     @Override
-    public void close() {        
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
+    public void close() {
+        if (!closed) {
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                logger.warn("close connection {}", e);
             }
-        } catch (SQLException e) {
-            logger.warn("close connection {}", e);
+            em.close();
         }
-        em.close();
+        closed = true;
     }
 
     @Override

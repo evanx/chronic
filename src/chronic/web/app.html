@@ -417,14 +417,12 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>What use cases?</b>
-          <br>Use Chronica to monitor your networks and services, internally and externally, to ensure your IT performance and security. 
-          <br>Add custom checks to monitor all aspects of your specific infrastructure and applications.
-          <br>When something is wrong, be the first to know :)
+          <br>Use Chronica to monitor your networks and services, internally and externally, to ensure your IT performance and security. Add custom checks to monitor any and all aspects of your specific infrastructure and applications. When something is wrong, be the first to know :)
         </p>
 
         <p><b>Who should try it?</b>
-          <br>At this stage, anyone who wants instant monitoring i.e. without any server setup or customistion required, e.g. to be up and running in less than a minute. 
-          <br>Someone who wants a monitoring solution that they can customise using shell scripts.
+          <br>At this stage, anyone who wants monitoring, without any server setup or customistion required, up and running in less than a minute. 
+          <br>Linux admins who wants a monitoring solution that they can customise using shell scripts.
         </p>
 
         <p><b>How is this different from some other cloud-based monitoring services?</b>
@@ -432,19 +430,18 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>How is this different from some other opensource monitoring projects?</b>
-          <br>We provide a free multi-tenancy cloud service for instant monitoring without any server setup. 
-          <br>Our solution supports Nagios plugins, and will be integrated with opensource agents, according to demand.
+          <br>We provide a free multi-tenancy cloud service for instant monitoring without any server setup. Our solution supports Nagios plugins, and will be integrated with opensource agents, according to demand.
         </p>
 
         <p><b>What notification mechanisms are supported?</b>
           <br>Only email. Support is envisaged for mobile push notifications, but not SMS. 
-          <br>(Currently email is disabled for alpha testing.)
+          (Currently email is disabled for alpha testing.)
         </p>
 
         <p><b>What technologies are used?</b>
           <br>AngularJS for the front-end, making JSON requests to a Java back-end. 
-          <br>We use the JRE's built-in HTTPS server rather than Apache Tomcat. 
-          <br><a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
+          We use the JRE's built-in HTTPS server rather than Apache Tomcat. 
+          <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
         </p>
 
         <p><b>Why doesn't the site work on my phone's browser?</b>
@@ -453,13 +450,13 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
 
         <p><b>Windows or Linux?</b>
           <br>We provide a "starter" script for Linux, which can be used out the box to actively monitor Windows machines remotely via TCP. 
-          <br>We will integrate an opensource Windows agent, such as the Nagios Cross-Platform Agent (NCPA), and/or our own Chronica Java-based agent.
+          We will integrate an opensource Windows agent, such as the Nagios Cross-Platform Agent (NCPA), and/or our own Chronica Java-based agent.
         </p>
 
         <p><b>What can be installed on Linux clients right now?</b>
         <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS.
-        <br>Out of the box, this client script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. 
-        <br>However, the system is specially engineered to support Nagios plugins, and custom checks.
+        Out of the box, this client script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. 
+        However, the system is specially engineered to support Nagios plugins, and custom checks.
         </p>
         <pre>curl -s https://chronica.co/sample/chronica.sh -o chronica.sh</pre>
 
@@ -477,13 +474,14 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
 curl -s https://chronica.co/sample/chronica.sh | sha1sum
 curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt
 curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1sum.txt</pre>
-        <p><b>What API does it use?</b>
-          <br>Text document with email-style headers, submitted via HTTPS POST. 
-        <br>For example, our shell script pipes to <tt>curl</tt> to post to <tt>https://secure.chronica.co</tt>. 
-        <br>Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
-        <br>But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
-        </p>
 
+        <p><b>What API does it use?</b>
+          <br>Text document with email-style headers, submitted via HTTPS POST. (HTTP headers are parsed as well).
+        <br>For example, a shell script can pipe to <tt>curl</tt> to post to <tt>https://secure.chronica.co</tt>, with headers in the content, such as "Topic:", "Subscriber:", "Alert:", "Period:". Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
+        But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
+        </p>
+        <pre>$ echo -e "<h2>Status</h2>\nOK - <i>nothing wrong</i>" | sh chronica.sh postheaders \
+  'Topic: System Health' 'Alert: STATUS_CHANGED' 'Subscribe: me@mine.org'</pre>
         <p><b>How are checks performed?</b>
           <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. 
         <br>For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. 

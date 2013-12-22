@@ -186,20 +186,18 @@ public class ChronicApp {
 
         @Override
         public void run() {
-            ChronicDatabase db = null;
             while (running) {
+                ChronicDatabase db = null;
                 try {
-                    if (db == null) {
-                        db = getDatabase();
-                    }
                     AlertRecord alert = alertQueue.poll(60, TimeUnit.SECONDS);
                     if (alert == null) {
                     } else {
+                        db = getDatabase();
                         messenger.alert(db, alert);
                     }
                 } catch (InterruptedException | SQLException e) {
                     logger.warn("run", e);
-                    db = null;
+                    ChronicDatabase.close(db);
                 }
             }
         }
