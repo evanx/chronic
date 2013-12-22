@@ -10,7 +10,7 @@ drop table topic_sub;
 drop table config;
 drop table history; 
 drop table entity_tran; 
-drop table schema_revision;
+drop table schema_version;
 
 create table person (
   person_id serial, 
@@ -70,9 +70,9 @@ create table topic_sub (
   constraint uniq_topic_sub unique (topic_id, email)
 );
 
-create table schema_revision (
-  revision_number int,
-  time_ timestamp default now()
+create table schema_version (
+  version_number int,
+  updated_time timestamp default now()
 );
 
 create table history (
@@ -106,3 +106,4 @@ create table entity_tran (
   time_ timestamp not null default now()
 );
 
+insert into schema_version (version_number) values (1);

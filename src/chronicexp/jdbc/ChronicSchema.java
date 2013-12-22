@@ -5,6 +5,7 @@
 package chronicexp.jdbc;
 
 import chronic.app.ChronicApp;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ChronicSchema {
 
-    static final int MIN_VERSION_NUMBER = 0;
+    static final int REQUIRED_VERSION_NUMBER = 1;
     static final int CURRENT_VERSION_NUMBER = 1;
     
     static final Logger logger = LoggerFactory.getLogger(ChronicSchema.class);
@@ -32,38 +33,31 @@ public class ChronicSchema {
         this.app = app;
     }
 
-    public void verifySchema() throws Exception {
-        if (MIN_VERSION_NUMBER == 0) {
-            createSchema();
-        } else if (verifySchemaVersion()) {
-        } else {
-            createSchema();
-        }  
+    public void verifySchema() throws SQLException, IOException {
+        int version = getSchemaVersion();
+        if (version < REQUIRED_VERSION_NUMBER) {
+            throw new SQLException("schema version number: " + version);
+        }
     }
-
-    private boolean verifySchemaVersion() {
+   
+    private int getSchemaVersion() throws SQLException {
         try (Connection connection = app.getDataSource().getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                "select * from schema_revision order by update_time desc")) {
+                        "select * from schema_version order by updated_time desc")) {
             databaseMetaData = connection.getMetaData();
             logger.info("databaseProductName " + databaseMetaData.getDatabaseProductName());
             logger.info("databaseProductVersion " + databaseMetaData.getDatabaseProductVersion());
             logger.info("url " + databaseMetaData.getURL());
             logger.info("userName " + databaseMetaData.getUserName());
             ResultSet rs = statement.executeQuery();
-            if (!rs.next()) {
-                int versionNumber = rs.getInt(1);
-                return versionNumber >= MIN_VERSION_NUMBER;
-            } else {
-                return false;
+            if (rs.next()) {
+                return rs.getInt(1);
             }
-        } catch (SQLException e) {
-            logger.warn("verify", e);
-            return false;
+            throw new SQLException("schema version not found");
         }
     }
 
-    private void createSchema() throws Exception {
+    private void createSchema() throws SQLException, IOException {
         try (Connection connection = app.getDataSource().getConnection()) {
             String sqlScriptName = getClass().getSimpleName() + ".sql";
             InputStream stream = getClass().getResourceAsStream(sqlScriptName);
@@ -85,7 +79,7 @@ public class ChronicSchema {
                 }
             }
             try (PreparedStatement preparedStatement = connection.prepareStatement(
-                        "insert into schema_revision (revision_number) values (?)")) {
+                        "insert into schema_version (version_number) values (?)")) {
                 preparedStatement.setInt(1, CURRENT_VERSION_NUMBER);
                 preparedStatement.execute();
             }
