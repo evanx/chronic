@@ -29,6 +29,7 @@ import chronic.entity.Topic;
 import chronic.entity.Subscriber;
 import chronic.entitymap.ChronicMatcher;
 import chronicexp.jdbc.CertService;
+import chronicexp.jdbc.OrgService;
 import chronicexp.jdbc.SubscriberService;
 import chronicexp.jdbc.TopicService;
 import java.sql.Connection;
@@ -44,7 +45,7 @@ import vellum.storage.EntityService;
  *
  * @author evan.summers
  */
-public class JpaDatabase extends ChronicDatabase {
+public class CachingJdbcDatabase extends ChronicDatabase {
 
     static Logger logger = LoggerFactory.getLogger(ChronicDatabase.class);
 
@@ -67,12 +68,12 @@ public class JpaDatabase extends ChronicDatabase {
     public EntityService<Subscriber> sub;
     public EntityService<Cert> cert;
     
-    public JpaDatabase(ChronicApp app, Connection connection, EntityManager em) {
+    public CachingJdbcDatabase(ChronicApp app, Connection connection, EntityManager em) {
         super(app);
         this.connection = connection;
         this.em = em;
         user = userCache;
-        org = orgCache;
+        org = new DelegatingEntityService(orgCache, new OrgService(connection));
         role = roleCache;
         topic = new DelegatingEntityService(topicCache, new TopicService(connection));
         sub = new DelegatingEntityService(subCache, new SubscriberService(connection));

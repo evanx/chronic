@@ -1,7 +1,7 @@
 
 -- insert
 insert into topic (
-  cert_id, label, enabled
+  cert_id, topic_label, enabled
 ) values (?, ?, ?)
 ;
 
@@ -16,7 +16,7 @@ set enabled = ?
 where topic_id = ?
 ;
 
--- select
+-- select id
 select * 
 from topic
 where topic_id = ?

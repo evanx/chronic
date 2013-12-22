@@ -23,7 +23,7 @@ package chronic.app;
 import chronic.handler.AdminEnroll;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
-import chronic.jpa.JpaDatabase;
+import chronic.jpa.CachingJdbcDatabase;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import chronicexp.jdbc.ChronicSchema;
@@ -150,7 +150,7 @@ public class ChronicApp {
     }
 
     public ChronicDatabase getDatabase() throws SQLException {
-        return new JpaDatabase(this, dataSource.getConnection(), emf.createEntityManager());
+        return new CachingJdbcDatabase(this, dataSource.getConnection(), emf.createEntityManager());
     }
 
     public void test() throws Exception {

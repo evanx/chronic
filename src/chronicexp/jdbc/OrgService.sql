@@ -17,12 +17,12 @@ update org set enabled = ? where org_id = ?
 update org set label = ? where org_id = ?
 ;
 
--- select key
-select * from org where org_domain = ?
-;
-
 -- select id
 select * from org where org_id = ?
+;
+
+-- select key
+select * from org where org_domain = ?
 ;
 
 -- list

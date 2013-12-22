@@ -4,7 +4,7 @@
 package chronic.app;
 
 import chronic.api.ChronicHttpxHandler;
-import chronic.jpa.JpaDatabase;
+import chronic.jpa.CachingJdbcDatabase;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class ChronicHttpService implements HttpHandler {
             app.ensureInitialized();
             connection = app.getDataSource().getConnection();
             em = app.getEntityManagerFactory().createEntityManager();
-            ChronicDatabase database = new JpaDatabase(app, connection, em);
+            ChronicDatabase database = new CachingJdbcDatabase(app, connection, em);
             httpx.setDatabase(database);
             em.getTransaction().begin();
             JMap responseMap = handler.handle(httpx);

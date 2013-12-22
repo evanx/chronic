@@ -75,11 +75,11 @@ public class ChronicSchema {
             for (String sqlStatement : sqlStatements) {
                 sqlStatement = sqlStatement.trim();
                 if (!sqlStatement.isEmpty()) {
-                    logger.info("sqlStatement {}", sqlStatement);
+                    logger.trace("sqlStatement {}", sqlStatement);
                     try {
                         connection.createStatement().execute(sqlStatement);
                     } catch (SQLException e) {
-                        logger.warn(e.getMessage());
+                        logger.warn(sqlStatement, e);
                     }
                 }
             }

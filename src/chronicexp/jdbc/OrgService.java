@@ -146,6 +146,22 @@ public class OrgService implements EntityService<Org> {
                 key.getClass().getSimpleName());
     }
 
+    private Org findId(Long id) throws StorageException {
+        try (PreparedStatement statement = prepare("select id", id);
+                ResultSet resultSet = statement.executeQuery()) {
+            if (!resultSet.next()) {
+                return null;
+            }
+            Org org = create(resultSet);
+            if (resultSet.next()) {
+                throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, id);
+            }
+            return org;
+        } catch (SQLException sqle) {
+            throw new StorageException(sqle, StorageExceptionType.SQL, id);
+        }
+    }
+    
     private Org findKey(String orgDomain) throws StorageException {
         try (PreparedStatement statement = prepare("select key", orgDomain)) {
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -160,22 +176,6 @@ public class OrgService implements EntityService<Org> {
             }
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL, orgDomain);
-        }
-    }
-
-    private Org findId(Long id) throws StorageException {
-        try (PreparedStatement statement = prepare("select id", id);
-                ResultSet resultSet = statement.executeQuery()) {
-            if (!resultSet.next()) {
-                return null;
-            }
-            Org org = create(resultSet);
-            if (resultSet.next()) {
-                throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, id);
-            }
-            return org;
-        } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, id);
         }
     }
 
