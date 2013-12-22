@@ -512,9 +512,8 @@ c0update() {
       grep `curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt | head -1`
     then
       echo "OK: https://chronica.co/sample/chronica.sh.sha1sum.txt"
-      echo "Run the following commands to update your script:"
+      echo "Run the following command to update your script:"
       echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
-      echo "sha1sum $script"
       echo "INFO: hashes match on github.com and chronica.co."
     else 
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1sum.txt"

@@ -71,7 +71,7 @@ public class StatusRecordParser {
     }
     
     private void parseHeader(String header, List<String> strings) {
-        logger.info("parseHeader {} {}", header, strings.toString());
+        logger.trace("parseHeader {} {}", header, strings.toString());
         for (String string: strings) {
             parseHeader(header, string);
         }
