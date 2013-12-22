@@ -538,6 +538,8 @@ c0updateCheck() {
   echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |'
   echo '  openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem'
   echo ')'
+  echo "Then run the following command to update your script:"
+  echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
   echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using' `pwd`/'chronica.pub.pem:'
   if curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem 
