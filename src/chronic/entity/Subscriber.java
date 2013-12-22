@@ -13,6 +13,12 @@ import chronic.entitykey.UserKey;
 import chronic.entitykey.UserKeyed;
 import chronic.entitytype.ChronicDatabaseInjectable;
 import chronic.entitytype.SubscriberActionType;
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
@@ -25,14 +31,24 @@ import vellum.type.Enabled;
  *
  * @author evan.summers
  */
-public final class Subscriber extends AbstractIdEntity implements SubscriberKeyed, UserKeyed, 
-        TopicIdKeyed, Enabled, JMapped, ChronicDatabaseInjectable {
+@Entity
+public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, UserKeyed, 
+        TopicIdKeyed, Enabled, JMapped, ChronicDatabaseInjectable, Serializable {
     
-    Logger logger = LoggerFactory.getLogger(Subscriber.class);
+    static Logger logger = LoggerFactory.getLogger(Subscriber.class);
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "topic_sub_id")
     Long id;
+
+    @Column(name = "topic_id")
     Long topicId;
+    
+    @Column()
     String email;
+    
+    @Column()    
     boolean enabled = true;
     
     transient Topic topic;

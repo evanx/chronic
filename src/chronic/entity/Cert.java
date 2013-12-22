@@ -34,6 +34,7 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "cert_id")
     Long id;
     
     @Column(name = "org_domain")

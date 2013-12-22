@@ -9,6 +9,12 @@ import chronic.entitykey.CertTopicKey;
 import chronic.entitykey.CertTopicKeyed;
 import chronic.entitytype.ChronicDatabaseInjectable;
 import chronic.entitytype.TopicActionType;
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
 import vellum.storage.AbstractIdEntity;
@@ -19,15 +25,29 @@ import vellum.type.Enabled;
  *
  * @author evan.summers
  */
-public final class Topic extends AbstractIdEntity implements CertTopicKeyed,  
-        JMapped, Enabled, ChronicDatabaseInjectable {
+@Entity
+public class Topic extends AbstractIdEntity implements CertTopicKeyed,  
+        JMapped, Enabled, ChronicDatabaseInjectable, Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "topic_id")
     Long id;
+    
+    @Column(name = "cert_id")
     Long certId;
+    
+    @Column(name = "topic_label")
     String topicLabel;
+    
+    @Column()
     boolean enabled = true;
+    
     transient Cert cert;
-            
+
+    public Topic() {
+    }
+                
     public Topic(Long certId, String topicLabel) {
         this.certId = certId;
         this.topicLabel = topicLabel;

@@ -6,7 +6,14 @@ package chronic.entity;
 
 import chronic.entitykey.UserKeyed;
 import chronic.entitykey.UserKey;
+import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Temporal;
 import vellum.data.Emails;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
@@ -17,15 +24,33 @@ import vellum.type.Enabled;
  *
  * @author evan.summers
  */
-public class User extends AbstractIdEntity implements UserKeyed, Enabled {
+@Entity
+public class User extends AbstractIdEntity implements UserKeyed, Enabled, Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id")
     Long id;
+    
+    @Column()        
     String email;
+    
+    @Column()    
     String label;
+    
+    @Column(name = "first_name")
     String firstName;
+
+    @Column(name = "last_name")
     String lastName;
+    
+    @Temporal(javax.persistence.TemporalType.DATE)
     Date loginTime;
+
+    @Temporal(javax.persistence.TemporalType.DATE)
     Date logoutTime;
+    
+    @Column()    
     boolean enabled = false;
 
     public User() {

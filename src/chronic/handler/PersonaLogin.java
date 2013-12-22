@@ -44,7 +44,7 @@ public class PersonaLogin implements ChronicHttpxHandler {
             user = new User(email);
             user.setEnabled(true);
             user.setLoginTime(new Date());
-            httpx.db.user().insert(user);
+            httpx.db.user().persist(user);
             logger.info("insert user {}", email);
         } else {
             user.setEnabled(true);

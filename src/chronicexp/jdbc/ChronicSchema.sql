@@ -9,7 +9,7 @@ drop table topic_sub;
 
 drop table config;
 drop table history; 
-drop table tran; 
+drop table entity_tran; 
 drop table schema_revision;
 
 create table person (
@@ -32,7 +32,7 @@ create table org (
 );
 
 create table org_role (
-  role_id int auto_increment primary key, 
+  org_role_id int auto_increment primary key, 
   org_domain varchar(64), 
   email varchar(64),
   role_type varchar(32),
@@ -58,7 +58,7 @@ create table topic (
   label varchar(64), 
   enabled boolean default false,
   inserted timestamp not null default now(),
-  unique key uniq_cert (org_domain, org_unit, common_name, label)
+  unique key uniq_topic (cert_id, label)
 );
 
 create table topic_sub (

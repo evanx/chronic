@@ -41,13 +41,13 @@ import vellum.storage.StorageExceptionType;
  *
  * @author evan.summers
  */
-public class SubscriberService implements EntityService<Subscriber> {
+public class TopicService implements EntityService<Subscriber> {
 
-    static Logger logger = LoggerFactory.getLogger(SubscriberService.class);
-    static QueryMap queryMap = new QueryMap(SubscriberService.class);
+    static Logger logger = LoggerFactory.getLogger(TopicService.class);
+    static QueryMap queryMap = new QueryMap(TopicService.class);
     Connection connection;
 
-    public SubscriberService(Connection connection) {
+    public TopicService(Connection connection) {
         this.connection = connection;
     }
 

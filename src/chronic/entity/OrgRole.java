@@ -9,7 +9,6 @@ import chronic.entitykey.UserKeyed;
 import chronic.entitykey.UserKey;
 import chronic.entitykey.OrgKey;
 import chronic.entitytype.OrgRoleType;
-import chronic.app.ChronicApp;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.OrgRoleKeyed;
 import chronic.entitykey.OrgUserKey;
@@ -19,6 +18,12 @@ import chronic.entitykey.OrgRoleTypeKeyed;
 import chronic.entitykey.UserRoleTypeKey;
 import chronic.entitykey.UserRoleTypeKeyed;
 import chronic.entitytype.OrgRoleActionType;
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 import vellum.storage.AbstractIdEntity;
@@ -30,20 +35,34 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
+@Entity
 public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleTypeKeyed,
-        OrgKeyed, OrgUserKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled {
+        OrgKeyed, OrgUserKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled, Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "org_role_id")
     Long id;
+    
+    @Column(name = "org_domain")
     String orgDomain;
+    
+    @Column()
     String email;
+    
+    @Column()
     OrgRoleType roleType;
-    ChronicApp app; 
+    
+    @Column()    
     boolean enabled = false;
     
     transient Org org;
     transient User user; 
 
-    public OrgRole(ChronicApp app, String orgDomain, String email) {
-        this.app = app;
+    public OrgRole() {
+    }
+    
+    public OrgRole(String orgDomain, String email) {
         this.orgDomain = orgDomain;
         this.email = email;
     }
@@ -151,11 +170,11 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
         return roleType;
     }
     
-    public User getUser() throws StorageException {
+    public User getUser() {
         return user;
     }
 
-    public Org getOrg() throws StorageException {
+    public Org getOrg() {
         return org;
     }    
 

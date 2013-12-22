@@ -80,7 +80,7 @@ public class CertService implements EntityService<Cert> {
     }
     
     @Override
-    public void insert(Cert cert) throws StorageException {
+    public void persist(Cert cert) throws StorageException {
         try (PreparedStatement statement = prepare("insert")) {
             statement.setString(1, cert.getOrgDomain());
             statement.setString(2, cert.getOrgUnit());

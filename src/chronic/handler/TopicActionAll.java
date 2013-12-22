@@ -47,7 +47,7 @@ public class TopicActionAll implements ChronicHttpxHandler {
         if (subscriber == null) {
             subscriber = new Subscriber(key);
             subscriber.setEnabled(true);
-            httpx.db.sub().insert(subscriber);
+            httpx.db.sub().persist(subscriber);
         }
     }
     

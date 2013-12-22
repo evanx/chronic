@@ -3,6 +3,7 @@
   <persistence-unit name="chronicPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>enbase.api.EnbaseRequest</class>
+    <class>chronic.entity.Org</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem"/>
       <property name="javax.persistence.jdbc.password" value="sa"/>

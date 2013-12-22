@@ -30,14 +30,12 @@ public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializ
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "org_id")
     Long id;
 
     @Column(name = "org_domain")
     String orgDomain;
     
-    @Column(name = "org_name")
-    String orgName;
-
     @Column()
     String label;
 
@@ -56,37 +54,23 @@ public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializ
     public Org() {
     }
 
-    public Org(String url, String orgName) {
-        this.orgDomain = url;
-        this.orgName = orgName;
+    public Org(String orgDomain) {
+        this.orgDomain = orgDomain;
     }
 
-    public Org(String url) {
-        this(url, url);
-    }
-      
-    
     public Org(JMap map) throws JMapException {
-        orgDomain = map.getString("url");
-        orgName = map.getString("orgName");
+        orgDomain = map.getString("org_domain");
         label = map.getString("label");
         region = map.getString("region");
         locality = map.getString("locality");
         country = map.getString("country");
-        if (orgName == null) {
-            orgName = orgDomain;
-        }
-        if (label == null) {
-            label = orgName;
-        }
     }
     
     public JMap getMap() {
         JMap map = new JMap();
         map.put("orgId", id);
-        map.put("orgName", orgName);
+        map.put("region", region);
         map.put("label", label);
-        map.put("url", orgDomain);
         map.put("region", region);
         map.put("locality", locality);
         map.put("country", country);
@@ -114,11 +98,6 @@ public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializ
         return id;
     }
         
-
-    public String getOrgName() {
-        return orgName;
-    }
-    
     public String getLocality() {
         return locality;
     }
@@ -156,9 +135,10 @@ public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializ
     }
     
     public String getOrgDomain() {
-        return orgName;
+        return orgDomain;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -167,17 +147,13 @@ public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializ
         this.enabled = enabled;
     }
 
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
-    }
-
     public String formatDname(String cn, String ou) {
-        return Certificates.formatDname(cn, ou, orgName, locality, region, country);
+        return Certificates.formatDname(cn, ou, orgDomain, locality, region, country);
     }
     
     public void validate() throws ValidationException {
         if (!Patterns.matchesDomain(orgDomain)) {
-            throw new ValidationException(ValidationExceptionType.INVALID_URL, orgDomain);
+            throw new ValidationException(ValidationExceptionType.INVALID_DOMAIN, orgDomain);
         }
     }
 
