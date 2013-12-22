@@ -485,7 +485,7 @@ c0minutelyCron() {
 ### update script
 
 c0updateCheck() {
-  echo "Please also run the following commands manually to confirm:"
+  echo "Please run the following commands manually to confirm all hashes match:"
   echo "curl -s https://chronica.co/sample/chronica.sh | sha1sum"
   echo "curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt"
   echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1sum.txt"
@@ -519,6 +519,25 @@ c0update() {
     fi
   fi
 }
+
+
+### post with headers 
+
+c1postheaders() {
+  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+    --data-binary @- -H 'Content-Type: text/plain' -H "$1" https://$server/post 
+}
+
+c2postheaders() {
+  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+    --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" https://$server/post 
+}
+
+c3postheaders() {
+  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+    --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" -H "$3" https://$server/post 
+}
+
 
 ### logging
 
@@ -622,21 +641,6 @@ c0start() {
 c0help() {
   echo "commands and their required number of arguments:"
   cat script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
-}
-
-c1postheaders() {
-  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' -H "$1" https://$server/post 
-}
-
-c2postheaders() {
-  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" https://$server/post 
-}
-
-c3postheaders() {
-  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" -H "$3" https://$server/post 
 }
 
 if [ $# -gt 0 ]
