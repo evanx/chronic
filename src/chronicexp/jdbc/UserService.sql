@@ -5,24 +5,24 @@ insert into user (
 ) values (?, ?, ?)
 ;
 
--- update (enabled, user_id)
+-- delete
+delete from user where user_id = ?
+;
+
+-- update enabled
 update user set enabled = ? where user_id = ?
 ;
 
--- update (label, user_id)
+-- update label
 update user set label = ? where user_id = ?
 ;
 
--- select (email)
-select * from user where email = ?
-;
-
--- select (user_id)
+-- select id
 select * from user where user_id = ?
 ;
 
--- delete (user_id)
-delete from user where user_id = ?
+-- select key
+select * from user where email = ?
 ;
 
 -- list

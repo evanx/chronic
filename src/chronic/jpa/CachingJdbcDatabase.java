@@ -32,6 +32,7 @@ import chronicexp.jdbc.CertService;
 import chronicexp.jdbc.OrgService;
 import chronicexp.jdbc.SubscriberService;
 import chronicexp.jdbc.TopicService;
+import chronicexp.jdbc.UserService;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.persistence.EntityManager;
@@ -72,7 +73,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
         super(app);
         this.connection = connection;
         this.em = em;
-        user = userCache;
+        user = new DelegatingEntityService(userCache, new UserService(connection));
         org = new DelegatingEntityService(orgCache, new OrgService(connection));
         role = roleCache;
         topic = new DelegatingEntityService(topicCache, new TopicService(connection));
