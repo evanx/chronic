@@ -530,7 +530,7 @@ c0updateGit() {
 
 c0updateCheck() {
   c0ensurePubKey
-  echo 'Run the following commands manually and verify that all hashes match:'
+  echo 'Run the following commands manually and verify digest and signature:'
   echo '('
   echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
   echo 'curl -s https://chronica.co/sample/chronica.sh | sha1sum'
@@ -538,12 +538,17 @@ c0updateCheck() {
   echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |'
   echo '  openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem'
   echo ')'
-  echo 'Checking signature: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
-  curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt
-  curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
-    openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem
-  curl -s https://chronica.co/sample/chronica.sh | sha1sum 
-  curl -s https://chronica.co/sample/chronica.sh.sha1.txt
+  echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using chronica.pub.pem:'
+  if curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
+    openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem 
+  then
+    echo 'OK: signature verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
+  else
+    echo 'CRITICAL: verification failed: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
+  fi
+  echo `curl -s https://chronica.co/sample/chronica.sh | sha1sum` 'https://chronica.co/sample/chronica.sh.sha1.sig.txt' 
+  echo `curl -s https://chronica.co/sample/chronica.sh.sha1.txt` '- https://chronica.co/sample/chronica.sh.sha1.txt'
+  echo `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` '- Github chronica.sh.sha1.txt'
 }
 
 c0update() {
@@ -555,15 +560,15 @@ c0update() {
   then
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
   else 
+      echo "OK: verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
     if ! curl -s https://chronica.co/sample/chronica.sh | sha1sum |
       grep `curl -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
     then
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.txt"
     else 
-      echo "OK: https://chronica.co/sample/chronica.sh.sha1.txt"
+      echo "OK: matches: https://chronica.co/sample/chronica.sh.sha1.txt"
       echo "Run the following command to update your script:"
       echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
-      echo "INFO: hashes match on github.com and chronica.co."
     fi
   fi
 }
