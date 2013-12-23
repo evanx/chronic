@@ -20,6 +20,8 @@
  */
 package chronic.app;
 
+import chronic.entity.Subscriber;
+import chronic.entity.Topic;
 import chronic.handler.AdminEnroll;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
@@ -35,6 +37,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -68,6 +71,7 @@ public class ChronicApp {
     LinkedBlockingQueue<StatusRecord> statusQueue = new LinkedBlockingQueue(100);
     Map<String, Class> handlerClasses = new HashMap();
     DataSource dataSource = new DataSource();
+    ChronicEntityService entityService;
     EntityManagerFactory emf;
     boolean initalized = false;
     boolean running = true;
@@ -106,6 +110,7 @@ public class ChronicApp {
     public void initDeferred() throws Exception {
         dataSource.setPoolProperties(properties.getPoolProperties());
         emf = Persistence.createEntityManagerFactory("chronicPU");;
+        entityService = new ChronicEntityService(this, emf);
         new ChronicSchema(this).createSchema();
         initalized = true;
         logger.info("initialized");
@@ -115,7 +120,6 @@ public class ChronicApp {
         elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(), properties.getPeriod(),
                 properties.getPeriod(), TimeUnit.MILLISECONDS);
         logger.info("started");
-        messenger.alertAdmins("Chronic restarted");
     }
 
     class InitThread extends Thread {
@@ -138,14 +142,14 @@ public class ChronicApp {
         return dataSource;
     }
 
-    public EntityManagerFactory getEntityManagerFactory() {
-        return emf;
-    }
-
     public CachingJdbcDatabase getDatabase() {
         return new CachingJdbcDatabase(this);
     }
 
+    public ChronicEntityService getEntityService() {
+        return entityService;
+    }
+   
     public void shutdown() throws Exception {
         running = false;
         elapsedExecutorService.shutdown();
@@ -162,6 +166,7 @@ public class ChronicApp {
         if (alertThread != null) {
             alertThread.interrupt();
             alertThread.join(2000);
+
         }
     }
 
@@ -170,20 +175,13 @@ public class ChronicApp {
         @Override
         public void run() {
             while (running) {
-                CachingJdbcDatabase db = getDatabase();
                 try {
                     AlertRecord alert = alertQueue.poll(60, TimeUnit.SECONDS);
-                    if (alert == null) {
-                    } else {
-                        db.open();
-                        messenger.alert(db, alert);
+                    if (alert != null) {
+                        messenger.alert(alert);
                     }
-                } catch (InterruptedException | SQLException e) {
+                } catch (InterruptedException e) {
                     logger.warn("run", e);
-                } catch (Throwable t) {
-                    logger.error("run", t);
-                } finally {
-                    db.close();
                 }
             }
         }
@@ -191,6 +189,7 @@ public class ChronicApp {
 
     public LinkedBlockingQueue<StatusRecord> getStatusQueue() {
         return statusQueue;
+
     }
 
     class StatusThread extends Thread {
@@ -204,7 +203,7 @@ public class ChronicApp {
                     } else {
                         checkStatus(status);
                     }
-                } catch (InterruptedException | StorageException e) {
+                } catch (InterruptedException e) {
                     logger.warn("run", e);
                 }
             }
@@ -240,9 +239,15 @@ public class ChronicApp {
                 alertQueue.add(alert);
             }
         }
+        if (!alertThread.isAlive()) {
+            logger.warn("alertThread");
+        }
+        if (!statusThread.isAlive()) {
+            logger.warn("statusThread");
+        }
     }
 
-    private void checkStatus(StatusRecord status) throws StorageException {
+    private void checkStatus(StatusRecord status) {
         logger.info("handleStatus {}", status);
         StatusRecord previousStatus = recordMap.put(status.getKey(), status);
         AlertRecord previousAlert = alertMap.get(status.getKey());
@@ -256,7 +261,7 @@ public class ChronicApp {
             }
         } else if (status.getAlertType() == AlertType.ONCE) {
             AlertRecord alert = new AlertRecord(status, previousStatus);
-            alertMap.put(status.getKey(), alert);            
+            alertMap.put(status.getKey(), alert);
         } else if (new StatusRecordChecker(status).isAlertable(previousStatus, previousAlert)) {
             AlertRecord alert = new AlertRecord(status, previousStatus);
             if (status.getAlertType() == AlertType.INITIAL) {

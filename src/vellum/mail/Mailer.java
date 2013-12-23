@@ -38,20 +38,12 @@ public class Mailer {
         this.properties = properties;
     }
 
-    public void sendEmail(String recipient, String subject, String htmlContent) {
-        logger.info("sendEmail {} [{}]", recipient, subject);
-        if (properties != null && properties.isEnabled()) {
-            try {
-                send(recipient, subject, htmlContent);
-            } catch (MessagingException | IOException e) {
-                logger.warn(e.getMessage());
-            }
-        }
-    }
-
-    private synchronized void send(String recipient, String subject, String htmlContent) 
+    public void send(String recipient, String subject, String htmlContent) 
             throws MessagingException, IOException {
-        logger.info("send {} [{}]", recipient, subject);
+        if (properties != null && properties.isEnabled()) {
+            logger.warn("disabled {} {}", recipient, subject);
+            return;
+        }
         Properties props = new Properties();
         props.put("mail.smtp.host", properties.getHost());
         props.put("mail.smtp.port", properties.getPort());

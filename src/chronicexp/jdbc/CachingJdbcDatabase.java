@@ -30,8 +30,6 @@ import chronic.entity.Subscriber;
 import chronic.entitymap.ChronicMatcher;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.storage.CachingEntityService;
@@ -54,7 +52,6 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     static final CachingEntityService<Topic> topicCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<Subscriber> subCache = new CachingEntityService(100, matcher);
     
-    private EntityManager em;
     private Connection connection;
 
     public EntityService<User> user;
@@ -70,7 +67,6 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     
     public void open() throws SQLException {
         connection = app.getDataSource().getConnection();
-        em = app.getEntityManagerFactory().createEntityManager();
         user = new DelegatingEntityService(userCache, new UserService(connection));
         org = new DelegatingEntityService(orgCache, new OrgService(connection));
         role = new DelegatingEntityService(roleCache, new OrgRoleService(connection));
@@ -81,7 +77,6 @@ public class CachingJdbcDatabase extends ChronicDatabase {
 
     public void begin() throws SQLException {
         connection.setAutoCommit(false);
-        em.getTransaction().begin();
     }
     
     public void rollback() {
@@ -90,9 +85,6 @@ public class CachingJdbcDatabase extends ChronicDatabase {
         } catch (SQLException e) {
             logger.warn("rollback connection {}", e);
         }
-        if (em.getTransaction().isActive()) {
-            em.getTransaction().rollback();
-        }
     }
 
     public void commit() {
@@ -100,9 +92,6 @@ public class CachingJdbcDatabase extends ChronicDatabase {
             connection.commit();
         } catch (SQLException e) {
             logger.warn("commit connection {}", e);
-        }
-        if (em.getTransaction().isActive()) {
-            em.getTransaction().commit();
         }
     }
 
@@ -114,9 +103,6 @@ public class CachingJdbcDatabase extends ChronicDatabase {
             }
         } catch (SQLException e) {
             logger.warn("close connection {}", e);
-        }
-        if (em != null) {
-            em.close();
         }
     }
 
