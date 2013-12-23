@@ -6,7 +6,8 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
-import chronic.entity.User;
+import chronic.app.ChronicApp;
+import chronic.entity.Person;
 import chronic.app.ChronicCookie;
 import chronic.persona.PersonaUserInfo;
 import chronic.persona.PersonaVerifier;
@@ -27,7 +28,7 @@ public class PersonaLogin implements ChronicHttpxHandler {
     ChronicCookie cookie;
     
     @Override
-    public JMap handle(ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
         JMap map = httpx.parseJsonMap();
         timezoneOffset = map.getString("timezoneOffset");
         logger.trace("timezoneOffset {}", timezoneOffset);
@@ -39,17 +40,17 @@ public class PersonaLogin implements ChronicHttpxHandler {
                 httpx.getHostUrl(), assertion);
         logger.trace("persona {}", userInfo);
         String email = userInfo.getEmail();
-        User user = httpx.db.user().find(email);
+        Person user = httpx.db.person().find(email);
         if (user == null) {
-            user = new User(email);
+            user = new Person(email);
             user.setEnabled(true);
             user.setLoginTime(new Date());
-            httpx.db.user().persist(user);
+            httpx.db.person().persist(user);
             logger.info("insert user {}", email);
         } else {
             user.setEnabled(true);
             user.setLoginTime(new Date());
-            httpx.db.user().update(user);
+            httpx.db.person().update(user);
         }
         cookie = new ChronicCookie(user.getEmail(), user.getLabel(),
                 user.getLoginTime().getTime(), assertion);

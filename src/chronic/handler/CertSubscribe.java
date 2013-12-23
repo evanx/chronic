@@ -5,6 +5,7 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
 import chronic.entity.Cert;
 import java.util.Arrays;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class CertSubscribe implements ChronicHttpxHandler {
     static Logger logger = LoggerFactory.getLogger(CertSubscribe.class);
 
     @Override
-    public JMap handle(ChronicHttpx hx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx hx) throws Exception {
         Cert cert = hx.persistCert();
         String[] emails = Strings.split(hx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {

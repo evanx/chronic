@@ -22,7 +22,7 @@ package chronicexp.jdbc;
 
 import chronic.app.*;
 import chronic.entity.Cert;
-import chronic.entity.User;
+import chronic.entity.Person;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
@@ -46,7 +46,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
 
     static final ChronicMatcher matcher = new ChronicMatcher();
     static final CachingEntityService<Cert> certCache = new CachingEntityService(100, matcher);
-    static final CachingEntityService<User> userCache = new CachingEntityService(100, matcher);
+    static final CachingEntityService<Person> userCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<Org> orgCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<OrgRole> roleCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<Topic> topicCache = new CachingEntityService(100, matcher);
@@ -54,7 +54,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     
     private Connection connection;
 
-    public EntityService<User> user;
+    public EntityService<Person> person;
     public EntityService<Org> org;
     public EntityService<OrgRole> role;
     public EntityService<Topic> topic;
@@ -67,7 +67,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     
     public void open() throws SQLException {
         connection = app.getDataSource().getConnection();
-        user = new DelegatingEntityService(userCache, new UserService(connection));
+        person = new DelegatingEntityService(userCache, new PersonService(connection));
         org = new DelegatingEntityService(orgCache, new OrgService(connection));
         role = new DelegatingEntityService(roleCache, new OrgRoleService(connection));
         topic = new DelegatingEntityService(topicCache, new TopicService(connection));
@@ -107,8 +107,8 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     }
 
     @Override
-    public EntityService<User> user() {
-        return user;
+    public EntityService<Person> person() {
+        return person;
     }
 
     @Override

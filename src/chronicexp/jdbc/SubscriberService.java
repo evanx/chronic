@@ -23,7 +23,7 @@ package chronicexp.jdbc;
 import chronic.entity.Subscriber;
 import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.TopicIdKey;
-import chronic.entitykey.UserKey;
+import chronic.entitykey.PersonKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -191,11 +191,11 @@ public class SubscriberService implements EntityService<Subscriber> {
     @Override
     public Collection<Subscriber> list(Comparable key) throws StorageException {
         if (key instanceof String) {
-            return listUser((String) key);
+            return listPerson((String) key);
         } else if (key instanceof Long) {
             return listTopic((Long) key);
-        } else if (key instanceof UserKey) {
-            return listUser(((UserKey) key).getEmail());
+        } else if (key instanceof PersonKey) {
+            return listPerson(((PersonKey) key).getEmail());
         } else if (key instanceof TopicIdKey) {
             return listTopic(((TopicIdKey) key).getTopicId());
         }
@@ -211,7 +211,7 @@ public class SubscriberService implements EntityService<Subscriber> {
         }
     }
     
-    private Collection<Subscriber> listUser(String email) throws StorageException {
+    private Collection<Subscriber> listPerson(String email) throws StorageException {
         try (PreparedStatement statement = prepare("list email", email);
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);

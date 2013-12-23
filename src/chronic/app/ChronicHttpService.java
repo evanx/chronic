@@ -78,7 +78,7 @@ public class ChronicHttpService implements HttpHandler {
             database.open();
             database.begin();
             httpx.setDatabase(database);
-            JMap responseMap = handler.handle(httpx);
+            JMap responseMap = handler.handle(app, httpx);
             logger.trace("response {}", responseMap);
             httpx.sendResponse(responseMap);
             database.commit();

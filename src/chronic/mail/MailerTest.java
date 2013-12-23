@@ -21,9 +21,9 @@ public class MailerTest {
     
     public static void main(String[] args) {
         try {
-            byte[] bytes = Streams.readBytes(MailerTest.class.getResourceAsStream("app.png"));
+            byte[] bytes = Streams.readBytes(MailerTest.class.getResourceAsStream("app64.png"));
             MailerProperties mailerProperties = new MailerProperties();
-            mailerProperties.init(bytes, "appcentral.info", "alerts@appcentral.info");
+            mailerProperties.init(bytes, "chronica.co", "alerts@chronica.co");
             Mailer mailer = new Mailer(mailerProperties);
             mailer.send("evan.summers@gmail.com", "test subject", 
                     "test body <hr> <img src='cid:image'/>");

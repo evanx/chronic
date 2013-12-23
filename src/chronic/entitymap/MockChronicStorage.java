@@ -23,7 +23,7 @@ package chronic.entitymap;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicDatabase;
 import chronic.entity.Cert;
-import chronic.entity.User;
+import chronic.entity.Person;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
@@ -38,7 +38,7 @@ import vellum.storage.MapEntityService;
  */
 public class MockChronicStorage extends ChronicDatabase {
     EntityMatcher matcher = new ChronicMatcher();
-    MapEntityService<User> users = new MapEntityService(matcher);
+    MapEntityService<Person> users = new MapEntityService(matcher);
     MapEntityService<Org> orgs = new MapEntityService(matcher);
     MapEntityService<OrgRole> orgRoles = new MapEntityService(matcher);
     MapEntityService<Topic> topics = new MapEntityService(matcher);
@@ -54,7 +54,7 @@ public class MockChronicStorage extends ChronicDatabase {
     }
 
     @Override
-    public EntityService<User> user() {
+    public EntityService<Person> person() {
         return users;
     }
 

@@ -8,7 +8,7 @@ import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Subscriber;
 import chronic.entity.Topic;
-import chronic.entity.User;
+import chronic.entity.Person;
 import chronic.entitykey.CertKey;
 import chronic.entitykey.CertTopicKey;
 import chronic.entitykey.OrgRoleKey;
@@ -38,6 +38,7 @@ import vellum.storage.StorageException;
  * @author evan.summers
  */
 public class ChronicHttpx extends Httpx {
+
     Logger logger = LoggerFactory.getLogger(ChronicHttpx.class);
 
     public ChronicApp app;
@@ -53,7 +54,7 @@ public class ChronicHttpx extends Httpx {
             ChronicCookie cookie = new ChronicCookie(getCookieMap());
             if (cookie.getEmail() != null) {
                 if (app.properties.isTesting()) {
-                    if (getReferer().endsWith("/mimic") 
+                    if (getReferer().endsWith("/mimic")
                             && app.properties.getMimicEmail() != null
                             && app.properties.isAdmin(cookie.getEmail())) {
                         return app.properties.getMimicEmail();
@@ -72,12 +73,12 @@ public class ChronicHttpx extends Httpx {
         setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
         throw new PersonaException("no verified email");
     }
-        
+
     public void setDatabase(CachingJdbcDatabase db) {
         this.db = db;
     }
-    
-    public void injectDatabase(Collection<? extends ChronicDatabaseInjectable> collection) 
+
+    public void injectDatabase(Collection<? extends ChronicDatabaseInjectable> collection)
             throws Exception {
         logger.info("injectDatabase collection {}", collection);
         for (ChronicDatabaseInjectable element : collection) {
@@ -129,35 +130,34 @@ public class ChronicHttpx extends Httpx {
         return cert;
     }
 
-    public User persistUser(String email) throws StorageException {
+    public Person persistUser(String email) throws StorageException {
         logger.info("handle {}", email);
-        User user = db.user().find(email);
+        Person user = db.person().find(email);
         if (user == null) {
-            user = new User(email);
-            db.user().persist(user);
+            user = new Person(email);
+            db.person().persist(user);
         }
         return user;
     }
-    
-    public void persistCertSubscriber(Cert cert, String email) 
+
+    public void persistCertSubscriber(Cert cert, String email)
             throws StorageException {
         logger.info("handle {} {}", cert, email);
-        User user = db.user().find(email);
+        Person user = db.person().find(email);
         if (user == null) {
-            user = new User(email);
-            db.user().persist(user);
+            user = new Person(email);
+            db.person().persist(user);
         }
         for (Topic topic : db.topic().list(cert.getKey())) {
             persistTopicSubscriber(topic, email);
         }
-        
+
     }
-    
-    public OrgRole persistOrgRole(Cert cert, String email, OrgRoleType roleType) 
+
+    public OrgRole persistOrgRole(Cert cert, String email, OrgRoleType roleType)
             throws StorageException {
         logger.info("enroll {} {}", cert, email);
-        User user = persistUser(email);        
-        logger.info("user {}", user);
+        Person user = persistUser(email);
         OrgRoleKey orgRoleKey = new OrgRoleKey(cert.getOrgDomain(), email, roleType);
         OrgRole orgRole = db.role().find(orgRoleKey);
         if (orgRole == null) {
@@ -167,22 +167,22 @@ public class ChronicHttpx extends Httpx {
         }
         return orgRole;
     }
-    
+
     public Topic persistTopic(Cert cert, String topicLabel)
             throws StorageException {
         logger.info("handle {} {}", topicLabel, cert);
-        assert(cert.getId() != null);
+        assert (cert.getId() != null);
         CertTopicKey key = new CertTopicKey(cert.getId(), topicLabel);
         Topic topic = db.topic().find(key);
         if (topic == null) {
-            topic = new Topic(key);            
+            topic = new Topic(key);
             db.topic().persist(topic);
         }
         topic.setCert(cert);
         return topic;
     }
-    
-    public Subscriber persistTopicSubscriber(Topic topic, String email) 
+
+    public Subscriber persistTopicSubscriber(Topic topic, String email)
             throws StorageException {
         SubscriberKey key = new SubscriberKey(topic.getId(), email);
         Subscriber subscriber = db.sub().find(key);

@@ -5,18 +5,18 @@
 package chronic.entity;
 
 import chronic.entitykey.OrgKeyed;
-import chronic.entitykey.UserKeyed;
-import chronic.entitykey.UserKey;
+import chronic.entitykey.PersonKeyed;
+import chronic.entitykey.PersonKey;
 import chronic.entitykey.OrgKey;
 import chronic.entitytype.OrgRoleType;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.OrgRoleKeyed;
-import chronic.entitykey.OrgUserKey;
-import chronic.entitykey.OrgUserKeyed;
+import chronic.entitykey.OrgPersonKey;
+import chronic.entitykey.OrgPersonKeyed;
 import chronic.entitykey.OrgRoleTypeKey;
 import chronic.entitykey.OrgRoleTypeKeyed;
-import chronic.entitykey.UserRoleTypeKey;
-import chronic.entitykey.UserRoleTypeKeyed;
+import chronic.entitykey.PersonRoleTypeKey;
+import chronic.entitykey.PersonRoleTypeKeyed;
 import chronic.entitytype.OrgRoleActionType;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -24,6 +24,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 import vellum.storage.AbstractIdEntity;
@@ -36,8 +38,8 @@ import vellum.util.Args;
  * @author evan.summers
  */
 @Entity
-public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleTypeKeyed,
-        OrgKeyed, OrgUserKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled, Serializable {
+public class OrgRole extends AbstractIdEntity implements PersonKeyed, PersonRoleTypeKeyed,
+        OrgKeyed, OrgPersonKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -56,8 +58,13 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     @Column()    
     boolean enabled = false;
     
-    transient Org org;
-    transient User user; 
+    @OneToOne()    
+    @JoinColumn(name = "orgDomain", referencedColumnName = "orgDomain")
+    Org org;
+    
+    @OneToOne()    
+    @JoinColumn(name = "email", referencedColumnName = "email")
+    Person person; 
 
     public OrgRole() {
     }
@@ -67,9 +74,9 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
         this.email = email;
     }
     
-    public OrgRole(Org org, User user, OrgRoleType roleType) {
+    public OrgRole(Org org, Person user, OrgRoleType roleType) {
         this.org = org;
-        this.user = user;
+        this.person = user;
         this.roleType = roleType;
         orgDomain = org.getOrgDomain();
         email = user.getEmail();
@@ -97,13 +104,13 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     }
     
     @Override
-    public UserKey getUserKey() {
-        return new UserKey(email);
+    public PersonKey getPersonKey() {
+        return new PersonKey(email);
     }
 
     @Override
-    public OrgUserKey getOrgUserKey() {
-        return new OrgUserKey(orgDomain, email);
+    public OrgPersonKey getOrgUserKey() {
+        return new OrgPersonKey(orgDomain, email);
     }
 
     @Override
@@ -112,8 +119,8 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
     }
 
     @Override
-    public UserRoleTypeKey getUserRoleTypeKey() {
-        return new UserRoleTypeKey(email, roleType);
+    public PersonRoleTypeKey getPersonRoleTypeKey() {
+        return new PersonRoleTypeKey(email, roleType);
     }
     
     public void setEnabled(boolean enabled) {
@@ -173,8 +180,8 @@ public class OrgRole extends AbstractIdEntity implements UserKeyed, UserRoleType
         return roleType;
     }
     
-    public User getUser() {
-        return user;
+    public Person getPerson() {
+        return person;
     }
 
     public Org getOrg() {

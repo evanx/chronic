@@ -21,7 +21,7 @@
 package chronic.app;
 
 import chronic.entity.Cert;
-import chronic.entity.User;
+import chronic.entity.Person;
 import chronic.entitytype.OrgRoleType;
 import chronic.entity.Org;
 import chronic.entitykey.OrgKey;
@@ -29,8 +29,8 @@ import chronic.entity.OrgRole;
 import chronic.entity.Topic;
 import chronic.entity.Subscriber;
 import chronic.entitykey.OrgRoleTypeKey;
-import chronic.entitykey.OrgUserKey;
-import chronic.entitykey.UserKey;
+import chronic.entitykey.OrgPersonKey;
+import chronic.entitykey.PersonKey;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -65,7 +65,7 @@ public abstract class ChronicDatabase {
     }
     public abstract void close();
 
-    public abstract EntityService<User> user();
+    public abstract EntityService<Person> person();
 
     public abstract EntityService<Org> org();
 
@@ -77,14 +77,14 @@ public abstract class ChronicDatabase {
 
     public abstract EntityService<Cert> cert();
     
-    public Iterable<User> listUsers(String email) {
+    public Iterable<Person> listUsers(String email) {
         List list = new LinkedList();
         return list;
     }
 
     public Iterable<OrgRole> listRoles(String email) throws StorageException {
         List list = new LinkedList();
-        for (OrgRole orgRole : role().list(new UserKey(email))) {
+        for (OrgRole orgRole : role().list(new PersonKey(email))) {
             if (orgRole.getEmail().equals(email) || app.getProperties().isAdmin(email)) {
                 list.add(orgRole);
             }
@@ -95,7 +95,7 @@ public abstract class ChronicDatabase {
     public Iterable<String> listOrgDomains(String email, OrgRoleType roleType) 
             throws StorageException {
         List list = new LinkedList();
-        for (OrgRole orgRole : role().list(new UserKey(email))) {
+        for (OrgRole orgRole : role().list(new PersonKey(email))) {
             if (orgRole.getEmail().equals(email)) {
                 if (roleType == null || orgRole.getRoleType() == roleType) {
                     list.add(orgRole.getOrgDomain());
@@ -108,7 +108,7 @@ public abstract class ChronicDatabase {
     public Map<OrgRoleType, OrgRole> mapOrgRole(String orgDomain, String email) 
             throws StorageException {
         Map map = new HashMap();
-        for (OrgRole orgRole : role().list(new OrgUserKey(orgDomain, email))) {
+        for (OrgRole orgRole : role().list(new OrgPersonKey(orgDomain, email))) {
             map.put(orgRole.getRoleType(), orgRole);
         }
         return map;
@@ -117,7 +117,7 @@ public abstract class ChronicDatabase {
     public Collection<OrgRoleType> listOrgRoleType(String orgDomain, String email) 
             throws StorageException {
         List<OrgRoleType> roleTypes = new LinkedList();
-        for (OrgRole orgRole : role().list(new OrgUserKey(orgDomain, email))) {
+        for (OrgRole orgRole : role().list(new OrgPersonKey(orgDomain, email))) {
             roleTypes.add(orgRole.getRoleType());
         }
         return roleTypes;

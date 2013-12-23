@@ -5,6 +5,7 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
 import chronic.entity.Topic;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class TopicList implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(TopicList.class);
   
     @Override
-    public JMap handle(ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
         String email = httpx.getEmail();
         Set topics = new HashSet();
         for (Topic topic : httpx.db.listTopics(email)) {

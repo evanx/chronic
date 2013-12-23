@@ -5,6 +5,7 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
 import chronic.entity.OrgRole;
 import chronic.entitykey.OrgRoleKey;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ public class RoleAction implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(RoleAction.class);
   
     @Override
-    public JMap handle(ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
         String email = httpx.getEmail();
         OrgRoleKey roleKey = new OrgRoleKey(httpx.parseJsonMap().getMap("role"), email);
         if (!httpx.db.role().retrievable(roleKey)) {

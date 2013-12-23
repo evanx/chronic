@@ -23,7 +23,7 @@ package chronicexp.jdbc;
 import chronic.entity.Topic;
 import chronic.entitykey.CertIdKey;
 import chronic.entitykey.CertTopicKey;
-import chronic.entitykey.UserKey;
+import chronic.entitykey.PersonKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -199,8 +199,8 @@ public class TopicService implements EntityService<Topic> {
             return listUser((String) key);
         } else if (key instanceof Long) {
             return listCert((Long) key);
-        } else if (key instanceof UserKey) {
-            return listUser(((UserKey) key).getEmail());
+        } else if (key instanceof PersonKey) {
+            return listUser(((PersonKey) key).getEmail());
         } else if (key instanceof CertIdKey) {
             return listCert(((CertIdKey) key).getId());
         }

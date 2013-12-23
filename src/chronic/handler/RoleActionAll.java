@@ -5,6 +5,7 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
 import chronic.entity.OrgRole;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class RoleActionAll implements ChronicHttpxHandler {
     String email;
     
     @Override
-    public JMap handle(ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
         this.httpx = httpx;
         email = httpx.getEmail();
         List roles = new LinkedList();

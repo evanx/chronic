@@ -5,6 +5,7 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
 import chronic.app.StatusRecord;
 import chronic.app.StatusRecordParser;
 import chronic.check.StatusCheck;
@@ -28,7 +29,7 @@ public class Post implements ChronicHttpxHandler {
     final static Logger logger = LoggerFactory.getLogger(Post.class);
 
     @Override
-    public JMap handle(ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
         try {
             Cert cert = httpx.persistCert();
             StatusRecord status = new StatusRecord(cert);

@@ -20,32 +20,12 @@
  */
 package chronic.entitymap;
 
-import chronic.entitykey.CertKey;
-import chronic.entitykey.CertKeyed;
 import chronic.entity.Org;
-import chronic.entitykey.OrgKey;
-import chronic.entitykey.OrgKeyed;
-import chronic.entitykey.OrgUserKey;
-import chronic.entitykey.OrgUserKeyed;
-import chronic.entitykey.OrgRoleTypeKey;
-import chronic.entitykey.OrgRoleTypeKeyed;
-import chronic.entitykey.SubscriberKey;
-import chronic.entitykey.SubscriberKeyed;
-import chronic.entitykey.OrgTopicKey;
-import chronic.entitykey.OrgTopicKeyed;
-import chronic.entitykey.OrgUnitKey;
-import chronic.entitykey.OrgUnitKeyed;
-import chronic.entitykey.CertTopicKey;
-import chronic.entitykey.CertTopicKeyed;
-import chronic.entitykey.UserKey;
-import chronic.entitykey.UserKeyed;
-import chronic.entitykey.UserRoleTypeKey;
-import chronic.entitykey.UserRoleTypeKeyed;
+import chronic.entitykey.*;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import vellum.data.ComparableTuple;
-import static vellum.jx.JMaps.list;
 import vellum.storage.AbstractEntity;
 import vellum.storage.EntityMatcher;
 
@@ -71,14 +51,14 @@ public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E
 
     @Override
     public boolean matches(Comparable key, E entity) {
-        if (key instanceof UserKey) {
-            if (entity instanceof UserKeyed)  {
-                return matches((UserKeyed) entity, (UserKey) key);
+        if (key instanceof PersonKey) {
+            if (entity instanceof PersonKeyed)  {
+                return matches((PersonKeyed) entity, (PersonKey) key);
             }
         }
-        if (key instanceof UserRoleTypeKey) {
-            if (entity instanceof UserRoleTypeKeyed)  {
-                return matches((UserRoleTypeKeyed) entity, (UserRoleTypeKey) key);
+        if (key instanceof PersonRoleTypeKey) {
+            if (entity instanceof PersonRoleTypeKeyed)  {
+                return matches((PersonRoleTypeKeyed) entity, (PersonRoleTypeKey) key);
             }
         }
         if (key instanceof OrgKey) {
@@ -86,9 +66,9 @@ public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E
                 return matches((OrgKeyed) entity, (OrgKey) key);
             }
         }
-        if (key instanceof OrgUserKey) {
-            if (entity instanceof OrgUserKeyed)  {
-                return matches((OrgUserKeyed) entity, (OrgUserKey) key);
+        if (key instanceof OrgPersonKey) {
+            if (entity instanceof OrgPersonKeyed)  {
+                return matches((OrgPersonKeyed) entity, (OrgPersonKey) key);
             }
         }
         if (key instanceof OrgUnitKey) {
@@ -130,17 +110,17 @@ public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E
     @Override
     public Collection<Comparable> getKeys(E entity) {
         List<Comparable> list = new LinkedList();
-        if (entity instanceof UserKeyed) {
-            list.add(((UserKeyed) entity).getUserKey());
+        if (entity instanceof PersonKeyed) {
+            list.add(((PersonKeyed) entity).getPersonKey());
         }
-        if (entity instanceof UserRoleTypeKeyed) {
-            list.add(((UserRoleTypeKeyed) entity).getUserRoleTypeKey());
+        if (entity instanceof PersonRoleTypeKeyed) {
+            list.add(((PersonRoleTypeKeyed) entity).getPersonRoleTypeKey());
         }
         if (entity instanceof OrgKeyed) {
             list.add(((OrgKeyed) entity).getOrgKey());
         }
-        if (entity instanceof OrgUserKeyed) {
-            list.add(((OrgUserKeyed) entity).getOrgUserKey());
+        if (entity instanceof OrgPersonKeyed) {
+            list.add(((OrgPersonKeyed) entity).getOrgUserKey());
         }
         if (entity instanceof OrgUnitKeyed) {
             list.add(((OrgUnitKeyed) entity).getOrgUnitKey());
@@ -167,19 +147,19 @@ public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E
         return keyed.getCertKey().matches(key);        
     }
 
-    private boolean matches(UserKeyed keyed, UserKey key) {
-        return keyed.getUserKey().matches(key);        
+    private boolean matches(PersonKeyed keyed, PersonKey key) {
+        return keyed.getPersonKey().matches(key);        
     }
 
-    private boolean matches(UserRoleTypeKeyed keyed, UserRoleTypeKey key) {
-        return keyed.getUserRoleTypeKey().matches(key);        
+    private boolean matches(PersonRoleTypeKeyed keyed, PersonRoleTypeKey key) {
+        return keyed.getPersonRoleTypeKey().matches(key);        
     }
     
     private boolean matches(OrgKeyed keyed, OrgKey key) {
         return keyed.getOrgKey().matches(key);        
     }
     
-    private boolean matches(OrgUserKeyed keyed, OrgUserKey key) {
+    private boolean matches(OrgPersonKeyed keyed, OrgPersonKey key) {
         return keyed.getOrgUserKey().matches(key);        
     }
 

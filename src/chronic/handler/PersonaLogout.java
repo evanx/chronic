@@ -6,7 +6,8 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
-import chronic.entity.User;
+import chronic.app.ChronicApp;
+import chronic.entity.Person;
 import chronic.app.ChronicCookie;
 import java.util.Date;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class PersonaLogout implements ChronicHttpxHandler {
     ChronicCookie cookie;
     
     @Override
-    public JMap handle(ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
         logger.info("handle", getClass().getSimpleName(), httpx.getPath());
         try {
             String email = httpx.parseJsonMap().getString("email");
@@ -38,9 +39,9 @@ public class PersonaLogout implements ChronicHttpxHandler {
                     logger.info("testing mode: ignoring logout");
                 } else {
                     logger.info("cookie", cookie.getEmail());
-                    User user = httpx.db.user().retrieve(cookie.getEmail());
+                    Person user = httpx.db.person().retrieve(cookie.getEmail());
                     user.setLogoutTime(new Date());
-                    httpx.db.user().update(user);
+                    httpx.db.person().update(user);
                 }
             }
             return new JMap();

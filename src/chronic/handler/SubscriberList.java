@@ -5,8 +5,9 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
 import chronic.entity.Subscriber;
-import chronic.entitykey.UserKey;
+import chronic.entitykey.PersonKey;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -23,11 +24,11 @@ public class SubscriberList implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(SubscriberList.class);
   
     @Override
-    public JMap handle(ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
         String email = httpx.getEmail();
         logger.info("email {}", email);
         List subscriptions = new LinkedList();
-        for (Subscriber subscriber : httpx.db.sub().list(new UserKey(email))) {
+        for (Subscriber subscriber : httpx.db.sub().list(new PersonKey(email))) {
             subscriptions.add(subscriber);
         }
         logger.info("subscriptions {}", subscriptions);
@@ -41,7 +42,7 @@ public class SubscriberList implements ChronicHttpxHandler {
             }
         } else if (httpx.getReferer().endsWith("/demo")) {
             String adminEmail = httpx.app.getProperties().getAdminEmails().iterator().next();
-            for (Subscriber subscriber : httpx.db.sub().list(new UserKey(adminEmail))) {
+            for (Subscriber subscriber : httpx.db.sub().list(new PersonKey(adminEmail))) {
                 logger.info("demo subscriber {}", subscriber);
                 subscriptions.add(subscriber);
             }

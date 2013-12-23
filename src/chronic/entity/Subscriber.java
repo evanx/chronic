@@ -9,8 +9,8 @@ import chronic.entitykey.SubscriberKey;
 import chronic.entitykey.SubscriberKeyed;
 import chronic.entitykey.TopicIdKey;
 import chronic.entitykey.TopicIdKeyed;
-import chronic.entitykey.UserKey;
-import chronic.entitykey.UserKeyed;
+import chronic.entitykey.PersonKey;
+import chronic.entitykey.PersonKeyed;
 import chronic.entitytype.ChronicDatabaseInjectable;
 import chronic.entitytype.SubscriberActionType;
 import java.io.Serializable;
@@ -32,7 +32,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 @Entity
-public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, UserKeyed, 
+public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, PersonKeyed, 
         TopicIdKeyed, Enabled, JMapped, ChronicDatabaseInjectable, Serializable {
     
     static Logger logger = LoggerFactory.getLogger(Subscriber.class);
@@ -77,8 +77,8 @@ public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, Use
     }
         
     @Override        
-    public UserKey getUserKey() {
-        return new UserKey(email);
+    public PersonKey getPersonKey() {
+        return new PersonKey(email);
     }
     
     public void setEnabled(boolean enabled) {

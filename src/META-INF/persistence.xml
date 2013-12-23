@@ -2,14 +2,17 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="chronicPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>enbase.api.EnbaseRequest</class>
     <class>chronic.entity.Org</class>
+    <class>chronic.entity.Cert</class>
+    <class>chronic.entity.OrgRole</class>
+    <class>chronic.entity.Subscriber</class>
+    <class>chronic.entity.Topic</class>
+    <class>chronic.entity.Person</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem"/>
       <property name="javax.persistence.jdbc.password" value="sa"/>
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
       <property name="javax.persistence.jdbc.user" value="sa"/>
-      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
     </properties>
   </persistence-unit>
 </persistence>

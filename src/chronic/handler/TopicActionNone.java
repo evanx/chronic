@@ -5,6 +5,7 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
 import chronic.entity.Subscriber;
 import chronic.entity.Topic;
 import chronic.entitykey.SubscriberKey;
@@ -28,7 +29,7 @@ public class TopicActionNone implements ChronicHttpxHandler {
     String email;
 
     @Override
-    public JMap handle(ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
         this.httpx = httpx;
         email = httpx.getEmail();
         List topics = new LinkedList();

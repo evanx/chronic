@@ -24,8 +24,8 @@ import chronic.entity.OrgRole;
 import chronic.entitykey.OrgKey;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.OrgRoleTypeKey;
-import chronic.entitykey.UserKey;
-import chronic.entitykey.UserRoleTypeKey;
+import chronic.entitykey.PersonKey;
+import chronic.entitykey.PersonRoleTypeKey;
 import chronic.entitytype.OrgRoleType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -191,10 +191,10 @@ public class OrgRoleService implements EntityService<OrgRole> {
             return list((OrgKey) key);
         } else if (key instanceof OrgRoleTypeKey) {
             return list((OrgRoleTypeKey) key);
-        } else if (key instanceof UserKey) {
-            return list((UserKey) key);            
-        } else if (key instanceof UserRoleTypeKey) {
-            return list((UserRoleTypeKey) key);            
+        } else if (key instanceof PersonKey) {
+            return list((PersonKey) key);            
+        } else if (key instanceof PersonRoleTypeKey) {
+            return list((PersonRoleTypeKey) key);            
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, 
                 key.getClass().getSimpleName());
@@ -219,7 +219,7 @@ public class OrgRoleService implements EntityService<OrgRole> {
         }
     }
     
-    public Collection<OrgRole> list(UserKey key) throws StorageException {
+    public Collection<OrgRole> list(PersonKey key) throws StorageException {
         try (PreparedStatement statement = prepare("list email", key.getEmail());
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
@@ -228,7 +228,7 @@ public class OrgRoleService implements EntityService<OrgRole> {
         }
     }
 
-    public Collection<OrgRole> list(UserRoleTypeKey key) throws StorageException {
+    public Collection<OrgRole> list(PersonRoleTypeKey key) throws StorageException {
         try (PreparedStatement statement = prepare("list user role", key.getEmail(),
                 key.getRoleType().name());
                 ResultSet resultSet = statement.executeQuery()) {

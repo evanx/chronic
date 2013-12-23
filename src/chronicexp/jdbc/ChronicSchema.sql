@@ -18,6 +18,8 @@ create table person (
   label varchar(64), 
   locale varchar(32),
   enabled boolean default false,
+  login_time timestamp,
+  logout_time timestamp,
   inserted timestamp not null default now(),
   constraint uniq_person unique (email)
 );

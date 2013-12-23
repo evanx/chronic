@@ -8,6 +8,6 @@ package chronic.entitykey;
  *
  * @author evan.summers
  */
-public interface UserKeyed {
-    public UserKey getUserKey();
+public interface PersonIdKeyed {
+    public PersonIdKey getPersonIdKey();
 }

@@ -5,6 +5,7 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
+import chronic.app.ChronicApp;
 import chronic.entity.Subscriber;
 import chronic.entitykey.SubscriberKey;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ public class SubscriberAction implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(SubscriberAction.class);
   
     @Override
-    public JMap handle(ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
         String email = httpx.getEmail();
         JMap map = httpx.parseJsonMap().getMap("subscriber");
         SubscriberKey key = new SubscriberKey(map.getLong("topicId"), email);

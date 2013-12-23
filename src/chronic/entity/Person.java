@@ -4,8 +4,8 @@
  */
 package chronic.entity;
 
-import chronic.entitykey.UserKeyed;
-import chronic.entitykey.UserKey;
+import chronic.entitykey.PersonKeyed;
+import chronic.entitykey.PersonKey;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
@@ -25,11 +25,11 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 @Entity
-public class User extends AbstractIdEntity implements UserKeyed, Enabled, Serializable {
+public class Person extends AbstractIdEntity implements PersonKeyed, Enabled, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_id")
+    @Column(name = "person_id")
     Long id;
     
     @Column()        
@@ -38,34 +38,30 @@ public class User extends AbstractIdEntity implements UserKeyed, Enabled, Serial
     @Column()    
     String label;
     
-    @Column(name = "first_name")
-    String firstName;
-
-    @Column(name = "last_name")
-    String lastName;
-    
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Column(name = "login_time")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date loginTime;
 
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Column(name = "logout_time")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date logoutTime;
     
     @Column()    
     boolean enabled = false;
 
-    public User() {
+    public Person() {
     }
 
-    public User(UserKey key) {
+    public Person(PersonKey key) {
         this(key.getEmail());
     }
     
-    public User(String email) {
+    public Person(String email) {
         this.email = email;
         this.label = Emails.getUsername(email);
     }
     
-    public User(JMap map) throws JMapException {
+    public Person(JMap map) throws JMapException {
         email = map.getString("email");
         label = map.getString("name");
     }
@@ -76,8 +72,8 @@ public class User extends AbstractIdEntity implements UserKeyed, Enabled, Serial
     }
 
     @Override
-    public UserKey getUserKey() {
-        return new UserKey(email);
+    public PersonKey getPersonKey() {
+        return new PersonKey(email);
     }
     
     @Override
@@ -98,22 +94,7 @@ public class User extends AbstractIdEntity implements UserKeyed, Enabled, Serial
         this.label = label;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -130,22 +111,18 @@ public class User extends AbstractIdEntity implements UserKeyed, Enabled, Serial
         return email;
     }
 
-    public Date getLoginTime() {
-        return loginTime;
-    }
-
     public void setLoginTime(Date loginTime) {
         this.loginTime = loginTime;
     }
-
-    public Date getLogoutTime() {
-        return logoutTime;
+    
+    public Date getLoginTime() {
+        return loginTime;
     }
 
     public void setLogoutTime(Date logoutTime) {
         this.logoutTime = logoutTime;
     }
-
+        
     public JMap getMap() {
         JMap map = new JMap();
         map.put("id", id);

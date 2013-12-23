@@ -10,10 +10,10 @@ import vellum.util.ComparableValue;
  *
  * @author evan.summers
  */
-public final class UserIdKey extends ComparableValue {
+public final class PersonIdKey extends ComparableValue {
     Long id;
 
-    public UserIdKey(Long id) {
+    public PersonIdKey(Long id) {
         super(id);
         this.id = id;
     }

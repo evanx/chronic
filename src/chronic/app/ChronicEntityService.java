@@ -20,10 +20,14 @@
  */
 package chronic.app;
 
+import chronic.entity.Cert;
+import chronic.entity.Org;
 import chronic.entity.Topic;
+import chronic.entitytype.OrgRoleType;
 import javax.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.storage.StorageException;
 
 /**
  *
@@ -48,6 +52,19 @@ public class ChronicEntityService {
                 getResultList();
     }
 
+    public Iterable<Org> listOrg(String email) 
+            throws StorageException {
+        return emf.createEntityManager().
+                createQuery("select o from Org o join OrgRole r where r.email = :email").
+                setParameter("email", email).
+                getResultList();
+    }
     
     
+    public Iterable<Cert> listCerts(String email) throws StorageException {
+        return emf.createEntityManager().
+                createQuery("select c from Cert c join OrgRole r where r.email = :email").
+                setParameter("email", email).
+                getResultList();
+    }        
 }
