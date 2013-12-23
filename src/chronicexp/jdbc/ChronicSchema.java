@@ -57,7 +57,7 @@ public class ChronicSchema {
         }
     }
 
-    private void createSchema() throws SQLException, IOException {
+    public void createSchema() throws SQLException, IOException {
         try (Connection connection = app.getDataSource().getConnection()) {
             String sqlScriptName = getClass().getSimpleName() + ".sql";
             InputStream stream = getClass().getResourceAsStream(sqlScriptName);

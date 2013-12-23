@@ -66,6 +66,8 @@ public class CertService implements EntityService<Cert> {
         cert.setOrgDomain(resultSet.getString("org_domain"));
         cert.setOrgUnit(resultSet.getString("org_unit"));
         cert.setCommonName(resultSet.getString("common_name"));
+        cert.setAddress(resultSet.getString("address"));
+        cert.setTimestamp(resultSet.getTimestamp("inserted").getTime());
         cert.setEncoded(resultSet.getString("encoded"));
         cert.setEnabled(resultSet.getBoolean("enabled"));
         return cert;
@@ -86,7 +88,8 @@ public class CertService implements EntityService<Cert> {
             statement.setString(2, cert.getOrgUnit());
             statement.setString(3, cert.getCommonName());
             statement.setString(4, cert.getEncoded());
-            statement.setBoolean(5, cert.isEnabled());
+            statement.setString(5, cert.getAddress());
+            statement.setBoolean(6, cert.isEnabled());
             ResultSet generatedKeys = statement.executeQuery();
             if (!generatedKeys.next()) {
                 throw new StorageException(StorageExceptionType.NOT_PERSISTED);
@@ -100,7 +103,8 @@ public class CertService implements EntityService<Cert> {
 
     @Override
     public void update(Cert cert) throws StorageException {
-        updateEncoded(cert);
+        assert cert.getId() != null;
+        updateEnabled(cert);
     }
 
     public void updateEnabled(Cert cert) throws StorageException {

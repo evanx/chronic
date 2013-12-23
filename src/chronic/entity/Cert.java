@@ -52,8 +52,12 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
     @Column()
     boolean enabled;
     
-    transient long timestamp;
-    transient String address;
+    @Column(name = "time_")
+    long timestamp;
+    
+    @Column()
+    String address;
+    
     transient Org org;
     
     public Cert() {

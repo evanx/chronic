@@ -46,6 +46,7 @@ create table cert (
   org_domain varchar(64) not null,
   org_unit varchar(64) not null,
   common_name varchar(64) not null,
+  address varchar(32) not null,
   encoded varchar(8192),
   enabled boolean default false,
   inserted timestamp not null default now(),

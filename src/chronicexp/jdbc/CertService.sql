@@ -5,8 +5,9 @@ insert into cert (
   org_unit,
   common_name,
   encoded,
+  address,
   enabled
-) values (?, ?, ?, ?, ?)
+) values (?, ?, ?, ?, ?, ?)
 returning cert_id
 ;
 

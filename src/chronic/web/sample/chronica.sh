@@ -49,13 +49,14 @@ startTimestamp=`date '+%s'`
 
 set -u 
 
+dir=~/.chronica
+mkdir -p $dir/etc
+cp -f $0 $dir/script
+
 cd `dirname $0`
 custom=`pwd`/custom.chronica.sh
 script=`pwd`/chronica.sh
 
-dir=~/.chronica
-mkdir -p $dir/etc
-cp -f $0 $dir/script
 cd $dir
 
 if ! pwd | grep -q '/.chronica$'

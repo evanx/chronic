@@ -114,6 +114,8 @@ public class ChronicHttpx extends Httpx {
             cert.setEnabled(enabled);
             cert.setEncoded(encoded);
             cert.setAddress(remoteHostAddress);
+            cert.setTimestamp(System.currentTimeMillis());
+            cert.setAddress(remoteHostAddress);
             db.cert().persist(cert);
             logger.info("certificate {}", certKey);
         } else if (!cert.getEncoded().equals(encoded)) {
@@ -123,8 +125,6 @@ public class ChronicHttpx extends Httpx {
         } else if (!cert.getAddress().equals(remoteHostAddress)) {
             logger.warn("host address {}", remoteHostAddress);
         }
-        cert.setTimestamp(System.currentTimeMillis());
-        cert.setAddress(remoteHostAddress);
         cert.setOrg(org);
         return cert;
     }
