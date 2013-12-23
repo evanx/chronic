@@ -14,17 +14,17 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-public class PersonaUserInfo {
-    static Logr logger = LogrFactory.getLogger(PersonaUserInfo.class);
+public class PersonaInfo {
+    static Logr logger = LogrFactory.getLogger(PersonaInfo.class);
     String email;
     String issuer;
     long expires;
 
-    public PersonaUserInfo(String email) {
+    public PersonaInfo(String email) {
         this.email = email;
     }
     
-    public PersonaUserInfo(JMap map) throws JMapException {
+    public PersonaInfo(JMap map) throws JMapException {
         email = map.getString("email");
         expires = map.getLong("expires");
         issuer = map.getString("issuer");

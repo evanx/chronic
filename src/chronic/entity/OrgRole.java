@@ -37,7 +37,7 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-@Entity
+@Entity(name = "org_role")
 public class OrgRole extends AbstractIdEntity implements PersonKeyed, PersonRoleTypeKeyed,
         OrgKeyed, OrgPersonKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled, Serializable {
 
@@ -59,7 +59,7 @@ public class OrgRole extends AbstractIdEntity implements PersonKeyed, PersonRole
     boolean enabled = false;
     
     @OneToOne()    
-    @JoinColumn(name = "orgDomain", referencedColumnName = "orgDomain")
+    @JoinColumn(name = "org_domain", referencedColumnName = "org_domain")
     Org org;
     
     @OneToOne()    

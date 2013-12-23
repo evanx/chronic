@@ -77,7 +77,7 @@ public abstract class ChronicDatabase {
 
     public abstract EntityService<Cert> cert();
     
-    public Iterable<Person> listUsers(String email) {
+    public Iterable<Person> listPersons(String email) {
         List list = new LinkedList();
         return list;
     }

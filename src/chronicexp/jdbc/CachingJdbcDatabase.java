@@ -46,7 +46,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
 
     static final ChronicMatcher matcher = new ChronicMatcher();
     static final CachingEntityService<Cert> certCache = new CachingEntityService(100, matcher);
-    static final CachingEntityService<Person> userCache = new CachingEntityService(100, matcher);
+    static final CachingEntityService<Person> personCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<Org> orgCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<OrgRole> roleCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<Topic> topicCache = new CachingEntityService(100, matcher);
@@ -67,7 +67,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     
     public void open() throws SQLException {
         connection = app.getDataSource().getConnection();
-        person = new DelegatingEntityService(userCache, new PersonService(connection));
+        person = new DelegatingEntityService(personCache, new PersonService(connection));
         org = new DelegatingEntityService(orgCache, new OrgService(connection));
         role = new DelegatingEntityService(roleCache, new OrgRoleService(connection));
         topic = new DelegatingEntityService(topicCache, new TopicService(connection));

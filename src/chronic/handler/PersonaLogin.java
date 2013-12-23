@@ -9,7 +9,7 @@ import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.entity.Person;
 import chronic.app.ChronicCookie;
-import chronic.persona.PersonaUserInfo;
+import chronic.persona.PersonaInfo;
 import chronic.persona.PersonaVerifier;
 import java.util.Date;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class PersonaLogin implements ChronicHttpxHandler {
         if (ChronicCookie.matches(httpx.getCookieMap())) {
             cookie = new ChronicCookie(httpx.getCookieMap());
         }
-        PersonaUserInfo userInfo = new PersonaVerifier(httpx.app, cookie).getUserInfo(
+        PersonaInfo userInfo = new PersonaVerifier(httpx.app, cookie).getPersonaInfo(
                 httpx.getHostUrl(), assertion);
         logger.trace("persona {}", userInfo);
         String email = userInfo.getEmail();

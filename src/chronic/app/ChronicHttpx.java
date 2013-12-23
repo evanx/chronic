@@ -16,7 +16,7 @@ import chronic.entitykey.SubscriberKey;
 import chronic.entitytype.ChronicDatabaseInjectable;
 import chronic.entitytype.OrgRoleType;
 import chronic.persona.PersonaException;
-import chronic.persona.PersonaUserInfo;
+import chronic.persona.PersonaInfo;
 import chronic.persona.PersonaVerifier;
 import chronicexp.jdbc.CachingJdbcDatabase;
 import com.sun.net.httpserver.HttpExchange;
@@ -62,10 +62,9 @@ public class ChronicHttpx extends Httpx {
                         return cookie.getEmail();
                     }
                 }
-                PersonaUserInfo userInfo = new PersonaVerifier(app, cookie).
-                        getUserInfo(getHostUrl(), cookie.getAssertion());
-                if (cookie.getEmail().equals(userInfo.getEmail())) {
-                    return userInfo.getEmail();
+                PersonaInfo personInfo = new PersonaVerifier(app, cookie).getPersonaInfo(getHostUrl(), cookie.getAssertion());
+                if (cookie.getEmail().equals(personInfo.getEmail())) {
+                    return personInfo.getEmail();
                 }
             }
         }
@@ -130,23 +129,23 @@ public class ChronicHttpx extends Httpx {
         return cert;
     }
 
-    public Person persistUser(String email) throws StorageException {
+    public Person persistPerson(String email) throws StorageException {
         logger.info("handle {}", email);
-        Person user = db.person().find(email);
-        if (user == null) {
-            user = new Person(email);
-            db.person().persist(user);
+        Person person = db.person().find(email);
+        if (person == null) {
+            person = new Person(email);
+            db.person().persist(person);
         }
-        return user;
+        return person;
     }
 
     public void persistCertSubscriber(Cert cert, String email)
             throws StorageException {
         logger.info("handle {} {}", cert, email);
-        Person user = db.person().find(email);
-        if (user == null) {
-            user = new Person(email);
-            db.person().persist(user);
+        Person person = db.person().find(email);
+        if (person == null) {
+            person = new Person(email);
+            db.person().persist(person);
         }
         for (Topic topic : db.topic().list(cert.getKey())) {
             persistTopicSubscriber(topic, email);
@@ -157,7 +156,7 @@ public class ChronicHttpx extends Httpx {
     public OrgRole persistOrgRole(Cert cert, String email, OrgRoleType roleType)
             throws StorageException {
         logger.info("enroll {} {}", cert, email);
-        Person user = persistUser(email);
+        Person person = persistPerson(email);
         OrgRoleKey orgRoleKey = new OrgRoleKey(cert.getOrgDomain(), email, roleType);
         OrgRole orgRole = db.role().find(orgRoleKey);
         if (orgRole == null) {

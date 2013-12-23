@@ -35,7 +35,7 @@ public class PersonaVerifier {
         this.cookie = cookie;
     }
         
-    public PersonaUserInfo getUserInfo(String serverUrl, String assertion) 
+    public PersonaInfo getPersonaInfo(String serverUrl, String assertion) 
             throws IOException, JMapException, PersonaException {
         logger.trace("getUserInfo {}", serverUrl);
         URL url = new URL("https://verifier.login.persona.org/verify");
@@ -53,13 +53,13 @@ public class PersonaVerifier {
             String status = object.getString("status");
             if (status.equals("okay")) {
                 logger.trace("persona", object.getMap().toString());
-                return new PersonaUserInfo(object.getMap());
+                return new PersonaInfo(object.getMap());
             } else {
                 String reason = object.getString("reason");
                 logger.debug("{}: {}", status, reason);
                 if (reason.equals("assertion has expired")) {
                     if (app.getProperties().isTesting() && cookie != null) {
-                        return new PersonaUserInfo(cookie.getEmail());
+                        return new PersonaInfo(cookie.getEmail());
                     }
                 }
                 throw new PersonaException(status, reason);
