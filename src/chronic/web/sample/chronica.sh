@@ -393,6 +393,21 @@ c0diskspace() {
   echo "Diskspace $diskStatus - $diskUsage%"
 }
 
+c0yumVerify() {
+  sha1sum /usr/bin/yum
+  /usr/bin/yum verify
+}
+
+c0rpmVerify() {
+  sha1sum /bin/rpm
+  /bin/rpm -Va
+}
+
+c0megaRaid() {
+  /usr/sbin/MegaCli -ldinfo -lall -aall | grep '^State'
+  /usr/sbin/MegaCli -pdlist -aall | grep '^Firmware'
+}
+
 c0mdstat() {
   echo "<br><b>mdstat</b>"
   cat /proc/mdstat 2>/dev/null | grep ^md -A1 | sed 's/.*\[\([U_]*\)\]/\1/' |
@@ -406,16 +421,6 @@ c0shaAuth() {
   /usr/bin/sha1sum /etc/ssh/sshd_config
   /usr/bin/sha1sum /etc/group
   /usr/bin/sha1sum /etc/passwd
-}
-
-c0yumVerify() {
-  sha1sum /usr/bin/yum
-  /usr/bin/yum verify
-}
-
-c0rpmVerify() {
-  sha1sum /bin/rpm
-  /bin/rpm -Va
 }
 
 
