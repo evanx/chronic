@@ -541,7 +541,9 @@ c0minutelyCron() {
 ### update script
 
 c0checkChronicaPubKey() {
-  echo `curl -s https://chronica.co/sample/chronica/chronica.pub.pem | /usr/bin/sha1sum` chronica.pub.pem
+  curl -s https://chronica.co/sample/chronica/chronica.pub.pem | /usr/bin/sha1sum |
+    grep -v `cat  ~/.chronica/etc/chronica.pub.pem | /usr/bin/sha1sum` && 
+    echo 'CRITICAL: chronica.pub.key'
 }
 
 c0updateGit() {
