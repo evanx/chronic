@@ -540,6 +540,10 @@ c0minutelyCron() {
 
 ### update script
 
+c0checkChronicaPubKey() {
+  echo `curl -s https://chronica.co/sample/chronica/chronica.pub.pem | /usr/bin/sha1sum` chronica.pub.pem
+}
+
 c0updateGit() {
   c0updateCheck
   echo 'Run the following commands to update your script:'
@@ -566,9 +570,9 @@ c0updateInfo() {
 
 c0updateCheck() {
   c0updateInfo
-  echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using' `pwd`/'chronica.pub.pem:'
+  echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using ~/.chronica/etc/chronica.pub.pem:'
   if curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
-    openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem 
+    openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem
   then
     echo 'OK: signature verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
   else
