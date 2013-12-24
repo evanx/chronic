@@ -17,19 +17,22 @@
 # specific language governing permissions and limitations
 # under the License.  
 
+
 ### custom config 
 
+commonName="" # name of this publisher
 orgUnit="" # network or group
-orgDomain="" # URL of your organisation 
-commonName="" # name of this host or account
+orgDomain="" # internet domain of your organisation 
 admins="" # emails of chronica admins for this organisation
-subscribers="" # emails of invited subcribers for this topic
+subscribers="" # emails of default subcribers
+
 
 ### customizable jobs
 
 c0minutely() {
   c1topic minutely
   c0load
+  c0login
   #c2tcp chronica.co 443
   #c2nossl chronica.co 80
   #c2nohttps chronica.co 80
@@ -43,13 +46,14 @@ c0minutely() {
 c0hourly() {
   c1topic hourly
   c0diskspace
-  #c0mdstat
-  #c0sshAuthKeys
+  #c0shaAuth
   #c0megaRaid
+  #c0mdstat
 }
 
 c0daily() {
   c1topic daily
-  c0login
+  #c0yumVerify
+  #c0rpmVerify
   #c2certExpiry chronica.co 443
 }

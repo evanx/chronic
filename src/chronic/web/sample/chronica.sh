@@ -395,7 +395,7 @@ c0diskspace() {
 
 c0mdstat() {
   echo "<br><b>mdstat</b>"
-  cat /proc/mdstat 2>/dev/null | grep ^md -A1 | sed 's/.*\[\([U_]*\)\]/\1/' | 
+  cat /proc/mdstat 2>/dev/null | grep ^md -A1 | sed 's/.*\[\([U_]*\)\]/\1/' |
     sed '/^\s*$/d' | grep 'U\|^md'
 }
 

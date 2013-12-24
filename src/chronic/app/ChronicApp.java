@@ -20,8 +20,6 @@
  */
 package chronic.app;
 
-import chronic.entity.Subscriber;
-import chronic.entity.Topic;
 import chronic.handler.AdminEnroll;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
@@ -29,7 +27,6 @@ import chronicexp.jdbc.CachingJdbcDatabase;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import chronicexp.jdbc.ChronicSchema;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,7 +34,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -47,7 +43,6 @@ import vellum.collections.SynchronizedCapacityDeque;
 import vellum.data.Millis;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
-import vellum.storage.StorageException;
 import vellum.data.ComparableTuple;
 import vellum.httphandler.RedirectHttpsHandler;
 
@@ -182,6 +177,8 @@ public class ChronicApp {
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
+                } catch (Throwable t) {
+                    messenger.alert(t);
                 }
             }
         }
@@ -205,6 +202,8 @@ public class ChronicApp {
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
+                } catch (Throwable t) {
+                    messenger.alert(t);
                 }
             }
         }
@@ -222,6 +221,8 @@ public class ChronicApp {
                 }
             } catch (Exception e) {
                 logger.warn("run", e);
+            } catch (Throwable t) {
+                messenger.alert(t);
             }
         }
     }

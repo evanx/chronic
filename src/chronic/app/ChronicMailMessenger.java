@@ -28,6 +28,7 @@ import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
+import vellum.exception.Exceptions;
 import vellum.util.Args;
 
 /**
@@ -70,6 +71,16 @@ public class ChronicMailMessenger {
             } catch (IOException | MessagingException e) {
                 logger.warn("{} {}", e.getMessage(), alert);
             }
+        }
+    }
+
+    void alert(Throwable t) {
+        logger.warn("alert throwable", t);
+        try {
+            mailer.send(app.getProperties().getAdminEmail(), "Chronica exception",
+                    "<pre>" + Exceptions.printStackTrace(t) + "</pre>");
+        } catch (MessagingException | IOException e) {
+            logger.warn("alert throwable email", e);
         }
     }
 }
