@@ -404,6 +404,7 @@ c0rpmVerify() {
 }
 
 c0megaRaid() {
+  echo "<br><b>megaRaid</b>"
   /usr/sbin/MegaCli -ldinfo -lall -aall | grep '^State'
   /usr/sbin/MegaCli -pdlist -aall | grep '^Firmware'
 }
