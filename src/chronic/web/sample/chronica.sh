@@ -395,12 +395,27 @@ c0diskspace() {
 
 c0mdstat() {
   echo "<br><b>mdstat</b>"
-  cat /proc/mdstat 2>/dev/null | grep ^md -A1 | sed 's/.*\[\([U_]*\)\]/\1/' | sed '/^\s*$/d' | grep 'U\|^md'
+  cat /proc/mdstat 2>/dev/null | grep ^md -A1 | sed 's/.*\[\([U_]*\)\]/\1/' | 
+    sed '/^\s*$/d' | grep 'U\|^md'
 }
 
-c0sshAuthKeys() {
-  echo "<br><b>sshAuthKeys</b>"
-  sha1sum `locate authorized_keys | /etc/ssh/sshd_config`
+c0shaAuth() {
+  echo "<br><b>shaAuth</b>"
+  /usr/bin/sha1sum /usr/bin/sha1sum
+  /usr/bin/sha1sum `locate authorized_keys | grep '/authorized_keys$'`
+  /usr/bin/sha1sum /etc/ssh/sshd_config
+  /usr/bin/sha1sum /etc/group
+  /usr/bin/sha1sum /etc/passwd
+}
+
+c0yumVerify() {
+  sha1sum /usr/bin/yum
+  /usr/bin/yum verify
+}
+
+c0rpmVerify() {
+  sha1sum /bin/rpm
+  /bin/rpm -Va
 }
 
 
