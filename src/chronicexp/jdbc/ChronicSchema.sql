@@ -51,7 +51,7 @@ create table cert (
   address varchar(32) not null,
   encoded varchar(8192),
   enabled boolean default false,
-  inserted timestamp not null default now(),
+  acquired timestamp not null default now(),
   constraint uniq_cert unique (org_domain, org_unit, common_name)
 );
 

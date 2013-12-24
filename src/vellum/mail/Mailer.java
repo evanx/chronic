@@ -40,7 +40,7 @@ public class Mailer {
 
     public void send(String recipient, String subject, String htmlContent) 
             throws MessagingException, IOException {
-        if (properties != null && properties.isEnabled()) {
+        if (properties == null || !properties.isEnabled()) {
             logger.warn("disabled {} {}", recipient, subject);
             return;
         }

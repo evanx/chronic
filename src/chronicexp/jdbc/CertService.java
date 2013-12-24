@@ -28,6 +28,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import vellum.sql.QueryMap;
 import vellum.storage.EntityService;
 import vellum.storage.StorageException;
 import vellum.storage.StorageExceptionType;
+import vellum.util.Calendars;
 
 /**
  *
@@ -67,7 +69,7 @@ public class CertService implements EntityService<Cert> {
         cert.setOrgUnit(resultSet.getString("org_unit"));
         cert.setCommonName(resultSet.getString("common_name"));
         cert.setAddress(resultSet.getString("address"));
-        cert.setTimestamp(resultSet.getTimestamp("inserted").getTime());
+        cert.setAcquired(Calendars.newCalendar(resultSet.getTimestamp("acquired").getTime()));
         cert.setEncoded(resultSet.getString("encoded"));
         cert.setEnabled(resultSet.getBoolean("enabled"));
         return cert;

@@ -12,17 +12,19 @@ import chronic.entitykey.OrgUnitKey;
 import chronic.entitykey.OrgUnitKeyed;
 import chronic.entitytype.CertActionType;
 import java.io.Serializable;
+import java.util.Calendar;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import vellum.data.Millis;
-import vellum.data.Timestamped;
+import javax.persistence.Temporal;
+import vellum.format.CalendarFormats;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
 import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
+import vellum.util.Calendars;
 
 /**
  *
@@ -30,7 +32,7 @@ import vellum.type.Enabled;
  */
 @Entity
 public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed, 
-        CertKeyed, Timestamped, Enabled, JMapped, Serializable {
+        CertKeyed, Enabled, JMapped, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -52,8 +54,9 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
     @Column()
     boolean enabled;
     
-    @Column(name = "time_")
-    long timestamp;
+    @Column(name = "acquired")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    Calendar acquired;
     
     @Column()
     String address;
@@ -71,7 +74,7 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
         this.orgDomain = orgDomain;
         this.orgUnit = orgUnit;
         this.commonName = commonName;
-        timestamp = System.currentTimeMillis();
+        acquired = Calendar.getInstance();
     }
 
     @Override
@@ -161,21 +164,20 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
         this.address = address;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public Calendar getAcquired() {
+        return acquired;
     }
 
-    @Override
-    public long getTimestamp() {
-        return timestamp;
+    public void setAcquired(Calendar acquired) {
+        this.acquired = acquired;
     }
-        
+    
     @Override
     public JMap getMap() {
         JMap map = getKeyMap();
         map.put("enabled", enabled);
         map.put("address", address);
-        map.put("timestampLabel", Millis.formatTime(timestamp));
+        map.put("timestampLabel", CalendarFormats.timeFormat.format(acquired.getTime()));
         map.put("address", address);
         map.put("action", getAction());
         map.put("actionLabel", getAction().getLabel());

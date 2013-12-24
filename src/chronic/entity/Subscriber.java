@@ -19,6 +19,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
@@ -31,7 +32,8 @@ import vellum.type.Enabled;
  *
  * @author evan.summers
  */
-@Entity
+@Entity()
+@Table(name = "topic_sub")
 public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, PersonKeyed, 
         TopicIdKeyed, Enabled, JMapped, ChronicDatabaseInjectable, Serializable {
     

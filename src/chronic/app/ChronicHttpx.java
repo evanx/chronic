@@ -22,6 +22,7 @@ import chronicexp.jdbc.CachingJdbcDatabase;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.security.cert.CertificateException;
+import java.util.Calendar;
 import java.util.Collection;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.cert.X509Certificate;
@@ -62,7 +63,8 @@ public class ChronicHttpx extends Httpx {
                         return cookie.getEmail();
                     }
                 }
-                PersonaInfo personInfo = new PersonaVerifier(app, cookie).getPersonaInfo(getHostUrl(), cookie.getAssertion());
+                PersonaInfo personInfo = new PersonaVerifier(app, cookie).
+                        getPersonaInfo(getHostUrl(), cookie.getAssertion());
                 if (cookie.getEmail().equals(personInfo.getEmail())) {
                     return personInfo.getEmail();
                 }
@@ -114,7 +116,7 @@ public class ChronicHttpx extends Httpx {
             cert.setEnabled(enabled);
             cert.setEncoded(encoded);
             cert.setAddress(remoteHostAddress);
-            cert.setTimestamp(System.currentTimeMillis());
+            cert.setAcquired(Calendar.getInstance());
             cert.setAddress(remoteHostAddress);
             db.cert().persist(cert);
             logger.info("certificate {}", certKey);

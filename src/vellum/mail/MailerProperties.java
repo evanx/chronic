@@ -22,7 +22,7 @@ public class MailerProperties {
     String password;
     String host = "localhost";
     int port = 25;
-    boolean enabled;
+    boolean enabled = false;
 
     public MailerProperties() {
     }

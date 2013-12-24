@@ -26,6 +26,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 import vellum.storage.AbstractIdEntity;
@@ -37,7 +38,8 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-@Entity(name = "org_role")
+@Entity()
+@Table(name = "org_role")
 public class OrgRole extends AbstractIdEntity implements PersonKeyed, PersonRoleTypeKeyed,
         OrgKeyed, OrgPersonKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled, Serializable {
 
@@ -59,11 +61,13 @@ public class OrgRole extends AbstractIdEntity implements PersonKeyed, PersonRole
     boolean enabled = false;
     
     @OneToOne()    
-    @JoinColumn(name = "org_domain", referencedColumnName = "org_domain")
+    @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", 
+            insertable = false, updatable = false)
     Org org;
     
     @OneToOne()    
-    @JoinColumn(name = "email", referencedColumnName = "email")
+    @JoinColumn(name = "email", referencedColumnName = "email",
+            insertable = false, updatable = false)
     Person person; 
 
     public OrgRole() {

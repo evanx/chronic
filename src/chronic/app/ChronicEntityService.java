@@ -23,7 +23,6 @@ package chronic.app;
 import chronic.entity.Cert;
 import chronic.entity.Org;
 import chronic.entity.Topic;
-import chronic.entitytype.OrgRoleType;
 import javax.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
