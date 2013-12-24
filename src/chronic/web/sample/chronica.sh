@@ -43,6 +43,14 @@ httpTimeout=4
 databaseTimeout=2
 
 
+### default functions
+
+c1topic() {
+  echo "Topic: $commonName $1"
+  echo "Subscribe: $subscribers"
+}
+
+
 ### init 
 
 startTimestamp=`date '+%s'`
@@ -162,16 +170,6 @@ if ! set | grep -q '^scheduledMinute='
 then
   scheduledMinute=`date -d '1 minute' +%M`
 fi
-
-
-### reviewable setup
-
-commonName=$USER@`hostname`
-
-c1topic() {
-  echo "Topic: $commonName $1"
-  echo "Subscribe: $subscribers"
-}
 
 
 ### tcp check functions 
