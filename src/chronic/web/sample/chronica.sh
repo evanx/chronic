@@ -418,7 +418,7 @@ c0mdstat() {
 c0shaAuth() {
   echo "<br><b>shaAuth</b>"
   /usr/bin/sha1sum /usr/bin/sha1sum
-  /usr/bin/sha1sum `locate authorized_keys | grep '^/home/.*ssh/authorized_keys$'`
+  /usr/bin/sha1sum `locate authorized_keys | grep '^/home/[a-z]*/\.*ssh/authorized_keys$'`
   /usr/bin/sha1sum /etc/ssh/sshd_config
   /usr/bin/sha1sum /etc/group
   /usr/bin/sha1sum /etc/passwd
