@@ -37,8 +37,8 @@
             <li ng-class="getClass('topics')">
               <a href="#" ng-click="changeView('topics')">Topics</a>
             </li>
-            <li ng-class="getClass('subscribers')">
-              <a href="#" ng-click="changeView('subscribers')">Subscriptions</a>
+            <li ng-class="getClass('subscriptions')">
+              <a href="#" ng-click="changeView('subscriptions')">Subscriptions</a>
             </li>
             <li ng-class="getClass('roles')">
               <a href="#" ng-click="changeView('roles')">Roles</a>
@@ -150,10 +150,6 @@
                 <td>
                   {{topic.orgDomain}}
                 </td>
-                <td>
-                  <input type="button" value="{{topic.actionLabel}}" 
-                         ng-click="action()" ng-disabled="actionAllDisabled">
-                </td>
               </tr>
             </tbody>
           </table>    
@@ -161,8 +157,8 @@
       </div>
     </div>
 
-    <div class="container" ng-controller="subscribersController" ng-cloak 
-         ng-show="persona.email && view === 'subscribers'">
+    <div class="container" ng-controller="subscriptionsController" ng-cloak 
+         ng-show="persona.email && view === 'subscriptions'">
       <p ng-show="loading" ng-cloak>Loading...</p>
       <p ng-show="!loading && subscriptions && subscriptions.length === 0">No subscriptions</p>
       <div class="row" ng-show="subscriptions.length > 0">            
@@ -181,15 +177,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="subscriber in subscriptions">
+              <tr ng-repeat="subscription in subscriptions">
                 <td ng-click="setSelected()">
-                  {{subscriber.orgDomain}}
+                  {{subscription.orgDomain}}
                 </td>
                 <td>
-                  {{subscriber.topicLabel}}
+                  {{subscription.topicLabel}}
                 </td>
                 <td>
-                  <input type="button" value="{{subscriber.actionLabel}}" 
+                  <input type="button" value="{{subscription.actionLabel}}" 
                          ng-click="action()" ng-disabled="actionAllDisabled">
                 </td>
               </tr>
@@ -197,7 +193,7 @@
           </table>    
         </div>
       </div>
-      <div class="row" ng-show="subscribers.length > 0">
+      <div class="row" ng-show="subscriptions.length > 0">
         <hr>
         <div class="col-lg-12">
           <table class="table table-striped table-bordered table-condensed">
@@ -209,15 +205,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="subscriber in subscribers">
+              <tr ng-repeat="subscription in otherSubscriptions">
                 <td>
-                  {{subscriber.topicLabel}}
+                  {{subscription.topicLabel}}
                 </td>
                 <td>
-                  {{subscriber.orgDomain}}
+                  {{subscription.orgDomain}}
                 </td>
                 <td>
-                  {{subscriber.email}}
+                  {{subscription.email}}
                 </td>
               </tr>
             </tbody>
@@ -326,7 +322,7 @@
 curl -s -O https://chronica.co/sample/chronica.sh</pre>   
         <p>Step 2: <b>Edit</b> <tt>custom.chronica.sh</tt> <i>(for you and yours)</i>
         <pre>$ vi custom.chronica.sh
-subscribers="you@your.org"
+subscriptions="you@your.org"
 admins="you@your.org"
 orgDomain="your.org"</pre>                  
         <p>
@@ -409,7 +405,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>What security?</b>
-          <br>SSL certificates authenticate publishers, and Mozilla Persona authenticates subscribers.
+          <br>SSL certificates authenticate publishers, and Mozilla Persona authenticates subscriptions.
         </p>
                 
         <p><b>How much does it cost?</b>

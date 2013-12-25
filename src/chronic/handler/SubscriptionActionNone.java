@@ -7,7 +7,8 @@ import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
-import chronic.entity.Subscriber;
+import chronic.entity.Subscription;
+import chronic.entitykey.PersonKey;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -19,22 +20,20 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class SubscriberActionAll implements ChronicHttpxHandler {
+public class SubscriptionActionNone implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(SubscriberActionAll.class);
+    Logger logger = LoggerFactory.getLogger(SubscriptionActionNone.class);
   
     @Override
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
         String email = httpx.getEmail();
-        List subscribers = new LinkedList();        
-        for (Subscriber subscriber : httpx.db.sub().list(email)) {
-            subscriber.setEnabled(true);
-            httpx.db.sub().update(subscriber);
-            subscribers.add(subscriber);
+        List subscriptions = new LinkedList();        
+        for (Subscription subscription : es.listSubscription(email)) {
+            subscription.setEnabled(false);
+            subscriptions.add(subscription);
         }
-        httpx.injectDatabase(subscribers);
-        return JMaps.map("subscriptions", subscribers);
+        return JMaps.map("subscriptions", subscriptions);
     }
     
 }

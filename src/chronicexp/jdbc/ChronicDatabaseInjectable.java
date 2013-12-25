@@ -2,9 +2,9 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.entitytype;
+package chronicexp.jdbc;
 
-import chronic.app.ChronicDatabase;
+import chronicexp.entitymap.ChronicDatabase;
 
 /**
  *

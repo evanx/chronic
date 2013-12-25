@@ -26,14 +26,14 @@ public class AdminEnroll implements ChronicHttpxHandler {
     static Logger logger = LoggerFactory.getLogger(AdminEnroll.class);
     
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx hx, ChronicEntityService es) throws Exception {
-        Cert cert = hx.persistCert();
-        String[] emails = Strings.split(hx.readString(), DelimiterType.COMMA_OR_SPACE);
+    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) throws Exception {
+        Cert cert = es.persistCert(httpx);
+        String[] emails = Strings.split(httpx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {
             if (!Emails.matchesEmail(email)) {
                 return new JMap(String.format("ERROR: invalid email: %s\n", email));
             } else {
-                hx.persistOrgRole(cert, email, OrgRoleType.ADMIN);
+                es.persistOrgRole(cert, email, OrgRoleType.ADMIN);
             }
         }
         return new JMap(String.format("OK: %s: %s\n", cert.getOrgDomain(), Arrays.toString(emails)));

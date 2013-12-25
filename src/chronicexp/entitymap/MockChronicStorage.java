@@ -18,16 +18,15 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package chronic.entitymap;
+package chronicexp.entitymap;
 
 import chronic.app.ChronicApp;
-import chronic.app.ChronicDatabase;
 import chronic.entity.Cert;
 import chronic.entity.Person;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
-import chronic.entity.Subscriber;
+import chronic.entity.Subscription;
 import vellum.storage.EntityMatcher;
 import vellum.storage.EntityService;
 import vellum.storage.MapEntityService;
@@ -42,7 +41,7 @@ public class MockChronicStorage extends ChronicDatabase {
     MapEntityService<Org> orgs = new MapEntityService(matcher);
     MapEntityService<OrgRole> orgRoles = new MapEntityService(matcher);
     MapEntityService<Topic> topics = new MapEntityService(matcher);
-    MapEntityService<Subscriber> subscribers = new MapEntityService(matcher);
+    MapEntityService<Subscription> subscribers = new MapEntityService(matcher);
     MapEntityService<Cert> certs = new MapEntityService(matcher);
 
     public MockChronicStorage(ChronicApp app) {
@@ -74,7 +73,7 @@ public class MockChronicStorage extends ChronicDatabase {
     }
 
     @Override
-    public EntityService<Subscriber> sub() {
+    public EntityService<Subscription> sub() {
         return subscribers;
     }
 

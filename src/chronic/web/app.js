@@ -221,75 +221,75 @@ app.controller("topicsController", ["$scope", "$http",
       });
    }]);
 
-app.controller("subscribersController", ["$scope", "$http",
+app.controller("subscriptionsController", ["$scope", "$http",
    function($scope, $http) {
       $scope.loading = false;
       $scope.actionAllDisabled = $scope.persona.demo;
       $scope.actionNoneDisabled = $scope.persona.demo;
-      $scope.subscribersList = function() {
-         console.log("subscribers", $scope.persona.email);
-         $scope.subscribers = undefined;
+      $scope.subscriptionsList = function() {
+         console.log("subscriptions", $scope.persona.email);
+         $scope.subscriptions = undefined;
          $scope.selected = undefined;
          $scope.loading = true;
-         $http.post("/chronicapp/subscriberList", {
+         $http.post("/chronicapp/subscriptionList", {
             email: $scope.persona.email
          }).then(function(response) {
             $scope.loading = false;
-            console.log("subscribers", response.data);
-            if (response.data && response.data.subscribers) {
+            console.log("subscriptions", response.data);
+            if (response.data && response.data.subscriptions) {
                $scope.subscriptions = response.data.subscriptions;
-               $scope.subscribers = response.data.subscribers;
+               $scope.subscriptions = response.data.subscriptions;
             } else {
-               console.warn("subscribers", response);
+               console.warn("subscriptions", response);
             }
          });
       };
       $scope.actionAll = function() {
          console.log("actionAll");
-         $http.post("/chronicapp/subscriberActionAll", {
+         $http.post("/chronicapp/subscriptionActionAll", {
          }).then(function(response) {
             if (response.data && response.data.subscriptions) {
                $scope.subscriptions = response.data.subscriptions;
             } else {
-               console.warn("subscriberActionAll", response);
+               console.warn("subscriptionActionAll", response);
             }
          });
       };
       $scope.actionNone = function() {
          console.log("actionNone");
-         $http.post("/chronicapp/subscriberActionNone", {
+         $http.post("/chronicapp/subscriptionActionNone", {
          }).then(function(response) {
             if (response.data && response.data.subscriptions) {
                $scope.subscriptions = response.data.subscriptions;
             } else {
-               console.warn("subscriberActionNone", response);
+               console.warn("subscriptionActionNone", response);
             }
          });
       };
       $scope.action = function() {
-         $scope.selected = this.subscriber;
+         $scope.selected = this.subscription;
          console.log("action", $scope.selected);
-         $http.post("/chronicapp/subscriberAction", {
-            "subscriber": $scope.selected
+         $http.post("/chronicapp/subscriptionAction", {
+            "subscription": $scope.selected
          }).then(function(response) {
-            if (response.data && response.data.subscriber) {
-               console.warn("subscriberAction", response.data.subscriber.actionLabel);
-               $scope.selected.actionLabel = response.data.subscriber.actionLabel;
+            if (response.data && response.data.subscription) {
+               console.warn("subscriptionAction", response.data.subscription.actionLabel);
+               $scope.selected.actionLabel = response.data.subscription.actionLabel;
             } else {
-               console.warn("subscriberAction", response);
+               console.warn("subscriptionAction", response);
             }
          });
       };
       $scope.setSelected = function() {
-         $scope.selected = this.subscriber;
+         $scope.selected = this.subscription;
          console.log("selected", $scope.selected);
       };
       $scope.$on("changeView", function(event, view) {
-         console.log("subscribers changeView", view);
-         if (view === "subscribers") {
-            $scope.subscribersList();
+         console.log("subscriptions changeView", view);
+         if (view === "subscriptions") {
+            $scope.subscriptionsList();
          } else {
-            $scope.subscribers = undefined;            
+            $scope.subscriptions = undefined;            
             $scope.loading = false;
          }
       });

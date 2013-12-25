@@ -7,8 +7,9 @@ import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
-import chronic.entity.Subscriber;
-import chronic.entitykey.SubscriberKey;
+import chronic.entity.Subscription;
+import java.util.LinkedList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
@@ -18,20 +19,20 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class SubscriberAction implements ChronicHttpxHandler {
+public class SubscriptionActionAll implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(SubscriberAction.class);
+    Logger logger = LoggerFactory.getLogger(SubscriptionActionAll.class);
   
     @Override
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
         String email = httpx.getEmail();
-        JMap map = httpx.parseJsonMap().getMap("subscriber");
-        SubscriberKey key = new SubscriberKey(map.getLong("topicId"), email);
-        Subscriber subscriber = httpx.db.sub().find(key);
-        subscriber.setEnabled(!subscriber.isEnabled());
-        httpx.db.sub().update(subscriber);
-        return JMaps.mapValue("subscriber", subscriber.getMap());
+        List subscriptions = new LinkedList();        
+        for (Subscription subscription : es.listSubscription(email)) {
+            subscription.setEnabled(true);
+            subscriptions.add(subscription);
+        }
+        return JMaps.map("subscriptions", subscriptions);
     }
     
 }

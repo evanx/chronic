@@ -8,8 +8,6 @@ import chronic.entitykey.CertKey;
 import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.OrgKey;
 import chronic.entitykey.CertKeyed;
-import chronic.entitykey.OrgUnitKey;
-import chronic.entitykey.OrgUnitKeyed;
 import chronic.entitytype.CertActionType;
 import java.io.Serializable;
 import java.util.Calendar;
@@ -32,8 +30,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 @Entity
-public class Cert extends AutoIdEntity implements OrgKeyed, OrgUnitKeyed, 
-        CertKeyed, Enabled, JMapped, Serializable {
+public class Cert extends AutoIdEntity implements OrgKeyed, CertKeyed, Enabled, JMapped, Serializable {
 
     @Id    
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -96,11 +93,6 @@ public class Cert extends AutoIdEntity implements OrgKeyed, OrgUnitKeyed,
         return new OrgKey(orgDomain);
     }
 
-    @Override
-    public OrgUnitKey getOrgUnitKey() {
-        return new OrgUnitKey(orgDomain, orgUnit);
-    }
-    
     @Override
     public void setId(Long id) {
         this.id = id;

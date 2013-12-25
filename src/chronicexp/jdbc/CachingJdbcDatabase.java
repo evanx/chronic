@@ -20,14 +20,15 @@
  */
 package chronicexp.jdbc;
 
+import chronicexp.entitymap.ChronicDatabase;
 import chronic.app.*;
 import chronic.entity.Cert;
 import chronic.entity.Person;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
-import chronic.entity.Subscriber;
-import chronic.entitymap.ChronicMatcher;
+import chronic.entity.Subscription;
+import chronicexp.entitymap.ChronicMatcher;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     static final CachingEntityService<Org> orgCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<OrgRole> roleCache = new CachingEntityService(100, matcher);
     static final CachingEntityService<Topic> topicCache = new CachingEntityService(100, matcher);
-    static final CachingEntityService<Subscriber> subCache = new CachingEntityService(100, matcher);
+    static final CachingEntityService<Subscription> subCache = new CachingEntityService(100, matcher);
     
     private Connection connection;
 
@@ -58,7 +59,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     public EntityService<Org> org;
     public EntityService<OrgRole> role;
     public EntityService<Topic> topic;
-    public EntityService<Subscriber> sub;
+    public EntityService<Subscription> sub;
     public EntityService<Cert> cert;
 
     public CachingJdbcDatabase(ChronicApp app) {
@@ -142,7 +143,7 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     }
 
     @Override
-    public EntityService<Subscriber> sub() {
+    public EntityService<Subscription> sub() {
         return sub;
     }
 

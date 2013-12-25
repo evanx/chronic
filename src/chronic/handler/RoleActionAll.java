@@ -32,10 +32,9 @@ public class RoleActionAll implements ChronicHttpxHandler {
         this.httpx = httpx;
         email = httpx.getEmail();
         List roles = new LinkedList();
-        for (OrgRole role : httpx.db.listRoles(httpx.getEmail())) {
+        for (OrgRole role : es.listRoles(httpx.getEmail())) {
             if (!role.isEnabled()) {
                 role.setEnabled(true);
-                httpx.db.role().update(role);
             }
             roles.add(role.getMap());
         }

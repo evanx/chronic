@@ -11,12 +11,6 @@ import chronic.entitykey.OrgKey;
 import chronic.entitytype.OrgRoleType;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.OrgRoleKeyed;
-import chronic.entitykey.OrgPersonKey;
-import chronic.entitykey.OrgPersonKeyed;
-import chronic.entitykey.OrgRoleTypeKey;
-import chronic.entitykey.OrgRoleTypeKeyed;
-import chronic.entitykey.PersonRoleTypeKey;
-import chronic.entitykey.PersonRoleTypeKeyed;
 import chronic.entitytype.OrgRoleActionType;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -25,7 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
@@ -40,8 +34,7 @@ import vellum.util.Args;
  */
 @Entity()
 @Table(name = "org_role")
-public class OrgRole extends AutoIdEntity implements PersonKeyed, PersonRoleTypeKeyed,
-        OrgKeyed, OrgPersonKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled, Serializable {
+public class OrgRole extends AutoIdEntity implements PersonKeyed, OrgKeyed, OrgRoleKeyed, Enabled, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,12 +53,12 @@ public class OrgRole extends AutoIdEntity implements PersonKeyed, PersonRoleType
     @Column()    
     boolean enabled = false;
     
-    @OneToOne()    
+    @ManyToOne()    
     @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", 
             insertable = false, updatable = false)
     Org org;
     
-    @OneToOne()    
+    @ManyToOne()    
     @JoinColumn(name = "email", referencedColumnName = "email",
             insertable = false, updatable = false)
     Person person; 
@@ -112,21 +105,6 @@ public class OrgRole extends AutoIdEntity implements PersonKeyed, PersonRoleType
         return new PersonKey(email);
     }
 
-    @Override
-    public OrgPersonKey getOrgUserKey() {
-        return new OrgPersonKey(orgDomain, email);
-    }
-
-    @Override
-    public OrgRoleTypeKey getOrgRoleTypeKey() {
-        return new OrgRoleTypeKey(orgDomain, roleType);
-    }
-
-    @Override
-    public PersonRoleTypeKey getPersonRoleTypeKey() {
-        return new PersonRoleTypeKey(email, roleType);
-    }
-    
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }

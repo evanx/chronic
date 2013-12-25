@@ -7,7 +7,7 @@
     <class>chronic.entity.Person</class>
     <class>chronic.entity.OrgRole</class>
     <class>chronic.entity.Topic</class>
-    <class>chronic.entity.Subscriber</class>
+    <class>chronic.entity.Subscription</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/chronica"/>
       <property name="javax.persistence.jdbc.password" value="chronica"/>

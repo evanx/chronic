@@ -42,20 +42,19 @@ public class PersonaLogin implements ChronicHttpxHandler {
                 httpx.getHostUrl(), assertion);
         logger.trace("persona {}", userInfo);
         String email = userInfo.getEmail();
-        Person user = httpx.db.person().find(email);
-        if (user == null) {
-            user = new Person(email);
-            user.setEnabled(true);
-            user.setLoginTime(new Date());
-            httpx.db.person().persist(user);
+        Person person = es.findPerson(email);
+        if (person == null) {
+            person = new Person(email);
+            person.setEnabled(true);
+            person.setLoginTime(new Date());
+            es.persist(person);
             logger.info("insert user {}", email);
         } else {
-            user.setEnabled(true);
-            user.setLoginTime(new Date());
-            httpx.db.person().update(user);
+            person.setEnabled(true);
+            person.setLoginTime(new Date());
         }
-        cookie = new ChronicCookie(user.getEmail(), user.getLabel(),
-                user.getLoginTime().getTime(), assertion);
+        cookie = new ChronicCookie(person.getEmail(), person.getLabel(),
+                person.getLoginTime().getTime(), assertion);
         JMap cookieMap = cookie.toMap();
         logger.trace("cookie {}", cookieMap);
         httpx.setCookie(cookieMap, ChronicCookie.MAX_AGE_MILLIS);

@@ -52,7 +52,7 @@ public class AlertMailBuilder {
             appendHeader(alert.status);
             builder.append("\n<br><b>Changed lines:</b>\n");
             builder.append(Strings.join("\n", alert.status.buildChanged(alert.previousStatus)));
-            if (alert.previousStatus == null) {
+            if (alert.previousStatus != null) {
                 if (alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
                     appendPrevious(alert.previousStatus);
                 }

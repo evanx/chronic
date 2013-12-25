@@ -27,12 +27,12 @@ public class RoleList implements ChronicHttpxHandler {
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
         List roles = new LinkedList();
-        for (OrgRole role : httpx.db.listRoles(httpx.getEmail())) {
+        for (OrgRole role : es.listRoles(httpx.getEmail())) {
             roles.add(role.getMap());
         }
         if (roles.isEmpty() && httpx.getReferer().endsWith("/demo")) {
             String adminEmail = httpx.app.getProperties().getAdminEmails().iterator().next();
-            for (OrgRole role : httpx.db.listRoles(adminEmail)) {
+            for (OrgRole role : es.listRoles(adminEmail)) {
                 roles.add(role.getMap());
             }
         }

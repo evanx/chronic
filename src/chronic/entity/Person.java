@@ -4,7 +4,6 @@
  */
 package chronic.entity;
 
-import static chronic.entity.Cert_.id;
 import chronic.entitykey.PersonKeyed;
 import chronic.entitykey.PersonKey;
 import java.io.Serializable;
@@ -110,7 +109,6 @@ public class Person extends VellumEntity implements PersonKeyed, Enabled, Serial
         
     public JMap getMap() {
         JMap map = new JMap();
-        map.put("id", id);
         map.put("email", email);
         map.put("label", label);
         map.put("enabled", enabled);

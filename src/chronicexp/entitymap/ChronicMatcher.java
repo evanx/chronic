@@ -18,7 +18,7 @@
        specific language governing permissions and limitations
        under the License.  
  */
-package chronic.entitymap;
+package chronicexp.entitymap;
 
 import chronic.entity.Org;
 import chronic.entitykey.*;
@@ -56,31 +56,6 @@ public class ChronicMatcher<E extends VellumEntity> implements EntityMatcher<E> 
                 return matches((PersonKeyed) entity, (PersonKey) key);
             }
         }
-        if (key instanceof PersonRoleTypeKey) {
-            if (entity instanceof PersonRoleTypeKeyed)  {
-                return matches((PersonRoleTypeKeyed) entity, (PersonRoleTypeKey) key);
-            }
-        }
-        if (key instanceof OrgKey) {
-            if (entity instanceof OrgKeyed)  {
-                return matches((OrgKeyed) entity, (OrgKey) key);
-            }
-        }
-        if (key instanceof OrgPersonKey) {
-            if (entity instanceof OrgPersonKeyed)  {
-                return matches((OrgPersonKeyed) entity, (OrgPersonKey) key);
-            }
-        }
-        if (key instanceof OrgUnitKey) {
-            if (entity instanceof OrgUnitKeyed)  {
-                return matches((OrgUnitKeyed) entity, (OrgUnitKey) key);
-            }
-        }
-        if (key instanceof OrgRoleTypeKey) {
-            if (entity instanceof OrgRoleTypeKeyed)  {
-                return matches((OrgRoleTypeKeyed) entity, (OrgRoleTypeKey) key);
-            }
-        }
         if (key instanceof CertTopicKey) {
             if (entity instanceof CertTopicKeyed)  {
                 return matches((CertTopicKeyed) entity, (CertTopicKey) key);
@@ -113,20 +88,8 @@ public class ChronicMatcher<E extends VellumEntity> implements EntityMatcher<E> 
         if (entity instanceof PersonKeyed) {
             list.add(((PersonKeyed) entity).getPersonKey());
         }
-        if (entity instanceof PersonRoleTypeKeyed) {
-            list.add(((PersonRoleTypeKeyed) entity).getPersonRoleTypeKey());
-        }
         if (entity instanceof OrgKeyed) {
             list.add(((OrgKeyed) entity).getOrgKey());
-        }
-        if (entity instanceof OrgPersonKeyed) {
-            list.add(((OrgPersonKeyed) entity).getOrgUserKey());
-        }
-        if (entity instanceof OrgUnitKeyed) {
-            list.add(((OrgUnitKeyed) entity).getOrgUnitKey());
-        }
-        if (entity instanceof OrgRoleTypeKeyed) {
-            list.add(((OrgRoleTypeKeyed) entity).getOrgRoleTypeKey());
         }
         if (entity instanceof CertTopicKeyed) {
             list.add(((CertTopicKeyed) entity).getCertTopicKey());
@@ -150,25 +113,9 @@ public class ChronicMatcher<E extends VellumEntity> implements EntityMatcher<E> 
     private boolean matches(PersonKeyed keyed, PersonKey key) {
         return keyed.getPersonKey().matches(key);        
     }
-
-    private boolean matches(PersonRoleTypeKeyed keyed, PersonRoleTypeKey key) {
-        return keyed.getPersonRoleTypeKey().matches(key);        
-    }
     
     private boolean matches(OrgKeyed keyed, OrgKey key) {
         return keyed.getOrgKey().matches(key);        
-    }
-    
-    private boolean matches(OrgPersonKeyed keyed, OrgPersonKey key) {
-        return keyed.getOrgUserKey().matches(key);        
-    }
-
-    private boolean matches(OrgUnitKeyed keyed, OrgUnitKey key) {
-        return keyed.getOrgUnitKey().matches(key);        
-    }
-    
-    private boolean matches(OrgRoleTypeKeyed keyed, OrgRoleTypeKey key) {
-        return keyed.getOrgRoleTypeKey().matches(key);        
     }
     
     private boolean matches(OrgTopicKeyed keyed, OrgTopicKey key) {

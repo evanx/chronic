@@ -18,8 +18,9 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.app;
+package chronicexp.entitymap;
 
+import chronic.app.ChronicApp;
 import chronic.entity.Cert;
 import chronic.entity.Person;
 import chronic.entitytype.OrgRoleType;
@@ -27,15 +28,10 @@ import chronic.entity.Org;
 import chronic.entitykey.OrgKey;
 import chronic.entity.OrgRole;
 import chronic.entity.Topic;
-import chronic.entity.Subscriber;
-import chronic.entitykey.OrgRoleTypeKey;
-import chronic.entitykey.OrgPersonKey;
+import chronic.entity.Subscription;
 import chronic.entitykey.PersonKey;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.slf4j.Logger;
@@ -73,7 +69,7 @@ public abstract class ChronicDatabase {
 
     public abstract EntityService<Topic> topic();
 
-    public abstract EntityService<Subscriber> sub();
+    public abstract EntityService<Subscription> sub();
 
     public abstract EntityService<Cert> cert();
     
@@ -105,29 +101,6 @@ public abstract class ChronicDatabase {
         return list;
     }
 
-    public Map<OrgRoleType, OrgRole> mapOrgRole(String orgDomain, String email) 
-            throws StorageException {
-        Map map = new HashMap();
-        for (OrgRole orgRole : role().list(new OrgPersonKey(orgDomain, email))) {
-            map.put(orgRole.getRoleType(), orgRole);
-        }
-        return map;
-    }
-
-    public Collection<OrgRoleType> listOrgRoleType(String orgDomain, String email) 
-            throws StorageException {
-        List<OrgRoleType> roleTypes = new LinkedList();
-        for (OrgRole orgRole : role().list(new OrgPersonKey(orgDomain, email))) {
-            roleTypes.add(orgRole.getRoleType());
-        }
-        return roleTypes;
-    }
-
-    public boolean isOrgRoleType(String orgDomain, OrgRoleType roleType) 
-            throws StorageException {
-        return !role().list(new OrgRoleTypeKey(orgDomain, roleType)).isEmpty();
-    }
-
     public Iterable<OrgRole> listOrgRole(String orgDomain) throws StorageException {
         return role().list(new OrgKey(orgDomain));
     }
@@ -135,7 +108,7 @@ public abstract class ChronicDatabase {
     public Iterable<Topic> listTopics(String email) throws StorageException {
         logger.info("listTopics {} {}", email);
         Set<Topic> topics = new TreeSet();
-        for (Subscriber subscriber : sub().list(email)) {
+        for (Subscription subscriber : sub().list(email)) {
             logger.info("listTopics subscriber {}", subscriber);
             topics.add(topic().retrieve(subscriber.getTopicId()));
         }
@@ -146,7 +119,7 @@ public abstract class ChronicDatabase {
             throws StorageException {
         logger.info("listTopics {} {}", email);
         Set<Topic> topics = new TreeSet();
-        for (Subscriber subscriber : sub().list(email)) {
+        for (Subscription subscriber : sub().list(email)) {
             logger.info("listTopics subscriber {}", subscriber);
             topics.add(topic().retrieve(subscriber.getTopicId()));
         }
@@ -155,7 +128,7 @@ public abstract class ChronicDatabase {
     
     public Iterable<String> listSubscriberEmails(Topic topic) throws StorageException {
         Set<String> set = new TreeSet();
-        for (Subscriber subscriber : sub().list(topic.getId())) {
+        for (Subscription subscriber : sub().list(topic.getId())) {
             set.add(subscriber.getEmail());
         }
         logger.info("listSubscriberEmails {} {}", topic.getTopicLabel(), set);
@@ -165,7 +138,7 @@ public abstract class ChronicDatabase {
         return set;
     }
 
-    public Iterable<Subscriber> listSubscribers(String email) throws StorageException {
+    public Iterable<Subscription> listSubscribers(String email) throws StorageException {
         Set set = new TreeSet();
         set.addAll(sub().list(email));
         logger.info("listSubscriber {}", set);

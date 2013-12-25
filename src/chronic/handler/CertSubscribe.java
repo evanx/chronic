@@ -27,13 +27,13 @@ public class CertSubscribe implements ChronicHttpxHandler {
     @Override
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
-        Cert cert = httpx.persistCert();
+        Cert cert = es.persistCert(httpx);
         String[] emails = Strings.split(httpx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {
             if (!Emails.matchesEmail(email)) {
                 return new JMap(String.format("ERROR: invalid email: %s\n", email));
             } else {
-                httpx.persistCertSubscriber(cert, email);
+                es.persistCertSubscription(cert, email);
             }
         }
         return new JMap(String.format("OK: %s: %s\n", cert.getCommonName(), Arrays.toString(emails)));

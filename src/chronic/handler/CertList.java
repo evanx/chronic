@@ -33,7 +33,7 @@ public class CertList implements ChronicHttpxHandler {
         }
         if (certs.isEmpty() && httpx.getReferer().endsWith("/demo")) {
             String adminEmail = httpx.app.getProperties().getAdminEmail();
-            for (Cert cert : httpx.db.listCerts(adminEmail)) {
+            for (Cert cert : es.listCerts(adminEmail)) {
                 certs.add(cert);
             }
         } 

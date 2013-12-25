@@ -68,7 +68,6 @@ public class TopicService implements EntityService<Topic> {
         topic.setId(resultSet.getLong("topic_id"));
         topic.setCertId(resultSet.getLong("cert_id"));
         topic.setTopicLabel(resultSet.getString("topic_label"));
-        topic.setEnabled(resultSet.getBoolean("enabled"));
         return topic;
     }
 
@@ -85,7 +84,6 @@ public class TopicService implements EntityService<Topic> {
         try (PreparedStatement statement = prepare("insert")) {
             statement.setLong(1, topic.getCertId());
             statement.setString(2, topic.getTopicLabel());
-            statement.setBoolean(3, topic.isEnabled());
             ResultSet generatedKeys = statement.executeQuery();
             if (!generatedKeys.next()) {
                 throw new StorageException(StorageExceptionType.NOT_PERSISTED);
@@ -99,18 +97,6 @@ public class TopicService implements EntityService<Topic> {
 
     @Override
     public void update(Topic topic) throws StorageException {
-        updateEnabled(topic);
-    }
-
-    public void updateEnabled(Topic topic) throws StorageException {
-        try (PreparedStatement statement = prepare("update enabled", 
-                topic.isEnabled(), topic.getId())) {
-            if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, topic.getId());
-            }
-        } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, topic.getId());
-        }
     }
 
     @Override

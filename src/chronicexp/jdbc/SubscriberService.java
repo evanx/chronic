@@ -20,9 +20,8 @@
  */
 package chronicexp.jdbc;
 
-import chronic.entity.Subscriber;
+import chronic.entity.Subscription;
 import chronic.entitykey.SubscriberKey;
-import chronic.entitykey.TopicIdKey;
 import chronic.entitykey.PersonKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,7 +40,7 @@ import vellum.storage.StorageExceptionType;
  *
  * @author evan.summers
  */
-public class SubscriberService implements EntityService<Subscriber> {
+public class SubscriberService implements EntityService<Subscription> {
 
     static Logger logger = LoggerFactory.getLogger(SubscriberService.class);
     static QueryMap queryMap = new QueryMap(SubscriberService.class);
@@ -61,8 +60,8 @@ public class SubscriberService implements EntityService<Subscriber> {
         return statement;
     }
 
-    private Subscriber create(ResultSet resultSet) throws SQLException {
-        Subscriber subscriber = new Subscriber();
+    private Subscription create(ResultSet resultSet) throws SQLException {
+        Subscription subscriber = new Subscription();
         subscriber.setId(resultSet.getLong("topic_sub_id"));
         subscriber.setTopicId(resultSet.getLong("topic_id"));
         subscriber.setEmail(resultSet.getString("email"));
@@ -70,7 +69,7 @@ public class SubscriberService implements EntityService<Subscriber> {
         return subscriber;
     }
 
-    private Collection<Subscriber> list(ResultSet resultSet) throws SQLException {
+    private Collection<Subscription> list(ResultSet resultSet) throws SQLException {
         Collection list = new LinkedList();
         while (resultSet.next()) {
             list.add(create(resultSet));
@@ -79,7 +78,7 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
     
     @Override
-    public void persist(Subscriber subscriber) throws StorageException {
+    public void persist(Subscription subscriber) throws StorageException {
         try (PreparedStatement statement = prepare("insert", subscriber.getTopicId(),
                 subscriber.getEmail(), subscriber.isEnabled())) {
             ResultSet generatedKeys = statement.executeQuery();
@@ -93,11 +92,11 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     @Override
-    public void update(Subscriber subscriber) throws StorageException {
+    public void update(Subscription subscriber) throws StorageException {
         updateEnabled(subscriber);
     }
 
-    public void updateEnabled(Subscriber subscriber) throws StorageException {
+    public void updateEnabled(Subscription subscriber) throws StorageException {
         try (PreparedStatement statement = prepare("update enabled", 
                 subscriber.isEnabled(), subscriber.getId())) {
             if (statement.executeUpdate() != 1) {
@@ -120,7 +119,7 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     @Override
-    public Subscriber find(Comparable key) throws StorageException {
+    public Subscription find(Comparable key) throws StorageException {
         if (key instanceof Long) {
             return findId((Long) key);
         } else if (key instanceof SubscriberKey) {
@@ -130,14 +129,14 @@ public class SubscriberService implements EntityService<Subscriber> {
                 key.getClass().getSimpleName());
     }
 
-    private Subscriber findKey(SubscriberKey key) throws StorageException {
+    private Subscription findKey(SubscriberKey key) throws StorageException {
         try (PreparedStatement statement = prepare("select key",
                 key.getTopicId(), key.getEmail());
                 ResultSet resultSet = statement.executeQuery()) {
             if (!resultSet.next()) {
                 return null;
             }
-            Subscriber subscriber = create(resultSet);
+            Subscription subscriber = create(resultSet);
             if (resultSet.next()) {
                 throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, key);
             }
@@ -147,13 +146,13 @@ public class SubscriberService implements EntityService<Subscriber> {
                     key);
         }
     }
-    private Subscriber findId(Long id) throws StorageException {
+    private Subscription findId(Long id) throws StorageException {
         try (PreparedStatement statement = prepare("select id", id);
                 ResultSet resultSet = statement.executeQuery()) {
             if (!resultSet.next()) {
                 return null;
             }
-            Subscriber subscriber = create(resultSet);
+            Subscription subscriber = create(resultSet);
             if (resultSet.next()) {
                 throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, id);
             }
@@ -170,8 +169,8 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     @Override
-    public Subscriber retrieve(Comparable key) throws StorageException {
-        Subscriber subscriber = find(key);
+    public Subscription retrieve(Comparable key) throws StorageException {
+        Subscription subscriber = find(key);
         if (subscriber == null) {
             throw new StorageException(StorageExceptionType.NOT_FOUND, key);
         }
@@ -179,7 +178,7 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     @Override
-    public Collection<Subscriber> list() throws StorageException {
+    public Collection<Subscription> list() throws StorageException {
         try (PreparedStatement statement = prepare("list");
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
@@ -189,20 +188,18 @@ public class SubscriberService implements EntityService<Subscriber> {
     }
 
     @Override
-    public Collection<Subscriber> list(Comparable key) throws StorageException {
+    public Collection<Subscription> list(Comparable key) throws StorageException {
         if (key instanceof String) {
             return listPerson((String) key);
         } else if (key instanceof Long) {
             return listTopic((Long) key);
         } else if (key instanceof PersonKey) {
             return listPerson(((PersonKey) key).getEmail());
-        } else if (key instanceof TopicIdKey) {
-            return listTopic(((TopicIdKey) key).getTopicId());
         }
         throw new StorageException(StorageExceptionType.INVALID_KEY, key.getClass().getSimpleName());
     }
 
-    private Collection<Subscriber> listTopic(Long topicId) throws StorageException {
+    private Collection<Subscription> listTopic(Long topicId) throws StorageException {
         try (PreparedStatement statement = prepare("list topic", topicId);
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);
@@ -211,7 +208,7 @@ public class SubscriberService implements EntityService<Subscriber> {
         }
     }
     
-    private Collection<Subscriber> listPerson(String email) throws StorageException {
+    private Collection<Subscription> listPerson(String email) throws StorageException {
         try (PreparedStatement statement = prepare("list email", email);
                 ResultSet resultSet = statement.executeQuery()) {
             return list(resultSet);

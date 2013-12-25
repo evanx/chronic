@@ -11,7 +11,7 @@ import vellum.type.Labelled;
  *
  * @author evan.summers
  */
-public enum SubscriberActionType implements Labelled {
+public enum SubscriptionActionType implements Labelled {
     UNSUBSCRIBE,    
     SUBSCRIBE;
     

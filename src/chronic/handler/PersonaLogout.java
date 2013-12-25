@@ -41,9 +41,8 @@ public class PersonaLogout implements ChronicHttpxHandler {
                     logger.info("testing mode: ignoring logout");
                 } else {
                     logger.info("cookie", cookie.getEmail());
-                    Person user = httpx.db.person().retrieve(cookie.getEmail());
+                    Person user = es.findPerson(cookie.getEmail());
                     user.setLogoutTime(new Date());
-                    httpx.db.person().update(user);
                 }
             }
             return new JMap();

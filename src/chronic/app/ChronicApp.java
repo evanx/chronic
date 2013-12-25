@@ -26,7 +26,6 @@ import chronic.handler.Post;
 import chronicexp.jdbc.CachingJdbcDatabase;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
-import chronicexp.jdbc.ChronicSchema;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +33,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -159,18 +157,22 @@ public class ChronicApp {
         }
     }
 
+    ChronicEntityService newEntityService() {
+        return new ChronicEntityService(this);
+    }
+            
     class AlertThread extends Thread {
 
         @Override
         public void run() {
             while (running) {
-                ChronicEntityService es = new ChronicEntityService();
+                ChronicEntityService es = newEntityService();
                 try {
                     es.begin(emf.createEntityManager());
                     AlertRecord alert = alertQueue.poll(60, TimeUnit.SECONDS);
                     if (alert != null) {
                         messenger.alert(alert, 
-                                es.listSubscriberEmails(alert.getStatus().getTopic()));
+                                es.listSubscriptionEmails(alert.getStatus().getTopic()));
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);

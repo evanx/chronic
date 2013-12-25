@@ -33,7 +33,7 @@ public class Post implements ChronicHttpxHandler {
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
         try {
-            Cert cert = httpx.persistCert();
+            Cert cert = es.persistCert(httpx);
             StatusRecord status = new StatusRecord(cert);
             int contentLength = Integer.parseInt(httpx.getRequestHeader("Content-length"));
             if (contentLength > contentLengthLimit) {
@@ -41,11 +41,10 @@ public class Post implements ChronicHttpxHandler {
                 status.setAlertType(AlertType.ONCE);
                 status.setTopicLabel("Chronica");
                 status.getLineList().add("INFO: Content length limit exceeded");
-                Topic topic = httpx.persistTopic(cert, status.getTopicLabel());
+                Topic topic = es.persistTopic(cert, status.getTopicLabel());
                 status.setTopic(topic);
                 httpx.app.getStatusQueue().add(status);
                 cert.setEnabled(false);
-                httpx.db.cert().update(cert);
                 throw new Exception("Content length limit exceeded: " + cert);
             }
             byte[] content = new byte[contentLength];
@@ -56,12 +55,12 @@ public class Post implements ChronicHttpxHandler {
                     httpx.getRequestHeaders(),
                     contentString);
             logger.debug("status {}", status);
-            Topic topic = httpx.persistTopic(cert, status.getTopicLabel());
+            Topic topic = es.persistTopic(cert, status.getTopicLabel());
             status.setTopic(topic);
             if (status.getSubscribers() != null) {
                 if (status.getSubscribers().size() > 0) {
                     for (String subscriber : status.getSubscribers()) {
-                        httpx.persistTopicSubscriber(topic, subscriber);
+                        es.persistTopicSubscription(topic, subscriber);
                     }
                 }
             }
@@ -77,7 +76,7 @@ public class Post implements ChronicHttpxHandler {
                 builder.append(String.format("OK: %s: %s\n", 
                         cert.getCommonName(), topic.getTopicLabel()));
             }
-            httpx.db.commit();
+            es.commit();
             httpx.app.getStatusQueue().add(status);
             return new JMap(builder.toString());
         } catch (StorageException se) {
