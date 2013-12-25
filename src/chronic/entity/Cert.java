@@ -17,7 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import vellum.format.CalendarFormats;
 import vellum.jx.JMap;
@@ -59,9 +59,8 @@ public class Cert extends AutoIdEntity implements OrgKeyed, CertKeyed, Enabled, 
     @Column()
     String address;
     
-    @ManyToOne()    
-    @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", 
-            insertable = false, updatable = false)
+    @OneToOne()    
+    @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", insertable = false, updatable = false)
     Org org;
     
     public Cert() {

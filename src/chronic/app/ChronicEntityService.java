@@ -28,10 +28,12 @@ import chronic.entity.Subscription;
 import chronic.entity.Topic;
 import chronic.entitykey.CertKey;
 import chronic.entitykey.CertTopicKey;
+import chronic.entitykey.OrgKey;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.PersonKey;
 import chronic.entitytype.OrgRoleType;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -60,6 +62,10 @@ public class ChronicEntityService {
         this.app = app;
     }
 
+    public EntityManager getEntityManager() {
+        return em;
+    }
+    
     public void begin() {
         em = app.createEntityManager();
         em.getTransaction().begin();
@@ -105,6 +111,17 @@ public class ChronicEntityService {
         return list.get(0);
     }
 
+    public Org findOrg(String orgDomain) throws StorageException {
+        List<Org> list = selectOrg(orgDomain);
+        if (list.isEmpty()) {
+            return null;
+        }
+        if (list.size() > 1) {
+            throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, Person.class, orgDomain);
+        }
+        return list.get(0);
+    }
+    
     public Cert find(CertKey key) throws StorageException {
         List<Cert> list = selectCert(key);
         if (list.isEmpty()) {
@@ -166,17 +183,27 @@ public class ChronicEntityService {
     }
 
     public List<Org> listOrg(String email) {
-        return em.createQuery("select o from Org o join OrgRole r"
-                + " where r.email = :email").
+        return em.createQuery("select o from Org o inner join OrgRole r"
+                + " where r.email = :email"
+                + " and o.orgDomain = r.orgDomain"
+                + "").
                 setParameter("email", email).
                 getResultList();
     }
 
-    public List<Cert> listCerts(String email) {
-        return em.createQuery("select c from OrgRole r join Org o join Cert c"
-                + " where r.email = :email").
-                setParameter("email", email).
+    public List<Cert> listCerts(Org org) {
+        return em.createQuery("select c from Cert c"
+                + " where c.org = :org").
+                setParameter("org", org).
                 getResultList();
+    }
+    
+    public List<Cert> listCerts(String email) {
+        List<Cert> list = new ArrayList();
+        for (Org org : listOrg(email)) {
+            list.addAll(listCerts(org));
+        }
+        return list;
     }
 
     public List<OrgRole> listRoles(String email) {
@@ -204,8 +231,7 @@ public class ChronicEntityService {
 
     public List<Topic> listTopic(String email) {
         return em.createQuery("select t from Topic t join Subscription s"
-                + " where s.email = :email"
-        ).
+                + " where s.email = :email").
                 setParameter("email", email).
                 getResultList();
     }
@@ -245,6 +271,13 @@ public class ChronicEntityService {
                 getSingleResult().equals(1);
     }
 
+    private List<Org> selectOrg(String orgDomain) {
+        return em.createQuery("select o from Org o"
+                + " where o.orgDomain = :orgDomain").
+                setParameter("orgDomain", orgDomain).
+                getResultList();
+    }
+    
     private List<Cert> selectCert(CertKey certKey) {
         return em.createQuery("select c from Cert c"
                 + " where c.commonName = :commonName"
@@ -416,4 +449,5 @@ public class ChronicEntityService {
         }
         return subscription;
     }
+
 }

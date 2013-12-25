@@ -4,17 +4,14 @@
  */
 package chronic.entity;
 
-import chronic.entitykey.OrgKeyed;
-import chronic.entitykey.PersonKeyed;
-import chronic.entitykey.PersonKey;
-import chronic.entitykey.OrgKey;
 import chronic.entitytype.OrgRoleType;
 import chronic.entitykey.OrgRoleKey;
-import chronic.entitykey.OrgRoleKeyed;
 import chronic.entitytype.OrgRoleActionType;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,9 +20,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
-import vellum.storage.AutoIdEntity;
 import vellum.storage.StorageException;
-import vellum.type.Enabled;
+import vellum.storage.VellumEntity;
 import vellum.util.Args;
 
 /**
@@ -34,7 +30,7 @@ import vellum.util.Args;
  */
 @Entity()
 @Table(name = "org_role")
-public class OrgRole extends AutoIdEntity implements PersonKeyed, OrgKeyed, OrgRoleKeyed, Enabled, Serializable {
+public class OrgRole extends VellumEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,35 +44,36 @@ public class OrgRole extends AutoIdEntity implements PersonKeyed, OrgKeyed, OrgR
     String email;
     
     @Column(name = "role_type")
-    OrgRoleType roleType;
+    @Enumerated(EnumType.STRING)
+    OrgRoleType roleType = OrgRoleType.ADMIN;
     
     @Column()    
     boolean enabled = false;
     
     @OneToOne()    
-    @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", 
-            insertable = false, updatable = false)
+    @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", insertable = false, updatable = false)
     Org org;
     
     @OneToOne()    
-    @JoinColumn(name = "email", referencedColumnName = "email",
-            insertable = false, updatable = false)
+    @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
     Person person; 
 
+    
     public OrgRole() {
     }
     
-    public OrgRole(String orgDomain, String email) {
+    public OrgRole(String orgDomain, String email, OrgRoleType roleType) {
         this.orgDomain = orgDomain;
         this.email = email;
+        this.roleType = roleType;
     }
     
-    public OrgRole(Org org, Person user, OrgRoleType roleType) {
+    public OrgRole(Org org, Person person, OrgRoleType roleType) {
         this.org = org;
-        this.person = user;
+        this.person = person;
         this.roleType = roleType;
         orgDomain = org.getOrgDomain();
-        email = user.getEmail();
+        email = person.getEmail();
     }
 
     public OrgRole(OrgRoleKey key) {
@@ -85,35 +82,23 @@ public class OrgRole extends AutoIdEntity implements PersonKeyed, OrgKeyed, OrgR
         this.roleType = key.getRoleType();
     }
     
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     @Override
     public Long getId() {
         return id;
-    }
-    
-    @Override
-    public OrgRoleKey getOrgRoleKey() {
-        return new OrgRoleKey(orgDomain, email, roleType);
-    }
-
-    @Override
-    public OrgKey getOrgKey() {
-        return new OrgKey(orgDomain);
-    }
-    
-    @Override
-    public PersonKey getPersonKey() {
-        return new PersonKey(email);
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
-    @Override
     public boolean isEnabled() {
         return enabled;
     }
-    
+        
     public JMap getMap() throws StorageException {
         return new JMap(
                 JMaps.entryValue("orgDomain", orgDomain),
@@ -128,11 +113,6 @@ public class OrgRole extends AutoIdEntity implements PersonKeyed, OrgKeyed, OrgR
         return enabled ? OrgRoleActionType.REVOKE : OrgRoleActionType.GRANT;
     }
     
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setOrgDomain(String orgDomain) {
         this.orgDomain = orgDomain;
     }

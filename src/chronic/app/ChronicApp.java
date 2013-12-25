@@ -23,7 +23,6 @@ package chronic.app;
 import chronic.handler.AdminEnroll;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
-import chronicexp.jdbc.CachingJdbcDatabase;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.util.HashMap;
@@ -136,10 +135,6 @@ public class ChronicApp {
 
     public DataSource getDataSource() {
         return dataSource;
-    }
-
-    public CachingJdbcDatabase getDatabase() {
-        return new CachingJdbcDatabase(this);
     }
 
     public void shutdown() throws Exception {
