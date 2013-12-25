@@ -67,8 +67,10 @@ public class ChronicMailMessenger {
                     }
                 }
                 alert.setAlertedStatus(alert.getStatus());
-                mailer.send(email, alert.getStatus().getTopicLabel(),
+                if (app.getProperties().getAdminDomains().contains(email)) {
+                    mailer.send(email, alert.getStatus().getTopicLabel(),
                         new AlertMailBuilder(app).build(alert));
+                }
             } catch (IOException | MessagingException e) {
                 logger.warn("{} {}", e.getMessage(), alert);
             }

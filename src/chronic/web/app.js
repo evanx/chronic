@@ -358,14 +358,14 @@ app.controller("rolesController", ["$scope", "$http",
 
 app.controller("certsController", ["$scope", "$http",
    function($scope, $http) {
-      $scope.loading = false;
       $scope.actionAllDisabled = $scope.persona.demo;
       $scope.actionNoneDisabled = $scope.persona.demo;
+      $scope.loading = false;
       $scope.certsList = function() {
          console.log("certs", $scope.persona.email);
          $scope.certs = undefined;
-         $scope.selected = undefined;
          $scope.loading = true;
+         $scope.selected = undefined;
          $http.post("/chronicapp/certList", {
             email: $scope.persona.email
          }).then(function(response) {
@@ -381,9 +381,12 @@ app.controller("certsController", ["$scope", "$http",
       };
       $scope.actionAll = function() {
          console.log("actionAll");
+         $scope.loading = true;
+         $scope.certs = undefined;
          $http.post("/chronicapp/certActionAll", {
          }).then(function(response) {
             if (response.data && response.data.certs) {
+               console.warn("certActionAll", response.data);
                $scope.certs = response.data.certs;
             } else {
                console.warn("certActionAll", response);

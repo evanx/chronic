@@ -74,7 +74,7 @@ public class ChronicHttpService implements HttpHandler {
         ChronicEntityService es = new ChronicEntityService(app);
         try {
             app.ensureInitialized();
-            es.begin(app.emf.createEntityManager());
+            es.begin();
             JMap responseMap = handler.handle(app, httpx, es);
             logger.trace("response {}", responseMap);
             httpx.sendResponse(responseMap);

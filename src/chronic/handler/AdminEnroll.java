@@ -33,7 +33,7 @@ public class AdminEnroll implements ChronicHttpxHandler {
             if (!Emails.matchesEmail(email)) {
                 return new JMap(String.format("ERROR: invalid email: %s\n", email));
             } else {
-                es.persistOrgRole(cert, email, OrgRoleType.ADMIN);
+                es.persistOrgRole(cert.getOrg(), email, OrgRoleType.ADMIN);
             }
         }
         return new JMap(String.format("OK: %s: %s\n", cert.getOrgDomain(), Arrays.toString(emails)));

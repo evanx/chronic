@@ -37,6 +37,7 @@ public class CertList implements ChronicHttpxHandler {
                 certs.add(cert);
             }
         } 
+        logger.info("certs {}", certs.size());
         return JMaps.map("certs", certs);
     }
     

@@ -19,7 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
@@ -47,18 +47,18 @@ public class OrgRole extends AutoIdEntity implements PersonKeyed, OrgKeyed, OrgR
     @Column()
     String email;
     
-    @Column()
+    @Column(name = "role_type")
     OrgRoleType roleType;
     
     @Column()    
     boolean enabled = false;
     
-    @ManyToOne()    
+    @OneToOne()    
     @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", 
             insertable = false, updatable = false)
     Org org;
     
-    @ManyToOne()    
+    @OneToOne()    
     @JoinColumn(name = "email", referencedColumnName = "email",
             insertable = false, updatable = false)
     Person person; 
@@ -156,11 +156,19 @@ public class OrgRole extends AutoIdEntity implements PersonKeyed, OrgKeyed, OrgR
     public OrgRoleType getRoleType() {
         return roleType;
     }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
     
     public Person getPerson() {
         return person;
     }
 
+    public void setOrg(Org org) {
+        this.org = org;
+    }
+    
     public Org getOrg() {
         return org;
     }    

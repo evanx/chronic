@@ -32,7 +32,9 @@ public class CertActionAll implements ChronicHttpxHandler {
                 cert.setEnabled(true);
             }
             certs.add(cert);
+            logger.info("cert {}", cert);
         }
+        logger.info("certs {}", certs.size());
         return JMaps.map("certs", certs);
     }
     
