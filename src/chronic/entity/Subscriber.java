@@ -19,12 +19,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
-import vellum.storage.AbstractIdEntity;
+import vellum.storage.AutoIdEntity;
 import vellum.storage.StorageException;
 import vellum.type.Enabled;
 
@@ -34,7 +35,7 @@ import vellum.type.Enabled;
  */
 @Entity()
 @Table(name = "topic_sub")
-public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, PersonKeyed, 
+public class Subscriber extends AutoIdEntity implements SubscriberKeyed, PersonKeyed, 
         TopicIdKeyed, Enabled, JMapped, ChronicDatabaseInjectable, Serializable {
     
     static Logger logger = LoggerFactory.getLogger(Subscriber.class);
@@ -64,8 +65,8 @@ public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, Per
     }
     
     @Override
-    public Comparable getKey() {
-        return getSubscriberKey();
+    public Comparable getId() {
+        return id;
     }
 
     @Override
@@ -97,11 +98,6 @@ public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, Per
         this.id = id;
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-    
     public String getEmail() {
         return email;
     }
@@ -145,6 +141,6 @@ public class Subscriber extends AbstractIdEntity implements SubscriberKeyed, Per
 
     @Override
     public String toString() {
-        return getKey().toString();
+        return getId().toString();
     }
 }

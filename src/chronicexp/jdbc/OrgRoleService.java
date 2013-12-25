@@ -95,7 +95,7 @@ public class OrgRoleService implements EntityService<OrgRole> {
             }
             orgRole.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, orgRole.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, orgRole.getId());
         }
     }
 
@@ -120,10 +120,10 @@ public class OrgRoleService implements EntityService<OrgRole> {
             statement.setBoolean(1, orgRole.isEnabled());
             statement.setLong(2, orgRole.getId());
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, orgRole.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, orgRole.getId());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, orgRole.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, orgRole.getId());
         }
     }
     

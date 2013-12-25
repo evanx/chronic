@@ -4,20 +4,19 @@
  */
 package chronic.entity;
 
+import static chronic.entity.Cert_.id;
 import chronic.entitykey.PersonKeyed;
 import chronic.entitykey.PersonKey;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import vellum.data.Emails;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
-import vellum.storage.AbstractIdEntity;
+import vellum.storage.VellumEntity;
 import vellum.type.Enabled;
 
 /**
@@ -25,14 +24,10 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 @Entity
-public class Person extends AbstractIdEntity implements PersonKeyed, Enabled, Serializable {
+public class Person extends VellumEntity implements PersonKeyed, Enabled, Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "person_id")
-    Long id;
-    
-    @Column()        
+    @Column()
     String email;
     
     @Column()    
@@ -67,23 +62,13 @@ public class Person extends AbstractIdEntity implements PersonKeyed, Enabled, Se
     }
     
     @Override
-    public Comparable getKey() {
+    public Comparable getId() {
         return email;
     }
 
     @Override
     public PersonKey getPersonKey() {
         return new PersonKey(email);
-    }
-    
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
     }
     
     public String getLabel() {

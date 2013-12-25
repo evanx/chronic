@@ -17,7 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
-import vellum.storage.AbstractIdEntity;
+import vellum.storage.AutoIdEntity;
 import vellum.storage.StorageException;
 import vellum.type.Enabled;
 
@@ -26,7 +26,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 @Entity
-public class Topic extends AbstractIdEntity implements CertTopicKeyed,  
+public class Topic extends AutoIdEntity implements CertTopicKeyed,  
         JMapped, Enabled, ChronicDatabaseInjectable, Serializable {
 
     @Id
@@ -58,24 +58,20 @@ public class Topic extends AbstractIdEntity implements CertTopicKeyed,
     }
 
     @Override
-    public Comparable getKey() {
-        return getTopicKey();
+    public Long getId() {
+        return id;
     }
-
-    @Override
-    public CertTopicKey getTopicKey() {
-        return new CertTopicKey(certId, topicLabel);
-    }    
 
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    
     @Override
-    public Long getId() {
-        return id;
-    }
+    public CertTopicKey getCertTopicKey() {
+        return new CertTopicKey(certId, topicLabel);
+    }    
 
     public Long getCertId() {
         return certId;
@@ -88,7 +84,7 @@ public class Topic extends AbstractIdEntity implements CertTopicKeyed,
     public void setCert(Cert cert) {
         this.cert = cert;
         if (cert != null) {
-            certId = cert.getId();
+            certId = cert.id;
         }
     }
 
@@ -138,6 +134,7 @@ public class Topic extends AbstractIdEntity implements CertTopicKeyed,
     
     @Override
     public String toString() {
-        return getKey().toString();
+        return getId().toString();
     }
+
 }

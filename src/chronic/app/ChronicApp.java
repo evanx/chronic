@@ -105,7 +105,6 @@ public class ChronicApp {
     public void initDeferred() throws Exception {
         dataSource.setPoolProperties(properties.getPoolProperties());
         emf = Persistence.createEntityManagerFactory("chronicPU");;
-        new ChronicSchema(this).createSchema();
         initalized = true;
         logger.info("initialized");
         statusThread.start();

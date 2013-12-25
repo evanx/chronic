@@ -149,7 +149,7 @@ public class ChronicHttpx extends Httpx {
             person = new Person(email);
             db.person().persist(person);
         }
-        for (Topic topic : db.topic().list(cert.getKey())) {
+        for (Topic topic : db.topic().list(cert.getId())) {
             persistTopicSubscriber(topic, email);
         }
 

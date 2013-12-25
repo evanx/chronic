@@ -88,7 +88,7 @@ public class SubscriberService implements EntityService<Subscriber> {
             }
             subscriber.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getId());
         }
     }
 
@@ -101,10 +101,10 @@ public class SubscriberService implements EntityService<Subscriber> {
         try (PreparedStatement statement = prepare("update enabled", 
                 subscriber.isEnabled(), subscriber.getId())) {
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, subscriber.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, subscriber.getId());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, subscriber.getId());
         }
     }
 

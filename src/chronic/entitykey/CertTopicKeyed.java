@@ -9,5 +9,5 @@ package chronic.entitykey;
  * @author evan.summers
  */
 public interface CertTopicKeyed {
-    public CertTopicKey getTopicKey();
+    public CertTopicKey getCertTopicKey();
 }

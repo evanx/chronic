@@ -39,20 +39,23 @@ public class AlertMailBuilder {
     StringBuilder builder = new StringBuilder();
     AlertRecord alert;
     ChronicApp app;
-    
+
     public AlertMailBuilder(ChronicApp app) {
         this.app = app;
     }
-    
+
     public String build(AlertRecord alert) {
         this.alert = alert;
         logger.info("build {}", alert.status);
         builder.append("<pre>\n");
         if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED) {
             appendHeader(alert.status);
+            builder.append("\n<br><b>Changed lines:</b>\n");
             builder.append(Strings.join("\n", alert.status.buildChanged(alert.previousStatus)));
-            if (alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
-                appendPrevious(alert.previousStatus);
+            if (alert.previousStatus == null) {
+                if (alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
+                    appendPrevious(alert.previousStatus);
+                }
             }
             builder.append('\n');
         } else if (alert.status.getAlertType() == AlertType.STATUS_CHANGED) {
@@ -60,10 +63,10 @@ public class AlertMailBuilder {
             if (alert.previousStatus != null) {
                 appendPrevious(alert.previousStatus);
             }
-        } else {            
+        } else {
             append(alert.status);
         }
-        builder.append(formatFooter());
+        builder.append(formatFooter(app.getProperties().getSiteUrl()));
         return builder.toString();
     }
 
@@ -77,19 +80,19 @@ public class AlertMailBuilder {
         appendHeader(status);
         appendContent(status);
     }
-    
+
     private void appendHeader(StatusRecord status) {
-        builder.append(String.format("<i>%s</i>", Millis.formatTime(status.getTimestamp())));        
-        builder.append(String.format(" <b>%s</b>", formatHeading(status)));        
+        builder.append(String.format("<i>%s</i>", Millis.formatTime(status.getTimestamp())));
+        builder.append(String.format(" <b>%s</b>", formatHeading(status)));
         String alertTypeStyle = "font-color: gray";
-        builder.append(String.format(" <i style='%s'>(%s)</i>\n\n", alertTypeStyle,
+        builder.append(String.format(" <i style='%s'>(Alert on %s)</i>\n\n", alertTypeStyle,
                 status.getAlertType().getLabel()));
     }
 
     private void appendContent(StatusRecord status) {
         builder.append(buildContent(status));
     }
-    
+
     public static String buildContent(StatusRecord status) {
         StringBuilder builder = new StringBuilder();
         for (String line : Strings.trimLines(status.getLineList())) {
@@ -125,7 +128,7 @@ public class AlertMailBuilder {
     private void appendf(String string, Object... args) {
         builder.append(String.format(string, args));
     }
-    
+
     public String formatHeading(StatusRecord status) {
         logger.info("formatSubject {} {}", status.getStatusType());
         if (status.isStatusType()) {
@@ -144,11 +147,11 @@ public class AlertMailBuilder {
         }
         return status.getSubject();
     }
-    
-    public String formatFooter() {
+
+    public static String formatFooter(String siteUrl) {
         String style = "font-size: 12px; font-color: gray";
         return String.format("<hr><a style='%s' href='%s'><img src='cid:image'/></a>", style,
-                app.getProperties().getSiteUrl(), app.getProperties().getSiteUrl());
+                siteUrl, siteUrl);
     }
-    
+
 }

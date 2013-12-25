@@ -3,23 +3,18 @@
 insert into person (
   email, label, enabled
 ) values (?, ?, ?)
-returning person_id
 ;
 
 -- delete
-delete from person where person_id = ?
+delete from person where email = ?
 ;
 
 -- update enabled
-update person set enabled = ? where person_id = ?
+update person set enabled = ? where email = ?
 ;
 
 -- update label
-update person set label = ? where person_id = ?
-;
-
--- select id
-select * from person where person_id = ?
+update person set label = ? where email = ?
 ;
 
 -- select key

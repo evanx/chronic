@@ -9,14 +9,12 @@ import chronic.entitykey.OrgKey;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import vellum.data.Patterns;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.security.Certificates;
-import vellum.storage.AbstractIdEntity;
+import vellum.storage.VellumEntity;
 import vellum.type.Enabled;
 import vellum.validation.ValidationException;
 import vellum.validation.ValidationExceptionType;
@@ -26,13 +24,9 @@ import vellum.validation.ValidationExceptionType;
  * @author evan.summers
  */
 @Entity
-public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializable {
+public class Org extends VellumEntity implements OrgKeyed, Enabled, Serializable {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "org_id")
-    Long id;
-
     @Column(name = "org_domain")
     String orgDomain;
     
@@ -68,7 +62,6 @@ public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializ
     
     public JMap getMap() {
         JMap map = new JMap();
-        map.put("orgId", id);
         map.put("region", region);
         map.put("label", label);
         map.put("region", region);
@@ -79,7 +72,7 @@ public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializ
     }
     
     @Override
-    public String getKey() {
+    public String getId() {
         return orgDomain;
     }
 
@@ -88,16 +81,6 @@ public class Org extends AbstractIdEntity implements OrgKeyed, Enabled, Serializ
         return new OrgKey(orgDomain);
     }
     
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-        
     public String getLocality() {
         return locality;
     }

@@ -66,22 +66,35 @@ public class CachingJdbcDatabase extends ChronicDatabase {
     }
     
     public void open() throws SQLException {
-        connection = app.getDataSource().getConnection();
-        person = new DelegatingEntityService(personCache, new PersonService(connection));
-        org = new DelegatingEntityService(orgCache, new OrgService(connection));
-        role = new DelegatingEntityService(roleCache, new OrgRoleService(connection));
-        topic = new DelegatingEntityService(topicCache, new TopicService(connection));
-        sub = new DelegatingEntityService(subCache, new SubscriberService(connection));
-        cert = new DelegatingEntityService(certCache, new CertService(connection));
+        if (false) {
+            connection = app.getDataSource().getConnection();
+            person = new DelegatingEntityService(personCache, new PersonService(connection));
+            org = new DelegatingEntityService(orgCache, new OrgService(connection));
+            role = new DelegatingEntityService(roleCache, new OrgRoleService(connection));
+            topic = new DelegatingEntityService(topicCache, new TopicService(connection));
+            sub = new DelegatingEntityService(subCache, new SubscriberService(connection));
+            cert = new DelegatingEntityService(certCache, new CertService(connection));
+        } else {
+            person = personCache;
+            org = orgCache;
+            role = roleCache;
+            topic = topicCache;
+            sub = subCache;
+            cert = certCache;
+        }
     }
 
     public void begin() throws SQLException {
-        connection.setAutoCommit(false);
+        if (connection != null) {
+            connection.setAutoCommit(false);
+        }
     }
     
     public void rollback() {
         try {
-            connection.rollback();
+            if (connection != null) {
+                connection.rollback();
+            }
         } catch (SQLException e) {
             logger.warn("rollback connection {}", e);
         }
@@ -89,7 +102,9 @@ public class CachingJdbcDatabase extends ChronicDatabase {
 
     public void commit() {
         try {
-            connection.commit();
+            if (connection != null) {
+                connection.commit();
+            }
         } catch (SQLException e) {
             logger.warn("commit connection {}", e);
         }

@@ -20,6 +20,7 @@
  */
 package chronic.app;
 
+import static chronic.app.AlertMailBuilder.formatFooter;
 import java.io.IOException;
 import java.util.Collection;
 import vellum.mail.Mailer;
@@ -76,9 +77,14 @@ public class ChronicMailMessenger {
 
     void alert(Throwable t) {
         logger.warn("alert throwable", t);
+        StringBuilder builder = new StringBuilder();
+        builder.append("<pre>\n");
+        builder.append(Exceptions.printStackTrace(t));
+        builder.append("</pre>");
+        builder.append(formatFooter(app.getProperties().getSiteUrl()));
         try {
             mailer.send(app.getProperties().getAdminEmail(), "Chronica exception",
-                    "<pre>" + Exceptions.printStackTrace(t) + "</pre>");
+                    builder.toString());
         } catch (MessagingException | IOException e) {
             logger.warn("alert throwable email", e);
         }

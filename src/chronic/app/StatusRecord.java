@@ -62,7 +62,7 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
     String hostname;
     String service;
     Set<String> subscribers = new HashSet();
-    List<String> changedLines;
+    
     transient Cert cert;
     transient Topic topic;
 
@@ -72,26 +72,12 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         this.cert = cert;
     }
 
-    public StatusRecord(StatusRecord record) {
-        this.alertType = record.alertType;
-        this.alertFormatType = record.alertFormatType;
-        this.topicLabel = record.topicLabel;
-        this.periodMillis = record.periodMillis;
-        this.from = record.from;
-        this.subject = record.subject;
-        this.hostname = record.hostname;
-        this.username = record.username;
-        this.service = record.service;
-        this.cert = record.cert;
-        this.timestamp = record.timestamp;
-    }
-
     public ComparableTuple getKey() {
-        return getTopicKey();
+        return getCertTopicKey();
     }
 
     @Override
-    public CertTopicKey getTopicKey() {
+    public CertTopicKey getCertTopicKey() {
         return new CertTopicKey(cert.getId(), topicLabel);
     }
     
@@ -210,9 +196,11 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
     
     public List<String> buildChanged(StatusRecord previous) {
         List<String> list = new ArrayList();
-        for (String line : lineList) {
-            if (!line.isEmpty() && !previous.contains(line)) {
-                list.add(line);
+        if (previous != null) {
+            for (String line : lineList) {
+                if (!line.isEmpty() && !previous.contains(line)) {
+                    list.add(line);
+                }
             }
         }
         if (list.isEmpty()) {
@@ -222,9 +210,9 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         return list;
     }
     
-    public boolean contains(String otherLine) {
+    public boolean contains(String matchLine) {
         for (String line : lineList) {
-            if (StatusRecordMatcher.matches(line, otherLine)) {
+            if (StatusRecordMatcher.matches(matchLine, line)) {
                 return true;
             }
         }

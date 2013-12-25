@@ -61,7 +61,6 @@ public class OrgService implements EntityService<Org> {
 
     private Org create(ResultSet resultSet) throws SQLException {
         Org org = new Org();
-        org.setId(resultSet.getLong("org_id"));
         org.setOrgDomain(resultSet.getString("org_domain"));
         org.setLabel(resultSet.getString("label"));
         org.setEnabled(resultSet.getBoolean("enabled"));
@@ -82,13 +81,8 @@ public class OrgService implements EntityService<Org> {
             statement.setString(1, org.getOrgDomain());
             statement.setString(2, org.getLabel());
             statement.setBoolean(3, org.isEnabled());
-            ResultSet generatedKeys = statement.executeQuery();
-            if (!generatedKeys.next()) {
-                throw new StorageException(StorageExceptionType.NOT_PERSISTED);
-            }
-            org.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, org.getId());
         }
     }
 
@@ -111,32 +105,30 @@ public class OrgService implements EntityService<Org> {
     public void updateEnabled(Org org) throws StorageException {
         try (PreparedStatement statement = prepare("update enabled")) {
             statement.setBoolean(1, org.isEnabled());
-            statement.setLong(2, org.getId());
+            statement.setString(2, org.getOrgDomain());
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, org.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, org.getId());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, org.getId());
         }
     }
     
     public void updateLabel(Org org) throws StorageException {
         try (PreparedStatement statement = prepare("update label")) {
             statement.setString(1, org.getLabel());
-            statement.setLong(2, org.getId());
+            statement.setString(2, org.getOrgDomain());
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, org.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, org.getId());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, org.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, org.getId());
         }
     }
 
     @Override
     public Org find(Comparable key) throws StorageException {
-        if (key instanceof Long) {
-            return findId((Long) key);
-        } else if (key instanceof String) {
+        if (key instanceof String) {
             return findKey((String) key);
         } else if (key instanceof OrgKey) {
             return findKey(((OrgKey) key).getOrgDomain());
@@ -145,22 +137,6 @@ public class OrgService implements EntityService<Org> {
                 key.getClass().getSimpleName());
     }
 
-    private Org findId(Long id) throws StorageException {
-        try (PreparedStatement statement = prepare("select id", id);
-                ResultSet resultSet = statement.executeQuery()) {
-            if (!resultSet.next()) {
-                return null;
-            }
-            Org org = create(resultSet);
-            if (resultSet.next()) {
-                throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, id);
-            }
-            return org;
-        } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, id);
-        }
-    }
-    
     private Org findKey(String orgDomain) throws StorageException {
         try (PreparedStatement statement = prepare("select key", orgDomain)) {
             try (ResultSet resultSet = statement.executeQuery()) {

@@ -38,12 +38,12 @@ public class StatusRecordPatterns {
     public final static Pattern LOG
             = Pattern.compile("^(TRACE|DEBUG|INFO|WARN|WARNING|ERROR)[\\s:-]*(.*)$");
     public final static Pattern LOG_DEBUG
-            = Pattern.compile("^(DEBUG|TRACE)");
+            = Pattern.compile("^(TRACE|DEBUG)");
     public final static Pattern NAGIOS
-            = Pattern.compile("^(\\S*\\s*)(OK|WARNING|CRITICAL|UNKNOWN)[\\s:-]*(.*)$");
+            = Pattern.compile("^(\\S*)\\s*(OK|WARNING|CRITICAL|UNKNOWN)[\\s:-]*(.*)$");
     public final static Pattern NAGIOS_UNKNOWN
-            = Pattern.compile("^(\\S*\\s*)(UNKNOWN) - (.*)$");
+            = Pattern.compile("^(\\S*)\\s*(UNKNOWN)[\\s:-]*(.*)$");
     public final static Pattern HEADER
-            = Pattern.compile("^[a-zA-Z]+: .*$");
+            = Pattern.compile("^([a-zA-Z]+):\\s*(.*)$");
 
 }

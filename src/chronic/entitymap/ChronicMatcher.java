@@ -26,14 +26,14 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import vellum.data.ComparableTuple;
-import vellum.storage.AbstractEntity;
+import vellum.storage.VellumEntity;
 import vellum.storage.EntityMatcher;
 
 /**
  *
  * @author evan.summers
  */
-public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E> {
+public class ChronicMatcher<E extends VellumEntity> implements EntityMatcher<E> {
         
     @Override
     public Collection<E> matches(Collection<E> entities, Comparable key) {
@@ -101,10 +101,10 @@ public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E
                 return matches((CertKeyed) entity, (CertKey) key);
             }
         }
-        if (entity.getKey() instanceof ComparableTuple) {
-            return ((ComparableTuple) entity.getKey()).contains(key);
+        if (entity.getId() instanceof ComparableTuple) {
+            return ((ComparableTuple) entity.getId()).contains(key);
         }
-        return entity.getKey().equals(key);
+        return entity.getId().equals(key);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E
             list.add(((OrgRoleTypeKeyed) entity).getOrgRoleTypeKey());
         }
         if (entity instanceof CertTopicKeyed) {
-            list.add(((CertTopicKeyed) entity).getTopicKey());
+            list.add(((CertTopicKeyed) entity).getCertTopicKey());
         }
         if (entity instanceof OrgTopicKeyed) {
             list.add(((OrgTopicKeyed) entity).getOrgTopicKey());
@@ -176,7 +176,7 @@ public class ChronicMatcher<E extends AbstractEntity> implements EntityMatcher<E
     }
 
     private boolean matches(CertTopicKeyed keyed, CertTopicKey key) {
-        return keyed.getTopicKey().matches(key);        
+        return keyed.getCertTopicKey().matches(key);        
     }
     
     private boolean matches(SubscriberKeyed keyed, SubscriberKey key) {

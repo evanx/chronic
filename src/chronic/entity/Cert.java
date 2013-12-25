@@ -24,7 +24,7 @@ import javax.persistence.Temporal;
 import vellum.format.CalendarFormats;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
-import vellum.storage.AbstractIdEntity;
+import vellum.storage.AutoIdEntity;
 import vellum.type.Enabled;
 
 /**
@@ -32,10 +32,10 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 @Entity
-public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed, 
+public class Cert extends AutoIdEntity implements OrgKeyed, OrgUnitKeyed, 
         CertKeyed, Enabled, JMapped, Serializable {
 
-    @Id
+    @Id    
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "cert_id")
     Long id;
@@ -49,7 +49,7 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
     @Column(name = "common_name")
     String commonName;
 
-    @Column()
+    @Column(length = 4096)
     String encoded;
     
     @Column()
@@ -82,10 +82,10 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
     }
 
     @Override
-    public Comparable getKey() {
-        return getCertKey();
+    public Long getId() {
+        return id;
     }
-
+    
     @Override
     public CertKey getCertKey() {
         return new CertKey(orgDomain, orgUnit, commonName);
@@ -104,11 +104,6 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
     }
 
     public void setOrg(Org org) {
@@ -205,4 +200,5 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
     public String toString() {
         return getKeyMap().toString();
     }
+
 }

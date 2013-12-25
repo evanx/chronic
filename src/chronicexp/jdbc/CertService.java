@@ -28,7 +28,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +98,7 @@ public class CertService implements EntityService<Cert> {
             cert.setId(generatedKeys.getLong(1));
             assert(cert.getId() != null);
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getId());
         }
     }
 
@@ -117,7 +116,7 @@ public class CertService implements EntityService<Cert> {
                 throw new StorageException(StorageExceptionType.NOT_UPDATED, cert);
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getId());
         }
     }
     public void updateEncoded(Cert cert) throws StorageException {
@@ -126,10 +125,10 @@ public class CertService implements EntityService<Cert> {
             statement.setString(2, cert.getEncoded());
             statement.setLong(3, cert.getId());
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, cert.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, cert.getId());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, cert.getId());
         }
     }
 

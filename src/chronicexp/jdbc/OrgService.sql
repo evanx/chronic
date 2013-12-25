@@ -3,23 +3,22 @@
 insert into org (
   org_domain, label, enabled
 ) values (?, ?, ?)
-returning org_id;
 ;
 
 -- delete
-delete from org where org_id = ?
+delete from org where org_domain = ?
 ;
 
 -- update enabled
-update org set enabled = ? where org_id = ?
+update org set enabled = ? where org_domain = ?
 ;
 
 -- update label
-update org set label = ? where org_id = ?
+update org set label = ? where org_domain = ?
 ;
 
 -- select id
-select * from org where org_id = ?
+select * from org where org_domain = ?
 ;
 
 -- select key

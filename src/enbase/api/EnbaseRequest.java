@@ -30,14 +30,14 @@ import vellum.data.Millis;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
 import vellum.jx.JMaps;
-import vellum.storage.AbstractIdEntity;
+import vellum.storage.AutoIdEntity;
 
 /**
  *
  * @author evan.summers
  */
 @Entity
-public class EnbaseRequest extends AbstractIdEntity implements Serializable, JMapped {
+public class EnbaseRequest extends AutoIdEntity implements Serializable, JMapped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -142,11 +142,6 @@ public class EnbaseRequest extends AbstractIdEntity implements Serializable, JMa
         this.data = data;
     }
     
-    @Override
-    public Comparable getKey() {
-        return getId();
-    }
-
     @Override
     public String toString() {
         return getMap().toString();

@@ -21,7 +21,6 @@
 package chronicexp.jdbc;
 
 import chronic.entity.Person;
-import chronic.entitykey.PersonIdKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,7 +60,6 @@ public class PersonService implements EntityService<Person> {
 
     private Person create(ResultSet resultSet) throws SQLException {
         Person person = new Person();
-        person.setId(resultSet.getLong("person_id"));
         person.setLabel(resultSet.getString("label"));
         person.setEmail(resultSet.getString("email"));
         person.setEnabled(resultSet.getBoolean("enabled"));
@@ -82,13 +80,8 @@ public class PersonService implements EntityService<Person> {
             statement.setString(1, person.getEmail());
             statement.setString(2, person.getLabel());
             statement.setBoolean(3, person.isEnabled());
-            ResultSet generatedKeys = statement.executeQuery();
-            if (!generatedKeys.next()) {
-                throw new StorageException(StorageExceptionType.NOT_PERSISTED);
-            }
-            person.setId(generatedKeys.getLong(1));
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, person.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, person.getId());
         }
     }
 
@@ -99,12 +92,12 @@ public class PersonService implements EntityService<Person> {
 
     public void updateEnabled(Person person) throws StorageException {
         try (PreparedStatement statement = prepare("update enabled", 
-                person.isEnabled(), person.getId())) {
+                person.isEnabled(), person.getEmail())) {
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, person.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, person.getId());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, person.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, person.getId());
         }
     }
 
@@ -121,12 +114,8 @@ public class PersonService implements EntityService<Person> {
 
     @Override
     public Person find(Comparable key) throws StorageException {
-        if (key instanceof Long) {
-            return findId((Long) key);
-        } else if (key instanceof String) {
+        if (key instanceof String) {
             return findKey((String) key);
-        } else if (key instanceof PersonIdKey) {
-            return findId(((PersonIdKey) key).getId());
         } else {
             throw new StorageException(StorageExceptionType.INVALID_KEY, 
                 key.getClass().getSimpleName());
@@ -147,23 +136,6 @@ public class PersonService implements EntityService<Person> {
         } catch (SQLException sqle) {
             throw new StorageException(sqle, StorageExceptionType.SQL,
                     key);
-        }
-    }
-
-    private Person findId(Long id) throws StorageException {
-        try (PreparedStatement statement = prepare("select id", id);
-                ResultSet resultSet = statement.executeQuery()) {
-            if (!resultSet.next()) {
-                return null;
-            }
-            Person person = create(resultSet);
-            if (resultSet.next()) {
-                throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, id);
-            }
-            return person;
-        } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL,
-                    id);
         }
     }
 

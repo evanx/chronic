@@ -88,23 +88,21 @@ public class StatusRecordMatcher {
             if (otherMatcher.find()) {
                 String otherCategory = otherMatcher.group(1);
                 if (category.equals(otherCategory)) {
-                    return Strings.equalsIgnoreNumeric(line, otherLine);
+                    return Strings.equalsIgnoreNumbers(line, otherLine);
                 }
             }
             return false;
         }
         Matcher nagiosMatcher = StatusRecordPatterns.NAGIOS.matcher(line);
         if (nagiosMatcher.find()) {
-            if (nagiosMatcher.group(2).equals("UNKNOWN")) {
-                return true;
-            } else {
-                Matcher otherMatcher = StatusRecordPatterns.NAGIOS.matcher(otherLine);
-                if (otherMatcher.find()) {
-                    if (otherMatcher.group(2).equals("UNKNOWN")) {
-                        return true;
-                    } else if (nagiosMatcher.group(1).equals(otherMatcher.group(1))) {
-                        return nagiosMatcher.group(2).equals(otherMatcher.group(2));
-                    }
+            Matcher otherMatcher = StatusRecordPatterns.NAGIOS.matcher(otherLine);
+            if (otherMatcher.find()) {
+                if (nagiosMatcher.group(2).equals("UNKNOWN")) {
+                    return true;
+                } else if (otherMatcher.group(2).equals("UNKNOWN")) {
+                    return true;
+                } else if (nagiosMatcher.group(1).equals(otherMatcher.group(1))) {
+                    return nagiosMatcher.group(2).equals(otherMatcher.group(2));
                 }
                 return false;
             }
@@ -114,13 +112,4 @@ public class StatusRecordMatcher {
         return line.equals(otherLine);
     }
 
-    private static boolean equals(Matcher nagiosMatcher, Matcher otherMatcher, int... groups) {
-        for (int group : groups) {
-            if (!nagiosMatcher.group(group).equals(otherMatcher.group(group))) {
-                logger.warn("matcher [{}] vs [{}]", nagiosMatcher.group(group), otherMatcher.group(group));
-                return false;
-            }
-        }
-        return true;
-    }    
 }

@@ -29,7 +29,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
-import vellum.storage.AbstractIdEntity;
+import vellum.storage.AutoIdEntity;
 import vellum.storage.StorageException;
 import vellum.type.Enabled;
 import vellum.util.Args;
@@ -40,7 +40,7 @@ import vellum.util.Args;
  */
 @Entity()
 @Table(name = "org_role")
-public class OrgRole extends AbstractIdEntity implements PersonKeyed, PersonRoleTypeKeyed,
+public class OrgRole extends AutoIdEntity implements PersonKeyed, PersonRoleTypeKeyed,
         OrgKeyed, OrgPersonKeyed, OrgRoleKeyed, OrgRoleTypeKeyed, Enabled, Serializable {
 
     @Id
@@ -93,8 +93,8 @@ public class OrgRole extends AbstractIdEntity implements PersonKeyed, PersonRole
     }
     
     @Override
-    public OrgRoleKey getKey() {
-        return getOrgRoleKey();
+    public Long getId() {
+        return id;
     }
     
     @Override
@@ -155,11 +155,6 @@ public class OrgRole extends AbstractIdEntity implements PersonKeyed, PersonRole
         this.id = id;
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-    
     public void setOrgDomain(String orgDomain) {
         this.orgDomain = orgDomain;
     }

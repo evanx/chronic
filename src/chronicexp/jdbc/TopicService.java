@@ -93,7 +93,7 @@ public class TopicService implements EntityService<Topic> {
             topic.setId(generatedKeys.getLong(1));
             assert(topic.getId() != null);
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, topic.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, topic.getId());
         }
     }
 
@@ -106,10 +106,10 @@ public class TopicService implements EntityService<Topic> {
         try (PreparedStatement statement = prepare("update enabled", 
                 topic.isEnabled(), topic.getId())) {
             if (statement.executeUpdate() != 1) {
-                throw new StorageException(StorageExceptionType.NOT_UPDATED, topic.getKey());
+                throw new StorageException(StorageExceptionType.NOT_UPDATED, topic.getId());
             }
         } catch (SQLException sqle) {
-            throw new StorageException(sqle, StorageExceptionType.SQL, topic.getKey());
+            throw new StorageException(sqle, StorageExceptionType.SQL, topic.getId());
         }
     }
 
