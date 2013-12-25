@@ -20,11 +20,21 @@
 
 ### custom config 
 
-commonName="" # name of this publisher
-orgUnit="" # network or group
-orgDomain="" # internet domain of your organisation 
-admins="" # emails of chronica admins for this organisation
-subscribers="" # emails of default subcribers
+commonName='' # name of this publisher e.g. user@host
+orgUnit='' # network or group
+orgDomain='' # internet domain of your organisation 
+admins='' # emails of chronica admins for this organisation
+subscribers="$admins" # emails of default subcribers
+
+# Notes: 
+#   The generated client cert will have: commonName, orgUnit, orgDomain.
+#   Additionally you can specify: locality, region, country.
+#   Admins can approve certs via the site: https://chronica.co
+#   Designated subscribers are allowed to subscribe via the site.
+
+locality='none'
+region='none'
+country='none'
 
 
 ### customizable jobs
@@ -38,8 +48,9 @@ c0minutely() {
   #c2nohttps chronica.co 80
   #c2notcp chronica 21
   #c2notcp chronica 25
+  #c2notcp chronica 5432
   #c2https chronica.co 443 
-  #c2https chronica.co 8444
+  #c2httpsAuth secure.chronica.co 443
   #c2postgres localhost 5432
 }
 
@@ -53,6 +64,7 @@ c0hourly() {
 
 c0daily() {
   c1topic daily
+  #c0checkChronicaPubKey
   #c0yumVerify
   #c0rpmVerify
   #c2certExpiry chronica.co 443
