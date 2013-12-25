@@ -11,6 +11,7 @@ import chronic.app.StatusRecord;
 import chronic.app.StatusRecordParser;
 import chronic.check.StatusCheck;
 import chronic.entity.Cert;
+import chronic.entity.Person;
 import chronic.entity.Topic;
 import chronic.type.AlertType;
 import java.io.IOException;
@@ -59,8 +60,10 @@ public class Post implements ChronicHttpxHandler {
             status.setTopic(topic);
             if (status.getSubscribers() != null) {
                 if (status.getSubscribers().size() > 0) {
-                    for (String subscriber : status.getSubscribers()) {
-                        es.persistTopicSubscription(topic, subscriber);
+                    for (String email : status.getSubscribers()) {
+                        Person person = es.persistPerson(email);
+                        logger.info("subscribe {}", person);
+                        es.persistTopicSubscription(topic, person);
                     }
                 }
             }

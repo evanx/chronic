@@ -367,7 +367,7 @@ public class ChronicEntityService {
             em.persist(person);
         }
         for (Topic topic : listTopic(cert)) {
-            persistTopicSubscription(topic, email);
+            persistTopicSubscription(topic, person);
         }
 
     }
@@ -400,9 +400,8 @@ public class ChronicEntityService {
         return topic;
     }
 
-    public Subscription persistTopicSubscription(Topic topic, String email)
+    public Subscription persistTopicSubscription(Topic topic, Person person)
             throws StorageException {
-        Person person = em.find(Person.class, email);
         Subscription subscription = findSubscription(topic, person);
         if (subscription == null) {
             subscription = new Subscription(topic, person);

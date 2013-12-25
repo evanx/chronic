@@ -54,7 +54,7 @@ public class ChronicMailMessenger {
     }
 
     public void alert(AlertRecord alert, Collection<String> emails) {
-        logger.warn("alert {}", alert.toString());
+         logger.warn("alert {} {}", alert.toString(), emails);
         for (String email : emails) {
             try {
                 AlertRecord previous = alertMap.put(email, alert);
