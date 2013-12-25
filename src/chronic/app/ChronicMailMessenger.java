@@ -21,6 +21,7 @@
 package chronic.app;
 
 import java.io.IOException;
+import java.util.Collection;
 import vellum.mail.Mailer;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,10 +52,9 @@ public class ChronicMailMessenger {
         mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
-    public void alert(AlertRecord alert) {
+    public void alert(AlertRecord alert, Collection<String> emails) {
         logger.warn("alert {}", alert.toString());
-        for (String email : app.getEntityService().
-                listSubscriberEmails(alert.getStatus().getTopic())) {
+        for (String email : emails) {
             try {
                 AlertRecord previous = alertMap.put(email, alert);
                 if (previous != null) {

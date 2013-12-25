@@ -7,6 +7,7 @@ import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.AlertRecord;
 import chronic.app.ChronicApp;
+import chronic.app.ChronicEntityService;
 import chronic.entitykey.SubscriberKey;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,8 @@ public class AlertList implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(AlertList.class);
     
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
+            throws Exception {
         String email = httpx.getEmail();
         List alerts = new LinkedList();
         for (AlertRecord alert : Lists.sortedLinkedList(httpx.app.getAlertMap().values(),

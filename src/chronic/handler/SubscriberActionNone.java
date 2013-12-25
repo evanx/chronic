@@ -6,6 +6,7 @@ package chronic.handler;
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
+import chronic.app.ChronicEntityService;
 import chronic.entity.Subscriber;
 import chronic.entitykey.PersonKey;
 import java.util.LinkedList;
@@ -24,7 +25,8 @@ public class SubscriberActionNone implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(SubscriberActionNone.class);
   
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
+            throws Exception {
         String email = httpx.getEmail();
         List subscribers = new LinkedList();        
         for (Subscriber subscriber : httpx.db.sub().list(new PersonKey(email))) {

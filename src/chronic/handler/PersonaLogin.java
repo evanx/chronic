@@ -9,6 +9,7 @@ import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.entity.Person;
 import chronic.app.ChronicCookie;
+import chronic.app.ChronicEntityService;
 import chronic.persona.PersonaInfo;
 import chronic.persona.PersonaVerifier;
 import java.util.Date;
@@ -28,7 +29,8 @@ public class PersonaLogin implements ChronicHttpxHandler {
     ChronicCookie cookie;
     
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
+            throws Exception {
         JMap map = httpx.parseJsonMap();
         timezoneOffset = map.getString("timezoneOffset");
         logger.trace("timezoneOffset {}", timezoneOffset);

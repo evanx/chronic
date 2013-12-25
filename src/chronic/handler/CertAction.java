@@ -6,10 +6,9 @@ package chronic.handler;
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
+import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
 import chronic.entitykey.CertKey;
-import chronic.entitykey.OrgRoleKey;
-import chronic.entitytype.OrgRoleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
@@ -24,16 +23,15 @@ public class CertAction implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(CertAction.class);
   
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
+            throws Exception {
         String email = httpx.getEmail();
         CertKey certKey = new CertKey(httpx.parseJsonMap().getMap("cert"));
-        OrgRoleKey roleKey = new OrgRoleKey(certKey.getOrgDomain(), email, OrgRoleType.ADMIN);
-        if (!httpx.db.role().retrievable(roleKey)) {
+        if (!es.isAdmin(certKey.getOrgDomain(), email)) {
             return JMaps.mapValue("errorMessage", "no role");
         } else {
-            Cert cert = httpx.db.cert().find(certKey);
+            Cert cert = es.find(certKey);
             cert.setEnabled(!cert.isEnabled());
-            httpx.db.cert().update(cert);
             return JMaps.mapValue("cert", cert.getMap());
         }
     }

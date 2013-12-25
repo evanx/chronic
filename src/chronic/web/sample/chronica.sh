@@ -572,6 +572,7 @@ c0updateInfo() {
 
 c0updateCheck() {
   c0updateInfo
+  c0checkChronicaPubKey
   echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using ~/.chronica/etc/chronica.pub.pem:'
   if curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem
@@ -589,9 +590,9 @@ c0updateCheck() {
 
 c0update() {
   c0updateInfo
-  echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using' `pwd`/'chronica.pub.pem:'
+  echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using ~/.chronica/etc/chronica.pub.pem'
   if ! curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
-    openssl base64 -d | openssl rsautl -verify -pubin -inkey chronica.pub.pem |
+    openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem |
     grep `curl -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
   then
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
@@ -689,6 +690,7 @@ c0stopped() {
 }
 
 c0run() {
+  trap 'rm -f pid' EXIT
   echo $$ > pid
   debug=2
   c0enroll
@@ -737,7 +739,6 @@ c0help() {
 if [ $# -gt 0 ]
 then
   command=$1
-  [ $command != "start" ] &&  trap 'rm -f pid' EXIT
   shift
   c$#$command "$@"
 else 

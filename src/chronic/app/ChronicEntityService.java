@@ -23,10 +23,12 @@ package chronic.app;
 import chronic.entity.Cert;
 import chronic.entity.Org;
 import chronic.entity.Topic;
-import javax.persistence.EntityManagerFactory;
+import chronic.entitykey.CertKey;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.storage.StorageException;
 
 /**
  *
@@ -36,34 +38,72 @@ public class ChronicEntityService {
 
     static Logger logger = LoggerFactory.getLogger(ChronicEntityService.class);
 
-    ChronicApp app;
-    EntityManagerFactory emf;
-    
-    public ChronicEntityService(ChronicApp app, EntityManagerFactory emf) {
-        this.app = app;
-        this.emf = emf;
+    EntityManager em;
+
+    public ChronicEntityService() {
     }
     
-    public Iterable<String> listSubscriberEmails(Topic topic) {
-        return emf.createEntityManager().
-                createQuery("select s.email from Subscriber s where s.topicId = :topicId").
+    public void begin(EntityManager em) {
+        this.em = em;
+        em.getTransaction().begin();
+    }
+    
+    public void commit() {
+        em.getTransaction().commit();
+    }
+    
+    public void rollback() {
+        if (em != null) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
+    }
+    
+    public void close() {
+        if (em != null) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            if (em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    public List<String> listSubscriberEmails(Topic topic) {
+        return em.createQuery("select s.email from Subscriber s where s.topicId = :topicId").
                 setParameter("topicId", topic.getId()).
                 getResultList();
     }
 
-    public Iterable<Org> listOrg(String email) 
-            throws StorageException {
-        return emf.createEntityManager().
-                createQuery("select o from Org o join OrgRole r where r.email = :email").
+    public List<Org> listOrg(String email) {
+        return em.createQuery("select o from Org o join OrgRole r"
+                + " where r.email = :email").
                 setParameter("email", email).
                 getResultList();
     }
-    
-    
-    public Iterable<Cert> listCerts(String email) throws StorageException {
-        return emf.createEntityManager().
-                createQuery("select c from Cert c join OrgRole r where r.email = :email").
+
+    public boolean isAdmin(String orgDomain, String email) {
+        return em.createQuery("select r.email from Org o join OrgRole r"
+                + " where o.orgDomain = :orgDomain").
+                setParameter("orgDomain", orgDomain).
+                getResultList().contains(email);
+    }
+
+    public Cert find(CertKey certKey) {
+        return em.createQuery("select c from Cert c join Org o join OrgRole r"
+                + " where r.email = :email", Cert.class).
+                setParameter("commonName", certKey.getCommonName()).
+                setParameter("orgUnit", certKey.getOrgUnit()).
+                setParameter("orgDomain", certKey.getOrgDomain()).
+                getSingleResult();
+    }
+
+    public List<Cert> listCerts(String email) {
+        return em.createQuery("select c from Cert c join Org o join OrgRole r"
+                + " where r.email = :email").
                 setParameter("email", email).
                 getResultList();
-    }        
+    }
 }

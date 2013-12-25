@@ -34,6 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -66,7 +67,6 @@ public class ChronicApp {
     LinkedBlockingQueue<StatusRecord> statusQueue = new LinkedBlockingQueue(100);
     Map<String, Class> handlerClasses = new HashMap();
     DataSource dataSource = new DataSource();
-    ChronicEntityService entityService;
     EntityManagerFactory emf;
     boolean initalized = false;
     boolean running = true;
@@ -105,7 +105,6 @@ public class ChronicApp {
     public void initDeferred() throws Exception {
         dataSource.setPoolProperties(properties.getPoolProperties());
         emf = Persistence.createEntityManagerFactory("chronicPU");;
-        entityService = new ChronicEntityService(this, emf);
         new ChronicSchema(this).createSchema();
         initalized = true;
         logger.info("initialized");
@@ -141,10 +140,6 @@ public class ChronicApp {
         return new CachingJdbcDatabase(this);
     }
 
-    public ChronicEntityService getEntityService() {
-        return entityService;
-    }
-   
     public void shutdown() throws Exception {
         running = false;
         elapsedExecutorService.shutdown();
@@ -170,15 +165,20 @@ public class ChronicApp {
         @Override
         public void run() {
             while (running) {
+                ChronicEntityService es = new ChronicEntityService();
                 try {
+                    es.begin(emf.createEntityManager());
                     AlertRecord alert = alertQueue.poll(60, TimeUnit.SECONDS);
                     if (alert != null) {
-                        messenger.alert(alert);
+                        messenger.alert(alert, 
+                                es.listSubscriberEmails(alert.getStatus().getTopic()));
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
                 } catch (Throwable t) {
                     messenger.alert(t);
+                } finally {
+                    es.close();
                 }
             }
         }

@@ -6,6 +6,7 @@ package chronic.handler;
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
+import chronic.app.ChronicEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
@@ -20,7 +21,8 @@ public class OrgEnroll implements ChronicHttpxHandler {
  
     
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx hx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
+            throws Exception {
         return new JMap();
     }
 

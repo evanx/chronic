@@ -9,6 +9,7 @@ import chronicexp.jdbc.CachingJdbcDatabase;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
+import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.exception.Exceptions;
@@ -73,22 +74,27 @@ public class ChronicHttpService implements HttpHandler {
     private void handle(ChronicHttpxHandler handler, HttpExchange httpe) {
         ChronicHttpx httpx = new ChronicHttpx(app, httpe);        
         CachingJdbcDatabase database = new CachingJdbcDatabase(app);
+        ChronicEntityService es = new ChronicEntityService();
         try {
             app.ensureInitialized();
             database.open();
             database.begin();
             httpx.setDatabase(database);
-            JMap responseMap = handler.handle(app, httpx);
+            es.begin(app.emf.createEntityManager());
+            JMap responseMap = handler.handle(app, httpx, es);
             logger.trace("response {}", responseMap);
             httpx.sendResponse(responseMap);
             database.commit();
+            es.commit();
         } catch (Exception e) {
             httpx.sendError(e);
             database.rollback();
+            es.rollback();
             e.printStackTrace(System.out);
         } finally {
             httpx.close();
             database.close();
+            es.close();
         }
     }
 }

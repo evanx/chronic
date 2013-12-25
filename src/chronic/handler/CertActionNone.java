@@ -6,6 +6,7 @@ package chronic.handler;
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
+import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,11 +24,13 @@ public class CertActionNone implements ChronicHttpxHandler {
     Logger logger = LoggerFactory.getLogger(CertActionNone.class);
   
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx httpx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
+            throws Exception {
         List certs = new LinkedList();
-        for (Cert cert : httpx.db.listCerts(httpx.getEmail())) {
-            cert.setEnabled(false);
-            httpx.db.cert().update(cert);
+        for (Cert cert : es.listCerts(httpx.getEmail())) {
+            if (cert.isEnabled()) {
+                cert.setEnabled(false);
+            }
         }
         return JMaps.map("certs", certs);
     }

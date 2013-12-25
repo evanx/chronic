@@ -18,13 +18,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import vellum.format.CalendarFormats;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
 import vellum.storage.AbstractIdEntity;
 import vellum.type.Enabled;
-import vellum.util.Calendars;
 
 /**
  *
@@ -61,7 +62,10 @@ public class Cert extends AbstractIdEntity implements OrgKeyed, OrgUnitKeyed,
     @Column()
     String address;
     
-    transient Org org;
+    @OneToOne()    
+    @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", 
+            insertable = false, updatable = false)
+    Org org;
     
     public Cert() {
     }

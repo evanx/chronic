@@ -6,6 +6,7 @@ package chronic.handler;
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
+import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
 import chronic.entitytype.OrgRoleType;
 import java.util.Arrays;
@@ -25,7 +26,7 @@ public class AdminEnroll implements ChronicHttpxHandler {
     static Logger logger = LoggerFactory.getLogger(AdminEnroll.class);
     
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx hx) throws Exception {
+    public JMap handle(ChronicApp app, ChronicHttpx hx, ChronicEntityService es) throws Exception {
         Cert cert = hx.persistCert();
         String[] emails = Strings.split(hx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {
