@@ -20,9 +20,6 @@
  */
 package enbase.app;
 
-import chronic.app.ChronicApp;
-import chronicexp.jdbc.CertService;
-import chronicexp.jdbc.ChronicSchema;
 import enbase.api.EnbaseRequest;
 import enbase.api.EnbaseActionType;
 import javax.persistence.EntityManager;
