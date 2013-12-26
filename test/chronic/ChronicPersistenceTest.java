@@ -19,9 +19,8 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.scripts;
+package chronic;
 
-import chronic.*;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
