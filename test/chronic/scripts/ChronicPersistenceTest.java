@@ -50,11 +50,12 @@ public class ChronicPersistenceTest {
 
     static Logger logger = LoggerFactory.getLogger(ChronicTest.class);
 
-    ChronicApp app = new ChronicApp();
+    static ChronicApp app = new ChronicApp();
 
     String orgUnit = "test";
     String commonName = "root";
     String address = "127.0.0.1";    
+    String encoded = "encoded";
     TestProperties p1 = new TestProperties("chronica.co", "minutely", "evan.summers@gmail.com");
     TestProperties p2 = new TestProperties("test.org", "hourly", "evanx@chronica.co");
     
@@ -78,11 +79,13 @@ public class ChronicPersistenceTest {
         }
     }
     
-    public ChronicPersistenceTest() {
+    public ChronicPersistenceTest() throws Exception {
     }
 
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUpClass() throws Exception {
+        app.init();
+        app.ensureInitialized();
     }
 
     @AfterClass
@@ -91,18 +94,12 @@ public class ChronicPersistenceTest {
 
     @Before
     public void setUp() throws Exception {
-        app.init();
-        app.ensureInitialized();
     }
 
     @After
     public void tearDown() {
     }
 
-    private void newEntityManager() {
-        
-    }
-    
     @Test
     public void testEntityManager() throws Exception {
         EntityManager em = app.createEntityManager();
@@ -123,7 +120,9 @@ public class ChronicPersistenceTest {
         Assert.assertNotNull(em.find(OrgRole.class, p1.orgRole.getId()));
         Assert.assertEquals(1, em.createQuery("select r from OrgRole r").getResultList().size());
         Assert.assertEquals(1, em.createQuery("select r from OrgRole r join Org o").getResultList().size());
-        assertSize(1, em.createQuery("select r from OrgRole r join Org o where o.orgDomain = :orgDomain")
+        assertSize(1, em.createQuery("select r from OrgRole r join Org o"
+                + " where o.orgDomain = :orgDomain"
+                + "")
                 .setParameter("orgDomain", p1.orgDomain)
                 .getResultList());
         assertSize(1, em.createQuery("select r from OrgRole r join Org o join Cert c where r.email = :email")
@@ -131,7 +130,10 @@ public class ChronicPersistenceTest {
                 .getResultList());
         p2.org = new Org(p2.orgDomain);
         em.persist(p2.org);
-        assertSize(1, em.createQuery("select r from OrgRole r join Org o join Cert c where r.email = :email")
+        assertSize(1, em.createQuery("select r from OrgRole r"
+                + " join Org o on (o.orgDomain = r.orgDomain)"
+                + " join Cert c on (c.orgDomain = r.orgDomain)"
+                + " where r.email = :email")
                 .setParameter("email", p1.email)
                 .getResultList());
         assertSize(1, em.createQuery("select r from OrgRole r join Org o where o.orgDomain = :orgDomain")
@@ -152,7 +154,7 @@ public class ChronicPersistenceTest {
           }
     }
     
-    //@Test
+    @Test
     public void testEntityService() throws Exception {
         ChronicEntityService es = new ChronicEntityService(app);
         es.begin();
@@ -162,11 +164,11 @@ public class ChronicPersistenceTest {
         p2.cert = es.persistCert(p2.orgDomain, orgUnit, commonName, address, "encoded");
         p1.org = p1.cert.getOrg();
         p2.org = p2.cert.getOrg();
-        p1.orgRole = es.persistOrgRole(p1.org, p1.email, OrgRoleType.ADMIN);
-        //p2.orgRole = es.persistOrgRole(p2.org, email2, OrgRoleType.ADMIN);
-        //es.persistOrgRole(p2.org, email1, OrgRoleType.ADMIN);
         assert p1.org != null;
         assert p2.org != null;
+        p1.orgRole = es.persistOrgRole(p1.org, p1.email, OrgRoleType.ADMIN);
+        es.persistOrgRole(p2.org, p1.email, OrgRoleType.ADMIN);
+        p2.orgRole = es.persistOrgRole(p2.org, p2.email, OrgRoleType.ADMIN);
         logger.info("org {}", p1.org);
         p1.topic = es.persistTopic(p1.cert, p1.topicLabel);
         p2.topic = es.persistTopic(p2.cert, p2.topicLabel);
