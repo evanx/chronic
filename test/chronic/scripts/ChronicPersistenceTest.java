@@ -53,14 +53,14 @@ public class ChronicPersistenceTest {
     static ChronicApp app = new ChronicApp();
 
     String orgUnit = "test";
-    String commonName = "root";
     String address = "127.0.0.1";    
     String encoded = "encoded";
-    TestProperties p1 = new TestProperties("chronica.co", "minutely", "evan.summers@gmail.com");
-    TestProperties p2 = new TestProperties("test.org", "hourly", "evanx@chronica.co");
+    TestProperties p1 = new TestProperties("chronica.co", "root", "minutely", "evan.summers@gmail.com");
+    TestProperties p2 = new TestProperties("test.org", "chronica", "hourly", "evanx@chronica.co");
     
     class TestProperties {
 
+        String commonName;
         String orgDomain;
         String topicLabel;
         String email;
@@ -71,8 +71,9 @@ public class ChronicPersistenceTest {
         Topic topic;
         Person person;
         
-        public TestProperties(String orgDomain, String topicLabel, String email) {
+        public TestProperties(String orgDomain, String commonName, String topicLabel, String email) {
             this.orgDomain = orgDomain;
+            this.commonName = commonName;
             this.topicLabel = topicLabel;
             this.email = email;
             certKey = new CertKey(orgDomain, orgUnit, commonName);
@@ -100,14 +101,16 @@ public class ChronicPersistenceTest {
     public void tearDown() {
     }
 
-    @Test
+    //@Test
     public void testEntityManager() throws Exception {
         EntityManager em = app.createEntityManager();
         em.getTransaction().begin();
         p1.org = new Org(p1.orgDomain);
         em.persist(p1.org);
         Assert.assertNotNull(em.find(Org.class, p1.orgDomain));
-        p1.cert = new Cert(p1.orgDomain, orgUnit, commonName);
+        p1.cert = new Cert(p1.orgDomain, orgUnit, p1.commonName);
+        p1.cert.setAddress(address);
+        p1.cert.setEncoded(encoded);
         em.persist(p1.cert);
         Assert.assertNotNull(p1.cert.getId());
         Assert.assertNotNull(em.find(Cert.class, p1.cert.getId()));
@@ -160,8 +163,9 @@ public class ChronicPersistenceTest {
         es.begin();
         p1.person = es.persistPerson(p1.email);
         p2.person = es.persistPerson(p2.email);
-        p1.cert = es.persistCert(p1.orgDomain, orgUnit, commonName, address, "encoded");
-        p2.cert = es.persistCert(p2.orgDomain, orgUnit, commonName, address, "encoded");
+        p1.cert = es.persistCert(p1.orgDomain, orgUnit, p1.commonName, address, "encoded");
+        p2.cert = es.persistCert(p2.orgDomain, orgUnit, p2.commonName, address, "encoded");
+        p2.cert = es.persistCert(p2.orgDomain, orgUnit, p1.commonName, address, "encoded");
         p1.org = p1.cert.getOrg();
         p2.org = p2.cert.getOrg();
         assert p1.org != null;
