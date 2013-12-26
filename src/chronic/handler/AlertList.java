@@ -8,7 +8,6 @@ import chronic.api.ChronicHttpxHandler;
 import chronic.app.AlertRecord;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
-import chronic.entitykey.SubscriberKey;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -35,10 +34,10 @@ public class AlertList implements ChronicHttpxHandler {
                 TimestampedComparator.reverse())) {            
             if (es.isSubscription(alert.getStatus().getTopic(), email)) {
                 alerts.add(alert.getMap());
-            } else if (httpx.app.getProperties().isAdmin(email)) {
-                alerts.add(alert.getMap());
             } else if (httpx.getReferer().endsWith("/demo")) {
                 alerts.add(alert.getPartialMap());
+            } else if (httpx.app.getProperties().isAdmin(email)) {
+                alerts.add(alert.getMap());
             }
         }
         return JMaps.mapValue("alerts", alerts);

@@ -20,7 +20,13 @@
  */
 package chronic4j;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,22 +35,61 @@ import org.slf4j.LoggerFactory;
  *
  * @author evan.summers
  */
-public class ChronicAppender extends AppenderSkeleton {
+public class ChronicAppender extends AppenderSkeleton implements Runnable {
 
     static Logger logger = LoggerFactory.getLogger(ChronicAppender.class);
 
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private final long period = TimeUnit.SECONDS.toMillis(60);
+    private final ArrayDeque<LoggingEvent> deque = new ArrayDeque();    
+    private boolean initialized;
+    private boolean running;
+    private long sampleTimestamp;
+    
     @Override
     protected void append(LoggingEvent le) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (!initialized) {
+            initialized = true;
+            initialize();
+        }
+        if (running && le != null && le.getLevel().toInt() >= Priority.INFO_INT) {
+            if (sampleTimestamp > 0 && System.currentTimeMillis() - sampleTimestamp > period*2) {
+                running = false;
+                synchronized (deque) {
+                    deque.clear();
+                }
+            } else {
+                synchronized (deque) {
+                    deque.add(le);                    
+                }
+            }
+        }
     }
 
+    private void initialize() {
+        scheduledExecutorService.scheduleAtFixedRate(this, period, period, TimeUnit.MILLISECONDS);
+        running = true;
+    }
+    
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        running = false;
+        scheduledExecutorService.shutdown();
     }
 
     @Override
     public boolean requiresLayout() {
         return false;
+    }
+
+    @Override
+    public synchronized void run() {
+        sampleTimestamp = System.currentTimeMillis();
+        Deque<LoggingEvent> snapshot;
+        synchronized(deque) {
+            snapshot = deque.clone();
+            deque.clear();
+        }
+        
     }
 }
