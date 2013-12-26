@@ -18,8 +18,8 @@ public class OrgRoleKey extends ComparableTuple {
     String email;
     OrgRoleType roleType;
 
-    public OrgRoleKey(JMap map, String email) throws JMapException {
-        this(map.getString("orgDomain"), email,
+    public OrgRoleKey(JMap map) throws JMapException {
+        this(map.getString("orgDomain"), map.getString("email"),
                 OrgRoleType.valueOf(map.getString("roleType")));
     }
     

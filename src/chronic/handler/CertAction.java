@@ -30,7 +30,7 @@ public class CertAction implements ChronicHttpxHandler {
         if (!es.isAdmin(certKey.getOrgDomain(), email)) {
             return JMaps.mapValue("errorMessage", "no role");
         } else {
-            Cert cert = es.find(certKey);
+            Cert cert = es.findCert(certKey);
             cert.setEnabled(!cert.isEnabled());
             return JMaps.mapValue("cert", cert.getMap());
         }

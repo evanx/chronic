@@ -122,7 +122,7 @@ public class ChronicEntityService {
         return list.get(0);
     }
     
-    public Cert find(CertKey key) throws StorageException {
+    public Cert findCert(CertKey key) throws StorageException {
         List<Cert> list = selectCert(key);
         if (list.isEmpty()) {
             return null;
@@ -133,8 +133,9 @@ public class ChronicEntityService {
         return list.get(0);
     }
 
-    public OrgRole find(OrgRoleKey key) throws StorageException {
-        List<OrgRole> list = selectOrgRole(key.getOrgDomain(), key.getEmail());
+    public OrgRole findOrgRole(OrgRoleKey key) throws StorageException {
+        logger.info("findOrgRole {}", key);
+        List<OrgRole> list = selectOrgRole(key);
         if (list.isEmpty()) {
             return null;
         }
@@ -298,12 +299,19 @@ public class ChronicEntityService {
                 getResultList();
     }
 
-    private List<OrgRole> selectOrgRole(String orgDomain, String email) {
+    private List<OrgRole> selectOrgRole(OrgRoleKey key) {
+        return selectOrgRole(key.getOrgDomain(), key.getEmail(), key.getRoleType());
+    }
+    
+    private List<OrgRole> selectOrgRole(String orgDomain, String email, OrgRoleType roleType) {
+        logger.info("selectOrgRole {} {}", orgDomain, email);
         return em.createQuery("select r from OrgRole r"
                 + " where r.orgDomain = :orgDomain"
-                + " and r.email = :email").
+                + " and r.email = :email"
+                + " and r.roleType = :roleType").
                 setParameter("orgDomain", orgDomain).
                 setParameter("email", email).
+                setParameter("roleType", roleType).
                 getResultList();
     }
 
@@ -365,7 +373,7 @@ public class ChronicEntityService {
             logger.info("persist org {}", org);
         }
         CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);
-        Cert cert = find(certKey);
+        Cert cert = findCert(certKey);
         if (cert == null) {
             cert = new Cert(certKey);
             cert.setEnabled(enabled);
@@ -375,12 +383,15 @@ public class ChronicEntityService {
             cert.setAddress(remoteHostAddress);
             em.persist(cert);
             logger.info("certificate {}", certKey);
-        } else if (!cert.getEncoded().equals(encoded)) {
-            logger.warn("invalid public key {}", certKey);
-        } else if (!cert.isEnabled()) {
-            logger.warn("cert disabled {}", certKey);
-        } else if (!cert.getAddress().equals(remoteHostAddress)) {
-            logger.warn("host address {}", remoteHostAddress);
+        } else {
+            assert cert.getEncoded() != null;
+            if (!cert.getEncoded().equals(encoded)) {
+                logger.warn("invalid public key {}", certKey);
+            } else if (!cert.isEnabled()) {
+                logger.warn("cert disabled {}", certKey);
+            } else if (!cert.getAddress().equals(remoteHostAddress)) {
+                logger.warn("host address {}", remoteHostAddress);
+            }
         }
         cert.setOrg(org);
         return cert;
@@ -414,10 +425,10 @@ public class ChronicEntityService {
             throws StorageException {
         Person person = persistPerson(email);
         logger.info("persistOrgRole {} {}", org, person);
-        OrgRoleKey orgRoleKey = new OrgRoleKey(org.getOrgDomain(), email, roleType);
-        OrgRole orgRole = find(orgRoleKey);
+        OrgRoleKey key = new OrgRoleKey(org.getOrgDomain(), email, roleType);
+        OrgRole orgRole = findOrgRole(key);
         if (orgRole == null) {
-            orgRole = new OrgRole(orgRoleKey);
+            orgRole = new OrgRole(key);
             orgRole.setEnabled(true);
             em.persist(orgRole);
         }
