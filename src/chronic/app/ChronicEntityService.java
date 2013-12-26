@@ -376,11 +376,10 @@ public class ChronicEntityService {
         Cert cert = findCert(certKey);
         if (cert == null) {
             cert = new Cert(certKey);
-            cert.setEnabled(enabled);
             cert.setEncoded(encoded);
             cert.setAddress(remoteHostAddress);
             cert.setAcquired(Calendar.getInstance());
-            cert.setAddress(remoteHostAddress);
+            cert.setEnabled(enabled);
             em.persist(cert);
             logger.info("certificate {}", certKey);
         } else {
@@ -433,7 +432,7 @@ public class ChronicEntityService {
             em.persist(orgRole);
         }
         orgRole.setPerson(person);
-        orgRole.setOrgDomain(email);
+        orgRole.setOrg(org);
         return orgRole;
     }
 
