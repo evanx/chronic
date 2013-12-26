@@ -13,9 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import vellum.data.Emails;
+import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
-import vellum.storage.VellumEntity;
 import vellum.type.Enabled;
 
 /**
@@ -23,7 +23,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 @Entity
-public class Person extends VellumEntity implements PersonKeyed, Enabled, Serializable {
+public class Person extends ComparableEntity implements PersonKeyed, Enabled, Serializable {
 
     @Id
     @Column()

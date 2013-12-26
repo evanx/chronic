@@ -11,10 +11,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import vellum.data.Patterns;
+import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.security.Certificates;
-import vellum.storage.VellumEntity;
 import vellum.type.Enabled;
 import vellum.validation.ValidationException;
 import vellum.validation.ValidationExceptionType;
@@ -24,7 +24,7 @@ import vellum.validation.ValidationExceptionType;
  * @author evan.summers
  */
 @Entity
-public class Org extends VellumEntity implements OrgKeyed, Enabled, Serializable {
+public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializable {
     
     @Id
     @Column(name = "org_domain")

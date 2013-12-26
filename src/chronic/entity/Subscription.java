@@ -14,13 +14,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
-import vellum.storage.AutoIdEntity;
 import vellum.type.Enabled;
 
 /**
@@ -29,7 +28,7 @@ import vellum.type.Enabled;
  */
 @Entity()
 @Table(name = "topic_sub")
-public class Subscription extends AutoIdEntity implements Enabled, JMapped, Serializable {
+public class Subscription extends ComparableEntity implements Enabled, JMapped, Serializable {
     
     static Logger logger = LoggerFactory.getLogger(Subscription.class);
 
@@ -77,11 +76,6 @@ public class Subscription extends AutoIdEntity implements Enabled, JMapped, Seri
         return enabled;
     }
     
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public long getTopicId() {
         return topicId;
     }

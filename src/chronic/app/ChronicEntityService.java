@@ -28,7 +28,6 @@ import chronic.entity.Subscription;
 import chronic.entity.Topic;
 import chronic.entitykey.CertKey;
 import chronic.entitykey.CertTopicKey;
-import chronic.entitykey.OrgKey;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.PersonKey;
 import chronic.entitytype.OrgRoleType;

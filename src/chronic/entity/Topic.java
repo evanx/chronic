@@ -17,16 +17,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
-import vellum.storage.AutoIdEntity;
 
 /**
  *
  * @author evan.summers
  */
 @Entity
-public class Topic extends AutoIdEntity implements CertTopicKeyed, JMapped, Serializable {
+public class Topic extends ComparableEntity implements CertTopicKeyed, JMapped, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -64,11 +64,6 @@ public class Topic extends AutoIdEntity implements CertTopicKeyed, JMapped, Seri
         return id;
     }
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     @Override
     public CertTopicKey getCertTopicKey() {
         return new CertTopicKey(certId, topicLabel);

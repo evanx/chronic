@@ -19,10 +19,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
+import vellum.entity.ComparableEntity;
 import vellum.format.CalendarFormats;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
-import vellum.storage.AutoIdEntity;
 import vellum.type.Enabled;
 
 /**
@@ -30,7 +30,7 @@ import vellum.type.Enabled;
  * @author evan.summers
  */
 @Entity
-public class Cert extends AutoIdEntity implements OrgKeyed, CertKeyed, Enabled, JMapped, Serializable {
+public class Cert extends ComparableEntity implements OrgKeyed, CertKeyed, Enabled, JMapped, Serializable {
 
     @Id    
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -90,11 +90,6 @@ public class Cert extends AutoIdEntity implements OrgKeyed, CertKeyed, Enabled, 
     @Override
     public OrgKey getOrgKey() {
         return new OrgKey(orgDomain);
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setOrg(Org org) {

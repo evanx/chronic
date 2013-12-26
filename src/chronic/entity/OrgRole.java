@@ -18,10 +18,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 import vellum.storage.StorageException;
-import vellum.storage.VellumEntity;
 import vellum.util.Args;
 
 /**
@@ -30,7 +30,7 @@ import vellum.util.Args;
  */
 @Entity()
 @Table(name = "org_role")
-public class OrgRole extends VellumEntity implements Serializable {
+public class OrgRole extends ComparableEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -4,10 +4,10 @@
  */
 package chronic.persona;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
-import vellum.logr.Logr;
-import vellum.logr.LogrFactory;
 import vellum.util.Args;
 
 /**
@@ -15,7 +15,7 @@ import vellum.util.Args;
  * @author evan.summers
  */
 public class PersonaInfo {
-    static Logr logger = LogrFactory.getLogger(PersonaInfo.class);
+    static Logger logger = LoggerFactory.getLogger(PersonaInfo.class);
     String email;
     String issuer;
     long expires;
