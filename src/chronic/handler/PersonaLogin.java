@@ -58,6 +58,7 @@ public class PersonaLogin implements ChronicHttpxHandler {
         JMap cookieMap = cookie.toMap();
         logger.trace("cookie {}", cookieMap);
         httpx.setCookie(cookieMap, ChronicCookie.MAX_AGE_MILLIS);
+        cookieMap.put("demo", httpx.getReferer().contains("/demo"));
         return cookieMap;
     }
 }

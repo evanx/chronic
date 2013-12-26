@@ -21,19 +21,22 @@ import vellum.jx.JMaps;
 public class RoleAction implements ChronicHttpxHandler {
 
     Logger logger = LoggerFactory.getLogger(RoleAction.class);
-  
+
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
+    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
             throws Exception {
-        String email = httpx.getEmail();
         OrgRoleKey roleKey = new OrgRoleKey(httpx.parseJsonMap().getMap("role"));
-        if (!es.isRole(roleKey)) {
-            return JMaps.mapValue("errorMessage", "no role");
-        } else {
-            OrgRole orgRole = es.findOrgRole(roleKey);
-            orgRole.setEnabled(!orgRole.isEnabled());
-            return JMaps.mapValue("role", orgRole.getMap());
+        OrgRole orgRole = es.findOrgRole(roleKey);
+        if (orgRole == null) {
+            throw new Exception("no such role: " + roleKey);
         }
+        String email = httpx.getEmail();
+        if (es.isAdmin(orgRole.getOrgDomain(), email)) {
+            orgRole.setEnabled(!orgRole.isEnabled());
+        } else {
+            logger.warn("not admin {} {}", email, roleKey);
+        }
+        return JMaps.mapValue("role", orgRole.getMap());
     }
-    
+
 }

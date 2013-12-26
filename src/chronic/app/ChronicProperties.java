@@ -114,6 +114,10 @@ public class ChronicProperties {
         return testing;
     }
 
+    public boolean isTesting(String name) {
+        return false;
+    }
+
     public ExtendedProperties getAppServer() {
         return appServer;
     }

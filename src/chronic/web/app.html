@@ -34,11 +34,11 @@
             <li ng-class="getClass('alerts')">
               <a href="#" ng-click="changeView('alerts')">Alerts</a>
             </li>
-            <li ng-class="getClass('topics')">
+            <!--li ng-class="getClass('topics')">
               <a href="#" ng-click="changeView('topics')">Topics</a>
-            </li>
+            </li-->
             <li ng-class="getClass('subscriptions')">
-              <a href="#" ng-click="changeView('subscriptions')">Subscriptions</a>
+              <a href="#" ng-click="changeView('subscriptions')">Topics</a>
             </li>
             <li ng-class="getClass('roles')">
               <a href="#" ng-click="changeView('roles')">Roles</a>
@@ -116,7 +116,7 @@
     </div>
 
     <div class="container" ng-controller="topicsController" ng-cloak 
-         ng-show="persona.email && view === 'topics'">
+         ng-show="false && persona.email && view === 'topics'">
       <p ng-show="loading">Loading...</p>
       <p ng-show="!loading && topics && topics.length === 0">No topics</p>
       <div class="row" ng-show="topics.length > 0" ng-cloak>

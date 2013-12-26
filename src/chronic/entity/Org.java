@@ -62,10 +62,10 @@ public class Org extends VellumEntity implements OrgKeyed, Enabled, Serializable
     
     public JMap getMap() {
         JMap map = new JMap();
-        map.put("region", region);
+        map.put("orgDomain", orgDomain);
         map.put("label", label);
-        map.put("region", region);
         map.put("locality", locality);
+        map.put("region", region);
         map.put("country", country);
         map.put("enabled", enabled);
         return map;

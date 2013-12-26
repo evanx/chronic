@@ -258,7 +258,7 @@ public class ChronicApp {
             AlertRecord alert = new AlertRecord(status);
             status.setAlertType(AlertType.INITIAL);
             alertMap.put(status.getKey(), alert);
-            if (properties.isTesting()) {
+            if (properties.isTesting("alert:initial")) {
                 alertQueue.add(alert);
             }
         } else if (status.getAlertType() == AlertType.ONCE) {

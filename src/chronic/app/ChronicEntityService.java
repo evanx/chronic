@@ -264,7 +264,7 @@ public class ChronicEntityService {
     }
 
     public boolean isRole(OrgRoleKey roleKey) {
-        return em.createQuery("select count(1) from r"
+        return em.createQuery("select count(1) from OrgRole r"
                 + " where r.orgDomain = :orgDomain"
                 + " and r.email = :email").
                 setParameter("orgDomain", roleKey.getOrgDomain()).
