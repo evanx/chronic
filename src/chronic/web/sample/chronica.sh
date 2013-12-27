@@ -45,6 +45,11 @@ databaseTimeout=2
 
 ### default functions
 
+if ! set | grep -q '^commonName='
+then
+  commonName=$USER@`hostname -s`
+fi
+
 c1topic() {
   echo "Topic: $commonName $1"
   echo "Subscribe: $subscribers"
@@ -465,6 +470,35 @@ c0ensureCert() {
 c0ensurePubKey
 c0ensureKey
 c0ensureCert
+
+
+### java keystore for chronica log4j appender connection
+
+c0ensureKeyStore() {
+  if [ ! -f etc/keystore.jks ]
+  then
+    keytool -keystore etc/keystore.jks -storepass chronica -alias chronica4j -keypass chronica -genkeypair -keyalg rsa -validity 999 \
+          -dname "CN=$commonName, O=$orgDomain, OU=$orgUnit"
+    echo "Generated keystore:"
+    keytool -keystore etc/keystore.jks -storepass chronica -alias chronica4j -exportcert -rfc | openssl x509 -text | grep 'CN='
+  fi
+  if [ ! -f etc/truststore.jks ]
+  then
+    keytool -keystore etc/truststore.jks -storepass chronica -alias chronica -importcert -file etc/server.pem -noprompt
+    echo "Created truststore:"
+    keytool -keystore etc/truststore.jks -storepass chronica -alias chronica -exportcert -rfc | openssl x509 -text | grep 'CN='
+  fi
+}
+
+c0resetKeyStore() {
+  rm -f etc/keystore.jks
+  rm -f etc/truststore.jks
+  c0ensureKeyStore
+}
+
+c0genKeyStore() {
+  c0resetKeyStore
+}
 
 
 ### standard functionality
