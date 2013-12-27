@@ -21,12 +21,12 @@
 package chronic4j;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -51,14 +51,14 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
 
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     private final long period = TimeUnit.SECONDS.toMillis(60);
-    private final long initialDelay = 500;
+    private final long initialDelay = period;
     private String postAddress = "https://chronica.co/post";
-    private int postLimit = 2000;
+    private final int postLimit = 2000;
     private final ArrayDeque<LoggingEvent> deque = new ArrayDeque();
     private boolean initialized;
     private boolean running;
     private long sampleTimestamp;
-
+    private List<String> patternList = new ArrayList();
     private String keyStoreLocation = System.getProperty("user.home") + "/.chronica/etc/keystore.jks";
     private char[] sslPass = "chronica".toCharArray();
     SSLContext sslContext;
@@ -68,6 +68,10 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
 
     public ChronicAppender(String postAddress) {
         this.postAddress = postAddress;
+    }
+
+    public void setPattern(String pattern) {
+        patternList.add(pattern);
     }
     
     public void setKeyStore(String keyStore) {
