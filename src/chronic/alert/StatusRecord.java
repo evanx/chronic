@@ -32,9 +32,11 @@ import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +64,7 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
     String hostname;
     String service;
     Set<String> subscribers = new HashSet();
+    Map<String, MetricValue> metricMap = new HashMap();
     
     transient Cert cert;
     transient Topic topic;
@@ -86,6 +89,10 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         return new OrgKey(cert.getOrgDomain());
     }
 
+    public Map<String, MetricValue> getMetricMap() {
+        return metricMap;
+    }
+    
     public Cert getCert() {
         return cert;
     }

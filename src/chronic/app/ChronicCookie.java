@@ -42,7 +42,7 @@ public class ChronicCookie {
     private String email;
     private String label;
     private long loginMillis;
-    private int timezoneOffset;
+    private int timeZoneOffset;
     private String assertion;
     private String authCode; 
             
@@ -54,7 +54,7 @@ public class ChronicCookie {
             this.email = map.getString("email");
             this.label = map.getString("label");
             this.loginMillis = map.getLong("loginMillis");
-            this.timezoneOffset = map.getInteger("timeZoneOffset");
+            this.timeZoneOffset = map.getInteger("timeZoneOffset");
             this.assertion = map.getString("assertion");
             this.authCode = map.getString("authCode", null);
         }
@@ -64,7 +64,7 @@ public class ChronicCookie {
         this.email = email;
         this.label = displayName;
         this.loginMillis = loginMillis;
-        this.timezoneOffset = timezoneOffset;
+        this.timeZoneOffset = timezoneOffset;
         this.assertion = assertion;
     }
 
@@ -88,8 +88,8 @@ public class ChronicCookie {
         return loginMillis;
     }
 
-    public int getTimezoneOffset() {
-        return timezoneOffset;
+    public int getTimeZoneOffset() {
+        return timeZoneOffset;
     }
           
     public void validateAuthCode(byte[] secret) throws Exception {
@@ -113,7 +113,7 @@ public class ChronicCookie {
         map.put("email", email);
         map.put("label", label);
         map.put("loginMillis", loginMillis);
-        map.put("timezoneOffset", timezoneOffset);
+        map.put("timeZoneOffset", timeZoneOffset);
         map.put("assertion", assertion);
         map.put("authCode", authCode);
         return map;
@@ -124,7 +124,7 @@ public class ChronicCookie {
         map.put("email", "");
         map.put("label", "");
         map.put("loginMillis", 0);
-        map.put("timezoneOffset", 0);
+        map.put("timeZoneOffset", 0);
         map.put("authCode", "");
         map.put("assertion", "");
         return map;        
@@ -136,6 +136,6 @@ public class ChronicCookie {
     }
     
     public static boolean matches(JMap map) {
-        return !map.isEmpty("email", "label", "loginMillis", "authCode", "assertion");
+        return !map.isEmpty("email", "label", "loginMillis", "timeZoneOffset", "authCode", "assertion");
     }
 }

@@ -43,7 +43,7 @@ public class AlertRecordMapper {
     public AlertRecordMapper(AlertRecord alert, TimeZone timeZone) {
         this.alert = alert;
         this.status = alert.status;        
-        DateFormat format = new SimpleDateFormat("HH:mm:ss z");
+        DateFormat format = new SimpleDateFormat("HH:mm:ss");
         format.setTimeZone(timeZone);
         timestampLabel = format.format(alert.status.timestamp);
     }

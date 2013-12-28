@@ -24,6 +24,9 @@ import chronic.alert.StatusRecord;
 import chronic.alert.StatusRecordChecker;
 import chronic.alert.ChronicMailMessenger;
 import chronic.alert.AlertRecord;
+import chronic.alert.MetricSeries;
+import chronic.alert.MetricValue;
+import chronic.entitykey.TopicMetricKey;
 import chronic.handler.AdminEnroll;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
@@ -61,6 +64,7 @@ public class ChronicApp {
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
     VellumHttpServer httpRedirectServer = new VellumHttpServer();
+    Map<TopicMetricKey, MetricSeries> seriesMap = new ConcurrentHashMap();
     Map<ComparableTuple, StatusRecord> recordMap = new ConcurrentHashMap();
     Map<ComparableTuple, AlertRecord> alertMap = new ConcurrentHashMap();
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
@@ -203,6 +207,19 @@ public class ChronicApp {
                     StatusRecord status = statusQueue.poll(60, TimeUnit.SECONDS);
                     if (status == null) {
                     } else {
+                        for (String metricLabel : status.getMetricMap().keySet()) {
+                            MetricValue value = status.getMetricMap().get(metricLabel);                            
+                            if (value != null) {
+                                TopicMetricKey key = new TopicMetricKey(status.getTopic().getId(), metricLabel);
+                                MetricSeries series = seriesMap.get(key);
+                                if (series == null) {
+                                    series = new MetricSeries(120);
+                                    seriesMap.put(key, series);
+                                }
+                                series.add(value.getValue());
+                                logger.info("series {} {}", metricLabel, series);
+                            }                            
+                        }
                         checkStatus(status);
                     }
                 } catch (InterruptedException e) {

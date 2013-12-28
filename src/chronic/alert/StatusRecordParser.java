@@ -46,7 +46,6 @@ public class StatusRecordParser {
 
     static Logger logger = LoggerFactory.getLogger(StatusRecordParser.class);
 
-
     StatusRecord record;
 
     boolean inHeader = true;
@@ -71,7 +70,7 @@ public class StatusRecordParser {
                 inHeader = false;
             }
             if (nagiosStatus) {
-                parseNagiosStatus(line);
+                parseLineNagiosStatus(line);
             }
             if (!HtmlChecker.sanitary(line)) {
                 logger.warn("omit not sanitary: {}", line);
@@ -115,6 +114,10 @@ public class StatusRecordParser {
             parseSubscribe(value);
         } else if (header.equals("Topic")) {
             parseTopic(value);
+        } else if (header.equals("Metric")) {
+            parseMetric(value);
+        } else if (header.equals("Metrics")) {
+            parseMetrics(value);
         } else {
             return false;
         }
@@ -138,40 +141,6 @@ public class StatusRecordParser {
         }
     }
 
-    private void parseFrom(String string) {
-        Matcher matcher = StatusRecordPatterns.FROM_CRON.matcher(string);
-        if (matcher.find()) {
-            record.setUsername(matcher.group(1));
-            record.setFrom(matcher.group(1));
-        }
-    }
-
-    private void parseSubject(String string) {
-        Matcher matcher = StatusRecordPatterns.CRON_SUBJECT.matcher(string);
-        if (matcher.find()) {
-            record.setUsername(matcher.group(1));
-            record.setHostname(matcher.group(2));
-            record.setService(matcher.group(3));
-            record.setFrom(record.username + '@' + record.hostname);
-        } else {
-            record.setSubject(string.substring(9).trim());
-        }
-    }
-
-    private boolean parseNagiosStatus(String line) {
-        Matcher matcher = StatusRecordPatterns.NAGIOS.matcher(line);
-        if (matcher.find()) {
-            String service = matcher.group(1).trim();
-            if (!service.isEmpty()) {
-                record.setService(service);
-            }
-            parseStatusType(matcher.group(2));
-            logger.debug("parseNagiosStatus {} {}", matcher.group(1), matcher.group(2));
-            return true;
-        }
-        return false;
-    }
-
     private void parseContentType(String contentType) {
         int index = contentType.indexOf(";");
         if (index > 0) {
@@ -180,7 +149,58 @@ public class StatusRecordParser {
             record.setContentType(contentType);
         }
     }
+    
+    private void parseFrom(String string) {
+        Matcher matcher = StatusRecordPatterns.FROM_CRON.matcher(string);
+        if (matcher.find()) {
+            record.setUsername(matcher.group(1));
+            record.setFrom(matcher.group(1));
+        }
+    }
 
+    private void parseHttps(String string) {
+        try {
+            record.getChecks().add(HttpsChecker.parse(string));
+        } catch (Exception e) {
+            logger.warn("parseHttps {}: {}", string, e.getMessage());
+        }
+    }
+
+    private boolean parseLineNagiosStatus(String line) {
+        Matcher matcher = StatusRecordPatterns.NAGIOS.matcher(line);
+        if (matcher.find()) {
+            String service = matcher.group(1).trim();
+            if (!service.isEmpty()) {
+                record.setService(service);
+                if (record.getMetricMap().containsKey(service)) {
+                    String valueString = matcher.group(3);
+                    Matcher metricValueMatcher = StatusRecordPatterns.METRIC_VALUE.matcher(valueString);
+                    if (!metricValueMatcher.find()) {
+                        logger.warn("metric {} {} ", service, valueString);
+                    } else {
+                        float value = Float.parseFloat(metricValueMatcher.group(1));
+                        logger.info("metric {} {} ", service, value);
+                        record.getMetricMap().get(service).setValue(value);
+                    }
+                }
+            }
+            parseStatusType(matcher.group(2));
+            logger.debug("parseNagiosStatus {} {}", matcher.group(1), matcher.group(2));
+            return true;
+        }
+        return false;
+    }
+
+    private void parseMetric(String string) {
+        record.getMetricMap().put(string, new MetricValue());
+    }
+
+    private void parseMetrics(String string) {
+        for (String name : Strings.split(string, DelimiterType.COMMA_OR_SPACE)) {
+            record.getMetricMap().put(name, new MetricValue());
+        }
+    }
+    
     private void parsePeriod(String string) {
         record.setPeriodMillis(Millis.parse(string));
     }
@@ -199,14 +219,21 @@ public class StatusRecordParser {
         }
     }
 
+    private void parseSubject(String string) {
+        Matcher matcher = StatusRecordPatterns.CRON_SUBJECT.matcher(string);
+        if (matcher.find()) {
+            record.setUsername(matcher.group(1));
+            record.setHostname(matcher.group(2));
+            record.setService(matcher.group(3));
+            record.setFrom(record.username + '@' + record.hostname);
+        } else {
+            record.setSubject(string.substring(9).trim());
+        }
+    }
+
     private void parseSubscribe(String string) {
         record.getSubscribers().addAll(Arrays.asList(
                 Strings.split(string, DelimiterType.COMMA_OR_SPACE)));
-    }
-
-    private void parseTopic(String string) {
-        record.setTopicLabel(string);
-        nagiosStatus = false;
     }
 
     private void parseTcp(String string) {
@@ -217,12 +244,9 @@ public class StatusRecordParser {
         }
     }
 
-    private void parseHttps(String string) {
-        try {
-            record.getChecks().add(HttpsChecker.parse(string));
-        } catch (Exception e) {
-            logger.warn("parseHttps {}: {}", string, e.getMessage());
-        }
+    private void parseTopic(String string) {
+        record.setTopicLabel(string);
+        nagiosStatus = false;
     }
 
     private void normalize() {
@@ -246,11 +270,7 @@ public class StatusRecordParser {
 
     private String createTopicLabel() {
         if (record.username != null && record.hostname != null && record.service != null) {
-            if (record.service.matches("\\s")) {
-                return String.format("%s@%s '%s'", record.username, record.hostname, record.service);
-            } else {
-                return String.format("%s@%s %s", record.username, record.hostname, record.service);
-            }
+            return String.format("%s@%s %s", record.username, record.hostname, record.service);
         }
         if (record.username != null && record.hostname != null) {
             return String.format("%s@%s", record.username, record.hostname);

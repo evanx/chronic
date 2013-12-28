@@ -63,7 +63,7 @@ public class ChronicHttpx extends Httpx {
 
     public TimeZone getTimeZone() throws JMapException {
         if (getCookie() != null) {
-            return getTimeZone(cookie.getTimezoneOffset());
+            return getTimeZone(cookie.getTimeZoneOffset());
         }
         return TimeZone.getDefault();
     }

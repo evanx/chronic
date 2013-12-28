@@ -41,6 +41,8 @@ public class StatusRecordPatterns {
     public final static Pattern NAGIOS_UNKNOWN
             = Pattern.compile("^(\\S*)\\s*(UNKNOWN)[\\s:-]*(.*)$");
     public final static Pattern HEADER
-            = Pattern.compile("^([A-Z][a-zA-Z]+):\\s*(.*)$");
+            = Pattern.compile("^([A-Z][a-zA-Z]+):\\s*(.*)\\s*$");
+    public final static Pattern METRIC_VALUE
+            = Pattern.compile("([-+]?[0-9]*.[0-9]*)");
 
 }
