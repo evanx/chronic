@@ -37,11 +37,12 @@ public class ChronicCookie {
     public static final long MAX_AGE_MILLIS = Millis.fromHours(16);
     
     private final static String path = "/chronicapp";
-    private final static String version = "1";
+    private final static String version = "2";
     
     private String email;
     private String label;
     private long loginMillis;
+    private int timezoneOffset;
     private String assertion;
     private String authCode; 
             
@@ -53,15 +54,17 @@ public class ChronicCookie {
             this.email = map.getString("email");
             this.label = map.getString("label");
             this.loginMillis = map.getLong("loginMillis");
+            this.timezoneOffset = map.getInteger("timeZoneOffset");
             this.assertion = map.getString("assertion");
             this.authCode = map.getString("authCode", null);
         }
     }
 
-    public ChronicCookie(String email, String displayName, long loginMillis, String assertion) {
+    public ChronicCookie(String email, String displayName, long loginMillis, int timezoneOffset, String assertion) {
         this.email = email;
         this.label = displayName;
         this.loginMillis = loginMillis;
+        this.timezoneOffset = timezoneOffset;
         this.assertion = assertion;
     }
 
@@ -85,7 +88,10 @@ public class ChronicCookie {
         return loginMillis;
     }
 
-       
+    public int getTimezoneOffset() {
+        return timezoneOffset;
+    }
+          
     public void validateAuthCode(byte[] secret) throws Exception {
         String code = createAuthCode(secret, email, loginMillis);
         if (!code.equals(code)) {
@@ -107,6 +113,7 @@ public class ChronicCookie {
         map.put("email", email);
         map.put("label", label);
         map.put("loginMillis", loginMillis);
+        map.put("timezoneOffset", timezoneOffset);
         map.put("assertion", assertion);
         map.put("authCode", authCode);
         return map;
@@ -117,6 +124,7 @@ public class ChronicCookie {
         map.put("email", "");
         map.put("label", "");
         map.put("loginMillis", 0);
+        map.put("timezoneOffset", 0);
         map.put("authCode", "");
         map.put("assertion", "");
         return map;        

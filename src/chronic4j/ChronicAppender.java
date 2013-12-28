@@ -58,7 +58,6 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     private boolean initialized;
     private boolean running;
     private long sampleTimestamp;
-    private List<String> patternList = new ArrayList();
     private String keyStoreLocation = System.getProperty("user.home") + "/.chronica/etc/keystore.jks";
     private char[] sslPass = "chronica".toCharArray();
     SSLContext sslContext;
@@ -70,8 +69,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
         this.postAddress = postAddress;
     }
 
-    public void setPattern(String pattern) {
-        patternList.add(pattern);
+    public void setHandler(String handlerClassName) {
     }
     
     public void setKeyStore(String keyStore) {

@@ -18,11 +18,9 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.app;
+package chronic.alert;
 
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -30,11 +28,10 @@ import org.slf4j.LoggerFactory;
  */
 public class StatusRecordPatterns {
 
-    static Logger logger = LoggerFactory.getLogger(StatusRecordPatterns.class);
     public final static Pattern FROM_CRON
-            = Pattern.compile("^From: ([a-z]+) \\(Cron Daemon\\)$");
+            = Pattern.compile("([a-z]+) \\(Cron Daemon\\)$");
     public final static Pattern CRON_SUBJECT
-            = Pattern.compile("^Subject: Cron <(\\S+)@(\\S+)> (.*)");
+            = Pattern.compile("Cron <(\\S+)@(\\S+)> (.*)");
     public final static Pattern LOG
             = Pattern.compile("^(TRACE|DEBUG|INFO|WARN|WARNING|ERROR)[\\s:-]*(.*)$");
     public final static Pattern LOG_DEBUG
@@ -44,6 +41,6 @@ public class StatusRecordPatterns {
     public final static Pattern NAGIOS_UNKNOWN
             = Pattern.compile("^(\\S*)\\s*(UNKNOWN)[\\s:-]*(.*)$");
     public final static Pattern HEADER
-            = Pattern.compile("^([a-zA-Z]+):\\s*(.*)$");
+            = Pattern.compile("^([A-Z][a-zA-Z]+):\\s*(.*)$");
 
 }

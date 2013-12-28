@@ -20,9 +20,11 @@
  */
 package chronic.message;
 
-import chronic.app.AlertMailBuilder;
-import chronic.app.AlertRecord;
+import chronic.alert.AlertMailBuilder;
+import chronic.alert.AlertRecord;
+import chronic.alert.AlertRecordMapper;
 import chronic.app.ChronicApp;
+import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.system.Executor;
@@ -51,7 +53,7 @@ public class ChronicScriptMessenger {
                 Executor executor = new Executor();
                 executor.exec(app.getProperties().getAlertScript(),
                         new AlertMailBuilder(app).build(alert).getBytes(),
-                        alert.getMap());
+                        new AlertRecordMapper(alert, TimeZone.getDefault()).getExtendedMap());
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
                 }

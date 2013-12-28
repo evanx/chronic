@@ -18,8 +18,9 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.app;
+package chronic.alert;
 
+import chronic.app.ChronicApp;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;

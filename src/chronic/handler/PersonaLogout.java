@@ -37,7 +37,7 @@ public class PersonaLogout implements ChronicHttpxHandler {
                     logger.warn("email {}", email);
                 }
                 httpx.setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
-                if (httpx.app.getProperties().isTesting()) {
+                if (app.getProperties().isTesting()) {
                     logger.info("testing mode: ignoring logout");
                 } else {
                     logger.info("cookie", cookie.getEmail());

@@ -18,9 +18,12 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.app;
+package chronic.alert;
 
-import static chronic.app.AlertMailBuilder.formatFooter;
+import chronic.alert.AlertMailBuilder;
+import chronic.alert.AlertRecord;
+import chronic.app.ChronicApp;
+import static chronic.alert.AlertMailBuilder.formatFooter;
 import java.io.IOException;
 import java.util.Collection;
 import vellum.mail.Mailer;
@@ -77,7 +80,7 @@ public class ChronicMailMessenger {
         }
     }
 
-    void alert(Throwable t) {
+    public void alert(Throwable t) {
         logger.warn("alert throwable", t);
         StringBuilder builder = new StringBuilder();
         builder.append("<pre>\n");

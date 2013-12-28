@@ -20,6 +20,10 @@
  */
 package chronic.app;
 
+import chronic.alert.StatusRecord;
+import chronic.alert.StatusRecordChecker;
+import chronic.alert.ChronicMailMessenger;
+import chronic.alert.AlertRecord;
 import chronic.handler.AdminEnroll;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
@@ -272,8 +276,7 @@ public class ChronicApp {
                 long elapsed = alert.getTimestamp() - previousAlert.getTimestamp();
                 if (elapsed < properties.getAlertPeriod()) {
                     logger.warn("elapsed {}: {}", elapsed, previousAlert);
-                    previousAlert.ignoreCount++;
-                    previousAlert.ignoredAlert = alert;
+                    previousAlert.setIgnoredAlert(alert);
                 } else {
                     alertMap.put(status.getKey(), alert);
                     alertQueue.add(alert);

@@ -34,7 +34,7 @@ public class SubscriptionList implements ChronicHttpxHandler {
         }
         logger.info("subscriptions {}", subscriptions);
         List otherSubscriptions = new LinkedList();
-        if (httpx.app.getProperties().isAdmin(email)) {
+        if (app.getProperties().isAdmin(email)) {
             for (Subscription subscriber : es.listSubcriber()) {
                 logger.info("admin subscriber {}", subscriber);
                 if (!subscriber.getPerson().getEmail().equals(email)) {
@@ -42,7 +42,7 @@ public class SubscriptionList implements ChronicHttpxHandler {
                 }
             }
         } else if (httpx.getReferer().endsWith("/demo")) {
-            String adminEmail = httpx.app.getProperties().getAdminEmails().iterator().next();
+            String adminEmail = app.getProperties().getAdminEmails().iterator().next();
             for (Subscription subscriber : es.listSubscription(adminEmail)) {
                 logger.info("demo subscriber {}", subscriber);
                 subscriptions.add(subscriber);

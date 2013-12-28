@@ -7,8 +7,8 @@ import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
-import chronic.app.StatusRecord;
-import chronic.app.StatusRecordParser;
+import chronic.alert.StatusRecord;
+import chronic.alert.StatusRecordParser;
 import chronic.check.StatusCheck;
 import chronic.entity.Cert;
 import chronic.entity.Person;
@@ -44,7 +44,7 @@ public class Post implements ChronicHttpxHandler {
                 status.getLineList().add("INFO: Content length limit exceeded");
                 Topic topic = es.persistTopic(cert, status.getTopicLabel());
                 status.setTopic(topic);
-                httpx.app.getStatusQueue().add(status);
+                app.getStatusQueue().add(status);
                 cert.setEnabled(false);
                 throw new Exception("Content length limit exceeded: " + cert);
             }
@@ -80,7 +80,7 @@ public class Post implements ChronicHttpxHandler {
                         cert.getCommonName(), topic.getTopicLabel()));
             }
             es.commit();
-            httpx.app.getStatusQueue().add(status);
+            app.getStatusQueue().add(status);
             return new JMap(builder.toString());
         } catch (StorageException se) {
             se.printStackTrace(System.err);

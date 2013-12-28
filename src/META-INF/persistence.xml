@@ -13,8 +13,8 @@
       <property name="javax.persistence.jdbc.password" value="chronica"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.user" value="chronica"/>
+      <property name="eclipselink.logging.level" value="INFO"/>
       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-      <property name="eclipselink.logging.level" value="INFO"/>      
     </properties>
   </persistence-unit>
 </persistence>

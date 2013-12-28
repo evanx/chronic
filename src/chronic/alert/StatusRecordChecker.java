@@ -18,8 +18,9 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic.app;
+package chronic.alert;
 
+import chronic.alert.AlertRecord;
 import chronic.type.StatusType;
 import chronic.type.AlertType;
 import org.slf4j.Logger;

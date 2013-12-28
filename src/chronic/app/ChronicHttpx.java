@@ -8,6 +8,7 @@ import chronic.persona.PersonaInfo;
 import chronic.persona.PersonaVerifier;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
+import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httpserver.Httpx;
@@ -19,18 +20,25 @@ import vellum.jx.JMapException;
  */
 public class ChronicHttpx extends Httpx {
 
-    Logger logger = LoggerFactory.getLogger(ChronicHttpx.class);
+    static Logger logger = LoggerFactory.getLogger(ChronicHttpx.class);
 
-    public ChronicApp app;
-
+    ChronicApp app;
+    ChronicCookie cookie;
+    
     public ChronicHttpx(ChronicApp app, HttpExchange delegate) {
         super(delegate);
         this.app = app;
     }
 
+    public ChronicCookie getCookie() throws JMapException {
+        if (cookie == null && ChronicCookie.matches(getCookieMap())) {
+           cookie = new ChronicCookie(getCookieMap());
+        }
+        return cookie;
+    }
+    
     public String getEmail() throws JMapException, IOException, PersonaException {
-        if (ChronicCookie.matches(getCookieMap())) {
-            ChronicCookie cookie = new ChronicCookie(getCookieMap());
+        if (getCookie() != null) {
             if (cookie.getEmail() != null) {
                 if (app.properties.isTesting()) {
                     if (getReferer().endsWith("/mimic")
@@ -52,4 +60,23 @@ public class ChronicHttpx extends Httpx {
         setCookie(ChronicCookie.emptyMap(), ChronicCookie.MAX_AGE_MILLIS);
         throw new PersonaException("no verified email");
     }
+
+    public TimeZone getTimeZone() throws JMapException {
+        if (getCookie() != null) {
+            return getTimeZone(cookie.getTimezoneOffset());
+        }
+        return TimeZone.getDefault();
+    }
+            
+    public static TimeZone getTimeZone(int timeZoneOffset) {
+        String[] timeZoneIds = TimeZone.getAvailableIDs(timeZoneOffset);
+        logger.info("timeZoneIds {}", timeZoneIds);
+        if (timeZoneIds.length > 0) {
+            String timeZoneId = timeZoneIds[0];
+            return TimeZone.getTimeZone(timeZoneId);
+        }        
+        return TimeZone.getTimeZone(String.format("GMT%+03d", timeZoneOffset));
+    }
+    
+    
 }

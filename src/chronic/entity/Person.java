@@ -40,6 +40,9 @@ public class Person extends ComparableEntity implements PersonKeyed, Enabled, Se
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date logoutTime;
     
+    @Column(name = "tz")
+    String timeZoneId;
+    
     @Column()    
     boolean enabled = false;
 
@@ -106,7 +109,15 @@ public class Person extends ComparableEntity implements PersonKeyed, Enabled, Se
     public void setLogoutTime(Date logoutTime) {
         this.logoutTime = logoutTime;
     }
-        
+
+    public void setTimeZoneId(String timeZoneId) {
+        this.timeZoneId = timeZoneId;
+    }
+
+    public String getTimeZoneId() {
+        return timeZoneId;
+    }
+    
     public JMap getMap() {
         JMap map = new JMap();
         map.put("email", email);

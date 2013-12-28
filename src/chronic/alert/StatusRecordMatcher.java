@@ -20,7 +20,7 @@
  under the License.  
  */
 
-package chronic.app;
+package chronic.alert;
 
 import java.util.LinkedList;
 import java.util.List;

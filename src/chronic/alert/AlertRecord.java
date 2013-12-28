@@ -1,4 +1,4 @@
-package chronic.app;
+package chronic.alert;
 
 /*
  * Source https://github.com/evanx by @evanxsummers
@@ -25,16 +25,13 @@ package chronic.app;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.data.Millis;
 import vellum.data.Timestamped;
-import vellum.jx.JMap;
-import vellum.jx.JMapped;
 
 /**
  *
  * @author evan.summers
  */
-public class AlertRecord implements Timestamped, JMapped {
+public class AlertRecord implements Timestamped {
 
     static Logger logger = LoggerFactory.getLogger(AlertRecord.class);
     StatusRecord status;
@@ -69,7 +66,12 @@ public class AlertRecord implements Timestamped, JMapped {
         } 
         return status.getTimestamp();
     }    
-    
+
+    public void setIgnoredAlert(AlertRecord ignoredAlert) {
+        this.ignoredAlert = ignoredAlert;
+        ignoreCount++;
+    }
+        
     public StatusRecord getStatus() {
         return status;
     }
@@ -77,38 +79,7 @@ public class AlertRecord implements Timestamped, JMapped {
     public void setPrevious(StatusRecord previous) {
         this.previousStatus = previous;
     }
-
-    @Override
-    public JMap getMap() {
-        JMap map = getPartialMap();
-        putExtra(map);
-        return map;
-    }
-        
-    public JMap getPartialMap() {
-        AlertFormatter formatter = new AlertFormatter(status);
-        JMap map = new JMap();
-        map.put("orgDomain", status.cert.getOrgDomain());
-        map.put("orgUnit", status.cert.getOrgUnit());
-        map.put("commonName", status.cert.getCommonName());
-        map.put("from", status.from);
-        map.put("statusType", status.statusType);
-        map.put("alertType", status.alertType);
-        map.put("alertTypeLabel", formatter.formatAlertTypeLabel());
-        map.put("topicLabel", status.topicLabel);
-        map.put("timestamp", status.timestamp);
-        map.put("timestampLabel", Millis.formatTime(status.timestamp));
-        map.put("message", formatter.formatAlertTypeLabel());
-        logger.trace("map {}", map);
-        return map;
-    }
-
-    public void putExtra(JMap map) {
-        new AlertWebContentBuilder().build(this);
-        map.put("htmlContent", htmlContent);
-        map.put("preContent", preContent);
-    }
-
+    
     @Override
     public String toString() {
         return status.toString();

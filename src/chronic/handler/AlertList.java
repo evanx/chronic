@@ -5,11 +5,13 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
-import chronic.app.AlertRecord;
+import chronic.alert.AlertRecord;
+import chronic.alert.AlertRecordMapper;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.TimestampedComparator;
@@ -29,15 +31,17 @@ public class AlertList implements ChronicHttpxHandler {
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
         String email = httpx.getEmail();
+        TimeZone timeZone = httpx.getTimeZone();
         List alerts = new LinkedList();
-        for (AlertRecord alert : Lists.sortedLinkedList(httpx.app.getAlertMap().values(),
+        for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {            
+            AlertRecordMapper mapper = new AlertRecordMapper(alert, timeZone);
             if (es.isSubscription(alert.getStatus().getTopic(), email)) {
-                alerts.add(alert.getMap());
+                alerts.add(mapper.getExtendedMap());
             } else if (httpx.getReferer().endsWith("/demo")) {
-                alerts.add(alert.getPartialMap());
-            } else if (httpx.app.getProperties().isAdmin(email)) {
-                alerts.add(alert.getMap());
+                alerts.add(mapper.getBasicMap());
+            } else if (app.getProperties().isAdmin(email)) {
+                alerts.add(mapper.getExtendedMap());
             }
         }
         return JMaps.mapValue("alerts", alerts);

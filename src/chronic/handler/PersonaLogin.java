@@ -25,20 +25,20 @@ public class PersonaLogin implements ChronicHttpxHandler {
 
     static Logger logger = LoggerFactory.getLogger(PersonaLogin.class);
     String assertion;
-    String timezoneOffset;
+    int timezoneOffset;
     ChronicCookie cookie;
     
     @Override
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
         JMap map = httpx.parseJsonMap();
-        timezoneOffset = map.getString("timezoneOffset");
+        timezoneOffset = map.getInt("timezoneOffset");
         logger.trace("timezoneOffset {}", timezoneOffset);
         assertion = map.getString("assertion");
         if (ChronicCookie.matches(httpx.getCookieMap())) {
             cookie = new ChronicCookie(httpx.getCookieMap());
         }
-        PersonaInfo userInfo = new PersonaVerifier(httpx.app, cookie).getPersonaInfo(
+        PersonaInfo userInfo = new PersonaVerifier(app, cookie).getPersonaInfo(
                 httpx.getHostUrl(), assertion);
         logger.trace("persona {}", userInfo);
         String email = userInfo.getEmail();
@@ -54,9 +54,10 @@ public class PersonaLogin implements ChronicHttpxHandler {
             person.setLoginTime(new Date());
         }
         cookie = new ChronicCookie(person.getEmail(), person.getLabel(),
-                person.getLoginTime().getTime(), assertion);
+                person.getLoginTime().getTime(), timezoneOffset, assertion);
         JMap cookieMap = cookie.toMap();
         logger.trace("cookie {}", cookieMap);
+        cookieMap.put("timezoneOffset", timezoneOffset);
         httpx.setCookie(cookieMap, ChronicCookie.MAX_AGE_MILLIS);
         cookieMap.put("demo", httpx.getReferer().endsWith("/demo"));
         return cookieMap;
