@@ -165,10 +165,19 @@ public class ChronicApp {
         }
     }
 
+    public LinkedBlockingQueue<StatusRecord> getStatusQueue() {
+        return statusQueue;
+
+    }
+    
     ChronicEntityService newEntityService() {
         return new ChronicEntityService(this);
     }
-            
+
+    public Map<TopicMetricKey, MetricSeries> getSeriesMap() {
+        return seriesMap;
+    }
+        
     class AlertThread extends Thread {
 
         @Override
@@ -193,11 +202,6 @@ public class ChronicApp {
         }
     }
 
-    public LinkedBlockingQueue<StatusRecord> getStatusQueue() {
-        return statusQueue;
-
-    }
-
     class StatusThread extends Thread {
 
         @Override
@@ -209,7 +213,8 @@ public class ChronicApp {
                     } else {
                         for (String metricLabel : status.getMetricMap().keySet()) {
                             MetricValue value = status.getMetricMap().get(metricLabel);                            
-                            if (value != null) {
+                            logger.info("series {} {}", metricLabel, value);
+                            if (value != null && value.getValue() != null) {
                                 TopicMetricKey key = new TopicMetricKey(status.getTopic().getId(), metricLabel);
                                 MetricSeries series = seriesMap.get(key);
                                 if (series == null) {

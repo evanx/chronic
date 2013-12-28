@@ -52,9 +52,7 @@ public class Post implements ChronicHttpxHandler {
             httpx.getDelegate().getRequestBody().read(content);
             String contentString = new String(content);
             logger.trace("content {}", contentString);
-            status = new StatusRecordParser().parse(cert,
-                    httpx.getRequestHeaders(),
-                    contentString);
+            status = new StatusRecordParser().parse(cert, httpx.getRequestHeaders(), contentString);
             logger.debug("status {}", status);
             Topic topic = es.persistTopic(cert, status.getTopicLabel());
             status.setTopic(topic);

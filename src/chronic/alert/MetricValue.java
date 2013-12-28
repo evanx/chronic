@@ -20,6 +20,8 @@
  */
 package chronic.alert;
 
+import vellum.util.Args;
+
 /**
  *
  * @author evan.summers
@@ -35,7 +37,14 @@ public class MetricValue {
         this.value = value;
     }
 
-    public float getValue() {
+    public Float getValue() {
         return value;
     }        
+
+    @Override
+    public String toString() {
+        return Args.format(value);
+    }
+    
+    
 }

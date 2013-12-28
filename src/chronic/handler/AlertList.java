@@ -36,7 +36,7 @@ public class AlertList implements ChronicHttpxHandler {
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {            
             AlertRecordMapper mapper = new AlertRecordMapper(alert, timeZone);
-            if (es.isSubscription(alert.getStatus().getTopic(), email)) {
+            if (es.isSubscription(alert.getStatus().getTopic().getId(), email)) {
                 alerts.add(mapper.getExtendedMap());
             } else if (httpx.getReferer().endsWith("/demo")) {
                 alerts.add(mapper.getBasicMap());

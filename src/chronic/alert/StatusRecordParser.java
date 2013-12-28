@@ -69,9 +69,7 @@ public class StatusRecordParser {
             } else {
                 inHeader = false;
             }
-            if (nagiosStatus) {
-                parseLineNagiosStatus(line);
-            }
+            parseLineNagiosStatus(line);
             if (!HtmlChecker.sanitary(line)) {
                 logger.warn("omit not sanitary: {}", line);
             } else {
@@ -83,7 +81,7 @@ public class StatusRecordParser {
     }
 
     private void parseHeader(String header, List<String> strings) {
-        logger.trace("parseHeader {} {}", header, strings.toString());
+        logger.info("parseHeader {} {}", header, strings.toString());
         for (String string : strings) {
             parseHeader(header, string);
         }
@@ -169,6 +167,7 @@ public class StatusRecordParser {
     private boolean parseLineNagiosStatus(String line) {
         Matcher matcher = StatusRecordPatterns.NAGIOS.matcher(line);
         if (matcher.find()) {
+            logger.debug("parseNagiosStatus {} {}", matcher.group(1), matcher.group(2));
             String service = matcher.group(1).trim();
             if (!service.isEmpty()) {
                 record.setService(service);
@@ -184,8 +183,9 @@ public class StatusRecordParser {
                     }
                 }
             }
-            parseStatusType(matcher.group(2));
-            logger.debug("parseNagiosStatus {} {}", matcher.group(1), matcher.group(2));
+            if (nagiosStatus) {
+                parseStatusType(matcher.group(2));
+            }
             return true;
         }
         return false;

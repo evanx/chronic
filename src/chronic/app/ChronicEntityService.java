@@ -99,6 +99,10 @@ public class ChronicEntityService {
         em.persist(entity);
     }
 
+    public Topic findTopic(Long topicId) {
+        return em.find(Topic.class, topicId);
+    }
+    
     public Person findPerson(String key) throws StorageException {
         List<Person> list = list(new PersonKey(key));
         if (list.isEmpty()) {
@@ -173,9 +177,8 @@ public class ChronicEntityService {
         return list.get(0);
     }
 
-    public boolean isSubscription(Topic topic, String email) throws StorageException {
-        Person person = em.find(Person.class, email);
-        return isSubscription(topic, person);
+    public boolean isSubscription(long topicId, String email) throws StorageException {
+        return selectSubscription(topicId, email).isEmpty();
     }
 
     public boolean isSubscription(Topic topic, Person person) throws StorageException {

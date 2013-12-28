@@ -20,6 +20,7 @@
  */
 package chronic.alert;
 
+import java.util.Arrays;
 import vellum.jx.JMap;
 
 /**
@@ -30,8 +31,6 @@ public class MetricSeries {
 
     int capacity;
     int size = 0;
-    int head = 0;
-    int tail = 0;
     byte[] values;
 
     transient float ceiling;
@@ -45,19 +44,12 @@ public class MetricSeries {
         if (Math.abs(value) > ceiling) {
             setCeiling(Math.abs(value));
         }
-        values[tail] = getNormalizedValue(value);
-        if (head == tail) {
-            head++;
+        for (int i = 0; i < capacity - 1; i++) {
+            values[i] = values[i+1];
         }
-        tail++;
+        values[capacity - 1] = getNormalizedValue(value);
         if (size < capacity) {
             size++;
-        }
-        if (tail == capacity) {
-            tail = 0;
-        }
-        if (head == capacity) {
-            head = 0;
         }
     }
 
@@ -108,6 +100,7 @@ public class MetricSeries {
 
     public JMap getMap() {
         JMap map = new JMap();
+        map.put("data", Arrays.copyOfRange(values, values.length - size, values.length));
         return map;
     }
 
