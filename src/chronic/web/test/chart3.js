@@ -24,7 +24,7 @@ app.controller("angCtrl", function($scope, $http) {
 
    $scope.drawChart = function() {
       $scope.chart = [{
-            labels: ["1", "2", "3", "4"],
+            labels: ["1", "2", "3", "4", "5"],
             datasets: [
                {
                   fillColor: "rgba(151,187,205,0)",

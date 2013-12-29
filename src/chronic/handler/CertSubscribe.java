@@ -4,7 +4,7 @@
 package chronic.handler;
 
 import chronic.app.ChronicHttpx;
-import chronic.api.ChronicHttpxHandler;
+import chronic.api.ChronicPlainHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
@@ -13,29 +13,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Emails;
 import vellum.enumtype.DelimiterType;
-import vellum.jx.JMap;
 import vellum.util.Strings;
 
 /**
  *
  * @author evan.summers
  */
-public class CertSubscribe implements ChronicHttpxHandler {
+public class CertSubscribe implements ChronicPlainHttpxHandler {
     
     static Logger logger = LoggerFactory.getLogger(CertSubscribe.class);
 
     @Override
-    public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
+    public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
         Cert cert = es.persistCert(httpx);
         String[] emails = Strings.split(httpx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {
             if (!Emails.matchesEmail(email)) {
-                return new JMap(String.format("ERROR: invalid email: %s\n", email));
+                return "ERROR: invalid email: " + email;
             } else {
                 es.persistCertSubscription(cert, email);
             }
         }
-        return new JMap(String.format("OK: %s: %s\n", cert.getCommonName(), Arrays.toString(emails)));
+        return "OK: " + Arrays.toString(emails);
     }
 }

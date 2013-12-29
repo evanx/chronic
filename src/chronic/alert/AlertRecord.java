@@ -43,6 +43,9 @@ public class AlertRecord implements Timestamped {
     int ignoreCount;
     AlertRecord ignoredAlert;
     StatusRecord alertedStatus;
+    boolean polled;
+    long notificationTimestamp;
+    long polledTimestamp;
     
     public AlertRecord(StatusRecord status) {
         this.status = status;
@@ -88,4 +91,13 @@ public class AlertRecord implements Timestamped {
     public void setAlertedStatus(StatusRecord alertedStatus) {
         this.alertedStatus = alertedStatus;
     }    
+
+    public void setPolled(boolean polled) {
+        this.polled = polled;
+    }
+
+    public boolean isPolled() {
+        return polled;
+    }
+   
 }

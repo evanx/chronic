@@ -26,8 +26,10 @@ import chronic.alert.ChronicMailMessenger;
 import chronic.alert.AlertRecord;
 import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
+import chronic.api.ChronicPlainHttpxHandler;
 import chronic.entitykey.TopicMetricKey;
 import chronic.handler.AdminEnroll;
+import chronic.handler.AlertPoll;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
 import chronic.type.AlertType;
@@ -71,7 +73,6 @@ public class ChronicApp {
     SynchronizedCapacityDeque<AlertRecord> alertDeque = new SynchronizedCapacityDeque(100);
     LinkedBlockingQueue<AlertRecord> alertQueue = new LinkedBlockingQueue(100);
     LinkedBlockingQueue<StatusRecord> statusQueue = new LinkedBlockingQueue(100);
-    Map<String, Class> handlerClasses = new HashMap();
     DataSource dataSource = new DataSource();
     EntityManagerFactory emf;
     boolean initalized = false;
@@ -95,9 +96,6 @@ public class ChronicApp {
         appServer.start(properties.getAppServer(),
                 new ChronicTrustManager(this),
                 new ChronicHttpService(this));
-        handlerClasses.put("/post", Post.class);
-        handlerClasses.put("/enroll", AdminEnroll.class);
-        handlerClasses.put("/subscribe", CertSubscribe.class);
         messenger.init();
         initThread.start();
     }
@@ -321,10 +319,6 @@ public class ChronicApp {
 
     public Map<ComparableTuple, AlertRecord> getAlertMap() {
         return alertMap;
-    }
-
-    public Map<String, Class> getHandlerClasses() {
-        return handlerClasses;
     }
 
     public static void main(String[] args) throws Exception {

@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.httpserver.HttpServerProperties;
-import vellum.httpserver.Httpx;
 import vellum.util.Args;
 import vellum.util.ExtendedProperties;
 import vellum.util.Streams;

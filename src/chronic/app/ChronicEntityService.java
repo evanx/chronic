@@ -31,6 +31,7 @@ import chronic.entitykey.CertTopicKey;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.PersonKey;
 import chronic.entitytype.OrgRoleType;
+import chronic.handler.CertInfo;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -365,6 +366,11 @@ public class ChronicEntityService {
         return persistCert(orgDomain, orgUnit, commonName, remoteHostAddress, encoded);
     }
 
+    public Cert persistCert(CertInfo certInfo) throws StorageException, CertificateException {
+        return persistCert(certInfo.getOrgDomain(), certInfo.getOrgUnit(), certInfo.getCommonName(), 
+                certInfo.getRemoteHostAddress(), certInfo.getEncoded());
+    }
+    
     public Cert persistCert(String orgDomain, String orgUnit, String commonName, String remoteHostAddress,
             String encoded) throws StorageException, CertificateException {
         boolean enabled = false;
