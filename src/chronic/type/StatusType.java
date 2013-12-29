@@ -22,6 +22,10 @@ public enum StatusType {
     public boolean isStatusAlertable() {
         return ordinal() <= CRITICAL.ordinal();
     }
+
+    public boolean isStatusKnown() {
+        return ordinal() <= UNKNOWN.ordinal();
+    }
     
     public String getLabel() {
         return Bundle.get(StatusType.class).getString(name());

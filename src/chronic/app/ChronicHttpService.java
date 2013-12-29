@@ -8,6 +8,7 @@ import chronic.api.ChronicHttpxHandler;
 import chronic.api.ChronicPlainHttpxHandler;
 import chronic.handler.AdminEnroll;
 import chronic.handler.AlertPoll;
+import chronic.handler.PushRegister;
 import chronic.handler.CertSubscribe;
 import chronic.handler.Post;
 import com.sun.net.httpserver.HttpExchange;
@@ -35,6 +36,7 @@ public class ChronicHttpService implements HttpHandler {
     public ChronicHttpService(ChronicApp app) {
         this.app = app;
         plainHandlerClasses.put("/post", Post.class);
+        plainHandlerClasses.put("/push", PushRegister.class);
         plainHandlerClasses.put("/enroll", AdminEnroll.class);
         plainHandlerClasses.put("/subscribe", CertSubscribe.class);
         plainHandlerClasses.put("/poll", AlertPoll.class);        

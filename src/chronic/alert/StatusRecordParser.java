@@ -92,6 +92,8 @@ public class StatusRecordParser {
             parseAlertType(value);
         } else if (header.equals("AlertFormat")) {
             parseAlertFormatType(value);
+        } else if (header.equals("AlertPush")) {
+            parseAlertPushUrl(value);
         } else if (header.equals("Check-tcp")) {
             parseTcp(value);
         } else if (header.equals("Check-https")) {
@@ -130,6 +132,14 @@ public class StatusRecordParser {
         }
     }
 
+    private void parseAlertPushUrl(String string) {
+        try {
+            record.setAlertPushUrl(string);
+        } catch (Exception e) {
+            logger.warn("parseAlertFormatType {}: {}", string, e.getMessage());
+        }
+    }
+    
     private void parseAlertType(String string) {
         logger.trace("parseAlertType {}", string);
         try {

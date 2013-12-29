@@ -426,8 +426,18 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>What notification mechanisms are supported?</b>
-          <br>Currently only email. However, we will support mobile push notifications, e.g. where you can use an Jabber IM client app to receive alerts on your mobile device from our server.
+          <br>Primarily, email. Also "push" notification via HTTPS post to a URL you can register. (Naturally this URL should require client auth and trust our SSL cert, and allow our IP number to connect.) This could provide an SMS gateway on your account. 
+          </p>
+        <pre>$ sh chronica.sh push https://myserver:8443/myapp</pre>
+        <p><b>What about mobile push notifications?</b>
+          <br>We want to support mobile push notifications, perhaps via our own app e.g. using PhoneGap aka Apache Cordova with its PushPlugin. Also Facebook, Google+ and Twitter integration for messaging via those platforms. Perhaps even a Jabber server to which you hook up a mobile IM app e.g. Xabber.
         </p>
+        <p><b>What other notification mechanisms are already supported?</b>
+          <br>You can poll our server via HTTPS for your alerts. 
+        </p>
+        <pre>$ sh chronica.sh poll
+Time: 16:02:54
+Subject: root@hostx checksys CRITICAL</pre>
 
         <p><b>What technologies are used?</b>
           <br>AngularJS for the front-end, making JSON requests to a Java back-end. 
@@ -463,8 +473,8 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
         <pre>$ sh chronica.sh update
 curl -s https://chronica.co/sample/chronica.sh | sha1sum
-curl -s https://chronica.co/sample/chronica.sh.sha1sum.txt
-curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1sum.txt</pre>
+Verifying signature using ~/.chronica/etc/chronica.pub.pem
+OK: verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt</pre>
 
         <p><b>What API does it use?</b>
           <br>Text document with email-style headers, submitted via HTTPS POST. (HTTP headers are parsed as well). This means we can pipe the output of a shell script to <tt>curl</tt>, to post to <tt>https://secure.chronica.co</tt>. The content typically contains headers such as "Topic" and "Subscribe." Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 

@@ -63,6 +63,7 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
     String username;
     String hostname;
     String service;
+    String alertPushUrl;
     Set<String> subscribers = new HashSet();
     Map<String, MetricValue> metricMap = new HashMap();
     
@@ -185,6 +186,14 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         return periodMillis;
     }
 
+    public void setAlertPushUrl(String alertPushUrl) {
+        this.alertPushUrl = alertPushUrl;
+    }
+
+    public String getAlertPushUrl() {
+        return alertPushUrl;
+    }
+    
     public List<String> getLineList() {
         return lineList;
     }

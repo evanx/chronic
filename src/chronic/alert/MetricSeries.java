@@ -21,6 +21,7 @@
 package chronic.alert;
 
 import java.util.Arrays;
+import vellum.data.Millis;
 import vellum.jx.JMap;
 
 /**
@@ -32,17 +33,20 @@ public class MetricSeries {
     int capacity;
     int size = 0;
     byte[] values;
-
+    byte latest;
     transient float ceiling;
 
     public MetricSeries(int capacity) {
         this.capacity = (byte) capacity;
         values = new byte[capacity];
+        latest = (byte) ((System.currentTimeMillis() % Millis.fromHours(1))/Millis.fromMinutes(1));
     }
 
     public void add(float value) {
-        if (Math.abs(value) > ceiling) {
-            setCeiling(Math.abs(value));
+        if (size == 0) {
+            setCeiling(Math.abs(value)*3/2);
+        } else if (Math.abs(value) > ceiling) {
+            setCeiling(Math.abs(value)*3/2);
         }
         for (int i = 0; i < capacity - 1; i++) {
             values[i] = values[i+1];
@@ -100,14 +104,23 @@ public class MetricSeries {
 
     public JMap getMap() {
         JMap map = new JMap();
+        String[] labels = new String[size];
+        int index = latest;
+        for (int i = size - 1; i >= 0; i--) {
+            labels[i] = String.format("%02d", index);
+            if (index == 0) {
+                index = 59;
+            } else {
+                index--;
+            }
+        }
         map.put("data", Arrays.copyOfRange(values, values.length - size, values.length));
+        map.put("labels", labels);
         return map;
     }
 
     @Override
     public String toString() {
         return String.format("size %d, average %f", size(), avg());
-    }
-    
-    
+    }       
 }

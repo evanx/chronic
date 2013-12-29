@@ -512,6 +512,14 @@ c0enroll() {
   echo "$admins" | c1curl enroll 
 }
 
+c0poll() {
+  echo "" | c1curl poll 
+}
+
+c1push() {
+  echo "$1" | c1curl push
+}
+
 c0reset() {
   rm -f etc/cert.pem etc/key.pem etc/server.pem
   c0ensureKey

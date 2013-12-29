@@ -130,7 +130,7 @@ public class AlertMailBuilder {
         builder.append(String.format(string, args));
     }
 
-    public String formatHeading(StatusRecord status) {
+    public static String formatHeading(StatusRecord status) {
         logger.info("formatSubject {} {}", status.getStatusType());
         if (status.isStatusType()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {

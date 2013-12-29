@@ -5,6 +5,7 @@
 package chronic.type;
 
 import chronic.bundle.Bundle;
+import static chronic.type.StatusType.CRITICAL;
 import vellum.type.Labelled;
 
 /**
@@ -12,18 +13,20 @@ import vellum.type.Labelled;
  * @author evan.summers
  */
 public enum AlertType implements Labelled {
+    STATUS_CHANGED,
+    CONTENT_CHANGED,
     NEVER,
     WARNING,
     ERROR,
     PATTERN,
-    ELAPSED,
-    STATUS_CHANGED,
-    CONTENT_CHANGED,
     SERVER_RESTARTED,
     INITIAL,
     ONCE,
     ALWAYS;
     
+    public boolean isPollable() {
+        return ordinal() <= CONTENT_CHANGED.ordinal();
+    }
     
     public static AlertType parse(String string) {
         for (AlertType type : values()) {
