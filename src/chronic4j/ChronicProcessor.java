@@ -20,14 +20,13 @@
  */
 package chronic4j;
 
-import java.util.Map;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
  *
  * @author evan.summers
  */
-public interface ChronicCounter {
+public interface ChronicProcessor {
     public void append(LoggingEvent le);
-    public Map getMap();
+    public String buildReport();
 }

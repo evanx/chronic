@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -50,18 +48,19 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     static Logger logger = LoggerFactory.getLogger(ChronicAppender.class);
 
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private final ArrayDeque<LoggingEvent> deque = new ArrayDeque();
     private final long period = TimeUnit.SECONDS.toMillis(60);
     private final long initialDelay = period;
     private String postAddress = "https://chronica.co/post";
-    private final int postLimit = 2000;
-    private final ArrayDeque<LoggingEvent> deque = new ArrayDeque();
+    private final int maximumPostLength = 2000;
     private boolean initialized;
     private boolean running;
-    private long sampleTimestamp;
+    private long runTimestamp;
     private String keyStoreLocation = System.getProperty("user.home") + "/.chronica/etc/keystore.jks";
     private char[] sslPass = "chronica".toCharArray();
     SSLContext sslContext;
-
+    ChronicProcessor counter = new DefaultProcessor();
+    
     public ChronicAppender() {
     }
 
@@ -79,6 +78,10 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     public void setPass(String pass) {
         this.sslPass = pass.toCharArray();
     }
+
+    public void setCounterClass(String className) throws Exception {
+        counter = (ChronicProcessor) Class.forName(className).newInstance();
+    }
     
     @Override
     protected void append(LoggingEvent le) {
@@ -89,7 +92,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
             initialize();
         }
         if (running && le.getLevel().toInt() >= Priority.INFO_INT) {
-            if (sampleTimestamp > 0 && System.currentTimeMillis() - sampleTimestamp > period * 2) {
+            if (runTimestamp > 0 && System.currentTimeMillis() - runTimestamp > period * 2) {
                 running = false;
                 synchronized (deque) {
                     deque.clear();
@@ -132,17 +135,18 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     @Override
     public synchronized void run() {
         logger.info("run {} {}", deque.size(), postAddress);
-        sampleTimestamp = System.currentTimeMillis();
+        runTimestamp = System.currentTimeMillis();
         Deque<LoggingEvent> snapshot;
         synchronized (deque) {
             snapshot = deque.clone();
             deque.clear();
         }
         StringBuilder builder = new StringBuilder();
+        builder.append(counter.buildReport());
         builder.append(String.format("deque size: %d\n", deque.size()));
         while (snapshot.peek() != null) {
             String string = snapshot.poll().toString();
-            if (builder.length() + string.length() + 1 >= postLimit) {
+            if (builder.length() + string.length() + 1 >= maximumPostLength) {
                 break;
             }
             builder.append(string);
