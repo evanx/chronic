@@ -20,7 +20,6 @@
  */
 package chronic.alert;
 
-import java.util.Arrays;
 import vellum.data.Millis;
 import vellum.jx.JMap;
 
@@ -33,16 +32,16 @@ public class MetricSeries {
     int capacity;
     int size = 0;
     byte[] values;
-    byte latest;
+    long timestamp;
     transient float ceiling;
 
     public MetricSeries(int capacity) {
         this.capacity = (byte) capacity;
         values = new byte[capacity];
-        latest = (byte) ((System.currentTimeMillis() % Millis.fromHours(1))/Millis.fromMinutes(1));
     }
 
-    public void add(float value) {
+    public synchronized void add(long timestamp, float value) {
+        this.timestamp = timestamp;
         if (size == 0) {
             setCeiling(Math.abs(value)*3/2);
         } else if (Math.abs(value) > ceiling) {
@@ -61,6 +60,10 @@ public class MetricSeries {
         return size;
     }
 
+    public float getFloatValue(int value) {
+        return value * ceiling / Byte.MAX_VALUE;
+    }
+    
     public byte getNormalizedValue(float floatValue) {
         if (floatValue > 0) {
             int intValue = (int) (floatValue * Byte.MAX_VALUE / ceiling);
@@ -98,29 +101,37 @@ public class MetricSeries {
         return capacity;
     }
 
-    public float getCeiling() {
-        return ceiling;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public JMap getMap() {
+    public int getSize() {
+        return size;
+    }
+    
+    public synchronized JMap getMinutelyMap() {
         JMap map = new JMap();
+        Float[] floatValues = new Float[size];
         String[] labels = new String[size];
-        int index = latest;
-        for (int i = size - 1; i >= 0; i--) {
-            labels[i] = String.format("%02d", index);
-            if (index == 0) {
-                index = 59;
+        int minute = Millis.timestampMinutes(timestamp);
+        for (int i = 1; i <= size; i++) {
+            floatValues[size - i] = getFloatValue(values[capacity - i]);
+            if (minute  == 0) {
+                labels[size - i] = "'";
+            } else if (minute % 5 == 0) {
+                labels[size - i] = String.format("%02d", minute);
             } else {
-                index--;
+                labels[size - i] = "";                
             }
+            minute = (59 + minute) % 60;
         }
-        map.put("data", Arrays.copyOfRange(values, values.length - size, values.length));
+        map.put("data", floatValues);
         map.put("labels", labels);
         return map;
     }
 
     @Override
     public String toString() {
-        return String.format("size %d, average %f", size(), avg());
+        return String.format("size %d, average %f, timestamp %s", size(), avg(), Millis.formatTime(timestamp));
     }       
 }

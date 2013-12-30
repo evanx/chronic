@@ -437,6 +437,7 @@ c0ensurePubKey() {
     curl -s https://chronica.co/sample/chronica.pub.pem -o etc/chronica.pub.pem
     echo 'Fetched public key: https://chronica.co/sample/chronica.pub.pem'
     cat etc/chronica.pub.pem
+    chmod 600 etc/chronica.pub.pem
     ls etc/chronica.pub.pem
   fi 
 }
@@ -449,6 +450,7 @@ c0ensureKey() {
       -subj "/CN=$commonName/O=$orgDomain/OU=$orgUnit"
     echo 'Generated client certficate:'
     openssl x509 -text -in etc/cert.pem | grep CN
+    chmod 600 etc/cert.pem
     ls etc/cert.pem
   fi
 }
@@ -462,6 +464,7 @@ c0ensureCert() {
         sed -n -e '/BEGIN CERT/,/END CERT/p' > etc/server.pem
       echo "Fetched server certificate:"
       openssl x509 -text -in etc/server.pem | grep 'CN='
+      chown 600 etc/server.pem
       ls etc/server.pem
     fi
   fi
@@ -470,7 +473,6 @@ c0ensureCert() {
 c0ensurePubKey
 c0ensureKey
 c0ensureCert
-
 
 ### java keystore for chronica log4j appender connection
 
@@ -481,12 +483,14 @@ c0ensureKeyStore() {
           -dname "CN=$commonName, O=$orgDomain, OU=$orgUnit"
     echo "Generated keystore:"
     keytool -keystore etc/keystore.jks -storepass chronica -alias chronica4j -exportcert -rfc | openssl x509 -text | grep 'CN='
+    chmod 600 etc/keystore.jks
   fi
   if [ ! -f etc/truststore.jks ]
   then
     keytool -keystore etc/truststore.jks -storepass chronica -alias chronica -importcert -file etc/server.pem -noprompt
     echo "Created truststore:"
     keytool -keystore etc/truststore.jks -storepass chronica -alias chronica -exportcert -rfc | openssl x509 -text | grep 'CN='
+    chmod 600 etc/truststore.jks
   fi
 }
 
@@ -524,6 +528,7 @@ c0reset() {
   rm -f etc/cert.pem etc/key.pem etc/server.pem
   c0ensureKey
   c0ensureCert
+  chmod 600 etc/cert.pem etc/key.pem etc/server.pem
 }
 
 c0post() {

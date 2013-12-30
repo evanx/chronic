@@ -44,8 +44,9 @@ public class ChronicHttpService implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        logger.info("handle");
         String path = httpExchange.getRequestURI().getPath();
-        logger.info("handle {}", path);
+        logger.trace("handle {}", path);
         try {
             Class<? extends ChronicPlainHttpxHandler> handlerClass = plainHandlerClasses.get(path);
             logger.trace("handlerClass {} {}", path, handlerClass);

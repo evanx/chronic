@@ -26,15 +26,9 @@ import chronic.alert.ChronicMailMessenger;
 import chronic.alert.AlertRecord;
 import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
-import chronic.api.ChronicPlainHttpxHandler;
 import chronic.entitykey.TopicMetricKey;
-import chronic.handler.AdminEnroll;
-import chronic.handler.AlertPoll;
-import chronic.handler.CertSubscribe;
-import chronic.handler.Post;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -88,14 +82,11 @@ public class ChronicApp {
     public void init() throws Exception {
         properties.init();
         logger.info("properties {}", properties);
-        webServer.start(properties.getWebServer(),
-                new ChronicTrustManager(this),
-                new ChronicHttpService(this));
-        httpRedirectServer.start(properties.getHttpRedirectServer(),
-                new RedirectHttpsHandler());
-        appServer.start(properties.getAppServer(),
-                new ChronicTrustManager(this),
-                new ChronicHttpService(this));
+        ChronicTrustManager trustManager = new ChronicTrustManager(this);
+        ChronicHttpService httpService = new ChronicHttpService(this);
+        webServer.start(properties.getWebServer(), trustManager, httpService);
+        httpRedirectServer.start(properties.getHttpRedirectServer(), new RedirectHttpsHandler());
+        appServer.start(properties.getAppServer(), trustManager, httpService);
         messenger.init();
         initThread.start();
     }
@@ -216,10 +207,10 @@ public class ChronicApp {
                                 TopicMetricKey key = new TopicMetricKey(status.getTopic().getId(), metricLabel);
                                 MetricSeries series = seriesMap.get(key);
                                 if (series == null) {
-                                    series = new MetricSeries(120);
+                                    series = new MetricSeries(30);
                                     seriesMap.put(key, series);
                                 }
-                                series.add(value.getValue());
+                                series.add(System.currentTimeMillis(), value.getValue());
                                 logger.info("series {} {}", metricLabel, series);
                             }                            
                         }

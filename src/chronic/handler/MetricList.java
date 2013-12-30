@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.data.Millis;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
 
@@ -33,16 +34,20 @@ public class MetricList implements ChronicHttpxHandler {
         List metrics = new LinkedList();
         for (TopicMetricKey key : app.getSeriesMap().keySet()) {
             MetricSeries series = app.getSeriesMap().get(key);
-            JMap map = series.getMap();
-            Topic topic = es.findTopic(key.getTopicId());
-            map.put("topicLabel", topic.getTopicLabel());
-            map.put("metricLabel", key.getMetricLabel());
-            if (es.isSubscription(key.getTopicId(), email)) {
-            } else if (httpx.getReferer().endsWith("/demo")) {
-            } else if (app.getProperties().isAdmin(email)) {
+            logger.info("series {}", series.toString());
+            if (System.currentTimeMillis() - series.getTimestamp() < Millis.fromSeconds(90) && series.getSize() > 5) {
+                JMap map = series.getMinutelyMap();
+                Topic topic = es.findTopic(key.getTopicId());
+                map.put("topicLabel", topic.getTopicLabel());
+                map.put("metricLabel", key.getMetricLabel());
+                if (es.isSubscription(key.getTopicId(), email)) {
+                } else if (httpx.getReferer().endsWith("/demo")) {
+                } else if (app.getProperties().isAdmin(email)) {
+                }
+                metrics.add(map);
             }
-            metrics.add(map);
         }
+        logger.info("metrics {}", metrics);
         return JMaps.mapValue("metrics", metrics);
     }
 }

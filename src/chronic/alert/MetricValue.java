@@ -33,6 +33,10 @@ public class MetricValue {
     public MetricValue() {        
     }
 
+    public MetricValue(Float value) {
+        this.value = value;
+    }
+    
     public void setValue(float value) {
         this.value = value;
     }

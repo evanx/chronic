@@ -1,5 +1,5 @@
 
-var app = angular.module("app", ['ngSanitize']);
+var app = angular.module("app", ['ngSanitize', 'angles']);
 
 app.factory("personaService", ["$http", "$q", function($http, $q) {
       return {
@@ -138,7 +138,6 @@ app.controller("alertsController", ["$scope", "$http",
          $scope.changeView("alerts");
       });
       $scope.$on("changeView", function(event, view) {
-         console.log("alerts changeView", view);
          if (view === "alerts") {
             $scope.alertsList();
          } else {
@@ -211,7 +210,6 @@ app.controller("topicsController", ["$scope", "$http",
          console.log("selected", $scope.selected);
       };
       $scope.$on("changeView", function(event, view) {
-         console.log("topics changeView", view);
          if (view === "topics") {
             $scope.topicsList();
          } else {
@@ -285,7 +283,6 @@ app.controller("subscriptionsController", ["$scope", "$http",
          console.log("selected", $scope.selected);
       };
       $scope.$on("changeView", function(event, view) {
-         console.log("subscriptions changeView", view);
          if (view === "subscriptions") {
             $scope.subscriptionsList();
          } else {
@@ -347,7 +344,6 @@ app.controller("rolesController", ["$scope", "$http",
          console.log("selected", $scope.selected);
       };
       $scope.$on("changeView", function(event, view) {
-         console.log("roles changeView", view);
          if (view === "roles") {
             $scope.rolesList();
          } else {
@@ -422,7 +418,6 @@ app.controller("certsController", ["$scope", "$http",
          });
       };
       $scope.$on("changeView", function(event, view) {
-         console.log("certs changeView", view);
          if (view === "certs") {
             $scope.certsList();
          } else {
@@ -431,3 +426,70 @@ app.controller("certsController", ["$scope", "$http",
          }
       });
    }]);
+
+app.controller("chartController", function($scope, $http) {
+
+   $scope.metricList = function() {
+      console.log("metricList");
+      $scope.charts = undefined;
+      $scope.metrics = undefined;
+      $scope.selected = undefined;
+      $scope.loading = true;
+      $http.post("/chronicapp/metricList", {
+      }).then(function(response) {
+         $scope.loading = false;
+         $scope.charts = undefined;
+         if (response.data && response.data.metrics) {
+            console.log("metrics", response.data.metrics);
+            $scope.metrics = response.data.metrics;
+            $scope.handleMetrics();
+         } else {
+            console.warn("metrics", response);
+         }
+      });
+   };
+
+   $scope.handleMetrics = function() {
+      var charts = [];
+      for (var i = 0; i < $scope.metrics.length; i++) {
+         var chart = {
+            topicLabel: $scope.metrics[i].topicLabel,
+            metricLabel: $scope.metrics[i].metricLabel,
+            labels: $scope.metrics[i].labels,
+            datasets: [
+               {
+                  fillColor: "rgba(151,187,205,0)",
+                  strokeColor: "#e67e22",
+                  pointColor: "rgba(151,187,205,0)",
+                  pointStrokeColor: "#e67e22",
+                  data: $scope.metrics[i].data
+               }
+            ]
+         };
+         charts.push(chart);
+      }
+      $scope.charts = charts;
+   };
+
+   $scope.options = {
+      pointDotRadius: 2,
+      pointDotStrokeWidth: 1,
+      scaleShowLabels: true,
+      scaleOverlay: false,
+      scaleOverride: false,
+      scaleSteps: 3,
+      scaleStepWidth: 2,
+      scaleStartValue: 0,
+      segmentShowStroke: false
+   };
+
+   $scope.$on("changeView", function(event, view) {
+      if (view === "charts") {
+         $scope.metricList();
+      } else {
+         $scope.loading = false;
+         $scope.charts = undefined;         
+      }
+   });
+
+})

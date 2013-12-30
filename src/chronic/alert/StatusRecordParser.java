@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
@@ -118,6 +119,8 @@ public class StatusRecordParser {
             parseMetric(value);
         } else if (header.equals("Metrics")) {
             parseMetrics(value);
+        } else if (header.equals("Value")) {
+            parseMetricValue(value);
         } else {
             return false;
         }
@@ -210,7 +213,26 @@ public class StatusRecordParser {
             record.getMetricMap().put(name, new MetricValue());
         }
     }
-    
+
+    private void parseMetricValue(String string) {
+        Pattern pattern = Pattern.compile("(\\w+)[\\s,=]+([+-]?[0-9]+.?[0-9]*)");
+        Matcher matcher = pattern.matcher(string);
+        if (!matcher.find()) {
+            logger.warn("parseMetricValue {}", string);
+        } else {
+            String name = matcher.group(1);
+            float value = Float.parseFloat(matcher.group(2));
+            MetricValue metricValue = record.getMetricMap().get(name);
+            if (metricValue == null) {
+                metricValue = new MetricValue(value);
+                record.getMetricMap().put(name, metricValue);
+            } else {
+                metricValue.setValue(value);
+            }
+            logger.warn("parseMetricValue {} {}", name, value);
+        }
+    }
+        
     private void parsePeriod(String string) {
         record.setPeriodMillis(Millis.parse(string));
     }
