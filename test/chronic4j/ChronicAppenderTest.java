@@ -21,6 +21,7 @@
  */
 package chronic4j;
 
+import org.apache.log4j.Appender;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -58,9 +59,10 @@ public class ChronicAppenderTest {
 
     @Test
     public void test() throws InterruptedException {
+        ChronicAppender appender = new ChronicAppender("https://localhost:8444/post");
         Logger.getRootLogger().getLoggerRepository().resetConfiguration();
         Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%d{ISO8601} %p [%c{1}] %m%n")));
-        Logger.getRootLogger().addAppender(new ChronicAppender("https://localhost:8444/post"));
+        Logger.getRootLogger().addAppender(appender);
         Logger logger = Logger.getLogger(ChronicAppenderTest.class);
         logger.warn("test");
     }

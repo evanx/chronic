@@ -100,7 +100,7 @@ public class ChronicPersistenceTest {
     public void tearDown() {
     }
 
-    //@Test
+    @Test
     public void testEntityManager() throws Exception {
         EntityManager em = app.createEntityManager();
         em.getTransaction().begin();
@@ -141,6 +141,7 @@ public class ChronicPersistenceTest {
         assertSize(1, em.createQuery("select r from OrgRole r join Org o where o.orgDomain = :orgDomain")
                 .setParameter("orgDomain", p1.orgDomain)
                 .getResultList());
+        Assert.assertNull(em.find(Person.class, ""));
         em.getTransaction().commit();
         em.close();
     }

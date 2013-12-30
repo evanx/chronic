@@ -21,13 +21,15 @@
  */
 package chronic;
 
-import chronic.app.HtmlChecker;
-import chronic.app.StatusRecord;
-import chronic.app.StatusRecordMatcher;
-import chronic.app.StatusRecordPatterns;
+import chronic.alert.HtmlChecker;
+import chronic.alert.StatusRecord;
+import chronic.alert.StatusRecordMatcher;
+import chronic.alert.StatusRecordPatterns;
 import chronic.entity.Cert;
 import chronic.entitykey.CertKey;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import junit.framework.AssertionFailedError;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,7 +40,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Patterns;
-
 
 /**
  *
@@ -74,7 +75,11 @@ public class ChronicTest {
 
     @Test
     public void emailHeaderPattern() {
-        Assert.assertTrue("X-from: test".matches("^\\S*: .*"));
+        Pattern pattern = Pattern.compile("([A-Z][A-Za-z-]*): (.*)");
+        Matcher matcher = pattern.matcher("X-from: test");
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals("X-from", matcher.group(1));
+        Assert.assertEquals("test", matcher.group(2));
     }
 
     @Test
@@ -82,6 +87,31 @@ public class ChronicTest {
         Assert.assertTrue("https://chronica/mimic".matches(".*\\Wmimic\\W*.*"));
     }
 
+    @Test
+    public void timeZone() {
+        String id = String.format("GMT%+03d", 2);
+        logger.info("timeZone {} {}", id, TimeZone.getTimeZone(id));
+    }
+
+    @Test
+    public void metricValue() {
+        Pattern pattern = Pattern.compile("([-+]?[0-9]+.[0-9]*)");
+        String string = "0.23";
+        Matcher matcher = pattern.matcher(" " + string + " 0.45");
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals(string, matcher.group(1));
+    }
+
+    public void parseValue() {
+        String string = "Load=0.9";
+        Pattern pattern = Pattern.compile("(\\w+)[\\s,=]+([+-]?[0-9]+.?[0-9]*)");
+        Matcher matcher = pattern.matcher(string);
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals("Load", matcher.group(1));
+        Assert.assertEquals("0.9", matcher.group(2));        
+    }
+
+    
     @Test
     public void nagiosMatches() {
         Assert.assertTrue(StatusRecordMatcher.matches(
