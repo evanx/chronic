@@ -156,7 +156,6 @@ public class ChronicApp {
 
     public LinkedBlockingQueue<StatusRecord> getStatusQueue() {
         return statusQueue;
-
     }
     
     ChronicEntityService newEntityService() {
@@ -200,18 +199,18 @@ public class ChronicApp {
                     StatusRecord status = statusQueue.poll(60, TimeUnit.SECONDS);
                     if (status == null) {
                     } else {
-                        for (String metricLabel : status.getMetricMap().keySet()) {
-                            MetricValue value = status.getMetricMap().get(metricLabel);                            
-                            logger.info("series {} {}", metricLabel, value);
+                        int index = 0;
+                        for (MetricValue value : status.getMetricList()) {
+                            logger.info("series {}", value);
                             if (value != null && value.getValue() != null) {
-                                TopicMetricKey key = new TopicMetricKey(status.getTopic().getId(), metricLabel);
+                                TopicMetricKey key = new TopicMetricKey(status.getTopic().getId(), index++, value.getLabel());
                                 MetricSeries series = seriesMap.get(key);
                                 if (series == null) {
-                                    series = new MetricSeries(30);
+                                    series = new MetricSeries(90);
                                     seriesMap.put(key, series);
                                 }
                                 series.add(System.currentTimeMillis(), value.getValue());
-                                logger.info("series {} {}", metricLabel, series);
+                                logger.info("series {} {}", value.getLabel(), series);
                             }                            
                         }
                         checkStatus(status);

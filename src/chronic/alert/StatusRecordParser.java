@@ -204,28 +204,33 @@ public class StatusRecordParser {
         return false;
     }
 
-    private void parseMetric(String string) {
-        record.getMetricMap().put(string, new MetricValue());
+    private void parseMetric(String name) {
+        record.add(new MetricValue(name));
     }
 
     private void parseMetrics(String string) {
         for (String name : Strings.split(string, DelimiterType.COMMA_OR_SPACE)) {
-            record.getMetricMap().put(name, new MetricValue());
+            record.add(new MetricValue(name));
         }
     }
 
     private void parseMetricValue(String string) {
-        Pattern pattern = Pattern.compile("(\\w+)[\\s,=]+([+-]?[0-9]+.?[0-9]*)");
+        Pattern pattern = Pattern.compile("(\\w+)\\s+([+-]?[0-9]+.?,?[0-9]*)");
         Matcher matcher = pattern.matcher(string);
         if (!matcher.find()) {
             logger.warn("parseMetricValue {}", string);
         } else {
             String name = matcher.group(1);
-            float value = Float.parseFloat(matcher.group(2));
+            String valueString = matcher.group(2).trim();
+            int index = valueString.lastIndexOf(',');
+            if (index == valueString.length() - 2) {
+                valueString = valueString.substring(0, index) + "." + valueString.substring(index + 1);
+            }
+            float value = Float.parseFloat(valueString);
             MetricValue metricValue = record.getMetricMap().get(name);
             if (metricValue == null) {
-                metricValue = new MetricValue(value);
-                record.getMetricMap().put(name, metricValue);
+                metricValue = new MetricValue(name, value);
+                record.add(metricValue);
             } else {
                 metricValue.setValue(value);
             }

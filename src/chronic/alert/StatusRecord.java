@@ -65,6 +65,7 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
     String service;
     String alertPushUrl;
     Set<String> subscribers = new HashSet();
+    List<MetricValue> metricList = new ArrayList();
     Map<String, MetricValue> metricMap = new HashMap();
     
     transient Cert cert;
@@ -90,6 +91,15 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         return new OrgKey(cert.getOrgDomain());
     }
 
+    void add(MetricValue metricValue) {
+        metricList.add(metricValue);
+        metricMap.put(metricValue.getLabel(), metricValue);
+    }
+    
+    public List<MetricValue> getMetricList() {
+        return metricList;
+    }
+    
     public Map<String, MetricValue> getMetricMap() {
         return metricMap;
     }

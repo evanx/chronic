@@ -28,15 +28,22 @@ import vellum.util.Args;
  */
 public class MetricValue {
 
+    String label;
     Float value;
     
-    public MetricValue() {        
+    public MetricValue(String label) {
+        this.label = label;
     }
 
-    public MetricValue(Float value) {
+    public MetricValue(String label, Float value) {
+        this.label = label;        
         this.value = value;
     }
-    
+
+    public String getLabel() {
+        return label;
+    }
+        
     public void setValue(float value) {
         this.value = value;
     }
@@ -47,7 +54,7 @@ public class MetricValue {
 
     @Override
     public String toString() {
-        return Args.format(value);
+        return Args.format(label, value);
     }
     
     
