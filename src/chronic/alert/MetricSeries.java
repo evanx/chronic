@@ -36,7 +36,7 @@ public class MetricSeries {
     transient float ceiling;
 
     public MetricSeries(int capacity) {
-        this.capacity = (byte) capacity;
+        this.capacity = capacity;
         values = new byte[capacity];
     }
 
