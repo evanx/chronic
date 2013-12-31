@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.handler;
+package chronic.securehandler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicPlainHttpxHandler;
@@ -30,11 +30,11 @@ public class AdminEnroll implements ChronicPlainHttpxHandler {
         String[] emails = Strings.split(httpx.readString(), DelimiterType.COMMA_OR_SPACE);
         for (String email : emails) {
             if (!Emails.matchesEmail(email)) {
-                return "ERROR: invalid email: " + email;
+                return String.format("ERROR: invalid email: %s\n", email);
             } else {
                 es.persistOrgRole(cert.getOrg(), email, OrgRoleType.ADMIN);
             }
         }
-        return "OK: " + Arrays.toString(emails);
+        return String.format("OK: %s\n", Arrays.toString(emails));
     }
 }

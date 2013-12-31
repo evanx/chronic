@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.handler;
+package chronic.securehandler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicPlainHttpxHandler;
@@ -23,9 +23,11 @@ public class PushRegister implements ChronicPlainHttpxHandler {
     public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
             throws Exception {
         Cert cert = es.persistCert(httpx);
+        String pushUrl = httpx.readString();
+        logger.info("pushUrl {}", pushUrl);
         if (!cert.isEnabled()) {
-            return "Cert not enabled";
+            return "Cert not enabled\n";
         }
-        return "OK";
+        return "OK\n";
     }
 }

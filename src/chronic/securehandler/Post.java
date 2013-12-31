@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.handler;
+package chronic.securehandler;
 
 import chronic.app.ChronicHttpx;
 import chronic.app.ChronicApp;
@@ -71,7 +71,7 @@ public class Post implements ChronicPlainHttpxHandler {
         es.commit();
         app.getStatusQueue().add(status);
         if (builder.length() == 0) {
-            builder.append(String.format("OK: " + topic.getTopicLabel()));
+            builder.append(String.format("OK: %s\n", topic.getTopicLabel()));
         }
         return builder.toString();
     }

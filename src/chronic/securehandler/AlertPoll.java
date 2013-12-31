@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.handler;
+package chronic.securehandler;
 
 import chronic.app.ChronicHttpx;
 import chronic.alert.AlertRecord;
@@ -30,7 +30,7 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
             throws Exception {
         Cert cert = es.persistCert(httpx);
         if (!cert.isEnabled()) {
-            return "Cert not enabled";
+            return "Cert not enabled\n";
         }
         for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {
@@ -41,7 +41,7 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
                 return buildPlain(alert);
             }
         }
-        return "NONE";
+        return "NONE\n";
     }
     
     public String buildPlain(AlertRecord alert) {

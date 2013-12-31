@@ -126,7 +126,7 @@
       <div class="row-fluid" ng-repeat="chart in charts">
         <div class="span6" style="margin:20px 0;">	
           <p>{{chart.topicLabel}} <b>{{chart.metricLabel}}</b></p>
-          <canvas linechart options="options" data="chart" id="lineChart" width="600" height="80"></canvas>
+          <canvas linechart options="options" data="chart" id="lineChart" width="600" height="100"></canvas>
         </div>
       </div>
     </div>
@@ -558,13 +558,13 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
         <p>
           <i>2013-12-15</i> &nbsp;
           <b>Info sections added to site</b> 
-          <br>"Getting Started," "Frequently Asked Questions" and "News" sections have been added to the site. When signed in, click on "Chronica.co" for FAQ and News, and click on "Help" to see the "Getting Started" info. (A more detailed "User Guide" should be drafted in coming months.)
+          <br>"Getting Started," "Frequently Asked Questions" and "News" sections have been added to the site. When signed in, click on "Chronica.co" for FAQ and News, and click on "Help" to see the "Getting Started" info. (A more detailed "User Guide" is still required.)
         </p>
 
         <p>
           <i>2013-12-01</i> &nbsp;
           <b>AngujarJS UI started</b>
-          <br>Oh my god, AngularJS is <i>awesome!</i> Goodbye my formerly beloved jQuery.
+          <br>AngularJS is <i>great!</i> Goodbye formerly beloved jQuery. (See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>.)
         </p>
 
         <p>
@@ -574,7 +574,7 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
         <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Croc (on http://github.com/evanx/vellumapp).
         <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks. This project was abandoned in favour of pursing of multi-tenancy cloud-based approach. 
         <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica. Bootstrap 2 and jQuery as used for its UI, and JDBC for persistence. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed e.g. JPA for back-end persistence, and a Javascript data-binding framework for the front-end.
-        <p>The result is Chronica, which will use the AngularJS front-end framework (see <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>), and JPA.
+        <p>The result is Chronica, which will use the AngularJS front-end framework, and JPA.
         <hr> 
         <p class="pull-right">
           <a href="https://www.positivessl.com" style=

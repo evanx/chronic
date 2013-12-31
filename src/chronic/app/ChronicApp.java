@@ -47,6 +47,7 @@ import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.data.ComparableTuple;
 import vellum.httphandler.RedirectHttpsHandler;
+import vellum.ssl.OpenTrustManager;
 
 /**
  *
@@ -82,11 +83,13 @@ public class ChronicApp {
     public void init() throws Exception {
         properties.init();
         logger.info("properties {}", properties);
-        ChronicTrustManager trustManager = new ChronicTrustManager(this);
-        ChronicHttpService httpService = new ChronicHttpService(this);
-        webServer.start(properties.getWebServer(), trustManager, httpService);
+        webServer.start(properties.getWebServer(), 
+                new OpenTrustManager(),
+                new ChronicHttpService(this));
         httpRedirectServer.start(properties.getHttpRedirectServer(), new RedirectHttpsHandler());
-        appServer.start(properties.getAppServer(), trustManager, httpService);
+        appServer.start(properties.getAppServer(), 
+                new ChronicTrustManager(this),
+                new ChronicSecureHttpService(this));
         messenger.init();
         initThread.start();
     }
