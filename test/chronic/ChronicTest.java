@@ -40,6 +40,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Patterns;
+import vellum.data.SafeDateFormat;
 
 /**
  *
@@ -90,13 +91,15 @@ public class ChronicTest {
     @Test
     public void timeZone() {
         String id = String.format("GMT%+03d", 2);
-        logger.info("timeZone {} {}", id, TimeZone.getTimeZone(id));
+        Assert.assertEquals("", TimeZone.getTimeZone(id).toString());
+        Assert.assertEquals("", new SafeDateFormat("yyyy-MM-dd HH:mm:ss,SSS Z").format(
+                TimeZone.getTimeZone(id), System.currentTimeMillis()));
     }
 
     @Test
     public void metricValue() {
+        String string = "99.23";
         Pattern pattern = Pattern.compile("([-+]?[0-9]+.[0-9]*)");
-        String string = "0.23";
         Matcher matcher = pattern.matcher(" " + string + " 0.45");
         Assert.assertTrue(matcher.find());
         Assert.assertEquals(string, matcher.group(1));

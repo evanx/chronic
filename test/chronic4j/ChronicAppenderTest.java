@@ -21,7 +21,6 @@
  */
 package chronic4j;
 
-import org.apache.log4j.Appender;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -65,5 +64,6 @@ public class ChronicAppenderTest {
         Logger.getRootLogger().addAppender(appender);
         Logger logger = Logger.getLogger(ChronicAppenderTest.class);
         logger.warn("test");
+        appender.run();
     }
 }
