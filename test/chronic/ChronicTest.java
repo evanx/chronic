@@ -76,10 +76,9 @@ public class ChronicTest {
 
     @Test
     public void emailHeaderPattern() {
-        Pattern pattern = Pattern.compile("([A-Z][A-Za-z-]*): (.*)");
-        Matcher matcher = pattern.matcher("X-from: test");
+        Matcher matcher = StatusRecordPatterns.HEADER.matcher("X-Cron-Env: test");
         Assert.assertTrue(matcher.find());
-        Assert.assertEquals("X-from", matcher.group(1));
+        Assert.assertEquals("X-Cron-Env", matcher.group(1));
         Assert.assertEquals("test", matcher.group(2));
     }
 
@@ -91,9 +90,11 @@ public class ChronicTest {
     @Test
     public void timeZone() {
         String id = String.format("GMT%+03d", 2);
-        Assert.assertEquals("", TimeZone.getTimeZone(id).toString());
-        Assert.assertEquals("", new SafeDateFormat("yyyy-MM-dd HH:mm:ss,SSS Z").format(
-                TimeZone.getTimeZone(id), System.currentTimeMillis()));
+        long timestamp = System.currentTimeMillis();
+        logger.info("timestamp {}", timestamp);
+        Assert.assertEquals("GMT+02:00", TimeZone.getTimeZone(id).getID().toString());
+        Assert.assertTrue(new SafeDateFormat("yyyy-MM-dd HH:mm:ss,SSS Z").format(
+                TimeZone.getTimeZone(id), timestamp).endsWith(" +0200"));
     }
 
     @Test
