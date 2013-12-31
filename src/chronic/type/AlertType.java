@@ -5,7 +5,6 @@
 package chronic.type;
 
 import chronic.bundle.Bundle;
-import static chronic.type.StatusType.CRITICAL;
 import vellum.type.Labelled;
 
 /**

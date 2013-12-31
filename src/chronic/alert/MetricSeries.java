@@ -113,7 +113,7 @@ public class MetricSeries {
         JMap map = new JMap();
         Float[] floatValues = new Float[size];
         String[] labels = new String[size];
-        int minute = Millis.timestampMinutes(timestamp);
+        int minute = Millis.timestampMinute(timestamp);
         for (int i = 1; i <= size; i++) {
             floatValues[size - i] = getFloatValue(values[capacity - i]);
             if (minute  == 0) {
@@ -132,6 +132,6 @@ public class MetricSeries {
 
     @Override
     public String toString() {
-        return String.format("size %d, average %f, timestamp %s", size(), avg(), Millis.formatTime(timestamp));
+        return String.format("size %d, average %f, timestamp minute %s", size(), avg(), Millis.timestampMinute(timestamp));
     }       
 }

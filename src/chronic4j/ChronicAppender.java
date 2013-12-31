@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayDeque;
+import java.util.Date;
 import java.util.Deque;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -91,7 +92,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
             initialized = true;
             initialize();
         }
-        if (running && le.getLevel().toInt() >= Priority.INFO_INT) {
+        if (running && le.getLevel().toInt() >= Priority.DEBUG_INT) {
             if (runTimestamp > 0 && System.currentTimeMillis() - runTimestamp > period * 2) {
                 running = false;
                 synchronized (deque) {
@@ -101,6 +102,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
                 synchronized (deque) {
                     deque.add(le);
                 }
+                counter.process(le);
             }
         }
     }
@@ -113,7 +115,6 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
                 throw new GeneralSecurityException("Missing parameters for SSL connection: keyStore, pass");
             } else {
                 sslContext = SSLContexts.create(keyStoreLocation, sslPass, new OpenTrustManager());
-                post("test");
                 running = true;
             }
         } catch (IOException | GeneralSecurityException e) {
@@ -143,12 +144,18 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
         }
         StringBuilder builder = new StringBuilder();
         builder.append(counter.buildReport());
-        builder.append(String.format("deque size: %d\n", deque.size()));
+        builder.append(String.format("INFO: deque size: %d\n", deque.size()));
+        builder.append("INFO:-");
+        builder.append("Latest events:");
         while (snapshot.peek() != null) {
-            String string = snapshot.poll().toString();
+            LoggingEvent event = snapshot.poll();
+            String string = event.getMessage().toString();
             if (builder.length() + string.length() + 1 >= maximumPostLength) {
                 break;
             }
+            builder.append(event.getLevel().toString());
+            builder.append(": ");
+            builder.append(new Date(event.getTimeStamp()));
             builder.append(string);
             builder.append("\n");
         }
@@ -156,7 +163,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     }
     
     private void post(String string) {
-        logger.info("post {}", string);
+        logger.info("post:\n{}", string);
         HttpsURLConnection connection;
         try {
             URL url = new URL(postAddress);

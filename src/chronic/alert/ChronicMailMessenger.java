@@ -20,15 +20,15 @@
  */
 package chronic.alert;
 
-import chronic.alert.AlertMailBuilder;
-import chronic.alert.AlertRecord;
 import chronic.app.ChronicApp;
 import static chronic.alert.AlertMailBuilder.formatFooter;
+import chronic.entity.Subscription;
 import java.io.IOException;
-import java.util.Collection;
 import vellum.mail.Mailer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +56,11 @@ public class ChronicMailMessenger {
         mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
-    public void alert(AlertRecord alert, Collection<String> emails) {
-         logger.warn("alert {} {}", alert.toString(), emails);
-        for (String email : emails) {
+    public void alert(AlertRecord alert, List<Subscription> subscriptions) {
+         logger.warn("alert {}", alert.toString());
+        for (Subscription subscription : subscriptions) {
+            String email = subscription.getEmail();
+            TimeZone timeZone = subscription.getTimeZone();
             try {
                 AlertRecord previous = alertMap.put(email, alert);
                 if (previous != null) {
@@ -72,7 +74,7 @@ public class ChronicMailMessenger {
                 alert.setAlertedStatus(alert.getStatus());
                 if (app.getProperties().getAdminDomains().contains(email)) {
                     mailer.send(email, alert.getStatus().getTopicLabel(),
-                        new AlertMailBuilder(app).build(alert));
+                        new AlertMailBuilder(app).build(alert, timeZone));
                 }
             } catch (IOException | MessagingException e) {
                 logger.warn("{} {}", e.getMessage(), alert);

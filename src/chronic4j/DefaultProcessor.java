@@ -34,7 +34,7 @@ public class DefaultProcessor implements ChronicProcessor {
     int debugCount;
     
     @Override
-    public void append(LoggingEvent le) {
+    public void process(LoggingEvent le) {
         if (le.getLevel().toInt() == Priority.ERROR_INT) {
             errorCount++;
         } else if (le.getLevel().toInt() == Priority.WARN_INT) {

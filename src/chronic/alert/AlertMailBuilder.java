@@ -24,10 +24,12 @@ import chronic.app.ChronicApp;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
+import vellum.format.CalendarFormats;
 import vellum.util.Strings;
 
 /**
@@ -38,15 +40,17 @@ public class AlertMailBuilder {
 
     static Logger logger = LoggerFactory.getLogger(AlertMailBuilder.class);
     StringBuilder builder = new StringBuilder();
-    AlertRecord alert;
     ChronicApp app;
+    AlertRecord alert;
+    TimeZone timeZone;
 
     public AlertMailBuilder(ChronicApp app) {
         this.app = app;
     }
 
-    public String build(AlertRecord alert) {
+    public String build(AlertRecord alert, TimeZone timeZone) {
         this.alert = alert;
+        this.timeZone = timeZone;
         logger.info("build {}", alert.status);
         builder.append("<pre>\n");
         if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED) {
@@ -83,7 +87,7 @@ public class AlertMailBuilder {
     }
 
     private void appendHeader(StatusRecord status) {
-        builder.append(String.format("<i>%s</i>", Millis.formatTime(status.getTimestamp())));
+        builder.append(String.format("<i>%s</i>", CalendarFormats.timestampFormat.format(timeZone, status.getTimestamp())));
         builder.append(String.format(" <b>%s</b>", formatHeading(status)));
         String alertTypeStyle = "font-color: gray";
         builder.append(String.format(" <i style='%s'>(Alert on %s)</i>\n\n", alertTypeStyle,

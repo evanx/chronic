@@ -180,7 +180,7 @@ public class ChronicApp {
                     AlertRecord alert = alertQueue.poll(60, TimeUnit.SECONDS);
                     if (alert != null) {
                         messenger.alert(alert, 
-                                es.listSubscriptionEmails(alert.getStatus().getTopic()));
+                                es.listSubscriptions(alert.getStatus().getTopic()));
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
