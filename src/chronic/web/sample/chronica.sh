@@ -32,8 +32,6 @@ diskCriticalThreshold=90
 packetLossWarningThreshold=20
 packetLossCriticalThreshold=60
 
-server=secure.chronica.co:443
-
 periodSeconds=60
 
 pingCount=1
@@ -44,6 +42,12 @@ databaseTimeout=2
 
 
 ### default functions
+
+if ! set | grep -q '^server='
+then
+  server=secure.chronica.co:443
+fi
+
 
 if ! set | grep -q '^commonName='
 then
