@@ -41,6 +41,7 @@ country='none'
 
 c0minutely() {
   c1topic minutely
+  c1metric Load
   c0load
   c0login
   #c2tcp chronica.co 443

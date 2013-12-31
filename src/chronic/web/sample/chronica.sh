@@ -373,6 +373,13 @@ c2rtcp() {
 }
 
 
+### metrics
+
+c1metric() {
+  echo "Metric: $1"
+}
+
+
 ### other common checks
 
 c0login() {
