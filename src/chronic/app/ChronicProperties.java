@@ -199,4 +199,12 @@ public class ChronicProperties {
     public String toString() {
         return Args.format(siteUrl);
     }    
+
+    public boolean isAllowedDomain(String orgDomain) {
+        return true;
+    }
+
+    public boolean isAllowedAddress(String remoteHostAddress) {
+        return true;
+    }
 }

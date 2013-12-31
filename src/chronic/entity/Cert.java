@@ -17,7 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import vellum.entity.ComparableEntity;
 import vellum.format.CalendarFormats;
@@ -59,7 +59,7 @@ public class Cert extends ComparableEntity implements OrgKeyed, CertKeyed, Enabl
     @Column()
     String address;
     
-    @OneToOne()    
+    @ManyToOne()    
     @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", insertable = false, updatable = false)
     Org org;
     

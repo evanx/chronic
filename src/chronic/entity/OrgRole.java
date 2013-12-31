@@ -16,7 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
@@ -50,11 +50,11 @@ public class OrgRole extends ComparableEntity implements Serializable {
     @Column()    
     boolean enabled = false;
     
-    @OneToOne()    
+    @ManyToOne()    
     @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", insertable = false, updatable = false)
     Org org;
     
-    @OneToOne()    
+    @ManyToOne()    
     @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
     Person person; 
 

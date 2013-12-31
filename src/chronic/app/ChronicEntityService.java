@@ -366,10 +366,10 @@ public class ChronicEntityService {
         String commonName = Certificates.getCommonName(certificate.getSubjectDN());
         String orgDomain = Certificates.getOrg(certificate.getSubjectDN());
         String orgUnit = Certificates.getOrgUnit(certificate.getSubjectDN());
-        if (!app.getProperties().getAllowedOrgDomains().contains(orgDomain)) {
+        if (!app.getProperties().isAllowedDomain(orgDomain)) {
             throw new CertificateException("org not allowed: " + orgDomain);
-        } else if (!app.getProperties().getAllowedAddresses().contains(remoteHostAddress)) {
-            logger.info("remote hostAddress {}", remoteHostAddress);
+        } else if (!app.getProperties().isAllowedAddress(remoteHostAddress)) {
+            throw new CertificateException("address not allowed: " + remoteHostAddress);
         }
         return persistCert(orgDomain, orgUnit, commonName, remoteHostAddress, encoded);
     }
