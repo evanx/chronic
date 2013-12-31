@@ -471,7 +471,7 @@ c0ensureCert() {
         sed -n -e '/BEGIN CERT/,/END CERT/p' > etc/server.pem
       echo "Fetched server certificate:"
       openssl x509 -text -in etc/server.pem | grep 'CN='
-      chown 600 etc/server.pem
+      chmod 600 etc/server.pem
       ls etc/server.pem
     fi
   fi

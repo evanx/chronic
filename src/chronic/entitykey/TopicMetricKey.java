@@ -12,16 +12,23 @@ import vellum.data.ComparableTuple;
  */
 public final class TopicMetricKey extends ComparableTuple {
     Long topicId;
-    int order; 
     String metricLabel;
+    int order;
     
-    public TopicMetricKey(Long topicId, int order, String metricLabel) {
-        super(topicId, order, metricLabel);
+    public TopicMetricKey(Long topicId, String metricLabel) {
+        super(topicId, metricLabel);
         this.topicId = topicId;
-        this.order = order;
         this.metricLabel = metricLabel;
     }
 
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+   
     public Long getTopicId() {
         return topicId;
     }

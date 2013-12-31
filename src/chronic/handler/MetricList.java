@@ -10,6 +10,7 @@ import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Topic;
 import chronic.entitykey.TopicMetricKey;
+import chronic.entitykey.TopicMetricKeyOrderComparator;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.jx.JMap;
 import vellum.jx.JMaps;
+import vellum.util.Lists;
 
 /**
  *
@@ -32,7 +34,7 @@ public class MetricList implements ChronicHttpxHandler {
         logger.info("handle {}", app.getSeriesMap().keySet());
         String email = httpx.getEmail();
         List metrics = new LinkedList();
-        for (TopicMetricKey key : app.getSeriesMap().keySet()) {
+        for (TopicMetricKey key : Lists.sortedSet(app.getSeriesMap().keySet(), new TopicMetricKeyOrderComparator())) {
             MetricSeries series = app.getSeriesMap().get(key);
             logger.info("series {}", series.toString());
             if (System.currentTimeMillis() - series.getTimestamp() < Millis.fromSeconds(90) && series.getSize() > 5) {

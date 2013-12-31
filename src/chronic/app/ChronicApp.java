@@ -160,6 +160,7 @@ public class ChronicApp {
 
     public LinkedBlockingQueue<StatusRecord> getStatusQueue() {
         return statusQueue;
+        
     }
     
     ChronicEntityService newEntityService() {
@@ -207,10 +208,11 @@ public class ChronicApp {
                         for (MetricValue value : status.getMetricList()) {
                             logger.info("series {}", value);
                             if (value != null && value.getValue() != null) {
-                                TopicMetricKey key = new TopicMetricKey(status.getTopic().getId(), index++, value.getLabel());
+                                TopicMetricKey key = new TopicMetricKey(status.getTopic().getId(), value.getLabel());
+                                key.setOrder(index);
                                 MetricSeries series = seriesMap.get(key);
                                 if (series == null) {
-                                    series = new MetricSeries(90);
+                                    series = new MetricSeries(180);
                                     seriesMap.put(key, series);
                                 }
                                 series.add(System.currentTimeMillis(), value.getValue());

@@ -62,9 +62,12 @@ public class StatusRecordParser {
             parseHeader(key, headers.get(key));
         }
         for (String line : text.split("\n")) {
+            line = line.trim();
             Matcher matcher = StatusRecordPatterns.HEADER.matcher(line);
             if (matcher.find()) {
                 if (parseHeader(matcher.group(1), matcher.group(2))) {
+                    continue;
+                } else if (matcher.group(1).startsWith("X-Cron")) {
                     continue;
                 }
             } else {
@@ -222,8 +225,9 @@ public class StatusRecordParser {
         } else {
             String name = matcher.group(1);
             String valueString = matcher.group(2).trim();
+            logger.info("parseMetricValue {} {}", name, valueString);
             int index = valueString.lastIndexOf(',');
-            if (index == valueString.length() - 2) {
+            if (index > 0 && index == valueString.length() - 2) {
                 valueString = valueString.substring(0, index) + "." + valueString.substring(index + 1);
             }
             float value = Float.parseFloat(valueString);
