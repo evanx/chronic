@@ -46,13 +46,13 @@ public class ChronicScriptMessenger {
         logger.info("initialized");
     }
 
-    public synchronized void alert(AlertRecord alert) {
+    public synchronized void alert(AlertRecord alert, TimeZone timeZone) {
         logger.info("alert {}", alert.toString());
         if (app.getProperties().getAlertScript() != null) {
             try {
                 Executor executor = new Executor();
                 executor.exec(app.getProperties().getAlertScript(),
-                        new AlertMailBuilder(app).build(alert).getBytes(),
+                        new AlertMailBuilder(app).build(alert, timeZone).getBytes(),
                         new AlertRecordMapper(alert, TimeZone.getDefault()).getExtendedMap());
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());

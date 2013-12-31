@@ -6,6 +6,7 @@ package chronic.entity;
 
 import chronic.entitytype.SubscriptionActionType;
 import java.io.Serializable;
+import java.util.TimeZone;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,6 +22,7 @@ import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
 import vellum.jx.JMapped;
 import vellum.type.Enabled;
+import vellum.util.Calendars;
 
 /**
  *
@@ -45,6 +47,9 @@ public class Subscription extends ComparableEntity implements Enabled, JMapped, 
     
     @Column()    
     boolean enabled;
+    
+    @Column(name = "timezone_id") 
+    String timeZoneId;
     
     @ManyToOne(fetch = FetchType.LAZY)    
     @JoinColumn(name = "topic_id", referencedColumnName = "topic_id")
@@ -123,5 +128,9 @@ public class Subscription extends ComparableEntity implements Enabled, JMapped, 
     @Override
     public String toString() {
         return getId().toString();
+    }
+
+    public TimeZone getTimeZone() {
+        return Calendars.getTimeZone(timeZoneId);
     }
 }

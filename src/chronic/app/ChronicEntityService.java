@@ -252,7 +252,7 @@ public class ChronicEntityService {
                 getResultList();
     }
 
-    public List<String> listSubscriptions(Topic topic) {
+    public List<Subscription> listSubscriptions(Topic topic) {
         return em.createQuery("select s from Subscription s"
                 + " where s.topicId = :topicId"
                 + " and s.enabled = true").

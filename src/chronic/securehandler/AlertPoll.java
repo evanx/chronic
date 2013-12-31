@@ -10,10 +10,13 @@ import chronic.api.ChronicPlainHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
+import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.data.TimestampedComparator;
+import vellum.format.CalendarFormats;
+import vellum.util.Calendars;
 import vellum.util.Lists;
 import vellum.util.Strings;
 
@@ -24,11 +27,15 @@ import vellum.util.Strings;
 public class AlertPoll implements ChronicPlainHttpxHandler {
 
     Logger logger = LoggerFactory.getLogger(AlertPoll.class);
-
+    
+    TimeZone timeZone;
+    
     @Override
     public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
             throws Exception {
         Cert cert = es.persistCert(httpx);
+        String timeZoneId = httpx.readString();
+        timeZone = Calendars.getTimeZone(timeZoneId);
         if (!cert.isEnabled()) {
             return "Cert not enabled\n";
         }
@@ -46,7 +53,7 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
     
     public String buildPlain(AlertRecord alert) {
         StringBuilder builder = new StringBuilder();
-        builder.append(String.format("Time: %s\n", Millis.formatTime(alert.getTimestamp())));
+        builder.append(String.format("Time: %s\n", CalendarFormats.timestampZoneFormat.format(timeZone, alert.getTimestamp())));
         builder.append(String.format("Topic: %s\n", alert.getStatus().getTopicLabel()));
         builder.append(String.format("Subject: %s\n", formatSubject(alert.getStatus())));
         builder.append("\n");
