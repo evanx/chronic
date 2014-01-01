@@ -29,6 +29,7 @@ import chronic.alert.MetricValue;
 import chronic.entitykey.TopicMetricKey;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
+import chronic4j.ChronicAppender;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,6 +40,8 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.PatternLayout;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -315,15 +318,6 @@ public class ChronicApp {
 
     public Map<ComparableTuple, AlertRecord> getAlertMap() {
         return alertMap;
-    }
-
-    public static void main(String[] args) throws Exception {
-        try {
-            ChronicApp app = new ChronicApp();
-            app.init();
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
     }
 
 }

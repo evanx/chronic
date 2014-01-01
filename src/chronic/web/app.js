@@ -472,7 +472,7 @@ app.controller("chartController", function($scope, $http) {
    };
 
    $scope.options = {
-      pointDotRadius: 2,
+      pointDotRadius: 1,
       pointDotStrokeWidth: 1,
       scaleShowLabels: true,
       scaleOverlay: false,

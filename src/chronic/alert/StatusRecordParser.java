@@ -238,7 +238,7 @@ public class StatusRecordParser {
             } else {
                 metricValue.setValue(value);
             }
-            logger.warn("parseMetricValue {} {}", name, value);
+            logger.info("parseMetricValue {}", metricValue);
         }
     }
         

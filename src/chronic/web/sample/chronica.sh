@@ -604,15 +604,6 @@ c0checkChronicaPubKey() {
     echo 'CRITICAL: chronica.pub.key' ) || echo 'OK: chronica.pub.key'
 }
 
-c0updateGit() {
-  c0updateCheck
-  echo 'Run the following commands to update your script:'
-  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
-  echo "curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh -o $script"
-  echo "sha1sum $script"
-  echo 'WARNING: In this case you are trusting that our github.com repository is not compromised.'
-}
-
 c0updateInfo() {
   c0ensurePubKey
   echo 'Run the following commands to verify the digest and signature:'
@@ -668,6 +659,12 @@ c0update() {
       exit $?
     fi
   fi
+}
+
+c0sha1Git() {
+  c0updateCheck
+  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
+  echo 'WARNING: In this case you are trusting that the github.com repository is not compromised.'
 }
 
 
