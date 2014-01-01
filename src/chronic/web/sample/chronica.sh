@@ -557,6 +557,18 @@ c0minutelyPost() {
   c0enroll
 }
 
+c0minutelySim() {
+  c0minutely | c0post
+  c0minutely | c0post
+  c0minutely | c0post
+  c0minutely | c0post
+  c0minutely | c0post
+  c0minutely | c0post
+  c0minutely | c0post
+  c0minutely | c0post
+  c0minutely | c0post
+}
+
 c0dailyPost() {
   c0daily 2>&1 | tee daily | c0post
   dcat daily

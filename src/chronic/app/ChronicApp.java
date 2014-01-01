@@ -29,9 +29,7 @@ import chronic.alert.MetricValue;
 import chronic.entitykey.TopicMetricKey;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
-import chronic4j.ChronicAppender;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -40,8 +38,6 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.PatternLayout;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,14 +67,14 @@ public class ChronicApp {
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
     SynchronizedCapacityDeque<AlertEvent> alertDeque = new SynchronizedCapacityDeque(100);
     LinkedBlockingQueue<AlertEvent> alertQueue = new LinkedBlockingQueue(100);
-    LinkedBlockingQueue<TopicMessage> statusQueue = new LinkedBlockingQueue(100);
+    LinkedBlockingQueue<TopicMessage> messageQueue = new LinkedBlockingQueue(100);
     DataSource dataSource = new DataSource();
     EntityManagerFactory emf;
     boolean initalized = false;
     boolean running = true;
-    Thread alertThread = new AlertThread();
-    Thread statusThread = new StatusThread();
     Thread initThread = new InitThread();
+    Thread messageThread = new MessageThread();
+    Thread alertThread = new AlertThread();
 
     public ChronicApp() {
         super();
@@ -109,7 +105,7 @@ public class ChronicApp {
         emf = Persistence.createEntityManagerFactory("chronicPU");;
         initalized = true;
         logger.info("initialized");
-        statusThread.start();
+        messageThread.start();
         alertThread.start();
         logger.info("schedule {}", properties.getPeriod());
         elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(), properties.getPeriod(),
@@ -150,9 +146,9 @@ public class ChronicApp {
         if (httpRedirectServer != null) {
             httpRedirectServer.shutdown();
         }
-        if (statusThread != null) {
-            statusThread.interrupt();
-            statusThread.join(2000);
+        if (messageThread != null) {
+            messageThread.interrupt();
+            messageThread.join(2000);
         }
         if (alertThread != null) {
             alertThread.interrupt();
@@ -162,7 +158,7 @@ public class ChronicApp {
     }
 
     public LinkedBlockingQueue<TopicMessage> getStatusQueue() {
-        return statusQueue;
+        return messageQueue;
         
     }
     
@@ -198,20 +194,20 @@ public class ChronicApp {
         }
     }
 
-    class StatusThread extends Thread {
+    class MessageThread extends Thread {
 
         @Override
         public void run() {
             while (running) {
                 try {
-                    TopicMessage status = statusQueue.poll(60, TimeUnit.SECONDS);
-                    if (status == null) {
+                    TopicMessage message = messageQueue.poll(60, TimeUnit.SECONDS);
+                    if (message == null) {
                     } else {
                         int index = 0;
-                        for (MetricValue value : status.getMetricList()) {
+                        for (MetricValue value : message.getMetricList()) {
                             logger.info("series {}", value);
                             if (value != null && value.getValue() != null) {
-                                TopicMetricKey key = new TopicMetricKey(status.getTopic().getId(), value.getLabel());
+                                TopicMetricKey key = new TopicMetricKey(message.getTopic().getId(), value.getLabel());
                                 key.setOrder(index);
                                 MetricSeries series = seriesMap.get(key);
                                 if (series == null) {
@@ -222,7 +218,7 @@ public class ChronicApp {
                                 logger.info("series {} {}", value.getLabel(), series);
                             }                            
                         }
-                        checkStatus(status);
+                        checkMessage(message);
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
@@ -238,9 +234,9 @@ public class ChronicApp {
         @Override
         public void run() {
             try {
-                for (TopicMessage statusRecord : recordMap.values()) {
-                    if (statusRecord.getPeriodMillis() != 0) {
-                        checkElapsed(statusRecord);
+                for (TopicMessage message : recordMap.values()) {
+                    if (message.getPeriodMillis() != 0) {
+                        checkElapsed(message);
                     }
                 }
             } catch (Exception e) {
@@ -251,65 +247,65 @@ public class ChronicApp {
         }
     }
 
-    private void checkElapsed(TopicMessage status) {
-        long elapsed = Millis.elapsed(status.getTimestamp());
-        logger.debug("checkElapsed {} {}", elapsed, status);
-        if (elapsed > status.getPeriodMillis() + properties.getPeriod()) {
-            AlertEvent previousAlert = alertMap.get(status.getKey());
+    private void checkElapsed(TopicMessage message) {
+        long elapsed = Millis.elapsed(message.getTimestamp());
+        logger.debug("checkElapsed {} {}", elapsed, message);
+        if (elapsed > message.getPeriodMillis() + properties.getPeriod()) {
+            AlertEvent previousAlert = alertMap.get(message.getKey());
             if (previousAlert == null
                     || previousAlert.getStatus().getStatusType() != StatusType.ELAPSED) {
-                status.setStatusType(StatusType.ELAPSED);
-                AlertEvent alert = new AlertEvent(status);
-                alertMap.put(status.getKey(), alert);
+                message.setStatusType(StatusType.ELAPSED);
+                AlertEvent alert = new AlertEvent(message);
+                alertMap.put(message.getKey(), alert);
                 alertQueue.add(alert);
             }
         }
         if (!alertThread.isAlive()) {
             logger.warn("alertThread");
         }
-        if (!statusThread.isAlive()) {
+        if (!messageThread.isAlive()) {
             logger.warn("statusThread");
         }
     }
 
-    private void checkStatus(TopicMessage status) {
-        logger.info("handleStatus {}", status);
-        TopicMessage previousStatus = recordMap.put(status.getKey(), status);
-        AlertEvent previousAlert = alertMap.get(status.getKey());
+    private void checkMessage(TopicMessage message) {
+        logger.info("handleStatus {}", message);
+        TopicMessage previousStatus = recordMap.put(message.getKey(), message);
+        AlertEvent previousAlert = alertMap.get(message.getKey());
         if (previousStatus == null) {
             logger.info("putRecord: no previous status");
-            AlertEvent alert = new AlertEvent(status);            
-            status.setAlertType(AlertType.INITIAL);
-            alertMap.put(status.getKey(), alert);
+            AlertEvent alert = new AlertEvent(message);            
+            message.setAlertType(AlertType.INITIAL);
+            alertMap.put(message.getKey(), alert);
             if (properties.isTesting("alert:initial")) {
                 alertQueue.add(alert);
             }
-        } else if (status.getAlertType() == AlertType.ONCE) {
-            AlertEvent alert = new AlertEvent(status, previousStatus);
-            alertMap.put(status.getKey(), alert);
-        } else if (new TopicMessageChecker(status).isAlertable(previousStatus, previousAlert)) {
-            AlertEvent alert = new AlertEvent(status, previousStatus);
-            if (status.getAlertType() == AlertType.INITIAL) {
-                alertMap.put(status.getKey(), alert);
+        } else if (message.getAlertType() == AlertType.ONCE) {
+            AlertEvent alert = new AlertEvent(message, previousStatus);
+            alertMap.put(message.getKey(), alert);
+        } else if (new TopicMessageChecker(message).isAlertable(previousStatus, previousAlert)) {
+            AlertEvent alert = new AlertEvent(message, previousStatus);
+            if (message.getAlertType() == AlertType.INITIAL) {
+                alertMap.put(message.getKey(), alert);
             } else {
                 long elapsed = alert.getTimestamp() - previousAlert.getTimestamp();
                 if (elapsed < properties.getAlertPeriod()) {
                     logger.warn("elapsed {}: {}", elapsed, previousAlert);
                     previousAlert.setIgnoredAlert(alert);
                 } else {
-                    alertMap.put(status.getKey(), alert);
+                    alertMap.put(message.getKey(), alert);
                     alertQueue.add(alert);
                 }
             }
         } else {
-            long period = status.getTimestamp() - previousStatus.getTimestamp();
+            long period = message.getTimestamp() - previousStatus.getTimestamp();
             logger.info("putRecord period {}", Millis.formatPeriod(period));
-            if (status.getPeriodMillis() == 0) {
+            if (message.getPeriodMillis() == 0) {
                 if (period > Millis.fromSeconds(55) && period < Millis.fromSeconds(70)) {
-                    status.setPeriodMillis(Millis.fromSeconds(60));
+                    message.setPeriodMillis(Millis.fromSeconds(60));
                     logger.info("putRecord set period {}", Millis.formatPeriod(period));
                 } else if (period > Millis.fromMinutes(55) && period < Millis.fromMinutes(70)) {
-                    status.setPeriodMillis(Millis.fromMinutes(60));
+                    message.setPeriodMillis(Millis.fromMinutes(60));
                     logger.info("putRecord set period {}", Millis.formatPeriod(period));
                 }
             }

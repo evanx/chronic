@@ -19,7 +19,6 @@
  specific language governing permissions and limitations
  under the License.  
  */
-
 package chronic.alert;
 
 import java.util.LinkedList;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.data.Patterns;
 import vellum.util.Strings;
 
 /**
@@ -37,37 +35,27 @@ import vellum.util.Strings;
 public class TopicMessageMatcher {
 
     static Logger logger = LoggerFactory.getLogger(TopicMessageMatcher.class);
-    
-    TopicMessage status;
-    
-    public TopicMessageMatcher(TopicMessage status) {
-        this.status = status;
-    }
-    
-    public boolean isHtmlContent() {
-        for (String line : status.lineList) {
-            if (Patterns.matchesTag(line)) {
-                return true;
-            }
-        }
-        return false;
+
+    public static boolean matches(TopicMessage message, TopicMessage other) {
+        return matches(filterLineList(message.getLineList()), filterLineList(other.getLineList()));
     }
 
-    public boolean matches(TopicMessage other) {
-        return matches(getFilteredLineList(status), getFilteredLineList(other));
-    }
-    
-    public static List<String> getFilteredLineList(TopicMessage status) {
+    public static List<String> filterLineList(List<String> lineList) {
         List<String> list = new LinkedList();
-        for (String line : status.lineList) {
+        for (String line : lineList) {
             if (TopicMessagePatterns.LOG.matcher(line).matches()) {
+            } else if (TopicMessagePatterns.SERVICE_STATUS.matcher(line).matches()) {
+                list.add(line);
+            } else if (TopicMessagePatterns.STATUS.matcher(line).matches()) {
+                list.add(line);
+            } else if (TopicMessagePatterns.HEADER.matcher(line).matches()) {
             } else {
                 list.add(line);
             }
         }
         return list;
     }
-    
+
     public static boolean matches(List<String> lineList, List<String> otherList) {
         if (lineList.size() != otherList.size()) {
             return false;
@@ -81,9 +69,9 @@ public class TopicMessageMatcher {
     }
 
     public static boolean matches(String line, String otherLine) {
-        Matcher logMatcher = TopicMessagePatterns.LOG.matcher(line);
-        if (logMatcher.find()) {
-            String category = logMatcher.group(1);
+        Matcher matcher = TopicMessagePatterns.LOG.matcher(line);
+        if (matcher.find()) {
+            String category = matcher.group(1);
             Matcher otherMatcher = TopicMessagePatterns.LOG.matcher(otherLine);
             if (otherMatcher.find()) {
                 String otherCategory = otherMatcher.group(1);
@@ -93,23 +81,32 @@ public class TopicMessageMatcher {
             }
             return false;
         }
-        Matcher nagiosMatcher = TopicMessagePatterns.SERVICE_STATUS.matcher(line);
-        if (nagiosMatcher.find()) {
+        matcher = TopicMessagePatterns.SERVICE_STATUS.matcher(line);
+        if (matcher.find()) {
             Matcher otherMatcher = TopicMessagePatterns.SERVICE_STATUS.matcher(otherLine);
             if (otherMatcher.find()) {
-                if (nagiosMatcher.group(2).equals("UNKNOWN")) {
-                    return true;
-                } else if (otherMatcher.group(2).equals("UNKNOWN")) {
-                    return true;
-                } else if (nagiosMatcher.group(1).equals(otherMatcher.group(1))) {
-                    return nagiosMatcher.group(2).equals(otherMatcher.group(2));
-                }
-                return false;
+                return matcher.group(1).equals(otherMatcher.group(1))
+                        && statusMatches(matcher.group(2), otherMatcher.group(2));
             }
-        } else if (TopicMessagePatterns.HEADER.matcher(line).find()) {
+            return false;
+        }
+        matcher = TopicMessagePatterns.STATUS.matcher(line);
+        if (matcher.find()) {
+            Matcher otherMatcher = TopicMessagePatterns.STATUS.matcher(otherLine);
+            if (otherMatcher.find()) {
+                return statusMatches(matcher.group(1), otherMatcher.group(1));
+            }
+            return false;
+        }
+        matcher = TopicMessagePatterns.HEADER.matcher(line);
+        if (matcher.find()) {
             return true;
         }
         return line.equals(otherLine);
     }
 
+    private static boolean statusMatches(String status, String otherStatus) {
+        return status.equals("UNKNOWN") || otherStatus.equals("UNKNOWN")
+                || status.equals(otherStatus);
+    }
 }

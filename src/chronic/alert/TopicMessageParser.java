@@ -84,6 +84,7 @@ public class TopicMessageParser {
                 } else if (parseHeader(matcher.group(1), matcher.group(2))) {
                     continue;
                 }
+                logger.warn("header: {}", line);
             } else {
             }
             matcher = TopicMessagePatterns.SERVICE_STATUS.matcher(line);

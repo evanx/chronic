@@ -41,6 +41,7 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.ComparableTuple;
+import vellum.data.Patterns;
 import vellum.util.Args;
 
 /**
@@ -224,7 +225,16 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
     }
     
     public boolean matches(TopicMessage other) {
-        return new TopicMessageMatcher(this).matches(other);
+        return TopicMessageMatcher.matches(this, other);
+    }
+    
+    public boolean isHtmlContent() {
+        for (String line : lineList) {
+            if (Patterns.matchesTag(line)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public List<String> buildChanged(TopicMessage previous) {

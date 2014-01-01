@@ -75,10 +75,5 @@ public class TopicMessageChecker {
            }
         }
         return false;
-    }
-    
-    public boolean matches(TopicMessage other) {
-        return new TopicMessageMatcher(status).matches(other);
-    }
-    
+    }    
 }

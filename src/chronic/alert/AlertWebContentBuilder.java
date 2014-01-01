@@ -39,7 +39,7 @@ public class AlertWebContentBuilder {
 
     public void build(AlertEvent alert) {
         this.alert = alert;
-        if (new TopicMessageMatcher(alert.status).isHtmlContent()) {
+        if (alert.status.isHtmlContent()) {
             logger.info("html content");
             alert.htmlContent = String.format("<pre>%s</pre>", 
                     Strings.join("\n", getLineList()));
