@@ -4,8 +4,8 @@
 package chronic.securehandler;
 
 import chronic.app.ChronicHttpx;
-import chronic.alert.AlertRecord;
-import chronic.alert.StatusRecord;
+import chronic.alert.AlertEvent;
+import chronic.alert.TopicMessage;
 import chronic.api.ChronicPlainHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
@@ -39,7 +39,7 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
         if (!cert.isEnabled()) {
             return "Cert not enabled\n";
         }
-        for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
+        for (AlertEvent alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {
             if (!alert.isPolled() && alert.getStatus().getStatusType().isStatusKnown() && 
                     alert.getStatus().getAlertType().isPollable() &&
@@ -51,7 +51,7 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
         return "NONE\n";
     }
     
-    public String buildPlain(AlertRecord alert) {
+    public String buildPlain(AlertEvent alert) {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("Time: %s\n", CalendarFormats.timestampZoneFormat.format(timeZone, alert.getTimestamp())));
         builder.append(String.format("Topic: %s\n", alert.getStatus().getTopicLabel()));
@@ -64,7 +64,7 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
         return builder.toString();
     }
 
-    public static String formatSubject(StatusRecord status) {
+    public static String formatSubject(TopicMessage status) {
         return String.format("%s %s", status.getTopicLabel(), status.getStatusType());
     }
 }

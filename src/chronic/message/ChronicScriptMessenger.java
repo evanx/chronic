@@ -21,8 +21,8 @@
 package chronic.message;
 
 import chronic.alert.AlertMailBuilder;
-import chronic.alert.AlertRecord;
-import chronic.alert.AlertRecordMapper;
+import chronic.alert.AlertEvent;
+import chronic.alert.AlertEventMapper;
 import chronic.app.ChronicApp;
 import java.util.TimeZone;
 import org.slf4j.Logger;
@@ -46,14 +46,14 @@ public class ChronicScriptMessenger {
         logger.info("initialized");
     }
 
-    public synchronized void alert(AlertRecord alert, TimeZone timeZone) {
+    public synchronized void alert(AlertEvent alert, TimeZone timeZone) {
         logger.info("alert {}", alert.toString());
         if (app.getProperties().getAlertScript() != null) {
             try {
                 Executor executor = new Executor();
                 executor.exec(app.getProperties().getAlertScript(),
                         new AlertMailBuilder(app).build(alert, timeZone).getBytes(),
-                        new AlertRecordMapper(alert, TimeZone.getDefault()).getExtendedMap());
+                        new AlertEventMapper(alert, TimeZone.getDefault()).getExtendedMap());
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
                 }

@@ -31,32 +31,32 @@ import vellum.data.Timestamped;
  *
  * @author evan.summers
  */
-public class AlertRecord implements Timestamped {
+public class AlertEvent implements Timestamped {
 
-    static Logger logger = LoggerFactory.getLogger(AlertRecord.class);
-    StatusRecord status;
-    StatusRecord previousStatus;
-    AlertRecord previousAlert;
+    static Logger logger = LoggerFactory.getLogger(AlertEvent.class);
+    TopicMessage status;
+    TopicMessage previousStatus;
+    AlertEvent previousAlert;
     List<String> changedLines;
     String htmlContent;
     String preContent;
     int ignoreCount;
-    AlertRecord ignoredAlert;
-    StatusRecord alertedStatus;
+    AlertEvent ignoredAlert;
+    TopicMessage alertedStatus;
     boolean polled;
     long notificationTimestamp;
     long polledTimestamp;
     
-    public AlertRecord(StatusRecord status) {
+    public AlertEvent(TopicMessage status) {
         this.status = status;
     }
     
-    public AlertRecord(StatusRecord status, StatusRecord previous) {
+    public AlertEvent(TopicMessage status, TopicMessage previous) {
         this.status = status;
         this.previousStatus = previous;
     }
 
-    public AlertRecord(StatusRecord status, StatusRecord previous, AlertRecord previousAlert) {
+    public AlertEvent(TopicMessage status, TopicMessage previous, AlertEvent previousAlert) {
         this.status = status;
         this.previousStatus = previous;
         this.previousAlert = previousAlert;
@@ -70,16 +70,16 @@ public class AlertRecord implements Timestamped {
         return status.getTimestamp();
     }    
 
-    public void setIgnoredAlert(AlertRecord ignoredAlert) {
+    public void setIgnoredAlert(AlertEvent ignoredAlert) {
         this.ignoredAlert = ignoredAlert;
         ignoreCount++;
     }
         
-    public StatusRecord getStatus() {
+    public TopicMessage getStatus() {
         return status;
     }
     
-    public void setPrevious(StatusRecord previous) {
+    public void setPrevious(TopicMessage previous) {
         this.previousStatus = previous;
     }
     
@@ -88,7 +88,7 @@ public class AlertRecord implements Timestamped {
         return status.toString();
     }        
 
-    public void setAlertedStatus(StatusRecord alertedStatus) {
+    public void setAlertedStatus(TopicMessage alertedStatus) {
         this.alertedStatus = alertedStatus;
     }    
 

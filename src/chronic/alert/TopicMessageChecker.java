@@ -20,7 +20,7 @@
  */
 package chronic.alert;
 
-import chronic.alert.AlertRecord;
+import chronic.alert.AlertEvent;
 import chronic.type.StatusType;
 import chronic.type.AlertType;
 import org.slf4j.Logger;
@@ -31,17 +31,17 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-public class StatusRecordChecker {
+public class TopicMessageChecker {
 
-    static Logger logger = LoggerFactory.getLogger(StatusRecordChecker.class);
+    static Logger logger = LoggerFactory.getLogger(TopicMessageChecker.class);
     
-    StatusRecord status;
+    TopicMessage status;
 
-    public StatusRecordChecker(StatusRecord status) {
+    public TopicMessageChecker(TopicMessage status) {
         this.status = status;
     }    
 
-    public boolean isAlertable(StatusRecord previous, AlertRecord alert) {
+    public boolean isAlertable(TopicMessage previous, AlertEvent alert) {
         logger.info("isAlertable {}", Args.format(status.topicLabel, status.alertType, 
                 status.statusType, previous.statusType, status.matches(previous),
                 alert.getStatus().getStatusType()));
@@ -77,8 +77,8 @@ public class StatusRecordChecker {
         return false;
     }
     
-    public boolean matches(StatusRecord other) {
-        return new StatusRecordMatcher(status).matches(other);
+    public boolean matches(TopicMessage other) {
+        return new TopicMessageMatcher(status).matches(other);
     }
     
 }

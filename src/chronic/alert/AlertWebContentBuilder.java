@@ -34,12 +34,12 @@ public class AlertWebContentBuilder {
 
     static Logger logger = LoggerFactory.getLogger(AlertWebContentBuilder.class);
 
-    AlertRecord alert;
+    AlertEvent alert;
     String string;
 
-    public void build(AlertRecord alert) {
+    public void build(AlertEvent alert) {
         this.alert = alert;
-        if (new StatusRecordMatcher(alert.status).isHtmlContent()) {
+        if (new TopicMessageMatcher(alert.status).isHtmlContent()) {
             logger.info("html content");
             alert.htmlContent = String.format("<pre>%s</pre>", 
                     Strings.join("\n", getLineList()));

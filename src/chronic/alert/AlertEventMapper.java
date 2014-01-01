@@ -33,14 +33,14 @@ import vellum.jx.JMap;
  *
  * @author evan.summers
  */
-public class AlertRecordMapper {
-    static Logger logger = LoggerFactory.getLogger(AlertRecordMapper.class);
+public class AlertEventMapper {
+    static Logger logger = LoggerFactory.getLogger(AlertEventMapper.class);
 
-    AlertRecord alert;
-    StatusRecord status;
+    AlertEvent alert;
+    TopicMessage status;
     String timestampLabel;
     
-    public AlertRecordMapper(AlertRecord alert, TimeZone timeZone) {
+    public AlertEventMapper(AlertEvent alert, TimeZone timeZone) {
         this.alert = alert;
         this.status = alert.status;        
         DateFormat format = new SimpleDateFormat("HH:mm:ss");

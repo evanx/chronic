@@ -45,7 +45,7 @@ public class ChronicMailMessenger {
     static Logger logger = LoggerFactory.getLogger(ChronicMailMessenger.class);
     ChronicApp app;
     Mailer mailer;
-    Map<String, AlertRecord> alertMap = new HashMap();
+    Map<String, AlertEvent> alertMap = new HashMap();
 
     public ChronicMailMessenger(ChronicApp app) {
         this.app = app;
@@ -56,13 +56,13 @@ public class ChronicMailMessenger {
         mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
-    public void alert(AlertRecord alert, List<Subscription> subscriptions) {
+    public void alert(AlertEvent alert, List<Subscription> subscriptions) {
          logger.warn("alert {}", alert.toString());
         for (Subscription subscription : subscriptions) {
             String email = subscription.getEmail();
             TimeZone timeZone = subscription.getTimeZone();
             try {
-                AlertRecord previous = alertMap.put(email, alert);
+                AlertEvent previous = alertMap.put(email, alert);
                 if (previous != null) {
                     long elapsed = alert.getTimestamp() - previous.getTimestamp();
                     if (elapsed < app.getProperties().getAlertPeriod()

@@ -28,9 +28,9 @@ import chronic.bundle.Bundle;
  */
 public class AlertFormatter {
 
-    StatusRecord status;
+    TopicMessage status;
 
-    public AlertFormatter(StatusRecord status) {
+    public AlertFormatter(TopicMessage status) {
         this.status = status;
     }
 

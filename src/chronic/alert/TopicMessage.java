@@ -32,12 +32,12 @@ import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.ComparableTuple;
@@ -47,14 +47,14 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-public class StatusRecord implements CertTopicKeyed, OrgKeyed {
+public class TopicMessage implements CertTopicKeyed, OrgKeyed {
 
-    static Logger logger = LoggerFactory.getLogger(StatusRecord.class);
+    static Logger logger = LoggerFactory.getLogger(TopicMessage.class);
     List<String> lineList = new ArrayList();
     AlertType alertType;
     AlertFormatType alertFormatType;
     String topicLabel;
-    StatusType statusType = StatusType.UNKNOWN;
+    StatusType statusType;
     long timestamp = System.currentTimeMillis();
     long periodMillis;
     String contentType;
@@ -62,18 +62,21 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
     String subject;
     String username;
     String hostname;
-    String service;
+    String serviceLabel;
     String alertPushUrl;
     Set<String> subscribers = new HashSet();
     List<MetricValue> metricList = new ArrayList();
-    Map<String, MetricValue> metricMap = new HashMap();
+    Map<String, MetricValue> metricMap = new TreeMap();
+    List<StatusCheck> checks = new LinkedList();
+    List<ServiceStatus> statusList = new LinkedList();
     
-    transient Cert cert;
-    transient Topic topic;
+    Cert cert;
+    Topic topic;
 
-    transient Collection<StatusCheck> checks = new LinkedList();
-    
-    public StatusRecord(Cert cert) {
+    public TopicMessage() {
+    }
+        
+    public TopicMessage(Cert cert) {
         this.cert = cert;
     }
 
@@ -95,7 +98,11 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         metricList.add(metricValue);
         metricMap.put(metricValue.getLabel(), metricValue);
     }
-    
+
+    public List<ServiceStatus> getStatusList() {
+        return statusList;
+    }
+        
     public List<MetricValue> getMetricList() {
         return metricList;
     }
@@ -136,12 +143,12 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         return from;
     }
 
-    public String getService() {
-        return service;
+    public String getServiceLabel() {
+        return serviceLabel;
     }
 
-    public void setService(String service) {
-        this.service = service;
+    public void setServiceLabel(String serviceLabel) {
+        this.serviceLabel = serviceLabel;
     }
 
     public void setSubject(String subject) {
@@ -208,7 +215,7 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         return lineList;
     }
 
-    public boolean isStatusType() {
+    public boolean isStatusKnown() {
         return statusType != null && statusType != StatusType.UNKNOWN;
     }
     
@@ -216,11 +223,11 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
         return statusType != null && statusType.isStatusAlertable();
     }
     
-    public boolean matches(StatusRecord other) {
-        return new StatusRecordMatcher(this).matches(other);
+    public boolean matches(TopicMessage other) {
+        return new TopicMessageMatcher(this).matches(other);
     }
     
-    public List<String> buildChanged(StatusRecord previous) {
+    public List<String> buildChanged(TopicMessage previous) {
         List<String> list = new ArrayList();
         if (previous != null) {
             for (String line : lineList) {
@@ -238,7 +245,7 @@ public class StatusRecord implements CertTopicKeyed, OrgKeyed {
     
     public boolean contains(String matchLine) {
         for (String line : lineList) {
-            if (StatusRecordMatcher.matches(matchLine, line)) {
+            if (TopicMessageMatcher.matches(matchLine, line)) {
                 return true;
             }
         }

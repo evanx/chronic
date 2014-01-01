@@ -20,10 +20,10 @@
  */
 package chronic.app;
 
-import chronic.alert.StatusRecord;
-import chronic.alert.StatusRecordChecker;
+import chronic.alert.TopicMessage;
+import chronic.alert.TopicMessageChecker;
 import chronic.alert.ChronicMailMessenger;
-import chronic.alert.AlertRecord;
+import chronic.alert.AlertEvent;
 import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
 import chronic.entitykey.TopicMetricKey;
@@ -66,12 +66,12 @@ public class ChronicApp {
     VellumHttpsServer appServer = new VellumHttpsServer();
     VellumHttpServer httpRedirectServer = new VellumHttpServer();
     Map<TopicMetricKey, MetricSeries> seriesMap = new ConcurrentHashMap();
-    Map<ComparableTuple, StatusRecord> recordMap = new ConcurrentHashMap();
-    Map<ComparableTuple, AlertRecord> alertMap = new ConcurrentHashMap();
+    Map<ComparableTuple, TopicMessage> recordMap = new ConcurrentHashMap();
+    Map<ComparableTuple, AlertEvent> alertMap = new ConcurrentHashMap();
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
-    SynchronizedCapacityDeque<AlertRecord> alertDeque = new SynchronizedCapacityDeque(100);
-    LinkedBlockingQueue<AlertRecord> alertQueue = new LinkedBlockingQueue(100);
-    LinkedBlockingQueue<StatusRecord> statusQueue = new LinkedBlockingQueue(100);
+    SynchronizedCapacityDeque<AlertEvent> alertDeque = new SynchronizedCapacityDeque(100);
+    LinkedBlockingQueue<AlertEvent> alertQueue = new LinkedBlockingQueue(100);
+    LinkedBlockingQueue<TopicMessage> statusQueue = new LinkedBlockingQueue(100);
     DataSource dataSource = new DataSource();
     EntityManagerFactory emf;
     boolean initalized = false;
@@ -161,7 +161,7 @@ public class ChronicApp {
         }
     }
 
-    public LinkedBlockingQueue<StatusRecord> getStatusQueue() {
+    public LinkedBlockingQueue<TopicMessage> getStatusQueue() {
         return statusQueue;
         
     }
@@ -182,7 +182,7 @@ public class ChronicApp {
                 ChronicEntityService es = newEntityService();
                 try {
                     es.begin();
-                    AlertRecord alert = alertQueue.poll(60, TimeUnit.SECONDS);
+                    AlertEvent alert = alertQueue.poll(60, TimeUnit.SECONDS);
                     if (alert != null) {
                         messenger.alert(alert, 
                                 es.listSubscriptions(alert.getStatus().getTopic()));
@@ -204,7 +204,7 @@ public class ChronicApp {
         public void run() {
             while (running) {
                 try {
-                    StatusRecord status = statusQueue.poll(60, TimeUnit.SECONDS);
+                    TopicMessage status = statusQueue.poll(60, TimeUnit.SECONDS);
                     if (status == null) {
                     } else {
                         int index = 0;
@@ -238,7 +238,7 @@ public class ChronicApp {
         @Override
         public void run() {
             try {
-                for (StatusRecord statusRecord : recordMap.values()) {
+                for (TopicMessage statusRecord : recordMap.values()) {
                     if (statusRecord.getPeriodMillis() != 0) {
                         checkElapsed(statusRecord);
                     }
@@ -251,15 +251,15 @@ public class ChronicApp {
         }
     }
 
-    private void checkElapsed(StatusRecord status) {
+    private void checkElapsed(TopicMessage status) {
         long elapsed = Millis.elapsed(status.getTimestamp());
         logger.debug("checkElapsed {} {}", elapsed, status);
         if (elapsed > status.getPeriodMillis() + properties.getPeriod()) {
-            AlertRecord previousAlert = alertMap.get(status.getKey());
+            AlertEvent previousAlert = alertMap.get(status.getKey());
             if (previousAlert == null
                     || previousAlert.getStatus().getStatusType() != StatusType.ELAPSED) {
                 status.setStatusType(StatusType.ELAPSED);
-                AlertRecord alert = new AlertRecord(status);
+                AlertEvent alert = new AlertEvent(status);
                 alertMap.put(status.getKey(), alert);
                 alertQueue.add(alert);
             }
@@ -272,23 +272,23 @@ public class ChronicApp {
         }
     }
 
-    private void checkStatus(StatusRecord status) {
+    private void checkStatus(TopicMessage status) {
         logger.info("handleStatus {}", status);
-        StatusRecord previousStatus = recordMap.put(status.getKey(), status);
-        AlertRecord previousAlert = alertMap.get(status.getKey());
+        TopicMessage previousStatus = recordMap.put(status.getKey(), status);
+        AlertEvent previousAlert = alertMap.get(status.getKey());
         if (previousStatus == null) {
             logger.info("putRecord: no previous status");
-            AlertRecord alert = new AlertRecord(status);
+            AlertEvent alert = new AlertEvent(status);            
             status.setAlertType(AlertType.INITIAL);
             alertMap.put(status.getKey(), alert);
             if (properties.isTesting("alert:initial")) {
                 alertQueue.add(alert);
             }
         } else if (status.getAlertType() == AlertType.ONCE) {
-            AlertRecord alert = new AlertRecord(status, previousStatus);
+            AlertEvent alert = new AlertEvent(status, previousStatus);
             alertMap.put(status.getKey(), alert);
-        } else if (new StatusRecordChecker(status).isAlertable(previousStatus, previousAlert)) {
-            AlertRecord alert = new AlertRecord(status, previousStatus);
+        } else if (new TopicMessageChecker(status).isAlertable(previousStatus, previousAlert)) {
+            AlertEvent alert = new AlertEvent(status, previousStatus);
             if (status.getAlertType() == AlertType.INITIAL) {
                 alertMap.put(status.getKey(), alert);
             } else {
@@ -316,8 +316,7 @@ public class ChronicApp {
         }
     }
 
-    public Map<ComparableTuple, AlertRecord> getAlertMap() {
+    public Map<ComparableTuple, AlertEvent> getAlertMap() {
         return alertMap;
-    }
-
+    }   
 }

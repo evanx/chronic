@@ -27,11 +27,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author evan.summers
  */
-public class StatusRecordProcessor {
+public class TopicMessageProcessor {
 
-    static Logger logger = LoggerFactory.getLogger(StatusRecordProcessor.class);
+    static Logger logger = LoggerFactory.getLogger(TopicMessageProcessor.class);
 
-    public StatusRecordProcessor() {
+    public TopicMessageProcessor() {
     }
         
 }

@@ -6,8 +6,8 @@ package chronic.securehandler;
 import chronic.app.ChronicHttpx;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
-import chronic.alert.StatusRecord;
-import chronic.alert.StatusRecordParser;
+import chronic.alert.TopicMessage;
+import chronic.alert.TopicMessageParser;
 import chronic.api.ChronicPlainHttpxHandler;
 import chronic.check.StatusCheck;
 import chronic.entity.Cert;
@@ -30,7 +30,7 @@ public class Post implements ChronicPlainHttpxHandler {
     public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
             throws Exception {
         Cert cert = es.persistCert(httpx);
-        StatusRecord status = new StatusRecord(cert);
+        TopicMessage status = new TopicMessage(cert);
         int contentLength = Integer.parseInt(httpx.getRequestHeader("Content-length"));
         if (contentLength > contentLengthLimit) {
             logger.warn("contentLength {} {}", contentLength, cert);
@@ -47,7 +47,7 @@ public class Post implements ChronicPlainHttpxHandler {
         httpx.getDelegate().getRequestBody().read(content);
         String contentString = new String(content);
         logger.trace("content {}", contentString);
-        status = new StatusRecordParser().parse(cert, httpx.getRequestHeaders(), contentString);
+        new TopicMessageParser(status).parse(httpx.getRequestHeaders(), contentString);
         logger.debug("status {}", status);
         Topic topic = es.persistTopic(cert, status.getTopicLabel());
         status.setTopic(topic);

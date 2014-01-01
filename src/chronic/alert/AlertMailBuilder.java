@@ -41,14 +41,14 @@ public class AlertMailBuilder {
     static Logger logger = LoggerFactory.getLogger(AlertMailBuilder.class);
     StringBuilder builder = new StringBuilder();
     ChronicApp app;
-    AlertRecord alert;
+    AlertEvent alert;
     TimeZone timeZone;
 
     public AlertMailBuilder(ChronicApp app) {
         this.app = app;
     }
 
-    public String build(AlertRecord alert, TimeZone timeZone) {
+    public String build(AlertEvent alert, TimeZone timeZone) {
         this.alert = alert;
         this.timeZone = timeZone;
         logger.info("build {}", alert.status);
@@ -75,18 +75,18 @@ public class AlertMailBuilder {
         return builder.toString();
     }
 
-    private void appendPrevious(StatusRecord status) {
+    private void appendPrevious(TopicMessage status) {
         builder.append("\n<br><hr><b>Previously:</b>\n");
         appendHeader(status);
         appendContent(status);
     }
 
-    private void append(StatusRecord status) {
+    private void append(TopicMessage status) {
         appendHeader(status);
         appendContent(status);
     }
 
-    private void appendHeader(StatusRecord status) {
+    private void appendHeader(TopicMessage status) {
         builder.append(String.format("<i>%s</i>", CalendarFormats.timestampFormat.format(timeZone, status.getTimestamp())));
         builder.append(String.format(" <b>%s</b>", formatHeading(status)));
         String alertTypeStyle = "font-color: gray";
@@ -94,11 +94,11 @@ public class AlertMailBuilder {
                 status.getAlertType().getLabel()));
     }
 
-    private void appendContent(StatusRecord status) {
+    private void appendContent(TopicMessage status) {
         builder.append(buildContent(status));
     }
 
-    public static String buildContent(StatusRecord status) {
+    public static String buildContent(TopicMessage status) {
         StringBuilder builder = new StringBuilder();
         for (String line : Strings.trimLines(status.getLineList())) {
             if (line.trim().isEmpty() && builder.length() == 0) {
@@ -108,7 +108,7 @@ public class AlertMailBuilder {
                 continue;
             }
             if (status.getAlertFormatType() == AlertFormatType.MINIMAL) {
-                Matcher matcher = StatusRecordPatterns.NAGIOS.matcher(line);
+                Matcher matcher = TopicMessagePatterns.SERVICE_STATUS.matcher(line);
                 if (matcher.find()) {
                     int index = line.indexOf(" - ");
                     if (index > 0) {
@@ -134,9 +134,9 @@ public class AlertMailBuilder {
         builder.append(String.format(string, args));
     }
 
-    public static String formatHeading(StatusRecord status) {
+    public static String formatHeading(TopicMessage status) {
         logger.info("formatSubject {} {}", status.getStatusType());
-        if (status.isStatusType()) {
+        if (status.isStatusKnown()) {
             if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
                 return status.getTopicLabel()
                         + " <i>" + status.getStatusType().getLabel() + "</i>";

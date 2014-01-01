@@ -24,7 +24,7 @@ package chronic.alert;
  *
  * @author evan.summers
  */
-public class StatusRecordHeaders {
+public class TopicMessageHeaders {
 
     public static final String CHECK_TCP = "Check-tcp";
     public static final String CHECK_HTTPS = "Check-https";

@@ -26,23 +26,24 @@ import java.util.regex.Pattern;
  *
  * @author evan.summers
  */
-public class StatusRecordPatterns {
+public class TopicMessagePatterns {
 
     public final static Pattern FROM_CRON
             = Pattern.compile("([a-z]+) \\(Cron Daemon\\)$");
     public final static Pattern CRON_SUBJECT
-            = Pattern.compile("Cron <(\\S+)@(\\S+)> (.*)");
-    public final static Pattern LOG
-            = Pattern.compile("^(TRACE|DEBUG|INFO|WARN|WARNING|ERROR)[\\s:-]*(.*)$");
-    public final static Pattern LOG_DEBUG
-            = Pattern.compile("^(TRACE|DEBUG)");
-    public final static Pattern NAGIOS
-            = Pattern.compile("^(\\S*)\\s*(OK|WARNING|CRITICAL|UNKNOWN)[\\s:-]*(.*)$");
-    public final static Pattern NAGIOS_UNKNOWN
-            = Pattern.compile("^(\\S*)\\s*(UNKNOWN)[\\s:-]*(.*)$");
+            = Pattern.compile("Cron <(\\w+)@(\\w+)> (.*)");
     public final static Pattern HEADER
             = Pattern.compile("^([A-Z][a-zA-Z-]+):\\s*(.*)\\s*$");
-    public final static Pattern METRIC_VALUE
+    public final static Pattern LOG
+            = Pattern.compile("^(TRACE|DEBUG|INFO|WARN|WARNING|ERROR)[\\s:-]*(.*)$");
+    public final static Pattern STATUS
+            = Pattern.compile("^(OK|WARNING|CRITICAL|UNKNOWN)[\\s:-]*(.*)$");
+    public final static Pattern SERVICE_STATUS
+            = Pattern.compile("^(\\S*)\\s*(OK|WARNING|CRITICAL|UNKNOWN)[\\s:-]*(.*)$");
+    public final static Pattern HEADER_METRIC_VALUE
+            = Pattern.compile("(\\w+)\\s+([+-]?[0-9]+.?,?[0-9]*)");
+    public final static Pattern SERVICE_METRIC_VALUE
             = Pattern.compile("([-+]?[0-9]*.[0-9]*)");
+    
 
 }

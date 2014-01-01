@@ -5,8 +5,8 @@ package chronic.handler;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
-import chronic.alert.AlertRecord;
-import chronic.alert.AlertRecordMapper;
+import chronic.alert.AlertEvent;
+import chronic.alert.AlertEventMapper;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import java.util.LinkedList;
@@ -33,9 +33,9 @@ public class AlertList implements ChronicHttpxHandler {
         String email = httpx.getEmail();
         TimeZone timeZone = httpx.getTimeZone();
         List alerts = new LinkedList();
-        for (AlertRecord alert : Lists.sortedLinkedList(app.getAlertMap().values(),
+        for (AlertEvent alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {            
-            AlertRecordMapper mapper = new AlertRecordMapper(alert, timeZone);
+            AlertEventMapper mapper = new AlertEventMapper(alert, timeZone);
             if (es.isSubscription(alert.getStatus().getTopic().getId(), email)) {
                 alerts.add(mapper.getExtendedMap());
             } else if (httpx.getReferer().endsWith("/demo")) {

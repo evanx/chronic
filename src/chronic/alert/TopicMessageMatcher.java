@@ -34,13 +34,13 @@ import vellum.util.Strings;
  *
  * @author evan.summers
  */
-public class StatusRecordMatcher {
+public class TopicMessageMatcher {
 
-    static Logger logger = LoggerFactory.getLogger(StatusRecordMatcher.class);
+    static Logger logger = LoggerFactory.getLogger(TopicMessageMatcher.class);
     
-    StatusRecord status;
+    TopicMessage status;
     
-    public StatusRecordMatcher(StatusRecord status) {
+    public TopicMessageMatcher(TopicMessage status) {
         this.status = status;
     }
     
@@ -53,14 +53,14 @@ public class StatusRecordMatcher {
         return false;
     }
 
-    public boolean matches(StatusRecord other) {
+    public boolean matches(TopicMessage other) {
         return matches(getFilteredLineList(status), getFilteredLineList(other));
     }
     
-    public static List<String> getFilteredLineList(StatusRecord status) {
+    public static List<String> getFilteredLineList(TopicMessage status) {
         List<String> list = new LinkedList();
         for (String line : status.lineList) {
-            if (StatusRecordPatterns.LOG.matcher(line).matches()) {
+            if (TopicMessagePatterns.LOG.matcher(line).matches()) {
             } else {
                 list.add(line);
             }
@@ -81,10 +81,10 @@ public class StatusRecordMatcher {
     }
 
     public static boolean matches(String line, String otherLine) {
-        Matcher logMatcher = StatusRecordPatterns.LOG.matcher(line);
+        Matcher logMatcher = TopicMessagePatterns.LOG.matcher(line);
         if (logMatcher.find()) {
             String category = logMatcher.group(1);
-            Matcher otherMatcher = StatusRecordPatterns.LOG.matcher(otherLine);
+            Matcher otherMatcher = TopicMessagePatterns.LOG.matcher(otherLine);
             if (otherMatcher.find()) {
                 String otherCategory = otherMatcher.group(1);
                 if (category.equals(otherCategory)) {
@@ -93,9 +93,9 @@ public class StatusRecordMatcher {
             }
             return false;
         }
-        Matcher nagiosMatcher = StatusRecordPatterns.NAGIOS.matcher(line);
+        Matcher nagiosMatcher = TopicMessagePatterns.SERVICE_STATUS.matcher(line);
         if (nagiosMatcher.find()) {
-            Matcher otherMatcher = StatusRecordPatterns.NAGIOS.matcher(otherLine);
+            Matcher otherMatcher = TopicMessagePatterns.SERVICE_STATUS.matcher(otherLine);
             if (otherMatcher.find()) {
                 if (nagiosMatcher.group(2).equals("UNKNOWN")) {
                     return true;
@@ -106,7 +106,7 @@ public class StatusRecordMatcher {
                 }
                 return false;
             }
-        } else if (StatusRecordPatterns.HEADER.matcher(line).find()) {
+        } else if (TopicMessagePatterns.HEADER.matcher(line).find()) {
             return true;
         }
         return line.equals(otherLine);
