@@ -22,9 +22,9 @@
 package chronic;
 
 import chronic.alert.HtmlChecker;
-import chronic.alert.StatusRecord;
-import chronic.alert.StatusRecordMatcher;
-import chronic.alert.StatusRecordPatterns;
+import chronic.alert.TopicMessage;
+import chronic.alert.TopicMessageMatcher;
+import chronic.alert.TopicMessagePatterns;
 import chronic.entity.Cert;
 import chronic.entitykey.CertKey;
 import java.util.TimeZone;
@@ -76,7 +76,7 @@ public class ChronicTest {
 
     @Test
     public void emailHeaderPattern() {
-        Matcher matcher = StatusRecordPatterns.HEADER.matcher("X-Cron-Env: test");
+        Matcher matcher = TopicMessagePatterns.HEADER.matcher("X-Cron-Env: test");
         Assert.assertTrue(matcher.find());
         Assert.assertEquals("X-Cron-Env", matcher.group(1));
         Assert.assertEquals("test", matcher.group(2));
@@ -118,23 +118,23 @@ public class ChronicTest {
     
     @Test
     public void nagiosMatches() {
-        Assert.assertTrue(StatusRecordMatcher.matches(
+        Assert.assertTrue(TopicMessageMatcher.matches(
                 "Service OK - 100ms",
                 "Service OK - 200ms"
         ));
-        Assert.assertTrue(StatusRecordMatcher.matches(
+        Assert.assertTrue(TopicMessageMatcher.matches(
                 "Service OK - 100ms",
                 "Service UNKNOWN - 200ms"
         ));
-        Assert.assertTrue(StatusRecordMatcher.matches(
+        Assert.assertTrue(TopicMessageMatcher.matches(
                 "Service UNKNOWN - 100ms",
                 "Service CRITICAL - 200ms"
         ));
-        Assert.assertFalse(StatusRecordMatcher.matches(
+        Assert.assertFalse(TopicMessageMatcher.matches(
                 "Service OK - 100ms",
                 "Service CRITICAL - 100ms"
         ));
-        Assert.assertFalse(StatusRecordMatcher.matches(
+        Assert.assertFalse(TopicMessageMatcher.matches(
                 "ServiceA OK - 100ms",
                 "ServiceB OK - 100ms"
         ));
@@ -142,41 +142,40 @@ public class ChronicTest {
 
     @Test
     public void nagiosPatternDash() {
-        Matcher matcher = StatusRecordPatterns.NAGIOS.matcher("CRITICAL - no connection");
+        Matcher matcher = TopicMessagePatterns.SERVICE_STATUS.matcher("Service CRITICAL - no connection");
         Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.group(1).equals(""));
+        Assert.assertTrue(matcher.group(1).equals("Service"));
         Assert.assertTrue(matcher.group(2).equals("CRITICAL"));
         Assert.assertTrue(matcher.group(3).equals("no connection"));
     }
 
     @Test
     public void nagiosPatternColon() {
-        Matcher matcher = StatusRecordPatterns.NAGIOS.matcher("CRITICAL: no connection");
+        Matcher matcher = TopicMessagePatterns.STATUS.matcher("CRITICAL: no connection");
         Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.group(1).equals(""));
-        Assert.assertTrue(matcher.group(2).equals("CRITICAL"));
-        Assert.assertTrue(matcher.group(3).equals("no connection"));
+        Assert.assertTrue(matcher.group(1).equals("CRITICAL"));
+        Assert.assertTrue(matcher.group(2).equals("no connection"));
     }
 
     @Test
     public void nagiosChanged() {
         Cert cert = new Cert(certKey);
-        StatusRecord record1 = new StatusRecord(cert);
-        StatusRecord record2 = new StatusRecord(cert);
+        TopicMessage record1 = new TopicMessage(cert);
+        TopicMessage record2 = new TopicMessage(cert);
         record1.getLineList().add("ACME OK - some detail");
         record2.getLineList().add("ACME OK - other detail");
         Assert.assertTrue(record1.matches(record2));
-        record2 = new StatusRecord(cert);
+        record2 = new TopicMessage(cert);
         record2.getLineList().add("ACMY OK - other detail");
         Assert.assertFalse(record1.matches(record2));
-        record2 = new StatusRecord(cert);
+        record2 = new TopicMessage(cert);
         record2.getLineList().add("ACME CRITICAL - some detail");
         Assert.assertFalse(record1.matches(record2));
     }
 
     @Test
     public void cronSubject() {
-        Matcher matcher = StatusRecordPatterns.CRON_SUBJECT.matcher(
+        Matcher matcher = TopicMessagePatterns.CRON_SUBJECT.matcher(
                 "Subject: Cron <root@client> ~/scripts/test.sh");
         Assert.assertTrue(matcher.find());
         Assert.assertEquals("root", matcher.group(1));
