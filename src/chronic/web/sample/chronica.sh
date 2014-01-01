@@ -558,15 +558,10 @@ c0minutelyPost() {
 }
 
 c0minutelySim() {
-  c0minutely | c0post
-  c0minutely | c0post
-  c0minutely | c0post
-  c0minutely | c0post
-  c0minutely | c0post
-  c0minutely | c0post
-  c0minutely | c0post
-  c0minutely | c0post
-  c0minutely | c0post
+  for i in {1..30} 
+  do
+    c0minutely | c0post
+  done
 }
 
 c0dailyPost() {
