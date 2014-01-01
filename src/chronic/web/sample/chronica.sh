@@ -558,7 +558,7 @@ c0minutelyPost() {
 }
 
 c0minutelySim() {
-  for i in {1..30} 
+  for i in $(seq 50) 
   do
     c0minutely | c0post
   done
