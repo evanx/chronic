@@ -43,7 +43,7 @@ public class ChronicMain {
     
     public static void main(String[] args) throws Exception {
         try {
-            new ChronicMain().init();
+            //new ChronicMain().init();
             ChronicApp app = new ChronicApp();
             app.init();
             if (false) {

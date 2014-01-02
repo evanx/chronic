@@ -24,7 +24,6 @@ import chronic.type.IntervalType;
 import chronic.util.ByteArraySeries;
 import vellum.data.Millis;
 import vellum.jx.JMap;
-import vellum.jx.JMaps;
 
 /**
  *
@@ -33,6 +32,7 @@ import vellum.jx.JMaps;
 public class MetricSeries {
 
     long timestamp;
+    long hourTimestamp;
     ByteArraySeries minutelySeries;
     ByteArraySeries hourlySeries;
 
@@ -43,9 +43,20 @@ public class MetricSeries {
 
     public synchronized void add(long timestamp, float value) {
         this.timestamp = timestamp;
+        int minute = Millis.timestampMinute(timestamp);
+        if (minute == 0) {
+            hourly();
+        } else if (minute == 1 && hourTimestamp == 0) {
+            hourly();
+        }
         minutelySeries.add(value);
     }
 
+    private void hourly() {
+        hourTimestamp = timestamp;
+        hourlySeries.add(minutelySeries.average(60));
+    }
+    
     public long getTimestamp() {
         return timestamp;
     }

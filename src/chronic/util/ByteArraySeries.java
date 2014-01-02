@@ -84,12 +84,17 @@ public class ByteArraySeries {
         this.ceiling = ceiling;
     }
 
-    public synchronized float average() {
+    public synchronized float average(int count) {
         int total = 0;
-        for (int i = 0; i < values.length; i++) {
-            total += values[i];
+        if (count > size()) count = size;
+        for (int i = 1; i <= size; i++) {
+            total += values[capacity - i];
         }
         return total * ceiling / size() / Byte.MAX_VALUE;
+    }
+    
+    public synchronized float average() {
+        return average(size());
     }
 
     public int getCapacity() {
@@ -111,5 +116,5 @@ public class ByteArraySeries {
     @Override
     public String toString() {
         return String.format("size %d, average %f", size(), average());
-    }       
+    }
 }

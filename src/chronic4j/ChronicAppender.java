@@ -136,10 +136,12 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
         //logger.info("run {} {}", deque.size(), postAddress);
         taskTimestamp = System.currentTimeMillis();
         Deque<LoggingEvent> snapshot;
+        System.out.println("ChronicAppender run enter");
         synchronized (deque) {
             snapshot = deque.clone();
             deque.clear();
         }
+        System.out.println("ChronicAppender run snapshot");
         StringBuilder builder = new StringBuilder();
         builder.append(processor.buildReport());
         builder.append(String.format("INFO: deque size: %d\n", deque.size()));
@@ -158,7 +160,10 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
             builder.append(string);
             builder.append("\n");
         }
+        System.out.println("ChronicAppender run post");
+        System.out.println(builder.toString());
         post(builder.toString());
+        System.out.println("ChronicAppender run return");
     }
 
     private void post(String string) {
