@@ -19,11 +19,11 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package vellum;
 
-import chronic.alert.MetricSeries;
-import chronic.type.MetricType;
-import java.util.TimeZone;
+import chronic.util.ByteArraySeries;
+import java.util.Arrays;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,21 +32,25 @@ import org.slf4j.LoggerFactory;
  *
  * @author evans
  */
-public class ChronicSeriesTest {
+public class ByteArraySeriesTest {
 
-    static Logger logger = LoggerFactory.getLogger(ChronicSeriesTest.class);
+    static Logger logger = LoggerFactory.getLogger(ByteArraySeriesTest.class);
 
 
-    public ChronicSeriesTest() {
+    public ByteArraySeriesTest() {
     }
     
     @Test
     public void test() {
-        MetricSeries series = new MetricSeries(10, 10);
+        ByteArraySeries series = new ByteArraySeries(10);
         for (int i = 0; i < 20; i++) {
-            series.add(System.currentTimeMillis(), 10 + i);
+            series.add(10 + i);
         }
-        logger.info("map {}", series.getMap(TimeZone.getDefault(), MetricType.MINUTELY));
+        logger.info("array {}", Arrays.toString(series.getFloatArray()));
+        Assert.assertEquals(10, series.size());
+        Assert.assertTrue(Float.toString(series.average()).startsWith("24.36"));
+        Assert.assertEquals(10, series.getFloatArray().length);
+        Assert.assertTrue(series.getFloatArray()[5].toString().startsWith("24.80"));
     }
     
 }
