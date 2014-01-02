@@ -39,7 +39,7 @@ public class Post implements ChronicPlainHttpxHandler {
             status.getLineList().add("INFO: Content length limit exceeded");
             Topic topic = es.persistTopic(cert, status.getTopicLabel());
             status.setTopic(topic);
-            app.getStatusQueue().add(status);
+            app.getMessageQueue().add(status);
             cert.setEnabled(false);
             throw new Exception("Content length limit exceeded: " + cert);
         }
@@ -69,7 +69,7 @@ public class Post implements ChronicPlainHttpxHandler {
             builder.append("\n");
         }
         es.commit();
-        app.getStatusQueue().add(status);
+        app.getMessageQueue().add(status);
         if (builder.length() == 0) {
             builder.append(String.format("OK: %s\n", topic.getTopicLabel()));
         }

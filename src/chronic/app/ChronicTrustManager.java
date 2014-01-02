@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ChronicTrustManager implements X509TrustManager {
 
-    Logger logger = LoggerFactory.getLogger(ChronicHttpService.class);
+    Logger logger = LoggerFactory.getLogger(ChronicTrustManager.class);
     ChronicApp app;
 
     public ChronicTrustManager(ChronicApp app) {
@@ -49,6 +49,7 @@ public class ChronicTrustManager implements X509TrustManager {
         throws CertificateException {
         String dname = certs[0].getSubjectDN().getName();
         logger.debug("checkClientTrusted {}", dname);
+        logger.debug("server threads {}", app.appServer);
     }
 
     @Override

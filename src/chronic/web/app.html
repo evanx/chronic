@@ -1,364 +1,372 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:ng="https://angularjs.org" xmlns:co="http://chronica.co" ng-app="app">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="favicon.png">
-    <title>Chronica.co</title>
-    <link href="bootstrap-3.0.2/css/bootstrap.css" rel="stylesheet" />
-    <link href="css/bootstrap-switch.css" rel="stylesheet" />
-    <link href="navbar.css" rel="stylesheet" />
-    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' 
-          type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' 
-          type='text/css'>
-    <script src="js/angular-1.2.0.min.js"></script>
-    <script src="js/angular-sanitize.min.js"></script>
-  </head>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="shortcut icon" href="favicon.png">
+        <title>Chronica.co</title>
+        <link href="bootstrap-3.0.2/css/bootstrap.css" rel="stylesheet" />
+        <link href="css/bootstrap-switch.css" rel="stylesheet" />
+        <link href="navbar.css" rel="stylesheet" />
+        <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' 
+              type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' 
+              type='text/css'>
+        <script src="js/angular-1.2.0.min.js"></script>
+        <script src="js/angular-sanitize.min.js"></script>
+    </head>
 
-  <body ng-controller="personaController">
-    <div class="container">
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation" ng-cloak>
-        <div class="navbar-header">
-          <ul class="nav navbar-nav">
-            <li ng-class="getClass('faq')">
-              <a class="navbar-brand" href="#" ng-click="changeView('faq')">Chronica.co</a>
-            </li>
-          </ul>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav" ng-show="persona.email" >
-            <li ng-class="getClass('alerts')">
-              <a href="#" ng-click="changeView('alerts')">Alerts</a>
-            </li>
-            <li ng-class="getClass('charts')">
-              <a href="#" ng-click="changeView('charts')">Charts</a>
-            </li>
-            <!--li ng-class="getClass('topics')">
-              <a href="#" ng-click="changeView('topics')">Topics</a>
-            </li-->
-            <li ng-class="getClass('subscriptions')">
-              <a href="#" ng-click="changeView('subscriptions')">Topics</a>
-            </li>
-            <li ng-class="getClass('roles')">
-              <a href="#" ng-click="changeView('roles')">Roles</a>
-            </li>
-            <li ng-class="getClass('certs')">
-              <a href="#" ng-click="changeView('certs')">Certs</a>
-            </li>
-            <li ng-class="getClass('start')">
-              <a href="#" ng-click="changeView('start')">Help</a>
-            </li>
-          </ul>
-          <div class="navbar-collapse collapse pull-right">
-            <div class="navbar-text" ng-cloak ng-hide="persona.email || loggingIn">
-              <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a>
+    <body ng-controller="personaController">
+        <div class="container" ng-cloak>
+            <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+                <div class="navbar-header">
+                    <ul class="nav navbar-nav">
+                        <li ng-class="getClass('about')">
+                            <a class="navbar-brand" href="#" ng-click="changeView('about')">Chronica.co</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav" ng-show="persona.email" >
+                        <li ng-class="getClass('alerts')">
+                            <a href="#" ng-click="changeView('alerts')">Alerts</a>
+                        </li>
+                        <li ng-class="getClass('charts')">
+                            <a href="#" ng-click="changeView('charts')">Charts</a>
+                        </li>
+                        <!--li ng-class="getClass('topics')">
+                          <a href="#" ng-click="changeView('topics')">Topics</a>
+                        </li-->
+                        <li ng-class="getClass('subscriptions')">
+                            <a href="#" ng-click="changeView('subscriptions')">Topics</a>
+                        </li>
+                        <li ng-class="getClass('roles')">
+                            <a href="#" ng-click="changeView('roles')">Roles</a>
+                        </li>
+                        <li ng-class="getClass('certs')">
+                            <a href="#" ng-click="changeView('certs')">Certs</a>
+                        </li>
+                        <li ng-class="getClass('start')">
+                            <a href="#" ng-click="changeView('start')">Help</a>
+                        </li>
+                    </ul>
+                    <div class="navbar-collapse collapse pull-right">
+                        <div class="navbar-text" ng-cloak ng-hide="persona.email || loggingIn">
+                            <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a>
+                        </div>
+                        <div class="navbar-text" ng-show="loggingIn">
+                            <span>Verify...</span>
+                        </div>
+                        <div class="navbar-text" ng-cloak ng-show="persona.email && !loggingIn">
+                            <a ng-click="logout()" class="navbar-link" href="#">{{persona.email}}</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="navbar-text" ng-show="loggingIn">
-              <span>Verify...</span>
+        </div>
+
+        <div class="container" ng-controller="alertsController" 
+             ng-cloak ng-show="persona.email && view === 'alerts'">
+            <p ng-show="loading">Loading...</p>
+            <p ng-show="!loading && alerts && alerts.length === 0">No alerts</p>
+            <div class="row"
+                 ng-show="alerts.length > 0" ng-cloak>
+                <div class="col-lg-12" style='height: 200px; overflow: auto;'>
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Unit</th>
+                                <th>Name</th>
+                                <th>Topic</th>
+                                <th>Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="alert in alerts" ng-click="setSelected()">
+                                <td>
+                                    <i>{{alert.timestampLabel}}</i>
+                                </td>
+                                <td>
+                                    {{alert.orgUnit}}
+                                </td>
+                                <td>
+                                    {{alert.commonName}}
+                                </td>
+                                <td>
+                                    <b>{{alert.topicLabel}}</b>
+                                </td>
+                                <td ng-click="setSelected()">
+                                    {{alert.message}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>    
+                </div>
+                <hr>
             </div>
-            <div class="navbar-text" ng-cloak ng-show="persona.email && !loggingIn">
-              <a ng-click="logout()" class="navbar-link" href="#">{{persona.email}}</a>
+            <div class="row">
+                <h4 ng-show="selected"><b>{{selected.topicLabel}}</b>
+                    &nbsp;<i>{{selected.alertTypeLabel}}</i></h4>
+                <div ng-show="selected.htmlContent" ng-bind-html="selected.htmlContent" 
+                     style="font-family: Ubuntu Mono">  
+                </div>
+                <pre ng-show="selected.preContent" ng-bind-html="selected.preContent"
+                     style="font-family: Ubuntu Mono">  
+                </pre>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
 
-    <div class="container" ng-controller="alertsController" 
-         ng-cloak ng-show="persona.email && view === 'alerts'">
-      <p ng-show="loading">Loading...</p>
-      <p ng-show="!loading && alerts && alerts.length === 0">No alerts</p>
-      <div class="row"
-           ng-show="alerts.length > 0" ng-cloak>
-        <div class="col-lg-12" style='height: 200px; overflow: auto;'>
-          <table class="table table-striped table-bordered table-condensed">
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>Unit</th>
-                <th>Name</th>
-                <th>Topic</th>
-                <th>Message</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="alert in alerts" ng-click="setSelected()">
-                <td>
-                  <i>{{alert.timestampLabel}}</i>
-                </td>
-                <td>
-                  {{alert.orgUnit}}
-                </td>
-                <td>
-                  {{alert.commonName}}
-                </td>
-                <td>
-                  <b>{{alert.topicLabel}}</b>
-                </td>
-                <td ng-click="setSelected()">
-                  {{alert.message}}
-                </td>
-              </tr>
-            </tbody>
-          </table>    
+        <div class="container" ng-controller="chartController" ng-cloak ng-show="persona.email && view === 'charts'">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" ng-class="{active: interval === 'MINUTE'}" 
+                        ng-click="intervalChanged('MINUTE')">Minutely</button>
+                <button type="button" class="btn btn-primary" ng-class="{active: interval === 'HOUR'}" 
+                        ng-click="intervalChanged('HOUR')">Hourly</button>
+            </div>
+            <p></p>
+            <p ng-show="loading">Loading...</p>
+            <p ng-show="!loading && charts && charts.length === 0">No charts</p>
+            <div class="row-fluid" ng-repeat="chart in charts">
+                <div class="span6" style="margin:20px 0;">	
+                    <p>{{chart.topicLabel}} <b>{{chart.metricLabel}}</b> 
+                        <i ng-show="chart.timestampLabel">{{chart.timestampLabel}}</i></p>
+                    <canvas linechart options="options" data="chart" id="lineChart" width="900" height="100"></canvas>
+                </div>
+            </div>
         </div>
-        <hr>
-      </div>
-      <div class="row">
-        <h4 ng-show="selected"><b>{{selected.topicLabel}}</b>
-          &nbsp;<i>{{selected.alertTypeLabel}}</i></h4>
-        <div ng-show="selected.htmlContent" ng-bind-html="selected.htmlContent" 
-             style="font-family: Ubuntu Mono">  
-        </div>
-        <pre ng-show="selected.preContent" ng-bind-html="selected.preContent"
-             style="font-family: Ubuntu Mono">  
-        </pre>
-      </div>
-    </div>
 
-    <div class="container" ng-controller="chartController" ng-cloak ng-show="persona.email && view === 'charts'">
-      <p ng-show="loading">Loading...</p>
-      <p ng-show="!loading && charts && charts.length === 0">No charts</p>
-      <div class="row-fluid" ng-repeat="chart in charts">
-        <div class="span6" style="margin:20px 0;">	
-          <p>{{chart.topicLabel}} <b>{{chart.metricLabel}}</b></p>
-          <canvas linechart options="options" data="chart" id="lineChart" width="900" height="100"></canvas>
+        <div class="container" ng-controller="topicsController" 
+             ng-cloak ng-show="false && persona.email && view === 'topics'">
+            <p ng-show="loading">Loading...</p>
+            <p ng-show="!loading && topics && topics.length === 0">No topics</p>
+            <div class="row" ng-show="topics.length > 0" ng-cloak>
+                <div class="col-lg-12">
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Topic</th>
+                                <th>Host</th>
+                                <th>Group</th>
+                                <th>Organisation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="topic in topics">
+                                <td ng-click="setSelected()">
+                                    {{topic.topicLabel}}
+                                </td>
+                                <td>
+                                    {{topic.commonName}}
+                                </td>
+                                <td>
+                                    {{topic.orgUnit}}
+                                </td>
+                                <td>
+                                    {{topic.orgDomain}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>    
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="container" ng-controller="topicsController" ng-cloak 
-         ng-show="false && persona.email && view === 'topics'">
-      <p ng-show="loading">Loading...</p>
-      <p ng-show="!loading && topics && topics.length === 0">No topics</p>
-      <div class="row" ng-show="topics.length > 0" ng-cloak>
-        <div class="col-lg-12">
-          <table class="table table-striped table-bordered table-condensed">
-            <thead>
-              <tr>
-                <th>Topic</th>
-                <th>Host</th>
-                <th>Group</th>
-                <th>Organisation</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="topic in topics">
-                <td ng-click="setSelected()">
-                  {{topic.topicLabel}}
-                </td>
-                <td>
-                  {{topic.commonName}}
-                </td>
-                <td>
-                  {{topic.orgUnit}}
-                </td>
-                <td>
-                  {{topic.orgDomain}}
-                </td>
-              </tr>
-            </tbody>
-          </table>    
+        <div class="container" ng-controller="subscriptionsController" ng-cloak 
+             ng-show="persona.email && view === 'subscriptions'">
+            <p ng-show="loading" ng-cloak>Loading...</p>
+            <p ng-show="!loading && subscriptions && subscriptions.length === 0">No subscriptions</p>
+            <div class="row" ng-show="subscriptions.length > 0">            
+                <div class="col-lg-12">
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Organisation</th>
+                                <th>Topic</th>
+                                <th>
+                                    <input type="button" value="All" 
+                                           ng-click="actionAll()" ng-disabled="actionAllDisabled">
+                                    <input type="button" value="None" 
+                                           ng-click="actionNone()" ng-disabled="actionNoneDisabled">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="subscription in subscriptions">
+                                <td ng-click="setSelected()">
+                                    {{subscription.orgDomain}}
+                                </td>
+                                <td>
+                                    {{subscription.topicLabel}}
+                                </td>
+                                <td>
+                                    <input type="button" value="{{subscription.actionLabel}}" 
+                                           ng-click="action()" ng-disabled="actionAllDisabled">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>    
+                </div>
+            </div>
+            <div class="row" ng-show="subscriptions.length > 0">
+                <hr>
+                <div class="col-lg-12">
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Topic</th>
+                                <th>Organisation</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="subscription in otherSubscriptions">
+                                <td>
+                                    {{subscription.topicLabel}}
+                                </td>
+                                <td>
+                                    {{subscription.orgDomain}}
+                                </td>
+                                <td>
+                                    {{subscription.email}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>    
+                </div>
+            </div>         
         </div>
-      </div>
-    </div>
 
-    <div class="container" ng-controller="subscriptionsController" ng-cloak 
-         ng-show="persona.email && view === 'subscriptions'">
-      <p ng-show="loading" ng-cloak>Loading...</p>
-      <p ng-show="!loading && subscriptions && subscriptions.length === 0">No subscriptions</p>
-      <div class="row" ng-show="subscriptions.length > 0">            
-        <div class="col-lg-12">
-          <table class="table table-striped table-bordered table-condensed">
-            <thead>
-              <tr>
-                <th>Organisation</th>
-                <th>Topic</th>
-                <th>
-                  <input type="button" value="All" 
-                         ng-click="actionAll()" ng-disabled="actionAllDisabled">
-                  <input type="button" value="None" 
-                         ng-click="actionNone()" ng-disabled="actionNoneDisabled">
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="subscription in subscriptions">
-                <td ng-click="setSelected()">
-                  {{subscription.orgDomain}}
-                </td>
-                <td>
-                  {{subscription.topicLabel}}
-                </td>
-                <td>
-                  <input type="button" value="{{subscription.actionLabel}}" 
-                         ng-click="action()" ng-disabled="actionAllDisabled">
-                </td>
-              </tr>
-            </tbody>
-          </table>    
+        <div class="container" ng-controller="rolesController" ng-cloak 
+             ng-show="persona.email && view === 'roles'">
+            <p ng-show="loading" ng-cloak>Loading...</p>
+            <p ng-show="!loading && roles && roles.length === 0" ng-cloak>No roles</p>
+            <div class="row" ng-show="roles.length > 0" ng-cloak>
+                <div class="col-lg-12">
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Organisation</th>
+                                <th>Role</th>
+                                <th>Person</th>
+                                <th>
+                                    <input type="button" value="All" 
+                                           ng-click="actionAll()" ng-disabled="actionAllDisabled">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="role in roles">
+                                <td>
+                                    {{role.orgDomain}}
+                                </td>
+                                <td>
+                                    {{role.roleTypeLabel}}
+                                </td>
+                                <td>
+                                    {{role.email}}
+                                </td>
+                                <td>
+                                    <input type="button" value="{{role.actionLabel}}" 
+                                           ng-click="action()" ng-disabled="actionAllDisabled">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>    
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="row" ng-show="subscriptions.length > 0">
-        <hr>
-        <div class="col-lg-12">
-          <table class="table table-striped table-bordered table-condensed">
-            <thead>
-              <tr>
-                <th>Topic</th>
-                <th>Organisation</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="subscription in otherSubscriptions">
-                <td>
-                  {{subscription.topicLabel}}
-                </td>
-                <td>
-                  {{subscription.orgDomain}}
-                </td>
-                <td>
-                  {{subscription.email}}
-                </td>
-              </tr>
-            </tbody>
-          </table>    
-        </div>
-      </div>         
-    </div>
 
-    <div class="container" ng-controller="rolesController" ng-cloak 
-         ng-show="persona.email && view === 'roles'">
-      <p ng-show="loading" ng-cloak>Loading...</p>
-      <p ng-show="!loading && roles && roles.length === 0" ng-cloak>No roles</p>
-      <div class="row" ng-show="roles.length > 0" ng-cloak>
-        <div class="col-lg-12">
-          <table class="table table-striped table-bordered table-condensed">
-            <thead>
-              <tr>
-                <th>Organisation</th>
-                <th>Role</th>
-                <th>Person</th>
-                <th>
-                  <input type="button" value="All" 
-                         ng-click="actionAll()" ng-disabled="actionAllDisabled">
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="role in roles">
-                <td>
-                  {{role.orgDomain}}
-                </td>
-                <td>
-                  {{role.roleTypeLabel}}
-                </td>
-                <td>
-                  {{role.email}}
-                </td>
-                <td>
-                  <input type="button" value="{{role.actionLabel}}" 
-                         ng-click="action()" ng-disabled="actionAllDisabled">
-                </td>
-              </tr>
-            </tbody>
-          </table>    
+        <div class="container" ng-controller="certsController" ng-cloak 
+             ng-show="persona.email && view === 'certs'">
+            <p ng-show="loading">Loading...</p>
+            <p ng-show="!loading && certs.length === 0">No certs</p>
+            <div class="row" ng-show="certs.length > 0" ng-cloak>
+                <div class="col-lg-12">
+                    <table class="table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Organisation</th>
+                                <th>Name</th>
+                                <th>Unit</th>
+                                <th>Address</th>
+                                <th>
+                                    <input type="button" value="All" 
+                                           ng-click="actionAll()" ng-disabled="actionAllDisabled">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="cert in certs">
+                                <td>
+                                    {{cert.timestampLabel}}
+                                </td>
+                                <td ng-click="setSelected()">
+                                    {{cert.orgDomain}}
+                                </td>
+                                <td>
+                                    {{cert.commonName}}
+                                </td>
+                                <td>
+                                    {{cert.orgUnit}}
+                                </td>
+                                <td>
+                                    {{cert.address}}
+                                </td>
+                                <td>
+                                    <input type="button" value="{{cert.actionLabel}}" 
+                                           ng-click="action()" ng-disabled="actionAllDisabled">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>    
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="container" ng-controller="certsController" ng-cloak 
-         ng-show="persona.email && view === 'certs'">
-      <p ng-show="loading">Loading...</p>
-      <p ng-show="!loading && certs.length === 0">No certs</p>
-      <div class="row" ng-show="certs.length > 0" ng-cloak>
-        <div class="col-lg-12">
-          <table class="table table-striped table-bordered table-condensed">
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>Organisation</th>
-                <th>Name</th>
-                <th>Unit</th>
-                <th>Address</th>
-                <th>
-                  <input type="button" value="All" 
-                         ng-click="actionAll()" ng-disabled="actionAllDisabled">
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="cert in certs">
-                <td>
-                  {{cert.timestampLabel}}
-                </td>
-                <td ng-click="setSelected()">
-                  {{cert.orgDomain}}
-                </td>
-                <td>
-                  {{cert.commonName}}
-                </td>
-                <td>
-                  {{cert.orgUnit}}
-                </td>
-                <td>
-                  {{cert.address}}
-                </td>
-                <td>
-                  <input type="button" value="{{cert.actionLabel}}" 
-                         ng-click="action()" ng-disabled="actionAllDisabled">
-                </td>
-              </tr>
-            </tbody>
-          </table>    
-        </div>
-      </div>
-    </div>
-
-    <div class="container" ng-show="!persona.email || view === 'start'" ng-cloak>
-      <div class="row well-lg">
-        <h2 ng-cloak ng-show="!persona.email">
-          <b>Instant</b> cloud monitoring, <i>as follows.</i></h2>
-        <h2 ng-cloak ng-show="persona.email">Getting started</h2>
-        <p><a href="#faq" class="btn btn-primary btn-lg" role="button"
-              ng-cloak ng-show="!persona.email && false">Learn more &raquo;</a></p>
-        <p>Step 1: <b>Get</b> these two scripts.
-        <pre>curl -s -O https://chronica.co/sample/custom.chronica.sh
+        <div class="container" ng-show="!persona.email || view === 'start'" ng-cloak>
+            <div class="row well-lg">
+                <h2 ng-cloak ng-show="!persona.email">
+                    <b>Instant</b> cloud monitoring, <i>as follows.</i></h2>
+                <h2 ng-cloak ng-show="persona.email">Getting started</h2>
+                <p><a href="#faq" class="btn btn-primary btn-lg" role="button"
+                      ng-cloak ng-show="!persona.email && false">Learn more &raquo;</a></p>
+                <p>Step 1: <b>Get</b> these two scripts.
+                <pre>curl -s -O https://chronica.co/sample/custom.chronica.sh
 curl -s -O https://chronica.co/sample/chronica.sh</pre>   
-        <p>Step 2: <b>Edit</b> <tt>custom.chronica.sh</tt> <i>(for you and yours)</i>
-        <pre>$ vi custom.chronica.sh
+                <p>Step 2: <b>Edit</b> <tt>custom.chronica.sh</tt> <i>(for you and yours)</i>
+                <pre>$ vi custom.chronica.sh
 subscriptions="you@your.org"
 admins="you@your.org"
 orgDomain="your.org"</pre>                  
-        <p>
-          Step 3. <b>Review</b> <tt>chronica.sh</tt> <i>(so you know it's cool)</i>
-        </p>
-        <p>
-          Step 4: <b>Test</b>
-        </p>
-        <pre>sh chronica.sh</pre>
-        <p>
-          Step 5: <b>Run</b>
-        </p>
-        <pre>sh chronica.sh run</pre>
-        <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
-          <i>(to <a href="https://chronica.co">https://chronica.co</a> 
-            using Mozilla Persona)</i>
-        </p>
-        <p>Click on alert rows to see their content (except on <a href="https://chronica.co/demo">https://chronica.co/demo</a> where you can preview the admin's alerts.)
-        </p>
-        <p>ps. The script posts to <tt>https://secure.chronica.co</tt>, which you can check as follows, i.e. that it is allowed by your firewall.</p>
-        <pre>$ sh chronica.sh https secure.chronica.co 443
+                <p>
+                    Step 3. <b>Review</b> <tt>chronica.sh</tt> <i>(so you know it's cool)</i>
+                </p>
+                <p>
+                    Step 4: <b>Test</b>
+                </p>
+                <pre>sh chronica.sh</pre>
+                <p>
+                    Step 5: <b>Run</b>
+                </p>
+                <pre>sh chronica.sh run</pre>
+                <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
+                    <i>(to <a href="https://chronica.co">https://chronica.co</a> 
+                        using Mozilla Persona)</i>
+                </p>
+                <p>Click on alert rows to see their content (except on <a href="https://chronica.co/demo">https://chronica.co/demo</a> where you can preview the admin's alerts.)
+                </p>
+                <p>ps. The script posts to <tt>https://secure.chronica.co</tt>, which you can check as follows, i.e. that it is allowed by your firewall.</p>
+                <pre>$ sh chronica.sh https secure.chronica.co 443
 OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
-        <hr>
-        <h3>Getting jiggy with it</h3>
-        <p>Customize the <tt>custom.chronica.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or daily.</p>
-        <pre>c0hourly() {
+                <hr>
+                <h3>Getting jiggy with it</h3>
+                <p>Customize the <tt>custom.chronica.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or daily.</p>
+                <pre>c0hourly() {
   c1topic hourly
   c0diskspace
   c2rhttps bizswitch.net 443 # request external check by chronica server
@@ -366,232 +374,233 @@ OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
   c2tcp chronica.co 80
   c2https chronica.co 443
 }</pre><p>where the convention for naming functions indicates the number of parameters. Commands can be tested from the command-line, as follows.</p>
-        <pre>$ sh chronica.sh nohttp chronica.co 80
+                <pre>$ sh chronica.sh nohttp chronica.co 80
 OK - chronica.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
-        <p>Add Nagios plugins and adhoc scripts as required.</p>
-        <pre>c0minutely() {
+                <p>Add Nagios plugins and adhoc scripts as required.</p>
+                <pre>c0minutely() {
   c1topic minutely
   c0load
   c2httpsAuth secure.chronica.co 443 
   /usr/lib/nagios/plugins/check_pgsql -H localhost 
   ssh postgres@localhost scripts/check_replication.sh
 }</pre>
-        <p>We suggest creating functions for your custom checks.</p>
-        <pre>c0pgsql() { 
+                <p>We suggest creating functions for your custom checks.</p>
+                <pre>c0pgsql() { 
   /usr/lib/nagios/plugins/check_pgsql -H localhost &&
     ssh postgres@localhost scripts/check_replication.sh
 }</pre>
-        <p>Then you can test such functions individually from the command-line as follows.</p>
-        <pre>$ sh scripts/chronica.sh pgsql
+                <p>Then you can test such functions individually from the command-line as follows.</p>
+                <pre>$ sh scripts/chronica.sh pgsql
 CRITICAL - no connection</pre>        
-        <p>As good practice, run <tt>chronica.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>su</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
-        <pre>$ cat /etc/rc.local
+                <p>As good practice, run <tt>chronica.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>su</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
+                <pre>$ cat /etc/rc.local
 su - chronica -c 'scripts/chronica.sh start'</pre>
-        <p>Send your questions, bugs and suggestions to evan.summers@gmail.com.</p>
-        <hr>
-        <h4>Resources</h4>
-        <p><a href="/sample/custom.chronica.sh">
-            https://chronica.co/sample/custom.chronica.sh</a> - customisable template
-        </p>
-        <p><a href="/sample/chronica.sh">
-            https://chronica.co/sample/chronica.sh</a> - operational script
-        </p>
-      </div>
-    </div>
+                <p>Send your questions, bugs and suggestions to evan.summers@gmail.com.</p>
+                <hr>
+                <h4>Resources</h4>
+                <p><a href="/sample/custom.chronica.sh">
+                        https://chronica.co/sample/custom.chronica.sh</a> - customisable template
+                </p>
+                <p><a href="/sample/chronica.sh">
+                        https://chronica.co/sample/chronica.sh</a> - operational script
+                </p>
+            </div>
+        </div>
 
-    <div class="container" ng-show="!persona.email || view === 'faq'" ng-cloak>
-      <div class="row well-lg">
-        <h2 ng-cloak ng-show="persona.email && view === 'faq'"><b>Instant</b> cloud monitoring</h2>
+        <div class="container" ng-show="!persona.email || view === 'about'">
+            <div class="row well-lg">
+                <h2 ng-cloak ng-show="persona.email && view === 'about'"><b>Instant</b> cloud monitoring</h2>
 
-        <hr>
-        <h4><a name="faq">Frequently asked questions</a></h4>
+                <hr>
+                <h4><a name="faq">Frequently asked questions</a></h4>
 
-        <p><b>What's this?</b>          
-          <br>A cloud-computing monitoring service.
-        </p>
+                <p><b>What's this?</b>          
+                    <br>A cloud-computing monitoring service.
+                </p>
 
-        <p><b>What does it compute for me?</b>
-          <br>Information you submit that you want to monitor, e.g. scheduled checks. As a default criterion, our server checks if the information has changed, and if so, will alert you. If the messages stop, we will alert you that something might be wrong. If it is changing all the time, we will ignore it for you, since alerts are not useful in that case.
-        </p>
+                <p><b>What does it compute for me?</b>
+                    <br>Information you submit that you want to monitor, e.g. scheduled checks. As a default criterion, our server checks if the information has changed, and if so, will alert you. If the messages stop, we will alert you that something might be wrong. If it is changing all the time, we will ignore it for you, since alerts are not useful in that case.
+                </p>
 
-        <p><b>What security?</b>
-          <br>SSL certificates authenticate publishers, and Mozilla Persona authenticates subscriptions.
-        </p>
-                
-        <p><b>How much does it cost?</b>
-          <br>It's free and open. Bits and bytes are priceless ;)
-        </p>
+                <p><b>What security?</b>
+                    <br>SSL certificates authenticate publishers, and Mozilla Persona authenticates subscriptions.
+                </p>
 
-        <p><b>What use cases?</b>
-          <br>Use Chronica to monitor your networks and services, internally and externally, to ensure performance and security. Add custom checks to monitor your specific infrastructure and applications. When something is wrong, be the first to know :)
-        </p>
+                <p><b>How much does it cost?</b>
+                    <br>It's free and open. Bits and bytes are priceless ;)
+                </p>
 
-        <p><b>Who should try it?</b>
-          <br>At this stage, anyone who wants monitoring, without any server setup or customistion required, up and running in a minute. 
-          Also, Linux admins who want a monitoring solution that enables custom checks using shell commands.
-        </p>
+                <p><b>What use cases?</b>
+                    <br>Use Chronica to monitor your networks and services, internally and externally, to ensure performance and security. Add custom checks to monitor your specific infrastructure and applications. When something is wrong, be the first to know :)
+                </p>
 
-        <p><b>How is this different from some other cloud-based monitoring services?</b>
-          <br>It's simple yet powerful for custom monitoring. It's opensource, so you can own it.
-        </p>
+                <p><b>Who should try it?</b>
+                    <br>At this stage, anyone who wants monitoring, without any server setup or customistion required, up and running in a minute. 
+                    Also, Linux admins who want a monitoring solution that enables custom checks using shell commands.
+                </p>
 
-        <p><b>How is this different from some other opensource monitoring projects?</b>
-          <br>We provide a free multi-tenancy cloud service for instant monitoring without any server setup. Our solution supports Nagios plugins, and will be integrated with opensource agents, according to demand.
-        </p>
+                <p><b>How is this different from some other cloud-based monitoring services?</b>
+                    <br>It's simple yet powerful for custom monitoring. It's opensource, so you can own it.
+                </p>
 
-        <p><b>What notification mechanisms are supported?</b>
-          <br>Primarily, email. Also "push" notification via HTTPS post to a URL you can register. (Naturally this URL should require client auth and trust our SSL cert, and allow our IP number to connect.) This could provide an SMS gateway on your account. 
-          </p>
-        <pre>$ sh chronica.sh push https://myserver:8443/myapp</pre>
-        <p><b>What about mobile push notifications?</b>
-          <br>We want to support mobile push notifications, perhaps via our own app e.g. using PhoneGap aka Apache Cordova with its PushPlugin. Also Facebook, Google+ and Twitter integration for messaging via those platforms. Perhaps even a Jabber server to which you hook up a mobile IM app e.g. Xabber.
-        </p>
-        <p><b>What other notification mechanisms are already supported?</b>
-          <br>You can poll our server via HTTPS for your alerts. 
-        </p>
-        <pre>$ sh chronica.sh poll
+                <p><b>How is this different from some other opensource monitoring projects?</b>
+                    <br>We provide a free multi-tenancy cloud service for instant monitoring without any server setup. Our solution supports Nagios plugins, and will be integrated with opensource agents, according to demand.
+                </p>
+
+                <p><b>What notification mechanisms are supported?</b>
+                    <br>Primarily, email. Also "push" notification via HTTPS post to a URL you can register. (Naturally this URL should require client auth and trust our SSL cert, and allow our IP number to connect.) This could provide an SMS gateway on your account. 
+                </p>
+                <pre>$ sh chronica.sh push https://myserver:8443/myapp</pre>
+                <p><b>What about mobile push notifications?</b>
+                    <br>We want to support mobile push notifications, perhaps via our own app e.g. using PhoneGap aka Apache Cordova with its PushPlugin. Also Facebook, Google+ and Twitter integration for messaging via those platforms. Perhaps even a Jabber server to which you hook up a mobile IM app e.g. Xabber.
+                </p>
+                <p><b>What other notification mechanisms are already supported?</b>
+                    <br>You can poll our server via HTTPS for your alerts. 
+                </p>
+                <pre>$ sh chronica.sh poll
 Time: 16:02:54
 Subject: root@hostx checksys CRITICAL</pre>
 
-        <p><b>What technologies are used?</b>
-          <br>AngularJS for the front-end, making JSON requests to a Java back-end. 
-          We use the JRE's built-in HTTPS server rather than Apache Tomcat. 
-          <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
-        </p>
+                <p><b>What technologies are used?</b>
+                    <br>AngularJS for the front-end, making JSON requests to a Java back-end. 
+                    We use the JRE's built-in HTTPS server rather than Apache Tomcat. 
+                    <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
+                </p>
 
-        <p><b>Why doesn't the site work on my phone's browser?</b>
-          <br>It will, soon! We use Twitter Bootstrap 3, which is "mobile first" and responsive to desktop, tablet and phone.
-        </p>
+                <p><b>Why doesn't the site work on my phone's browser?</b>
+                    <br>It will, soon! We use Twitter Bootstrap 3, which is "mobile first" and responsive to desktop, tablet and phone.
+                </p>
 
-        <p><b>Windows or Linux?</b>
-          <br>We provide a "starter" script for Linux, which can be used out the box to actively monitor Windows machines remotely via TCP. 
-          We will integrate an opensource Windows agent, such as the Nagios Cross-Platform Agent (NCPA), and/or our own Chronica Java-based agent.
-        </p>
+                <p><b>Windows or Linux?</b>
+                    <br>We provide a "starter" script for Linux, which can be used out the box to actively monitor Windows machines remotely via TCP. 
+                    We will integrate an opensource Windows agent, such as the Nagios Cross-Platform Agent (NCPA), and/or our own Chronica Java-based agent.
+                </p>
 
-        <p><b>What can be installed on Linux clients right now?</b>
-        <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS.
-        Out of the box, this client script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. 
-        However, the system is specially engineered to support Nagios plugins, and custom checks.
-        </p>
-        <pre>curl -s https://chronica.co/sample/chronica.sh -o chronica.sh</pre>
+                <p><b>What can be installed on Linux clients right now?</b>
+                <br>A shell script that uses <tt>curl</tt> to post status information to the service via HTTPS.
+                Out of the box, this client script uses standard diagnostic tools such as <tt>df</tt>, <tt>ping</tt>, <tt>netcat</tt> and <tt>openssl</tt>. 
+                However, the system is specially engineered to support Nagios plugins, and custom checks.
+                </p>
+                <pre>curl -s https://chronica.co/sample/chronica.sh -o chronica.sh</pre>
 
-        <p><b>How is it run?</b>
-        <br>The script can be run as a background process, to run minutely, hourly and daily checks, without needing <tt>crond</tt>. (It sleeps in a loop.)
-        <br>Also, you can pipe the output of custom cron jobs to this script. 
-        <br>Finally, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
-        </p>
-        <pre>$ sh chronica.sh start</pre>
+                <p><b>How is it run?</b>
+                <br>The script can be run as a background process, to run minutely, hourly and daily checks, without needing <tt>crond</tt>. (It sleeps in a loop.)
+                <br>Also, you can pipe the output of custom cron jobs to this script. 
+                <br>Finally, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
+                </p>
+                <pre>$ sh chronica.sh start</pre>
 
-        <p><b>How is it updated?</b>
-          <br>The script itself will provide hints, to verify and update.
-        </p>
-        <pre>$ sh chronica.sh update
+                <p><b>How is it updated?</b>
+                    <br>The script itself will provide hints, to verify and update.
+                </p>
+                <pre>$ sh chronica.sh update
 curl -s https://chronica.co/sample/chronica.sh | sha1sum
 Verifying signature using ~/.chronica/etc/chronica.pub.pem
 OK: verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt</pre>
 
-        <p><b>What API does it use?</b>
-          <br>Text document with email-style headers, submitted via HTTPS POST. (HTTP headers are parsed as well). This means we can pipe the output of a shell script to <tt>curl</tt>, to post to <tt>https://secure.chronica.co</tt>. The content typically contains headers such as "Topic" and "Subscribe." Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
-        But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
-        </p>
-        <pre>$ echo "OK - &lt;i&gt;nothing wrong&lt;/i&gt;" | sh chronica.sh postheaders \
+                <p><b>What API does it use?</b>
+                <br>Text document with email-style headers, submitted via HTTPS POST. (HTTP headers are parsed as well). This means we can pipe the output of a shell script to <tt>curl</tt>, to post to <tt>https://secure.chronica.co</tt>. The content typically contains headers such as "Topic" and "Subscribe." Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
+                But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
+                </p>
+                <pre>$ echo "OK - &lt;i&gt;nothing wrong&lt;/i&gt;" | sh chronica.sh postheaders \
   'Topic: System Health' 'Alert: STATUS_CHANGED' 'Subscribe: me@mine.org'</pre>
-        <p><b>How are checks performed?</b>
-          <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. 
-        <br>For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. 
-        <br>So it's totally customisable. As such, we will extend our script soon to satisfy PCI DSS compliancy, out of the box :)
-        </p>
+                <p><b>How are checks performed?</b>
+                    <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. 
+                <br>For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. 
+                <br>So it's totally customisable. As such, we will extend our script soon to satisfy PCI DSS compliancy, out of the box :)
+                </p>
 
-        <p><b>What about checking my site from the outside?</b>
-          <br>Naturally you can use Chronica from a server in a different data center, or even your home computer, to monitor your site externally. 
-          But the easiest is to request the Chronica server to perform external checks for you.
-        </p>
-        <pre>$ echo "Check-https: www.google.com 443" | sh chronica.sh post
+                <p><b>What about checking my site from the outside?</b>
+                    <br>Naturally you can use Chronica from a server in a different data center, or even your home computer, to monitor your site externally. 
+                    But the easiest is to request the Chronica server to perform external checks for you.
+                </p>
+                <pre>$ echo "Check-https: www.google.com 443" | sh chronica.sh post
 OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain View,ST=California,C=US</pre>
 
-        <p><b>How are client certs managed?</b>
-          <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. 
-          By default the user and hostname is used for the cert's common name. 
-          It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved. 
-          Admins can confirm client certs and approve other admins, via the site.
-        </p>
+                <p><b>How are client certs managed?</b>
+                    <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. 
+                    By default the user and hostname is used for the cert's common name. 
+                    It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved. 
+                    Admins can confirm client certs and approve other admins, via the site.
+                </p>
 
-        <p><b>How are subcribers managed?</b>
-          <br>The message content specifies its topic and invitees, via email-style headers. If you have approved the topic's cert, then this topic will be published. However, invitees must themselves subscribe to specific topics. This is performed via the site, which validates their email address using Mozilla Persona. So you should advise them visit the site to subscribe to available topics.
-        </p>
+                <p><b>How are subcribers managed?</b>
+                    <br>The message content specifies its topic and invitees, via email-style headers. If you have approved the topic's cert, then this topic will be published. However, invitees must themselves subscribe to specific topics. This is performed via the site, which validates their email address using Mozilla Persona. So you should advise them visit the site to subscribe to available topics.
+                </p>
 
-        <p><b>How do subcribers opt-out?</b>
-          <br>Actually they have to opt-in themselves, and can unsubscribe and re-subscribe anytime.
-        </p>
+                <p><b>How do subcribers opt-out?</b>
+                    <br>Actually they have to opt-in themselves, and can unsubscribe and re-subscribe anytime.
+                </p>
 
-        <p><b>How are alerts triggered?</b>
-        <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore suprious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
-        And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
-        </p>
+                <p><b>How are alerts triggered?</b>
+                <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore suprious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
+                And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
+                </p>
 
-        <p><b>What other applications?</b>
-          <br>We are looking at using the platform for scheduling reminders.
-        </p>
+                <p><b>What other applications?</b>
+                    <br>We are looking at using the platform for scheduling reminders.
+                </p>
 
-        <p><b>How do I to contribute my improvements for inclusion?</b>        
-          <br>Contact evan.summers@gmail.com. 
-        </p>
+                <p><b>How do I to contribute my improvements for inclusion?</b>        
+                    <br>Contact evan.summers@gmail.com. 
+                </p>
 
-        <p><b>Show me the code!</b>
-          <br>See <a href="https://github.com/evanx/chronic">github.com/evanx/chronic</a>.
-          This uses <a href="https://github.com/evanx/vellumcore">vellumcore</a> which is a common base of distilled code from previous projects.
-        </p>          
+                <p><b>Show me the code!</b>
+                    <br>See <a href="https://github.com/evanx/chronic">github.com/evanx/chronic</a>.
+                    This uses <a href="https://github.com/evanx/vellumcore">vellumcore</a> which is a common base of distilled code from previous projects.
+                </p>          
 
-        <p><b>Who is the original developer?</b>
-          <br>evan.summers@gmail.com, <a href="https://twitter.com/evanxsummers">@evanxsummers</a>, blog <a href="https://java.net/blogs/evanx">java.net/blogs/evanx</a>
-        </p>          
-        
-      </div>
-    </div>
+                <p><b>Who is the original developer?</b>
+                    <br>evan.summers@gmail.com, <a href="https://twitter.com/evanxsummers">@evanxsummers</a>, blog <a href="https://java.net/blogs/evanx">java.net/blogs/evanx</a>
+                </p>          
 
-    <div class="container" ng-show="!persona.email || view === 'faq'" ng-cloak>
-      <div class="row well-lg">
+            </div>
+        </div>
 
-        <hr>
-        <h4>News</h4>
+        <div class="container" ng-show="!persona.email || view === 'about'" ng-cloak>
+            <div class="row well-lg">
 
-        <p>
-          <i>2013-12-15</i> &nbsp;
-          <b>Info sections added to site</b> 
-          <br>"Getting Started," "Frequently Asked Questions" and "News" sections have been added to the site. When signed in, click on "Chronica.co" for FAQ and News, and click on "Help" to see the "Getting Started" info. (A more detailed "User Guide" is still required.)
-        </p>
+                <hr>
+                <h4>News</h4>
 
-        <p>
-          <i>2013-12-01</i> &nbsp;
-          <b>AngujarJS UI started</b>
-          <br>AngularJS is <i>great!</i> Goodbye formerly beloved jQuery. (See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>.)
-        </p>
+                <p>
+                    <i>2013-12-15</i> &nbsp;
+                    <b>Info sections added to site</b> 
+                    <br>"Getting Started," "Frequently Asked Questions" and "News" sections have been added to the site. When signed in, click on "Chronica.co" for FAQ and News, and click on "Help" to see the "Getting Started" info. (A more detailed "User Guide" is still required.)
+                </p>
 
-        <p>
-          <i>2013-11-24</i> &nbsp;
-          <b>Project inception</b> 
-        </p>
-        <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Croc (on http://github.com/evanx/vellumapp).
-        <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks. This project was abandoned in favour of pursing of multi-tenancy cloud-based approach. 
-        <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica. Bootstrap 2 and jQuery as used for its UI, and JDBC for persistence. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed e.g. JPA for back-end persistence, and a Javascript data-binding framework for the front-end.
-        <p>The result is Chronica, which will use the AngularJS front-end framework, and JPA.
-        <hr> 
-        <p class="pull-right">
-          <a href="https://www.positivessl.com" style=
-             "font-family: arial; font-size: 10px; color: #212121; text-decoration: none;">
-            <img src="https://www.positivessl.com/images-new/PositiveSSL_tl_white2.gif"
-                 alt="positivessl" width="64"/></a>
-        </p>
-      </div>
-    </div>
+                <p>
+                    <i>2013-12-01</i> &nbsp;
+                    <b>AngujarJS UI started</b>
+                    <br>AngularJS is <i>great!</i> Goodbye formerly beloved jQuery. (See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.js">app.js</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/web/app.html">app.html</a>.)
+                </p>
 
-    <script src="https://login.persona.org/include.js"></script>
-    <script src="app.js"></script>
-    <script src="js/jquery-1.10.2.min.js"></script>
-    <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
-    <script src="/js/Chart.min.js"></script>
-    <script src="/js/angles.js" type="text/javascript"></script>
+                <p>
+                    <i>2013-11-24</i> &nbsp;
+                    <b>Project inception</b> 
+                </p>
+                <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Croc (on http://github.com/evanx/vellumapp).
+                <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks. This project was abandoned in favour of pursing of multi-tenancy cloud-based approach. 
+                <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica. Bootstrap 2 and jQuery as used for its UI, and JDBC for persistence. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed e.g. JPA for back-end persistence, and a Javascript data-binding framework for the front-end.
+                <p>The result is Chronica, which will use the AngularJS front-end framework, and JPA.
+                <hr> 
+                <p class="pull-right">
+                    <a href="https://www.positivessl.com" style=
+                       "font-family: arial; font-size: 10px; color: #212121; text-decoration: none;">
+                        <img src="https://www.positivessl.com/images-new/PositiveSSL_tl_white2.gif"
+                             alt="positivessl" width="64"/></a>
+                </p>
+            </div>
+        </div>
 
-  </body>
+        <script src="https://login.persona.org/include.js"></script>
+        <script src="app.js"></script>
+        <script src="js/jquery-1.10.2.min.js"></script>
+        <script src="bootstrap-3.0.2/js/bootstrap.min.js"></script>
+        <script src="/js/ui-bootstrap-tpls-0.9.0.min.js"></script>
+        <script src="/js/Chart.min.js"></script>
+        <script src="/js/angles.js" type="text/javascript"></script>
+
+    </body>
 
 </html>

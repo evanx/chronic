@@ -65,7 +65,6 @@ public class ChronicApp {
     Map<ComparableTuple, TopicMessage> recordMap = new ConcurrentHashMap();
     Map<ComparableTuple, AlertEvent> alertMap = new ConcurrentHashMap();
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
-    SynchronizedCapacityDeque<AlertEvent> alertDeque = new SynchronizedCapacityDeque(100);
     LinkedBlockingQueue<AlertEvent> alertQueue = new LinkedBlockingQueue(100);
     LinkedBlockingQueue<TopicMessage> messageQueue = new LinkedBlockingQueue(100);
     DataSource dataSource = new DataSource();
@@ -95,7 +94,7 @@ public class ChronicApp {
     }
 
     public void ensureInitialized() throws InterruptedException {
-        if (!initalized) {
+        if (initThread.isAlive()) {
             initThread.join();
         }
     }
@@ -157,7 +156,7 @@ public class ChronicApp {
         }
     }
 
-    public LinkedBlockingQueue<TopicMessage> getStatusQueue() {
+    public LinkedBlockingQueue<TopicMessage> getMessageQueue() {
         return messageQueue;
         
     }
@@ -211,7 +210,7 @@ public class ChronicApp {
                                 key.setOrder(index);
                                 MetricSeries series = seriesMap.get(key);
                                 if (series == null) {
-                                    series = new MetricSeries(180);
+                                    series = new MetricSeries(90, 72);
                                     seriesMap.put(key, series);
                                 }
                                 series.add(System.currentTimeMillis(), value.getValue());

@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayDeque;
-import java.util.Date;
 import java.util.Deque;
+import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +36,7 @@ import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.format.CalendarFormats;
 import vellum.ssl.OpenTrustManager;
 import vellum.ssl.SSLContexts;
 import vellum.util.Streams;
@@ -56,11 +57,11 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     private final int maximumPostLength = 2000;
     private boolean initialized;
     private boolean running;
-    private long runTimestamp;
+    private long taskTimestamp;
     private String keyStoreLocation = System.getProperty("user.home") + "/.chronica/etc/keystore.jks";
     private char[] sslPass = "chronica".toCharArray();
     SSLContext sslContext;
-    ChronicProcessor counter = new DefaultProcessor();
+    ChronicProcessor processor = new DefaultProcessor();
     
     public ChronicAppender() {
     }
@@ -69,9 +70,6 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
         this.postAddress = postAddress;
     }
 
-    public void setHandler(String handlerClassName) {
-    }
-    
     public void setKeyStore(String keyStore) {
         this.keyStoreLocation = keyStore;        
     }
@@ -80,8 +78,8 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
         this.sslPass = pass.toCharArray();
     }
 
-    public void setCounterClass(String className) throws Exception {
-        counter = (ChronicProcessor) Class.forName(className).newInstance();
+    public void setProcessorClass(String className) throws Exception {
+        processor = (ChronicProcessor) Class.forName(className).newInstance();
     }
     
     @Override
@@ -93,7 +91,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
             initialize();
         }
         if (running && le.getLevel().toInt() >= Priority.DEBUG_INT) {
-            if (runTimestamp > 0 && System.currentTimeMillis() - runTimestamp > period * 2) {
+            if (taskTimestamp > 0 && System.currentTimeMillis() - taskTimestamp > period * 2) {
                 running = false;
                 synchronized (deque) {
                     deque.clear();
@@ -102,7 +100,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
                 synchronized (deque) {
                     deque.add(le);
                 }
-                counter.process(le);
+                processor.process(le);
             }
         }
     }
@@ -135,18 +133,18 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
 
     @Override
     public synchronized void run() {
-        logger.info("run {} {}", deque.size(), postAddress);
-        runTimestamp = System.currentTimeMillis();
+        //logger.info("run {} {}", deque.size(), postAddress);
+        taskTimestamp = System.currentTimeMillis();
         Deque<LoggingEvent> snapshot;
         synchronized (deque) {
             snapshot = deque.clone();
             deque.clear();
         }
         StringBuilder builder = new StringBuilder();
-        builder.append(counter.buildReport());
+        builder.append(processor.buildReport());
         builder.append(String.format("INFO: deque size: %d\n", deque.size()));
-        builder.append("INFO:-");
-        builder.append("Latest events:");
+        builder.append("INFO:-\n");
+        builder.append("Latest events:\n");
         while (snapshot.peek() != null) {
             LoggingEvent event = snapshot.poll();
             String string = event.getMessage().toString();
@@ -155,15 +153,16 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
             }
             builder.append(event.getLevel().toString());
             builder.append(": ");
-            builder.append(new Date(event.getTimeStamp()));
+            builder.append(CalendarFormats.timestampFormat.format(TimeZone.getDefault(), event.getTimeStamp()));
+            builder.append(" ");
             builder.append(string);
             builder.append("\n");
         }
         post(builder.toString());
     }
-    
+
     private void post(String string) {
-        logger.info("post:\n{}", string);
+        //logger.info("post:\n{}", string);
         HttpsURLConnection connection;
         try {
             URL url = new URL(postAddress);

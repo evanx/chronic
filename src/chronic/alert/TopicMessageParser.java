@@ -64,13 +64,16 @@ public class TopicMessageParser {
     public TopicMessage parse(Collection<String> lines) throws IOException {
         return parse(Lists.array(lines));
     }
-    
+
     public TopicMessage parse(String text) throws IOException {
         return parse(text.split("\n"));
     }
-        
+
     public TopicMessage parse(String[] lines) throws IOException {
         for (String line : lines) {
+            if (line.startsWith("X-Cron")) {
+                continue;
+            }
             line = line.trim();
             Matcher matcher = TopicMessagePatterns.FROM_CRON.matcher(line);
             if (matcher.find()) {
@@ -89,9 +92,7 @@ public class TopicMessageParser {
             }
             matcher = TopicMessagePatterns.HEADER.matcher(line);
             if (matcher.find()) {
-                if (matcher.group(1).startsWith("X-Cron")) {
-                    continue;
-                } else if (parseHeader(matcher.group(1), matcher.group(2))) {
+                if (parseHeader(matcher.group(1), matcher.group(2))) {
                     continue;
                 }
                 logger.warn("header: {}", line);
