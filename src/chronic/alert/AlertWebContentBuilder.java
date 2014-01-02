@@ -39,7 +39,7 @@ public class AlertWebContentBuilder {
 
     public void build(AlertEvent alert) {
         this.alert = alert;
-        if (alert.status.isHtmlContent()) {
+        if (alert.message.isHtmlContent()) {
             logger.info("html content");
             alert.htmlContent = String.format("<pre>%s</pre>", 
                     Strings.join("\n", getLineList()));
@@ -51,12 +51,12 @@ public class AlertWebContentBuilder {
     }
 
     private Collection<String> getLineList() {
-        if (alert.status.statusType == StatusType.CONTENT_CHANGED) {
-            Collection changedLines = alert.status.buildChanged(alert.previousStatus);
+        if (alert.message.statusType == StatusType.CONTENT_CHANGED) {
+            Collection changedLines = alert.message.buildChanged(alert.previousMessage);
             if (!changedLines.isEmpty()) {
                 return changedLines;
             }
         }
-        return Strings.trimLines(alert.status.lineList);
+        return Strings.trimLines(alert.message.lineList);
     }
 }

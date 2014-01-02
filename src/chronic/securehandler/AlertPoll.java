@@ -41,8 +41,8 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
         }
         for (AlertEvent alert : Lists.sortedLinkedList(app.getAlertMap().values(),
                 TimestampedComparator.reverse())) {
-            if (!alert.isPolled() && alert.getStatus().getStatusType().isStatusKnown() && 
-                    alert.getStatus().getAlertType().isPollable() &&
+            if (!alert.isPolled() && alert.getMessage().getStatusType().isStatusKnown() && 
+                    alert.getMessage().getAlertType().isPollable() &&
                     System.currentTimeMillis() - alert.getTimestamp() < Millis.fromMinutes(3)) {
                 alert.setPolled(true);
                 return buildPlain(alert);
@@ -54,10 +54,10 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
     public String buildPlain(AlertEvent alert) {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("Time: %s\n", CalendarFormats.timestampZoneFormat.format(timeZone, alert.getTimestamp())));
-        builder.append(String.format("Topic: %s\n", alert.getStatus().getTopicLabel()));
-        builder.append(String.format("Subject: %s\n", formatSubject(alert.getStatus())));
+        builder.append(String.format("Topic: %s\n", alert.getMessage().getTopicLabel()));
+        builder.append(String.format("Subject: %s\n", formatSubject(alert.getMessage())));
         builder.append("\n");
-        for (String line : Strings.trimLines(alert.getStatus().getLineList())) {
+        for (String line : Strings.trimLines(alert.getMessage().getLineList())) {
             builder.append(line);
             builder.append('\n');
         }

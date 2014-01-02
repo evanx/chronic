@@ -51,25 +51,25 @@ public class AlertMailBuilder {
     public String build(AlertEvent alert, TimeZone timeZone) {
         this.alert = alert;
         this.timeZone = timeZone;
-        logger.info("build {}", alert.status);
+        logger.info("build {}", alert.message);
         builder.append("<pre>\n");
-        if (alert.status.getAlertType() == AlertType.CONTENT_CHANGED) {
-            appendHeader(alert.status);
+        if (alert.message.getAlertType() == AlertType.CONTENT_CHANGED) {
+            appendHeader(alert.message);
             builder.append("\n<br><b>Changed lines:</b>\n");
-            builder.append(Strings.join("\n", alert.status.buildChanged(alert.previousStatus)));
-            if (alert.previousStatus != null) {
-                if (alert.previousStatus.getTimestamp() != alert.status.getTimestamp()) {
-                    appendPrevious(alert.previousStatus);
+            builder.append(Strings.join("\n", alert.message.buildChanged(alert.previousMessage)));
+            if (alert.previousMessage != null) {
+                if (alert.previousMessage.getTimestamp() != alert.message.getTimestamp()) {
+                    appendPrevious(alert.previousMessage);
                 }
             }
             builder.append('\n');
-        } else if (alert.status.getAlertType() == AlertType.STATUS_CHANGED) {
-            append(alert.status);
-            if (alert.previousStatus != null) {
-                appendPrevious(alert.previousStatus);
+        } else if (alert.message.getAlertType() == AlertType.STATUS_CHANGED) {
+            append(alert.message);
+            if (alert.previousMessage != null) {
+                appendPrevious(alert.previousMessage);
             }
         } else {
-            append(alert.status);
+            append(alert.message);
         }
         builder.append(formatFooter(app.getProperties().getSiteUrl()));
         return builder.toString();

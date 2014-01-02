@@ -17,7 +17,8 @@ public enum StatusType {
     CRITICAL,
     CONTENT_CHANGED,
     ELAPSED,
-    RESUMED;
+    RESUMED,
+    CONTENT_ERROR;
 
     public boolean isStatusAlertable() {
         return this == OK || this == WARNING || this == CRITICAL;

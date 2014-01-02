@@ -20,6 +20,7 @@
  */
 package chronic.alert;
 
+import static chronic.alert.TopicMessageChecker.isAlertable;
 import chronic.check.StatusCheck;
 import chronic.entity.Cert;
 import chronic.entity.Topic;
@@ -70,13 +71,13 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
     Map<String, MetricValue> metricMap = new TreeMap();
     List<StatusCheck> checks = new LinkedList();
     List<ServiceStatus> statusList = new LinkedList();
-    
+
     Cert cert;
     Topic topic;
 
     public TopicMessage() {
     }
-        
+
     public TopicMessage(Cert cert) {
         this.cert = cert;
     }
@@ -89,7 +90,7 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
     public CertTopicKey getCertTopicKey() {
         return new CertTopicKey(cert.getId(), topicLabel);
     }
-    
+
     @Override
     public OrgKey getOrgKey() {
         return new OrgKey(cert.getOrgDomain());
@@ -103,15 +104,15 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
     public List<ServiceStatus> getStatusList() {
         return statusList;
     }
-        
+
     public List<MetricValue> getMetricList() {
         return metricList;
     }
-    
+
     public Map<String, MetricValue> getMetricMap() {
         return metricMap;
     }
-    
+
     public Cert getCert() {
         return cert;
     }
@@ -123,7 +124,7 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
     public Topic getTopic() {
         return topic;
     }
-                
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -211,7 +212,7 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
     public String getAlertPushUrl() {
         return alertPushUrl;
     }
-    
+
     public List<String> getLineList() {
         return lineList;
     }
@@ -219,15 +220,19 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
     public boolean isStatusKnown() {
         return statusType != null && statusType != StatusType.UNKNOWN;
     }
-    
+
     public boolean isStatusAlertable() {
         return statusType != null && statusType.isStatusAlertable();
     }
-    
+
+    public boolean isAlertable(TopicMessage previous, AlertEvent alert) {
+        return TopicMessageChecker.isAlertable(this, previous, alert);
+    }
+
     public boolean matches(TopicMessage other) {
         return TopicMessageMatcher.matches(this, other);
     }
-    
+
     public boolean isHtmlContent() {
         for (String line : lineList) {
             if (Patterns.matchesTag(line)) {
@@ -236,7 +241,7 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
         }
         return false;
     }
-    
+
     public List<String> buildChanged(TopicMessage previous) {
         List<String> list = new ArrayList();
         if (previous != null) {
@@ -252,7 +257,7 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
         }
         return list;
     }
-    
+
     public boolean contains(String matchLine) {
         for (String line : lineList) {
             if (TopicMessageMatcher.matches(matchLine, line)) {
@@ -265,11 +270,11 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
     public Set<String> getSubscribers() {
         return subscribers;
     }
-    
+
     public Collection<StatusCheck> getChecks() {
         return checks;
     }
-    
+
     @Override
     public String toString() {
         return Args.format(alertType, topicLabel, statusType, periodMillis);

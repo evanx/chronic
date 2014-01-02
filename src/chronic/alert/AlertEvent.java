@@ -22,6 +22,7 @@ package chronic.alert;
  */
 
 
+import chronic.type.AlertEventType;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,62 +35,71 @@ import vellum.data.Timestamped;
 public class AlertEvent implements Timestamped {
 
     static Logger logger = LoggerFactory.getLogger(AlertEvent.class);
-    TopicMessage status;
-    TopicMessage previousStatus;
+    TopicMessage message;
+    TopicMessage previousMessage;
     AlertEvent previousAlert;
     List<String> changedLines;
     String htmlContent;
     String preContent;
     int ignoreCount;
     AlertEvent ignoredAlert;
-    TopicMessage alertedStatus;
+    TopicMessage alertedMessage;
+    AlertEventType alertEventType;
     boolean polled;
     long notificationTimestamp;
     long polledTimestamp;
     
-    public AlertEvent(TopicMessage status) {
-        this.status = status;
+    public AlertEvent(TopicMessage message) {
+        this.message = message;
     }
     
-    public AlertEvent(TopicMessage status, TopicMessage previous) {
-        this.status = status;
-        this.previousStatus = previous;
+    public AlertEvent(TopicMessage message, TopicMessage previous) {
+        this.message = message;
+        this.previousMessage = previous;
     }
 
-    public AlertEvent(TopicMessage status, TopicMessage previous, AlertEvent previousAlert) {
-        this.status = status;
-        this.previousStatus = previous;
+    public AlertEvent(TopicMessage message, TopicMessage previousMessage, AlertEvent previousAlert) {
+        this.message = message;
+        this.previousMessage = previousMessage;
         this.previousAlert = previousAlert;
     }
-    
+
     @Override
     public long getTimestamp() {
         if (ignoredAlert != null) {
             return ignoredAlert.getTimestamp();
         } 
-        return status.getTimestamp();
+        return message.getTimestamp();
     }    
 
+    public void setAlertEventType(AlertEventType alertEventType) {
+        this.alertEventType = alertEventType;
+    }
+    
+    public AlertEventType getAlertEventType() {
+        return alertEventType;
+    }
+        
     public void setIgnoredAlert(AlertEvent ignoredAlert) {
         this.ignoredAlert = ignoredAlert;
         ignoreCount++;
     }
         
-    public TopicMessage getStatus() {
-        return status;
+    public TopicMessage getMessage() {
+        return message;
     }
     
-    public void setPrevious(TopicMessage previous) {
-        this.previousStatus = previous;
+    public void setPrevious(TopicMessage previousMessage) {
+        this.previousMessage = previousMessage;
     }
     
     @Override
     public String toString() {
-        return status.toString();
+        return message.toString();
     }        
 
-    public void setAlertedStatus(TopicMessage alertedStatus) {
-        this.alertedStatus = alertedStatus;
+    public void setAlertedMessage(TopicMessage alertedMessage) {
+        this.alertedMessage = alertedMessage;
     }    
 
     public void setPolled(boolean polled) {

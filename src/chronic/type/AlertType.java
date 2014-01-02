@@ -19,8 +19,6 @@ public enum AlertType implements Labelled {
     ERROR,
     PATTERN,
     SERVER_RESTARTED,
-    INITIAL,
-    ONCE,
     ALWAYS;
     
     public boolean isPollable() {

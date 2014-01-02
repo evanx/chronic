@@ -42,10 +42,10 @@ public class AlertEventMapper {
     
     public AlertEventMapper(AlertEvent alert, TimeZone timeZone) {
         this.alert = alert;
-        this.status = alert.status;        
+        this.status = alert.message;        
         DateFormat format = new SimpleDateFormat("HH:mm:ss");
         format.setTimeZone(timeZone);
-        timestampLabel = format.format(alert.status.timestamp);
+        timestampLabel = format.format(alert.message.timestamp);
     }
     
     public JMap getExtendedMap() {

@@ -13,7 +13,7 @@ import chronic.check.StatusCheck;
 import chronic.entity.Cert;
 import chronic.entity.Person;
 import chronic.entity.Topic;
-import chronic.type.AlertType;
+import chronic.type.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class Post implements ChronicPlainHttpxHandler {
         int contentLength = Integer.parseInt(httpx.getRequestHeader("Content-length"));
         if (contentLength > contentLengthLimit) {
             logger.warn("contentLength {} {}", contentLength, cert);
-            status.setAlertType(AlertType.ONCE);
+            status.setStatusType(StatusType.CONTENT_ERROR);
             status.setTopicLabel("Chronica");
             status.getLineList().add("INFO: Content length limit exceeded");
             Topic topic = es.persistTopic(cert, status.getTopicLabel());

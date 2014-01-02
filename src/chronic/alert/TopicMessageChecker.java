@@ -20,7 +20,6 @@
  */
 package chronic.alert;
 
-import chronic.alert.AlertEvent;
 import chronic.type.StatusType;
 import chronic.type.AlertType;
 import org.slf4j.Logger;
@@ -35,42 +34,44 @@ public class TopicMessageChecker {
 
     static Logger logger = LoggerFactory.getLogger(TopicMessageChecker.class);
     
-    TopicMessage status;
+    TopicMessage message;
 
-    public TopicMessageChecker(TopicMessage status) {
-        this.status = status;
+    public TopicMessageChecker(TopicMessage message) {
+        this.message = message;
     }    
 
     public boolean isAlertable(TopicMessage previous, AlertEvent alert) {
-        logger.info("isAlertable {}", Args.format(status.topicLabel, status.alertType, 
-                status.statusType, previous.statusType, status.matches(previous),
-                alert.getStatus().getStatusType()));
-        if (status.alertType == AlertType.NEVER) {
+        return isAlertable(message, previous, alert);
+    }
+    
+    public static boolean isAlertable(TopicMessage message, TopicMessage previous, AlertEvent alert) {
+        logger.info("isAlertable {}", Args.format(message.topicLabel, message.alertType, 
+                message.statusType, previous.statusType, message.matches(previous),
+                alert.getMessage().getStatusType()));
+        if (message.alertType == AlertType.NEVER) {
             return false;
         }
-        if (status.alertType == AlertType.ALWAYS) {
+        if (message.alertType == AlertType.ALWAYS) {
             return true;
         }
         if (previous.statusType == StatusType.ELAPSED) {
-            status.statusType = StatusType.RESUMED;
+            message.statusType = StatusType.RESUMED;
             return true;
         }
-        if (status.alertType == AlertType.PATTERN) {
-        } else if (status.alertType == AlertType.ERROR) {
+        if (message.alertType == AlertType.PATTERN) {
+        } else if (message.alertType == AlertType.ERROR) {
         }
-        if (status.alertType == AlertType.CONTENT_CHANGED) {
-            if (!status.matches(previous)) {
-                status.statusType = StatusType.CONTENT_CHANGED;
+        if (message.alertType == AlertType.CONTENT_CHANGED) {
+            if (!message.matches(previous)) {
+                message.statusType = StatusType.CONTENT_CHANGED;
                 return true;
             }
         }
-        if (status.alertType == AlertType.STATUS_CHANGED) {
-           if (status.isStatusAlertable() && status.statusType == previous.statusType
-                    && status.statusType != alert.getStatus().getStatusType()) {
-               if (alert.getStatus().getAlertType() == AlertType.INITIAL && 
-                       !alert.getStatus().isStatusAlertable()) {
-                   status.alertType = AlertType.INITIAL;
-               }
+        if (message.alertType == AlertType.STATUS_CHANGED) {
+           if (message.isStatusAlertable() && message.statusType == previous.statusType
+                    && message.statusType != alert.getMessage().getStatusType()) {
+               logger.info("isAlertable {}", Args.format(alert.getMessage().getStatusType(),
+                       previous.statusType, message.statusType));
                return true;
            }
         }

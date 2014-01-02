@@ -21,12 +21,12 @@
 package chronic.app;
 
 import chronic.alert.TopicMessage;
-import chronic.alert.TopicMessageChecker;
 import chronic.alert.ChronicMailMessenger;
 import chronic.alert.AlertEvent;
 import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
 import chronic.entitykey.TopicMetricKey;
+import chronic.type.AlertEventType;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.util.Map;
@@ -181,7 +181,7 @@ public class ChronicApp {
                     AlertEvent alert = alertQueue.poll(60, TimeUnit.SECONDS);
                     if (alert != null) {
                         messenger.alert(alert, 
-                                es.listSubscriptions(alert.getStatus().getTopic()));
+                                es.listSubscriptions(alert.getMessage().getTopic()));
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
@@ -253,7 +253,7 @@ public class ChronicApp {
         if (elapsed > message.getPeriodMillis() + properties.getPeriod()) {
             AlertEvent previousAlert = alertMap.get(message.getKey());
             if (previousAlert == null
-                    || previousAlert.getStatus().getStatusType() != StatusType.ELAPSED) {
+                    || previousAlert.getMessage().getStatusType() != StatusType.ELAPSED) {
                 message.setStatusType(StatusType.ELAPSED);
                 AlertEvent alert = new AlertEvent(message);
                 alertMap.put(message.getKey(), alert);
@@ -270,27 +270,29 @@ public class ChronicApp {
 
     private void checkMessage(TopicMessage message) {
         logger.info("handleStatus {}", message);
-        TopicMessage previousStatus = recordMap.put(message.getKey(), message);
+        TopicMessage previousMessage = recordMap.put(message.getKey(), message);
         AlertEvent previousAlert = alertMap.get(message.getKey());
-        if (previousStatus == null) {
+        if (previousMessage == null) {
             logger.info("putRecord: no previous status");
             AlertEvent alert = new AlertEvent(message);            
-            message.setAlertType(AlertType.INITIAL);
+            alert.setAlertEventType(AlertEventType.INITIAL);
             alertMap.put(message.getKey(), alert);
             if (properties.isTesting("alert:initial")) {
                 alertQueue.add(alert);
             }
-        } else if (message.getAlertType() == AlertType.ONCE) {
-            AlertEvent alert = new AlertEvent(message, previousStatus);
+        } else if (message.getStatusType() == StatusType.CONTENT_ERROR) {
+            AlertEvent alert = new AlertEvent(message, previousMessage);
             alertMap.put(message.getKey(), alert);
-        } else if (new TopicMessageChecker(message).isAlertable(previousStatus, previousAlert)) {
-            AlertEvent alert = new AlertEvent(message, previousStatus);
-            if (message.getAlertType() == AlertType.INITIAL) {
+        } else if (message.isAlertable(previousMessage, previousAlert)) {
+            AlertEvent alert = new AlertEvent(message, previousMessage);
+            if (previousAlert.getAlertEventType() == AlertEventType.INITIAL && 
+                       !previousAlert.getMessage().isStatusAlertable()) {
+                previousAlert.setAlertEventType(AlertEventType.INITIAL);
                 alertMap.put(message.getKey(), alert);
             } else {
-                long elapsed = alert.getTimestamp() - previousAlert.getTimestamp();
-                if (elapsed < properties.getAlertPeriod()) {
-                    logger.warn("elapsed {}: {}", elapsed, previousAlert);
+                long elapsedMillis = alert.getTimestamp() - previousAlert.getTimestamp();
+                if (elapsedMillis < properties.getAlertPeriod()) {
+                    logger.warn("alert period not elapsed {}: {}", elapsedMillis, previousAlert);
                     previousAlert.setIgnoredAlert(alert);
                 } else {
                     alertMap.put(message.getKey(), alert);
@@ -298,7 +300,7 @@ public class ChronicApp {
                 }
             }
         } else {
-            long period = message.getTimestamp() - previousStatus.getTimestamp();
+            long period = message.getTimestamp() - previousMessage.getTimestamp();
             logger.info("putRecord period {}", Millis.formatPeriod(period));
             if (message.getPeriodMillis() == 0) {
                 if (period > Millis.fromSeconds(55) && period < Millis.fromSeconds(70)) {

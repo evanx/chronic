@@ -66,14 +66,14 @@ public class ChronicMailMessenger {
                 if (previous != null) {
                     long elapsed = alert.getTimestamp() - previous.getTimestamp();
                     if (elapsed < app.getProperties().getAlertPeriod()
-                            && alert.getStatus().getKey().equals(previous.status.getKey())) {
+                            && alert.getMessage().getKey().equals(previous.message.getKey())) {
                         logger.warn("elapsed {}", Args.format(email, Millis.formatPeriod(elapsed),
-                                alert.getStatus().getKey()));
+                                alert.getMessage().getKey()));
                     }
                 }
-                alert.setAlertedStatus(alert.getStatus());
+                alert.setAlertedMessage(alert.getMessage());
                 if (app.getProperties().getAdminDomains().contains(email)) {
-                    mailer.send(email, alert.getStatus().getTopicLabel(),
+                    mailer.send(email, alert.getMessage().getTopicLabel(),
                         new AlertMailBuilder(app).build(alert, timeZone));
                 }
             } catch (IOException | MessagingException e) {

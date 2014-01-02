@@ -29,12 +29,14 @@ import chronic.type.AlertType;
 import com.sun.net.httpserver.Headers;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.enumtype.DelimiterType;
+import vellum.util.Lists;
 import vellum.util.Strings;
 
 /**
@@ -59,8 +61,16 @@ public class TopicMessageParser {
         return parse(text);
     }
 
+    public TopicMessage parse(Collection<String> lines) throws IOException {
+        return parse(Lists.array(lines));
+    }
+    
     public TopicMessage parse(String text) throws IOException {
-        for (String line : text.split("\n")) {
+        return parse(text.split("\n"));
+    }
+        
+    public TopicMessage parse(String[] lines) throws IOException {
+        for (String line : lines) {
             line = line.trim();
             Matcher matcher = TopicMessagePatterns.FROM_CRON.matcher(line);
             if (matcher.find()) {
@@ -89,6 +99,9 @@ public class TopicMessageParser {
             }
             matcher = TopicMessagePatterns.SERVICE_STATUS.matcher(line);
             if (matcher.find()) {
+                if (topicMessage.alertType == null) {
+                    topicMessage.alertType = AlertType.STATUS_CHANGED;
+                }
                 parseServiceStatus(matcher.group(1), matcher.group(2), matcher.group(3));
                 topicMessage.getLineList().add(line);
                 continue;
