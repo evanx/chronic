@@ -7,7 +7,7 @@ import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
-import chronic.type.IntervalType;
+import chronic.type.MetricType;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class IntervalList implements ChronicHttpxHandler {
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
             throws Exception {
         List list = new LinkedList();
-        for (IntervalType type : IntervalType.values()) {
+        for (MetricType type : MetricType.values()) {
             JMap map = new JMap();
             map.put("name", type.name());
             map.put("label", type.getLabel());

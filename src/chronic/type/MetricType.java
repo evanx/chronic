@@ -11,10 +11,11 @@ import vellum.type.Labelled;
  *
  * @author evan.summers
  */
-public enum IntervalType implements Labelled {
-    MINUTE,
-    HOUR,
-    DAY;
+public enum MetricType implements Labelled {
+    MINUTELY,
+    HOURLY_AVERAGE,
+    HOURLY_MAXIMUM,
+    DAILY;
     
     @Override
     public String getLabel() {

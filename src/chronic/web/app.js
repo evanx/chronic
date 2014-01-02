@@ -429,7 +429,7 @@ app.controller("certsController", ["$scope", "$http",
 
 app.controller("chartController", function($scope, $http) {
 
-    $scope.interval = "MINUTE";
+    $scope.interval = "MINUTELY";
     
     $http.post("/chronicapp/intervalList", {
     }).then(function(response) {
@@ -444,33 +444,40 @@ app.controller("chartController", function($scope, $http) {
     $scope.intervalChanged = function(value) {
         console.log("intervalChanged", value);
         $scope.interval = value;
-        $scope.metricList();
+        $scope.chartList();
     };
 
-    $scope.metricList = function() {
-        console.log("metricList");
+    $scope.chartList = function() {
+        console.log("chartList");
         $scope.charts = undefined;
         $scope.metrics = undefined;
         $scope.selected = undefined;
         $scope.loading = true;
-        $http.post("/chronicapp/metricList", {
+        $http.post("/chronicapp/chartList", {
             data: $scope.interval
         }).then(function(response) {
             $scope.loading = false;
             $scope.charts = undefined;
             if (response.data && response.data.metrics) {
-                console.log("metrics", response.data.metrics);
                 $scope.metrics = response.data.metrics;
-                $scope.handleMetrics();
+                console.log("metrics", response.data.metrics.length, response.data.metrics.length);
+                if ($scope.metrics.length > 0) {
+                    console.log("metrics first length", response.data.metrics[0].data.length, response.data.metrics[0].labels.length);
+                }
+                $scope.renderCharts();
             } else {
                 console.warn("metrics", response);
             }
         });
     };
 
-    $scope.handleMetrics = function() {
+    $scope.renderCharts = function() {
         var charts = [];
+        console.log("renderCharts", $scope.metrics.length);
         for (var i = 0; i < $scope.metrics.length; i++) {
+            var metrics = $scope.metrics[i];
+            console.log("renderCharts labels", metrics.labels.length, metrics.labels);
+            console.log("renderCharts data", metrics.data.length, metrics.data);
             var chart = {
                 topicLabel: $scope.metrics[i].topicLabel,
                 metricLabel: $scope.metrics[i].metricLabel,
@@ -504,7 +511,7 @@ app.controller("chartController", function($scope, $http) {
 
     $scope.$on("changeView", function(event, view) {
         if (view === "charts") {
-            $scope.metricList();
+            $scope.chartList();
         } else {
             $scope.loading = false;
             $scope.charts = undefined;

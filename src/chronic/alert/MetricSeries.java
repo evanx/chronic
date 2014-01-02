@@ -20,8 +20,10 @@
  */
 package chronic.alert;
 
-import chronic.type.IntervalType;
+import chronic.type.MetricType;
 import chronic.util.ByteArraySeries;
+import java.util.Calendar;
+import java.util.TimeZone;
 import vellum.data.Millis;
 import vellum.jx.JMap;
 
@@ -34,11 +36,13 @@ public class MetricSeries {
     long timestamp;
     long hourTimestamp;
     ByteArraySeries minutelySeries;
-    ByteArraySeries hourlySeries;
+    ByteArraySeries hourlyAverageSeries;
+    ByteArraySeries hourlyMaximumSeries;
 
     public MetricSeries(int minutelyCapacity, int hourlyCapacity) {
         minutelySeries = new ByteArraySeries(minutelyCapacity);
-        hourlySeries = new ByteArraySeries(hourlyCapacity);
+        hourlyAverageSeries = new ByteArraySeries(hourlyCapacity);
+        hourlyMaximumSeries = new ByteArraySeries(hourlyCapacity);
     }
 
     public synchronized void add(long timestamp, float value) {
@@ -54,18 +58,21 @@ public class MetricSeries {
 
     private void hourly() {
         hourTimestamp = timestamp;
-        hourlySeries.add(minutelySeries.average(60));
+        hourlyAverageSeries.add(minutelySeries.average(60));
+        hourlyMaximumSeries.add(minutelySeries.maximum(60));
     }
     
     public long getTimestamp() {
         return timestamp;
     }
 
-    public synchronized JMap getMap(IntervalType intervalType) {
-        if (intervalType == IntervalType.MINUTE) {
+    public synchronized JMap getMap(TimeZone timeZone, MetricType intervalType) {
+        if (intervalType == MetricType.MINUTELY) {
             return getMinutelyMap();
-        } else if (intervalType == IntervalType.HOUR) {
-            return getHourlyMap();
+        } else if (intervalType == MetricType.HOURLY_AVERAGE) {
+            return getHourlyMap(hourlyAverageSeries.getFloatArray(), timeZone);
+        } else if (intervalType == MetricType.HOURLY_MAXIMUM) {
+            return getHourlyMap(hourlyMaximumSeries.getFloatArray(), timeZone);
         }
         return getMinutelyMap();
     }
@@ -78,7 +85,7 @@ public class MetricSeries {
         int minute = Millis.timestampMinute(timestamp);
         for (int i = 1; i <= size; i++) {
             if (minute == 0) {
-                labels[size - i] = "\"";
+                labels[size - i] = "0\"";
             } else if (minute % 5 == 0) {
                 labels[size - i] = String.format("%02d", minute);
             } else {
@@ -95,24 +102,30 @@ public class MetricSeries {
         return map;
     }
 
-    public synchronized JMap getHourlyMap() {
+    public synchronized JMap getHourlyMap(Float[] floatValues, TimeZone timeZone) {
         JMap map = new JMap();
-        Float[] floatValues = minutelySeries.getFloatArray();
         int size = floatValues.length;
         String[] labels = new String[size];
-        int minute = Millis.timestampMinute(timestamp);
+        Calendar calendar = Calendar.getInstance(timeZone);
+        calendar.setTimeInMillis(hourTimestamp);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if (hour == 0) {
+            hour = 23;
+        } else {
+            hour--;
+        }
         for (int i = 1; i <= size; i++) {
-            if (minute == 0) {
-                labels[size - i] = "\"";
-            } else if (minute % 5 == 0) {
-                labels[size - i] = String.format("%02d", minute);
+            if (hour == 0) {
+                labels[size - i] = "00h";
+            } else if (hour % 4 == 0) {
+                labels[size - i] = String.format("%02d", hour);
             } else {
                 labels[size - i] = "";
             }
-            if (minute == 0) {
-                minute = 59;
+            if (hour == 0) {
+                hour = 23;
             } else {
-                minute--;
+                hour--;
             }
         }
         map.put("data", floatValues);

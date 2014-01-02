@@ -122,21 +122,22 @@
 
         <div class="container" ng-controller="chartController" ng-cloak ng-show="persona.email && view === 'charts'">
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" ng-class="{active: interval === 'MINUTE'}" 
-                        ng-click="intervalChanged('MINUTE')">Minutely</button>
-                <button type="button" class="btn btn-primary" ng-class="{active: interval === 'HOUR'}" 
-                        ng-click="intervalChanged('HOUR')">Hourly</button>
+                <button type="button" class="btn btn-primary" ng-class="{active: interval === 'MINUTELY'}" 
+                        ng-click="intervalChanged('MINUTELY')">Minutely</button>
+                <button type="button" class="btn btn-primary" ng-class="{active: interval === 'HOURLY_MAXIMUM'}" 
+                        ng-click="intervalChanged('HOURLY_MAXIMUM')">Hourly Max</button>
+                <button type="button" class="btn btn-primary" ng-class="{active: interval === 'HOURLY_AVERAGE'}" 
+                        ng-click="intervalChanged('HOURLY_AVERAGE')">Hourly Ave</button>
             </div>
             <p></p>
             <p ng-show="loading">Loading...</p>
             <p ng-show="!loading && charts && charts.length === 0">No charts</p>
             <div class="row-fluid" ng-repeat="chart in charts">
-                <div class="span6" style="margin:20px 0;">	
-                    <p>{{chart.topicLabel}} <b>{{chart.metricLabel}}</b> 
-                        <i ng-show="chart.timestampLabel">{{chart.timestampLabel}}</i></p>
+                <div class="span6" style="margin:20px 0;">        
+                    <p>{{chart.topicLabel}} <b>{{chart.metricLabel}}</b></p>
                     <canvas linechart options="options" data="chart" id="lineChart" width="900" height="100"></canvas>
                 </div>
-            </div>
+            </div>            
         </div>
 
         <div class="container" ng-controller="topicsController" 

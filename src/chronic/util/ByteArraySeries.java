@@ -27,9 +27,9 @@ package chronic.util;
 public class ByteArraySeries {
 
     int capacity;
-    int size = 0;
+    int size;
     byte[] values;
-    transient float ceiling;
+    transient float maximum;
 
     public ByteArraySeries(int capacity) {
         this.capacity = capacity;
@@ -38,9 +38,9 @@ public class ByteArraySeries {
 
     public synchronized void add(float value) {
         if (size == 0) {
-            setCeiling(Math.abs(value)*3/2);
-        } else if (Math.abs(value) > ceiling) {
-            setCeiling(Math.abs(value)*3/2);
+            refactor(Math.abs(value)*3/2);
+        } else if (Math.abs(value) > maximum) {
+            refactor(Math.abs(value)*3/2);
         }
         for (int i = capacity - size; i < capacity - 1; i++) {
             values[i] = values[i+1];
@@ -56,18 +56,18 @@ public class ByteArraySeries {
     }
 
     private float getFloatValue(int value) {
-        return value * ceiling / Byte.MAX_VALUE;
+        return value * maximum / Byte.MAX_VALUE;
     }
     
     private byte getNormalizedValue(float floatValue) {
         if (floatValue > 0) {
-            int intValue = (int) (floatValue * Byte.MAX_VALUE / ceiling);
+            int intValue = (int) (floatValue * Byte.MAX_VALUE / maximum);
             if (intValue > Byte.MAX_VALUE) {
                 intValue = Byte.MAX_VALUE;
             }
             return (byte) intValue;
         } else if (floatValue < 0) {
-            int intValue = (int) (floatValue * Byte.MAX_VALUE / ceiling);
+            int intValue = (int) (floatValue * Byte.MAX_VALUE / maximum);
             if (intValue < Byte.MIN_VALUE) {
                 intValue = Byte.MIN_VALUE;
             }
@@ -77,11 +77,11 @@ public class ByteArraySeries {
         }
     }
 
-    public synchronized void setCeiling(float ceiling) {
+    private void refactor(float maximum) {
         for (int i = 0; i < values.length; i++) {
-            values[i] = (byte) (values[i] * this.ceiling / ceiling);
+            values[i] = (byte) (values[i] * this.maximum / maximum);
         }
-        this.ceiling = ceiling;
+        this.maximum = maximum;
     }
 
     public synchronized float average(int count) {
@@ -90,7 +90,17 @@ public class ByteArraySeries {
         for (int i = 1; i <= size; i++) {
             total += values[capacity - i];
         }
-        return total * ceiling / size() / Byte.MAX_VALUE;
+        return total * maximum / count / Byte.MAX_VALUE;
+    }
+
+    public synchronized float maximum(int count) {
+        int max = values[0];
+        if (count > size()) count = size;
+        for (int i = 1; i < size; i++) {
+            byte value = values[capacity - i];
+            if (value > max) max = value;
+        }
+        return max * maximum / count / Byte.MAX_VALUE;
     }
     
     public synchronized float average() {

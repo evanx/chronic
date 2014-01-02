@@ -11,7 +11,7 @@ import chronic.app.ChronicEntityService;
 import chronic.entity.Topic;
 import chronic.entitykey.TopicMetricKey;
 import chronic.entitykey.TopicMetricKeyOrderComparator;
-import chronic.type.IntervalType;
+import chronic.type.MetricType;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
@@ -27,9 +27,9 @@ import vellum.util.Lists;
  *
  * @author evan.summers
  */
-public class MetricList implements ChronicHttpxHandler {
+public class ChartList implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(MetricList.class);
+    Logger logger = LoggerFactory.getLogger(ChartList.class);
 
     @Override
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
@@ -39,12 +39,12 @@ public class MetricList implements ChronicHttpxHandler {
         TimeZone timeZone = httpx.getTimeZone();
         String intervalString = httpx.parseJsonMap().getString("data");
         logger.info("string {}", intervalString);
-        IntervalType intervalType = IntervalType.valueOf(intervalString);
+        MetricType intervalType = MetricType.valueOf(intervalString);
         List metrics = new LinkedList();
         for (TopicMetricKey key : Lists.sortedSet(app.getSeriesMap().keySet(), new TopicMetricKeyOrderComparator())) {
             MetricSeries series = app.getSeriesMap().get(key);
             logger.info("series {}", series.toString());
-            JMap map = series.getMap(intervalType);
+            JMap map = series.getMap(timeZone, intervalType);
             Topic topic = es.findTopic(key.getTopicId());
             map.put("topicLabel", topic.getTopicLabel());
             map.put("metricLabel", key.getMetricLabel());
