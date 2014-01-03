@@ -8,6 +8,7 @@ import chronic.api.ChronicHttpxHandler;
 import chronic.alert.MetricSeries;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
+import chronic.entity.Cert;
 import chronic.entity.Topic;
 import chronic.entitykey.TopicMetricKey;
 import chronic.entitykey.TopicMetricKeyOrderComparator;
@@ -45,9 +46,13 @@ public class ChartList implements ChronicHttpxHandler {
             MetricSeries series = app.getSeriesMap().get(key);
             logger.info("series {}", series.toString());
             JMap map = series.getMap(timeZone, intervalType);
+            map.put("metricLabel", key.getMetricLabel());
             Topic topic = es.findTopic(key.getTopicId());
             map.put("topicLabel", topic.getTopicLabel());
-            map.put("metricLabel", key.getMetricLabel());
+            Cert cert = es.findCert(topic.getCertId());
+            map.put("commonName", cert.getCommonName());
+            map.put("orgUnit", cert.getOrgUnit());
+            map.put("orgDomain", cert.getOrgDomain());
             if (System.currentTimeMillis() - series.getTimestamp() > Millis.fromSeconds(90)) {
                 map.put("timestampLabel", CalendarFormats.timestampFormat.format(timeZone, series.getTimestamp()));
             }

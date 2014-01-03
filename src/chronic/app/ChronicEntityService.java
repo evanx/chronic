@@ -100,6 +100,10 @@ public class ChronicEntityService {
         em.persist(entity);
     }
 
+    public Cert findCert(Long certId) {
+        return em.find(Cert.class, certId);
+    }
+    
     public Topic findTopic(Long topicId) {
         return em.find(Topic.class, topicId);
     }
