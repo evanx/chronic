@@ -388,15 +388,15 @@ c0sha1() {
 }
 
 c2headSha1() {
-  head -c $1 $2 | sha1sum | cut -d' ' -f1
+  head -c $2 $1 | sha1sum | cut -d' ' -f1
 }
 
 c3headVerify() {
-  if head -c $1 $2 | sha1sum | cut -d' ' -f1 | grep -q "$3"
+  if head -c $2 $1 | sha1sum | cut -d' ' -f1 | grep -q "$3"
   then
     echo "OK: $@"
   else
-    echo "WARNING: $@" `head -c $1 $2 | sha1sum | cut -d' ' -f1` 
+    echo "WARNING: $@" `head -c $2 $1 | sha1sum | cut -d' ' -f1` 
   fi 
 }
 
