@@ -379,8 +379,8 @@ c2rtcp() {
 
 # file checks
 
-declare -A fileSizes
-declare -A fileHashes
+#declare -A fileSizes
+#declare -A fileHashes
 
 c1pushSize() {
   fileSizes[$1]=`stat -c %s $1`
