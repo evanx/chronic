@@ -210,7 +210,7 @@ public class ChronicApp {
                                 key.setOrder(index);
                                 MetricSeries series = seriesMap.get(key);
                                 if (series == null) {
-                                    series = new MetricSeries(90, 73);
+                                    series = new MetricSeries(75, 50);
                                     seriesMap.put(key, series);
                                 }
                                 series.add(System.currentTimeMillis(), value.getValue());

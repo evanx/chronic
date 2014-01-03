@@ -116,9 +116,9 @@ public class MetricSeries {
         }
         for (int i = 1; i <= size; i++) {
             if (hour == 0) {
-                labels[size - i] = "00h";
+                labels[size - i] = "0h";
             } else if (hour % 4 == 0) {
-                labels[size - i] = String.format("%02d", hour);
+                labels[size - i] = String.format("%d", hour);
             } else {
                 labels[size - i] = "";
             }
