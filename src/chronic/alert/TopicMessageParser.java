@@ -22,6 +22,7 @@ package chronic.alert;
 
 import chronic.check.TcpChecker;
 import chronic.bundle.Bundle;
+import chronic.check.ClockChecker;
 import chronic.check.HttpsChecker;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
@@ -149,6 +150,8 @@ public class TopicMessageParser {
             topicMessage.getChecks().add(TcpChecker.parse(string));
         } else if (header.equals("Check-https")) {
             topicMessage.getChecks().add(HttpsChecker.parse(string));
+        } else if (header.equals("Clock")) {
+            topicMessage.getChecks().add(ClockChecker.parse(string));
         } else if (header.equals("Content-Type")) {
             parseContentType(string);
         } else if (header.equals("From")) {

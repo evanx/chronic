@@ -20,6 +20,7 @@
  */
 package chronic.check;
 
+import chronic.alert.StatusCheck;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import vellum.data.Patterns;

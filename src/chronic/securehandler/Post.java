@@ -9,7 +9,7 @@ import chronic.app.ChronicEntityService;
 import chronic.alert.TopicMessage;
 import chronic.alert.TopicMessageParser;
 import chronic.api.ChronicPlainHttpxHandler;
-import chronic.check.StatusCheck;
+import chronic.alert.StatusCheck;
 import chronic.entity.Cert;
 import chronic.entity.Person;
 import chronic.entity.Topic;

@@ -22,40 +22,30 @@ package chronic.check;
 
 import chronic.alert.StatusCheck;
 import java.net.Socket;
-import vellum.data.Patterns;
+import vellum.data.Millis;
 
 /**
  *
  * @author evan.summers
  */
-public class TcpChecker implements StatusCheck {
-    String address;
-    int port;
-    int timeout = 4000;
-
-    public TcpChecker(String address, int port) {
-        this.address = address;
-        this.port = port;
+public class ClockChecker implements StatusCheck {
+    long timestamp;
+    
+    private ClockChecker(long timestamp) {
+        this.timestamp = timestamp;
     }   
         
     @Override
     public String check() {
-        try (Socket socket = new Socket(address, port)) {
-            socket.setSoTimeout(timeout);            
-            return String.format("OK: %s port %d: %s", address, port, socket.toString());
-        } catch (Exception e) {
-            return String.format("WARNING: %s port %d: %s", address, port, e.getMessage());
-        } 
+        long differenceSeconds = Math.abs(System.currentTimeMillis() - timestamp)/1000;
+        if (differenceSeconds < 30) {
+            return String.format("Clock OK - %d", differenceSeconds);
+        } else {
+            return String.format("Clock WARNING - %d", differenceSeconds);
+        }
     }
 
-    public static TcpChecker parse(String string) {
-        String[] fields = string.split("\\s+");
-        if (fields.length == 2 && 
-                Patterns.matchesDomain(fields[0]) &&
-                Patterns.matchesInteger(fields[1])) {
-             return new TcpChecker(fields[0], Integer.parseInt(fields[1]));
-        }
-        throw new IllegalArgumentException(string);
-    }
-    
+    public static ClockChecker parse(String string) {
+        return new ClockChecker(Long.parseLong(string));
+    }    
 }

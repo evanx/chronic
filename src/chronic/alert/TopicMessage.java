@@ -21,7 +21,6 @@
 package chronic.alert;
 
 import static chronic.alert.TopicMessageChecker.isAlertable;
-import chronic.check.StatusCheck;
 import chronic.entity.Cert;
 import chronic.entity.Topic;
 import chronic.entitykey.OrgKey;

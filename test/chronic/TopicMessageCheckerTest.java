@@ -23,13 +23,13 @@ package chronic;
 
 import chronic.alert.AlertEvent;
 import chronic.alert.TopicMessage;
-import chronic.alert.TopicMessageChecker;
 import chronic.alert.TopicMessageParser;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.exception.ParseException;
 
 /**
  *
@@ -44,7 +44,7 @@ public class TopicMessageCheckerTest {
     }
 
     @Test
-    public void testSingleStatus() throws IOException {
+    public void testSingleStatus() throws IOException, ParseException {
         TopicMessage topicMessage1 = newTopicMessage(
                 "Load OK - 10",
                 "Disk OK - 20");
@@ -64,7 +64,7 @@ public class TopicMessageCheckerTest {
         Assert.assertFalse(topicMessage3.isAlertable(topicMessage2, alert2));
     }
     
-    private TopicMessage newTopicMessage(String ... lines) throws IOException {
+    private TopicMessage newTopicMessage(String ... lines) throws IOException, ParseException {
         TopicMessage topicMessage = new TopicMessage();
         TopicMessageParser parser = new TopicMessageParser(topicMessage);
         return parser.parse(lines);

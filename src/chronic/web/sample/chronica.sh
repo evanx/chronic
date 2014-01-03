@@ -379,6 +379,14 @@ c2rtcp() {
 
 ### other checks
 
+c1ntp() {
+  echo "NtpOffsetSec:" `ntpdate -q $1 | tail -1 | sed 's/.* offset \(.*\) sec$/\1/'`
+}
+
+c0ntp() {
+  c1ntp pool.ntp.org
+}
+
 c0clock() {
   echo "Timezone:" `cat /etc/timezone` 
   echo "Clock:" `date +%s`
