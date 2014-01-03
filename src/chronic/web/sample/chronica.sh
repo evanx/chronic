@@ -393,7 +393,7 @@ c2logKeyCount() {
 }
 
 c1authLogKeyCount() {
-  c1logKeyCount /var/log/auth.log "$2"
+  c1logKeyCount /var/log/auth.log "$1"
 }
 
 c0authLogKeyCount() {
