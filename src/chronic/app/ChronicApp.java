@@ -27,6 +27,7 @@ import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
 import chronic.entitykey.TopicMetricKey;
 import chronic.type.AlertEventType;
+import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -279,6 +280,9 @@ public class ChronicApp {
             logger.info("no previous status");
             AlertEvent alert = new AlertEvent(message);            
             alert.setAlertEventType(AlertEventType.INITIAL);
+            alertMap.put(message.getKey(), alert);
+        } else if (message.getAlertType() == AlertType.NEVER) {
+            AlertEvent alert = new AlertEvent(message, previousMessage);
             alertMap.put(message.getKey(), alert);
         } else if (message.getStatusType() == StatusType.CONTENT_ERROR) {
             AlertEvent alert = new AlertEvent(message, previousMessage);
