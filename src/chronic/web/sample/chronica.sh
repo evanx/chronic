@@ -388,7 +388,7 @@ c1authLogKeyCount() {
 }
 
 c0authLogKeyCount() {
-  c1c1authLogKeyCount yesterday
+  c1authLogKeyCount yesterdy
 }
 
 c1ntp() {
