@@ -47,7 +47,7 @@ public class Post implements ChronicPlainHttpxHandler {
         logger.info("contentLength {} {}", contentLength, cert);
         byte[] content = Streams.readBytes(httpx.getDelegate().getRequestBody());
         String contentString = new String(content);
-        logger.info("content {}", contentString);
+        logger.trace("content {}", contentString);
         new TopicMessageParser(status).parse(httpx.getRequestHeaders(), contentString);
         logger.debug("status {}", status);
         Topic topic = es.persistTopic(cert, status.getTopicLabel());

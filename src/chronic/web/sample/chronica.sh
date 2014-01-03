@@ -493,7 +493,7 @@ c0ensureKeyStore() {
     keytool -keystore etc/keystore.jks -storepass chronica -alias chronica4j -keypass chronica -genkeypair -keyalg rsa -validity 999 \
           -dname "CN=$commonName, O=$orgDomain, OU=$orgUnit"
     echo "Generated keystore:"
-    keytool -keystore etc/keystore.jks -storepass chronica -keypass chronica -alias chronica4j -exportcert -rfc | 
+    keytool -keystore etc/keystore.jks -storepass chronica -keypass chronica -alias chronica4j -exportcert -rfc |
       openssl x509 -text | grep 'CN='
     chmod 600 etc/keystore.jks
   fi

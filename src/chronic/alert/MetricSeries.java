@@ -24,6 +24,8 @@ import chronic.type.MetricType;
 import chronic.util.ByteArraySeries;
 import java.util.Calendar;
 import java.util.TimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.jx.JMap;
 
@@ -32,7 +34,8 @@ import vellum.jx.JMap;
  * @author evan.summers
  */
 public class MetricSeries {
-
+    static Logger logger = LoggerFactory.getLogger(MetricSeries.class);
+    
     long timestamp;
     long hourTimestamp;
     ByteArraySeries minutelySeries;
@@ -48,10 +51,17 @@ public class MetricSeries {
     public synchronized void add(long timestamp, float value) {
         this.timestamp = timestamp;
         int minute = Millis.timestampMinute(timestamp);
-        if (minute == 0) {
-            hourly();
-        } else if (minute == 1 && hourTimestamp == 0) {
-            hourly();
+        if (minutelySeries.size() >= 60) {
+            if (minute == 0) {
+                hourly();
+            } else if (minute <= 2) {
+                if (hourTimestamp == 0) {
+                    hourly();
+                } else if (timestamp - hourTimestamp > Millis.fromHours(1)) {
+                    logger.warn("hour elapsed {}", Millis.formatPeriod(timestamp - hourTimestamp));
+                    hourly();
+                }
+            }
         }
         minutelySeries.add(value);
     }

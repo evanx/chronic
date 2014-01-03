@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.enumtype.DelimiterType;
+import vellum.exception.ParseException;
 import vellum.util.Lists;
 import vellum.util.Strings;
 
@@ -53,7 +54,7 @@ public class TopicMessageParser {
         this.topicMessage = topicMessage;
     }
 
-    public TopicMessage parse(Headers headers, String text) throws IOException {
+    public TopicMessage parse(Headers headers, String text) throws IOException, ParseException {
         logger.trace("parse: {}", text);
         for (String key : headers.keySet()) {
             parseHeader(key, headers.get(key));
@@ -61,15 +62,15 @@ public class TopicMessageParser {
         return parse(text);
     }
 
-    public TopicMessage parse(Collection<String> lines) throws IOException {
+    public TopicMessage parse(Collection<String> lines) throws IOException, ParseException {
         return parse(Lists.array(lines));
     }
 
-    public TopicMessage parse(String text) throws IOException {
+    public TopicMessage parse(String text) throws IOException, ParseException {
         return parse(text.split("\n"));
     }
 
-    public TopicMessage parse(String[] lines) throws IOException {
+    public TopicMessage parse(String[] lines) throws IOException, ParseException {
         for (String line : lines) {
             if (line.startsWith("X-Cron")) {
                 continue;
@@ -119,14 +120,14 @@ public class TopicMessageParser {
         return topicMessage;
     }
 
-    private void parseHeader(String header, List<String> strings) {
+    private void parseHeader(String header, List<String> strings) throws ParseException {
         logger.info("parseHeader {} {}", header, strings.toString());
         for (String string : strings) {
             parseHeader(header, string);
         }
     }
 
-    private boolean parseHeader(String header, String string) {
+    private boolean parseHeader(String header, String string) throws ParseException {
         if (header.equals("Alert")) {
             topicMessage.setAlertType(AlertType.valueOf(string));
         } else if (header.equals("AlertFormat")) {

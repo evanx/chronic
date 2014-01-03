@@ -30,7 +30,7 @@ import org.apache.log4j.PatternLayout;
  * @author evan.summers
  */
 public class ChronicMain {
-    static ChronicAppender appender = new ChronicAppender("https://localhost:8444/post");
+    static ChronicAppender appender = new ChronicAppender("https://chronica.co:8444/post");
 
     public ChronicMain() {
     }

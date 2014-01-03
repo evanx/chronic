@@ -22,6 +22,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
+import vellum.exception.ParseException;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.jx.JMaps;
@@ -130,7 +131,7 @@ public class JsonObjectDelegate {
         return element.getAsLong();
     }    
     
-    public long getMillis(String key, long defaultValue) {
+    public long getMillis(String key, long defaultValue) throws ParseException {
         JsonElement element = get(key);
         if (element == null) {
             return defaultValue;

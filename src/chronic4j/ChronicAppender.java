@@ -31,6 +31,7 @@ import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import org.apache.log4j.AppenderSkeleton;
@@ -39,6 +40,7 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
+import vellum.exception.ParseException;
 import vellum.format.CalendarFormats;
 import vellum.format.Delimiters;
 import vellum.ssl.OpenTrustManager;
@@ -80,17 +82,26 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     }
 
     public void setPeriod(String period) {
-        this.period = Millis.parse(period);
+        try {
+            this.period = Millis.parse(period);
+        } catch (ParseException e) {
+            logger.error("Invalid period: {}", period);
+        }
     }
     
     public void setPass(String pass) {
         this.sslPass = pass.toCharArray();
     }
 
-    public void setProcessorClass(String className) throws Exception {
-        processor = (ChronicProcessor) Class.forName(className).newInstance();
-        if (topicLabel == null) {
-            topicLabel = processor.getClass().getSimpleName();
+    public void setProcessorClass(String className) {
+        try {
+            processor = (ChronicProcessor) Class.forName(className).newInstance();
+            if (topicLabel == null) {
+                topicLabel = processor.getClass().getSimpleName();
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            logger.warn("Invalid processor class: {}", className);
+            processor = null;
         }
     }
 
@@ -122,14 +133,20 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     }
 
     private void initialize() {
-        logger.info("initialize {}", keyStoreLocation);
+        logger.info("initialize: postAddress {}", postAddress);
+        if (processor == null) {
+            logger.error("Require processor class parameter: processorClass");
+            return;
+        }
+        if (keyStoreLocation == null || sslPass == null) {
+            logger.error("Require parameters for SSL connection: keyStore, pass");
+            return;
+        }
+        if (topicLabel == null) {
+            topicLabel = processor.getClass().getSimpleName();
+        }
+        logger.info("initialize: topic {}, processor {}", topicLabel, processor.getClass());
         try {
-            if (keyStoreLocation == null || sslPass == null) {
-                throw new GeneralSecurityException("Missing parameters for SSL connection: keyStore, pass");
-            }
-            if (topicLabel == null) {
-                topicLabel = processor.getClass().getSimpleName();
-            }
             sslContext = SSLContexts.create(keyStoreLocation, sslPass, new OpenTrustManager());
             running = true;
             long initialDelay = period;
@@ -165,7 +182,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
             builder.append(String.format("Topic: %s\n", topicLabel));
         }
         builder.append(report);
-        builder.append(String.format("INFO: deque size: %d\n", deque.size()));
+        builder.append(String.format("INFO: event snapshot size: %d\n", snapshot.size()));
         builder.append("INFO:-\n");
         builder.append("Latest events:\n");
         while (snapshot.peek() != null) {
@@ -188,8 +205,8 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     private void post(String string) {
         HttpsURLConnection connection;
         try {
-            byte[] bytes = string.getBytes("UTF-8");
-            logger.info("post: {}\n{}", bytes.length, string);
+            byte[] bytes = string.getBytes();
+            logger.trace("post: {}", bytes.length);
             URL url = new URL(postAddress);
             connection = (HttpsURLConnection) url.openConnection();
             connection.setSSLSocketFactory(sslContext.getSocketFactory());
@@ -211,5 +228,4 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
         } finally {
         }
     }
-
 }
