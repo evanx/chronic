@@ -390,8 +390,6 @@ c1verifyHead() {
   if [ -z "${fileSizes[$1]}" ]
   then
     fileSizes[$1]=`stat -c %s $1`
-  elif [ -z "${fileHashes[$1]}" ]
-  then
     fileHashes[$1]=`head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1`
   elif head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1 | grep -q "${fileHashes[$1]}"
   then
@@ -400,6 +398,11 @@ c1verifyHead() {
     echo "WARNING: $1: first ${fileSizes[$1]} bytes changed: ${fileHashes[$1]}" `
       head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1` 
   fi
+}
+
+c0verifyHeadTest() {
+  c1verifyHead /var/log/syslog
+  c1verifyHead /var/log/syslog
 }
 
 c1size() {
