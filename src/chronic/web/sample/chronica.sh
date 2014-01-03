@@ -379,7 +379,30 @@ c2rtcp() {
 
 # file checks
 
-c1fileSize() {
+declare -A fileSizes
+declare -A fileHashes
+
+c1pushSize() {
+  fileSizes[$1]=`stat -c %s $1`
+}
+
+c1verifyHead() {
+  if [ -z "${fileSizes[$1]}" ]
+  then
+    fileSizes[$1]=`stat -c %s $1`
+  elif [ -z "${fileHashes[$1]}" ]
+  then
+    fileHashes[$1]=`head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1`
+  elif head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1 | grep -q "${fileHashes[$1]}"
+  then
+    echo "OK: $1: first ${fileSizes[$1]} bytes: ${fileHashes[$1]}"
+  else
+    echo "WARNING: $1: first ${fileSizes[$1]} bytes changed: ${fileHashes[$1]}" `
+      head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1` 
+  fi
+}
+
+c1size() {
   stat -c %s $1
 }
 
@@ -387,11 +410,11 @@ c0sha1() {
   sha1sum | cut -d' ' -f1 
 }
 
-c2headSha1() {
+c2sha1Head() {
   head -c $2 $1 | sha1sum | cut -d' ' -f1
 }
 
-c3headVerify() {
+c3verifyHead() {
   if head -c $2 $1 | sha1sum | cut -d' ' -f1 | grep -q "$3"
   then
     echo "OK: $1: first $2 bytes: $3"
