@@ -78,6 +78,7 @@ public class ByteArraySeries {
     }
 
     private void refactor(float maximum) {
+        if (maximum < 1.0f) maximum = 1.0f;
         for (int i = 0; i < values.length; i++) {
             values[i] = (byte) (values[i] * this.maximum / maximum);
         }
@@ -87,6 +88,7 @@ public class ByteArraySeries {
     public synchronized float average(int count) {
         int total = 0;
         if (count > size()) count = size;
+        if (count == 0) return 0;
         for (int i = 1; i <= size; i++) {
             total += values[capacity - i];
         }
@@ -95,7 +97,7 @@ public class ByteArraySeries {
 
     public synchronized float maximum(int count) {
         int max = values[0];
-        if (count > size()) count = size;
+        if (count > size) count = size;
         for (int i = 1; i < size; i++) {
             byte value = values[capacity - i];
             if (value > max) max = value;
@@ -104,7 +106,8 @@ public class ByteArraySeries {
     }
     
     public synchronized float average() {
-        return average(size());
+        if (size == 0) return 0.0f;
+        return average(size);
     }
 
     public int getCapacity() {
