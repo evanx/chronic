@@ -387,6 +387,10 @@ c0sha1() {
   sha1sum | cut -d' ' -f1 
 }
 
+c2headSha1() {
+  head -c $1 | sha1sum | cut -d' ' -f1
+}
+
 c2headVerify() {
   head -c $1 | sha1sum | cut -d' ' -f1 | grep -q "$2" 
 }
