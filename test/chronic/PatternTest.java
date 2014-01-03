@@ -21,13 +21,9 @@
  */
 package chronic;
 
-import chronic.alert.TopicMessage;
 import chronic.alert.TopicMessageMatcher;
 import chronic.alert.TopicMessagePatterns;
-import chronic.entity.Cert;
-import chronic.entitykey.CertKey;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -56,67 +52,7 @@ public class PatternTest {
     public void mimicPattern() {
         Assert.assertTrue("https://chronica/mimic".matches(".*\\Wmimic\\W*.*"));
     }
-
-    @Test
-    public void metricValue() {
-        String string = "99.23";
-        Pattern pattern = Pattern.compile("([-+]?[0-9]+.[0-9]*)");
-        Matcher matcher = pattern.matcher(" " + string + " 0.45");
-        Assert.assertTrue(matcher.find());
-        Assert.assertEquals(string, matcher.group(1));
-    }
-
-    public void parseValue() {
-        String string = "Load=0.9";
-        Pattern pattern = Pattern.compile("(\\w+)[\\s,=]+([+-]?[0-9]+.?[0-9]*)");
-        Matcher matcher = pattern.matcher(string);
-        Assert.assertTrue(matcher.find());
-        Assert.assertEquals("Load", matcher.group(1));
-        Assert.assertEquals("0.9", matcher.group(2));        
-    }
-
     
-    @Test
-    public void statusMatches() {
-        Assert.assertTrue(TopicMessageMatcher.matches(
-                "Service OK - 100ms",
-                "Service OK - 200ms"
-        ));
-        Assert.assertTrue(TopicMessageMatcher.matches(
-                "Service OK - 100ms",
-                "Service UNKNOWN - 200ms"
-        ));
-        Assert.assertTrue(TopicMessageMatcher.matches(
-                "Service UNKNOWN - 100ms",
-                "Service CRITICAL - 200ms"
-        ));
-        Assert.assertFalse(TopicMessageMatcher.matches(
-                "Service OK - 100ms",
-                "Service CRITICAL - 100ms"
-        ));
-        Assert.assertFalse(TopicMessageMatcher.matches(
-                "ServiceA OK - 100ms",
-                "ServiceB OK - 100ms"
-        ));
-    }
-
-    @Test
-    public void nagiosPatternDash() {
-        Matcher matcher = TopicMessagePatterns.SERVICE_STATUS.matcher("Service CRITICAL - no connection");
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.group(1).equals("Service"));
-        Assert.assertTrue(matcher.group(2).equals("CRITICAL"));
-        Assert.assertTrue(matcher.group(3).equals("no connection"));
-    }
-
-    @Test
-    public void nagiosPatternColon() {
-        Matcher matcher = TopicMessagePatterns.STATUS.matcher("CRITICAL: no connection");
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.group(1).equals("CRITICAL"));
-        Assert.assertTrue(matcher.group(2).equals("no connection"));
-    }
-
     @Test
     public void cronSubject() {
         Matcher matcher = TopicMessagePatterns.CRON_SUBJECT.matcher(
@@ -126,23 +62,4 @@ public class PatternTest {
         Assert.assertEquals("ip-10-11-12-13", matcher.group(2));
         Assert.assertEquals("~/scripts/test.sh", matcher.group(3));
     }
-
-    @Test
-    public void metricValuePercentPattern() {
-        Matcher matcher = Pattern.compile("([0-9]+)(%?)").matcher("50%");
-        Assert.assertTrue(matcher.find());
-        Assert.assertEquals("50", matcher.group(1));
-        Assert.assertEquals("%", matcher.group(2));
-    }
-    
-    @Test
-    public void metricValuePattern() {
-        Matcher matcher = TopicMessagePatterns.HEADER_METRIC_VALUE.matcher(
-                "Diskspace 50%");
-        Assert.assertTrue(matcher.find());
-        Assert.assertEquals("Diskspace", matcher.group(1));
-        Assert.assertEquals("50", matcher.group(2));
-        Assert.assertEquals("%", matcher.group(3));
-    }
-
 }

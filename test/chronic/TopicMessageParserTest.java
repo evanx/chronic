@@ -33,6 +33,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.exception.ParseException;
 import vellum.util.Strings;
 
 /**
@@ -48,7 +49,7 @@ public class TopicMessageParserTest {
     }
 
     @Test
-    public void testCron() throws IOException {
+    public void testCron() throws IOException, ParseException {
         StringBuilder builder = new StringBuilder();
         TopicMessage topicMessage = new TopicMessage();
         TopicMessageParser parser = new TopicMessageParser(topicMessage);
@@ -60,7 +61,7 @@ public class TopicMessageParserTest {
     }
     
     @Test
-    public void testMetricValue() throws IOException {
+    public void testMetricValue() throws IOException, ParseException {
         StringBuilder builder = new StringBuilder();
         TopicMessage topicMessage = new TopicMessage();
         TopicMessageParser parser = new TopicMessageParser(topicMessage);
@@ -72,7 +73,7 @@ public class TopicMessageParserTest {
     }
 
     @Test
-    public void testSingleStatus() throws IOException {
+    public void testSingleStatus() throws IOException, ParseException {
         Deque<String> lineList = new ArrayDeque();
         TopicMessage topicMessage = new TopicMessage();
         TopicMessageParser parser = new TopicMessageParser(topicMessage);
@@ -88,7 +89,7 @@ public class TopicMessageParserTest {
     }
 
     @Test
-    public void testMultiStatus() throws IOException {
+    public void testMultiStatus() throws IOException, ParseException {
         Deque<String> lineList = new ArrayDeque();
         TopicMessage topicMessage = new TopicMessage();
         TopicMessageParser parser = new TopicMessageParser(topicMessage);
