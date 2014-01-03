@@ -49,7 +49,6 @@ public class ChronicTrustManager implements X509TrustManager {
         throws CertificateException {
         String dname = certs[0].getSubjectDN().getName();
         logger.debug("checkClientTrusted {}", dname);
-        logger.debug("server threads {}", app.appServer);
     }
 
     @Override

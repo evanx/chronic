@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import org.apache.log4j.MDC;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,7 @@ public class ChronicApp {
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
     VellumHttpServer httpRedirectServer = new VellumHttpServer();
+    VellumHttpServer insecureServer = new VellumHttpServer();
     Map<TopicMetricKey, MetricSeries> seriesMap = new ConcurrentHashMap();
     Map<ComparableTuple, TopicMessage> recordMap = new ConcurrentHashMap();
     Map<ComparableTuple, AlertEvent> alertMap = new ConcurrentHashMap();
@@ -83,7 +85,10 @@ public class ChronicApp {
         webServer.start(properties.getWebServer(), 
                 new OpenTrustManager(),
                 new ChronicHttpService(this));
-        httpRedirectServer.start(properties.getHttpRedirectServer(), new RedirectHttpsHandler());
+        httpRedirectServer.start(properties.getHttpRedirectServer(), 
+                new RedirectHttpsHandler());
+        insecureServer.start(properties.getInsecureServer(), 
+                new ChronicInsecureHttpService(this));
         appServer.start(properties.getAppServer(), 
                 new ChronicTrustManager(this),
                 new ChronicSecureHttpService(this));
@@ -266,17 +271,15 @@ public class ChronicApp {
     }
 
     private void checkMessage(TopicMessage message) {
-        logger.info("handleStatus {}", message);
+        MDC.put("method", "checkMessage");
+        logger.info("{}", message);
         TopicMessage previousMessage = recordMap.put(message.getKey(), message);
         AlertEvent previousAlert = alertMap.get(message.getKey());
         if (previousMessage == null) {
-            logger.info("putRecord: no previous status");
+            logger.info("no previous status");
             AlertEvent alert = new AlertEvent(message);            
             alert.setAlertEventType(AlertEventType.INITIAL);
             alertMap.put(message.getKey(), alert);
-            if (properties.isTesting("alert:initial")) {
-                alertQueue.add(alert);
-            }
         } else if (message.getStatusType() == StatusType.CONTENT_ERROR) {
             AlertEvent alert = new AlertEvent(message, previousMessage);
             alertMap.put(message.getKey(), alert);
@@ -298,14 +301,14 @@ public class ChronicApp {
             }
         } else {
             long period = message.getTimestamp() - previousMessage.getTimestamp();
-            logger.info("putRecord period {}", Millis.formatPeriod(period));
+            logger.info("period {}", Millis.formatPeriod(period));
             if (message.getPeriodMillis() == 0) {
                 if (period > Millis.fromSeconds(55) && period < Millis.fromSeconds(70)) {
                     message.setPeriodMillis(Millis.fromSeconds(60));
-                    logger.info("putRecord set period {}", Millis.formatPeriod(period));
+                    logger.info("set period {}", Millis.formatPeriod(period));
                 } else if (period > Millis.fromMinutes(55) && period < Millis.fromMinutes(70)) {
                     message.setPeriodMillis(Millis.fromMinutes(60));
-                    logger.info("putRecord set period {}", Millis.formatPeriod(period));
+                    logger.info("set period {}", Millis.formatPeriod(period));
                 }
             }
         }

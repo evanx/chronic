@@ -16,6 +16,7 @@ import chronic.entity.Topic;
 import chronic.type.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.util.Streams;
 
 /**
  *
@@ -43,10 +44,10 @@ public class Post implements ChronicPlainHttpxHandler {
             cert.setEnabled(false);
             throw new Exception("Content length limit exceeded: " + cert);
         }
-        byte[] content = new byte[contentLength];
-        httpx.getDelegate().getRequestBody().read(content);
+        logger.info("contentLength {} {}", contentLength, cert);
+        byte[] content = Streams.readBytes(httpx.getDelegate().getRequestBody());
         String contentString = new String(content);
-        logger.trace("content {}", contentString);
+        logger.info("content {}", contentString);
         new TopicMessageParser(status).parse(httpx.getRequestHeaders(), contentString);
         logger.debug("status {}", status);
         Topic topic = es.persistTopic(cert, status.getTopicLabel());

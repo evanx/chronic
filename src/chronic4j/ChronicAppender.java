@@ -21,6 +21,8 @@
 package chronic4j;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayDeque;
@@ -36,9 +38,12 @@ import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.data.Millis;
 import vellum.format.CalendarFormats;
+import vellum.format.Delimiters;
 import vellum.ssl.OpenTrustManager;
 import vellum.ssl.SSLContexts;
+import vellum.util.Args;
 import vellum.util.Streams;
 
 /**
@@ -51,8 +56,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
 
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     private final ArrayDeque<LoggingEvent> deque = new ArrayDeque();
-    private final long period = TimeUnit.SECONDS.toMillis(60);
-    private final long initialDelay = period;
+    private long period = TimeUnit.SECONDS.toMillis(60);
     private String postAddress = "https://chronica.co/post";
     private final int maximumPostLength = 2000;
     private boolean initialized;
@@ -62,6 +66,7 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     private char[] sslPass = "chronica".toCharArray();
     SSLContext sslContext;
     ChronicProcessor processor = new DefaultProcessor();
+    String topicLabel;
     
     public ChronicAppender() {
     }
@@ -74,14 +79,25 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
         this.keyStoreLocation = keyStore;        
     }
 
+    public void setPeriod(String period) {
+        this.period = Millis.parse(period);
+    }
+    
     public void setPass(String pass) {
         this.sslPass = pass.toCharArray();
     }
 
     public void setProcessorClass(String className) throws Exception {
         processor = (ChronicProcessor) Class.forName(className).newInstance();
+        if (topicLabel == null) {
+            topicLabel = processor.getClass().getSimpleName();
+        }
     }
-    
+
+    public void setTopicLabel(String topicLabel) {
+        this.topicLabel = topicLabel;
+    }
+        
     @Override
     protected void append(LoggingEvent le) {
         if (le.getLoggerName().equals(logger.getName())) {
@@ -107,14 +123,17 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
 
     private void initialize() {
         logger.info("initialize {}", keyStoreLocation);
-        scheduledExecutorService.scheduleAtFixedRate(this, initialDelay, period, TimeUnit.MILLISECONDS);
         try {
             if (keyStoreLocation == null || sslPass == null) {
                 throw new GeneralSecurityException("Missing parameters for SSL connection: keyStore, pass");
-            } else {
-                sslContext = SSLContexts.create(keyStoreLocation, sslPass, new OpenTrustManager());
-                running = true;
             }
+            if (topicLabel == null) {
+                topicLabel = processor.getClass().getSimpleName();
+            }
+            sslContext = SSLContexts.create(keyStoreLocation, sslPass, new OpenTrustManager());
+            running = true;
+            long initialDelay = period;
+            scheduledExecutorService.scheduleAtFixedRate(this, initialDelay, period, TimeUnit.MILLISECONDS);
         } catch (IOException | GeneralSecurityException e) {
             logger.error("intialized", e);
         }
@@ -132,53 +151,65 @@ public class ChronicAppender extends AppenderSkeleton implements Runnable {
     }
 
     @Override
-    public synchronized void run() {
-        //logger.info("run {} {}", deque.size(), postAddress);
+    public void run() {
+        logger.info("run {} {}", deque.size(), postAddress);
         taskTimestamp = System.currentTimeMillis();
         Deque<LoggingEvent> snapshot;
-        System.out.println("ChronicAppender run enter");
         synchronized (deque) {
             snapshot = deque.clone();
             deque.clear();
         }
-        System.out.println("ChronicAppender run snapshot");
         StringBuilder builder = new StringBuilder();
-        builder.append(processor.buildReport());
+        String report = processor.buildReport();
+        if (!report.startsWith("Topic: ")) {
+            builder.append(String.format("Topic: %s\n", topicLabel));
+        }
+        builder.append(report);
         builder.append(String.format("INFO: deque size: %d\n", deque.size()));
         builder.append("INFO:-\n");
         builder.append("Latest events:\n");
         while (snapshot.peek() != null) {
             LoggingEvent event = snapshot.poll();
-            String string = event.getMessage().toString();
-            if (builder.length() + string.length() + 1 >= maximumPostLength) {
+            String formattedString = Args.formatDelimiterSquash(Delimiters.SPACE,
+                    CalendarFormats.timestampFormat.format(TimeZone.getDefault(), event.getTimeStamp()),
+                    event.getLevel().toString(),
+                    event.getLoggerName(),
+                    event.getMDC("method"),
+                    event.getMessage().toString());
+            if (builder.length() + formattedString.length() + 1 >= maximumPostLength) {
                 break;
             }
-            builder.append(event.getLevel().toString());
-            builder.append(": ");
-            builder.append(CalendarFormats.timestampFormat.format(TimeZone.getDefault(), event.getTimeStamp()));
-            builder.append(" ");
-            builder.append(string);
+            builder.append(formattedString);
             builder.append("\n");
         }
-        System.out.println("ChronicAppender run post");
-        System.out.println(builder.toString());
         post(builder.toString());
-        System.out.println("ChronicAppender run return");
     }
 
     private void post(String string) {
-        //logger.info("post:\n{}", string);
         HttpsURLConnection connection;
         try {
+            byte[] bytes = string.getBytes("UTF-8");
+            logger.info("post: {}\n{}", bytes.length, string);
             URL url = new URL(postAddress);
             connection = (HttpsURLConnection) url.openConnection();
             connection.setSSLSocketFactory(sslContext.getSocketFactory());
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
             connection.setDoOutput(true);
-            connection.getOutputStream().write(string.getBytes());
-            connection.getOutputStream().close();
-            logger.debug("chronica response {}", Streams.readString(connection.getInputStream()));
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "plain/text");			
+            connection.setRequestProperty("Content-Length", Integer.toString(bytes.length));
+            try (OutputStream outputStream = connection.getOutputStream()) {
+                outputStream.write(bytes);
+            }
+            try (InputStream inputStream = connection.getInputStream()) {
+                logger.debug("chronica response {}", Streams.readString(inputStream));
+            }
+            connection.disconnect();
         } catch (IOException e) {
             logger.warn("post", e);
+        } finally {
         }
     }
+
 }

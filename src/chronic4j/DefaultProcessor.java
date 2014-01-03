@@ -51,6 +51,7 @@ public class DefaultProcessor implements ChronicProcessor {
     @Override
     public String buildReport() {
         StringBuilder builder = new StringBuilder();
+        builder.append("Topic: Appender\n");
         builder.append(String.format("Value: error %d\n", errorCount));
         builder.append(String.format("Value: warn %d\n", warnCount));
         builder.append(String.format("Value: info %d\n", infoCount));

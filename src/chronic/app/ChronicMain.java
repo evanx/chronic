@@ -43,17 +43,10 @@ public class ChronicMain {
     
     public static void main(String[] args) throws Exception {
         try {
-            //new ChronicMain().init();
+            appender.setPeriod("60s");
+            new ChronicMain().init();
             ChronicApp app = new ChronicApp();
             app.init();
-            if (false) {
-                Thread.sleep(2000);
-                app.ensureInitialized();
-                for (int i = 0; i < 30; i++) {
-                    Thread.sleep(1000);
-                    appender.run();
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }

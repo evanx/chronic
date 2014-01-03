@@ -53,6 +53,7 @@ public class ChronicProperties {
     private boolean testing = false;
     private boolean mockStorage = false;
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
+    private HttpServerProperties insecureServer = new HttpServerProperties(8081);
     private ExtendedProperties appServer;
     private ExtendedProperties webServer;
     private Set<String> adminDomains;
@@ -129,6 +130,10 @@ public class ChronicProperties {
         return httpRedirectServer;
     }
 
+    public HttpServerProperties getInsecureServer() {
+        return insecureServer;
+    }    
+        
     public Set<String> getAdminDomains() {
         return adminDomains;
     }

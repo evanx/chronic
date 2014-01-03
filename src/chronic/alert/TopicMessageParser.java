@@ -153,6 +153,7 @@ public class TopicMessageParser {
             parseSubscribe(string);
         } else if (header.equals("Topic")) {
             topicMessage.topicLabel = string;
+            logger.info("topicLabel {}", topicMessage.topicLabel);
         } else if (header.equals("Metric")) {
             parseMetric(string);
         } else if (header.equals("Metrics")) {
@@ -285,6 +286,7 @@ public class TopicMessageParser {
         if (topicMessage.topicLabel == null) {
             topicMessage.topicLabel = createTopicLabel();
         }
+        logger.info("topicLabel {}", topicMessage.topicLabel);
     }
 
     private String createTopicLabel() {
