@@ -21,29 +21,46 @@
  */
 package chronic;
 
-import java.util.TimeZone;
+import chronic.alert.HtmlChecker;
+import junit.framework.AssertionFailedError;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.data.SafeDateFormat;
+import vellum.data.Patterns;
 
 /**
  *
  * @author evans
  */
-public class ChronicTest {
+public class HtmlCheckerTest {
 
-    static Logger logger = LoggerFactory.getLogger(ChronicTest.class);
+    static Logger logger = LoggerFactory.getLogger(HtmlCheckerTest.class);
+
+    public HtmlCheckerTest() {
+    }
+    
+    @Test
+    public void sanitary() {
+        sanitary(true, "<b>hello</b>");
+        sanitary(true, "Indeed <b>hello</b>");
+        sanitary(true, "<b>hello</b> indeed");
+        sanitary(true, "<i>hello</i>");
+        sanitary(true, "<h4>title</h4>");
+        sanitary(false, "<script>alert()</script>");
+        sanitary(false, "<p style='expression:call()'>");
+    }
 
     @Test
-    public void timeZone() {
-        String id = String.format("GMT%+03d", 2);
-        long timestamp = System.currentTimeMillis();
-        logger.info("timestamp {}", timestamp);
-        Assert.assertEquals("GMT+02:00", TimeZone.getTimeZone(id).getID().toString());
-        Assert.assertTrue(new SafeDateFormat("yyyy-MM-dd HH:mm:ss,SSS Z").format(
-                TimeZone.getTimeZone(id), timestamp).endsWith(" +0200"));
+    public void tagPattern() {
+        Assert.assertTrue(Patterns.matchesTag("test test <i>test</i> test"));
+        Assert.assertFalse(Patterns.matchesTag("test"));
+    }
+
+    private void sanitary(boolean expected, String line) {
+        if (HtmlChecker.sanitary(line) != expected) {
+            throw new AssertionFailedError(line);
+        }
     }
 
 }

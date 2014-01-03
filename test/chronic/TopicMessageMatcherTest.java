@@ -21,7 +21,10 @@
  */
 package chronic;
 
+import chronic.alert.TopicMessage;
 import chronic.alert.TopicMessageMatcher;
+import chronic.entity.Cert;
+import chronic.entitykey.CertKey;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +46,28 @@ public class TopicMessageMatcherTest {
     }
 
     @Test
-    public void testMatchesLine() throws IOException {
+    public void statusChanged() {
+        String orgDomain = "test.org";
+        String orgUnit = "test";
+        String commonName = "serverx.test.org";
+        CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);        
+        Cert cert = new Cert(certKey);
+        TopicMessage record1 = new TopicMessage(cert);
+        TopicMessage record2 = new TopicMessage(cert);
+        record1.getLineList().add("ACME OK - some detail");
+        record2.getLineList().add("ACME OK - other detail");
+        Assert.assertTrue(record1.matches(record2));
+        record2 = new TopicMessage(cert);
+        record2.getLineList().add("ACMY OK - other detail");
+        Assert.assertFalse(record1.matches(record2));
+        record2 = new TopicMessage(cert);
+        record2.getLineList().add("ACME CRITICAL - some detail");
+        Assert.assertFalse(record1.matches(record2));
+    }
+
+    
+    @Test
+    public void matchesLine() throws IOException {
         Assert.assertTrue(TopicMessageMatcher.matches(
                 "Heading: 10", 
                 "Heading: 20"));
@@ -74,7 +98,7 @@ public class TopicMessageMatcherTest {
     }
     
     @Test
-    public void testFilter() {
+    public void filterLines() {
         List<String> list = new ArrayList();
         list.add("OK: 10");
         list.add("Load OK - 10");
