@@ -383,6 +383,10 @@ c1fileSize() {
   stat -c %s $1
 }
 
+c0sha1() {
+  sha1sum | cut -d' ' -f1 
+}
+
 c2headVerify() {
   head -c $1 | sha1sum | cut -d' ' -f1 | grep -q "$2" 
 }
