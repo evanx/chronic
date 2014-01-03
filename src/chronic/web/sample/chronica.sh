@@ -381,6 +381,7 @@ c2rtcp() {
 
 c1authLogKeyCount() {
   day=`date -d "$1" +'%e'`
+  echo "DEBUG: [$1] $day"
   cat /var/log/auth.log | cut -b5-99 | grep "^$day" | 
     grep ' Accepted publickey for ' | 
     sed 's/.* Accepted publickey for \(.*\) from \(.*\) port .*/\1/' | 
