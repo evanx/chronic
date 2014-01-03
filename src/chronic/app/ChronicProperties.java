@@ -31,6 +31,7 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
+import vellum.exception.ParseException;
 import vellum.httpserver.HttpServerProperties;
 import vellum.util.Args;
 import vellum.util.ExtendedProperties;
@@ -64,7 +65,7 @@ public class ChronicProperties {
     private final ExtendedProperties properties = new ExtendedProperties(System.getProperties());
     private final MailerProperties mailerProperties = new MailerProperties();
 
-    public void init() throws IOException {
+    public void init() throws IOException, ParseException {
         String jsonConfigFileName = properties.getString("config.json", "config.json");
         JsonObjectDelegate object = new JsonObjectDelegate(new File(jsonConfigFileName));
         siteUrl = object.getString("siteUrl", siteUrl);

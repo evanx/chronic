@@ -36,6 +36,8 @@ public class TopicMessagePatterns {
             = Pattern.compile("^([A-Z][a-zA-Z-]+):\\s*(.*)\\s*$");
     public final static Pattern LOG
             = Pattern.compile("^(TRACE|DEBUG|INFO|WARN|WARNING|ERROR)[\\s:-]*(.*)$");
+    public final static Pattern LOG_ADDENDUM
+            = Pattern.compile("^(TRACE|DEBUG|INFO|WARN|WARNING|ERROR):-\\s*$");
     public final static Pattern STATUS
             = Pattern.compile("^(OK|WARNING|CRITICAL|UNKNOWN)[\\s:-]*(.*)$");
     public final static Pattern SERVICE_STATUS

@@ -49,6 +49,8 @@ public class TopicMessageMatcher {
             } else if (TopicMessagePatterns.STATUS.matcher(line).matches()) {
                 list.add(line);
             } else if (TopicMessagePatterns.HEADER.matcher(line).matches()) {
+            } else if (TopicMessagePatterns.LOG_ADDENDUM.matcher(line).matches()) {
+                break;
             } else {
                 list.add(line);
             }

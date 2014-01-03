@@ -27,6 +27,7 @@ import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
+import vellum.format.CalendarFormats;
 import vellum.jx.JMap;
 
 /**
@@ -67,6 +68,7 @@ public class MetricSeries {
     }
 
     private void hourly() {
+        logger.info("hourly {}", Millis.formatDefaultTimeZone(timestamp));
         hourTimestamp = timestamp;
         hourlyAverageSeries.add(minutelySeries.average(60));
         hourlyMaximumSeries.add(minutelySeries.maximum(60));

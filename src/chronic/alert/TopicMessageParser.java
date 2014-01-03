@@ -71,12 +71,23 @@ public class TopicMessageParser {
     }
 
     public TopicMessage parse(String[] lines) throws IOException, ParseException {
+        boolean addendum = false;
         for (String line : lines) {
+            line = line.trim();
+            Matcher matcher = TopicMessagePatterns.LOG_ADDENDUM.matcher(line);
+            if (matcher.find()) {
+                addendum = true;
+                topicMessage.getLineList().add(line);
+                continue;
+            }
+            if (addendum) {
+                topicMessage.getLineList().add(line);
+                continue;
+            }
             if (line.startsWith("X-Cron")) {
                 continue;
             }
-            line = line.trim();
-            Matcher matcher = TopicMessagePatterns.FROM_CRON.matcher(line);
+            matcher = TopicMessagePatterns.FROM_CRON.matcher(line);
             if (matcher.find()) {
                 topicMessage.setUsername(matcher.group(1));
                 topicMessage.setFrom(matcher.group(1));
