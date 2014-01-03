@@ -41,7 +41,7 @@ public class TopicMessagePatterns {
     public final static Pattern SERVICE_STATUS
             = Pattern.compile("^(\\S*)\\s*(OK|WARNING|CRITICAL|UNKNOWN)[\\s:-]*(.*)$");
     public final static Pattern HEADER_METRIC_VALUE
-            = Pattern.compile("(\\w+)\\s+([+-]?[0-9]+.?,?[0-9]*)");
+            = Pattern.compile("(\\w+)\\s+([+-]?[0-9]+.?,?[0-9]*)\\s*(%?)");
     public final static Pattern SERVICE_METRIC_VALUE
             = Pattern.compile("([-+]?[0-9]*.[0-9]*)");
     
