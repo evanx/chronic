@@ -379,12 +379,16 @@ c2rtcp() {
 
 ### other checks
 
-c1authLogAcceptedKeyCount() {
+c1authLogKeyCount() {
   day=`date -d "$1" +'%e'`
   cat /var/log/auth.log | cut -b5-99 | grep "^$day" | 
     grep ' Accepted publickey for ' | 
     sed 's/.* Accepted publickey for \(.*\) from \(.*\) port .*/\1/' | 
     uniq -c | sort -nr
+}
+
+c0authLogKeyCount() {
+  c1c1authLogKeyCount yesterday
 }
 
 c1ntp() {
