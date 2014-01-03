@@ -394,9 +394,9 @@ c2headSha1() {
 c3headVerify() {
   if head -c $2 $1 | sha1sum | cut -d' ' -f1 | grep -q "$3"
   then
-    echo "OK: $1, $2 bytes: $3"
+    echo "OK: $1 (first $2 bytes) $3"
   else
-    echo "WARNING: $1, $2 bytes: $3" `head -c $2 $1 | sha1sum | cut -d' ' -f1` 
+    echo "WARNING: $1: first $2 bytes changed: $3" `head -c $2 $1 | sha1sum | cut -d' ' -f1` 
   fi 
 }
 
