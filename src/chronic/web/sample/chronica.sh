@@ -391,8 +391,13 @@ c2headSha1() {
   head -c $1 $2 | sha1sum | cut -d' ' -f1
 }
 
-c2headVerify() {
-  head -c $1 | sha1sum | cut -d' ' -f1 | grep -q "$2" 
+c3headVerify() {
+  if head -c $1 $2 | sha1sum | cut -d' ' -f1 | grep -q "$2"
+  then
+    echo "OK: $@"
+  else
+    echo "WARNING: $@" `head -c $1 $2 | sha1sum | cut -d' ' -f1` 
+  fi 
 }
 
 c0sha1AuthLog() {
