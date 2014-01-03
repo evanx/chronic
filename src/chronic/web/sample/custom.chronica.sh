@@ -65,6 +65,7 @@ c0hourly() {
 
 c0daily() {
   c1topic daily
+  c0clock
   #c0checkChronicaPubKey
   #c0yumVerify
   #c0rpmVerify

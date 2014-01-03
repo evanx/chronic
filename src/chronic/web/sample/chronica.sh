@@ -377,6 +377,15 @@ c2rtcp() {
 }
 
 
+### other checks
+
+c0clock() {
+  echo "Timezone:" `cat /etc/timezone` 
+  echo "Clock:" `date +%s`
+  echo "Timestamp:" `date +'%Y-%m-%d %T %Z'`
+}
+
+
 ### metrics
 
 c1metric() {
