@@ -377,20 +377,31 @@ c2rtcp() {
 }
 
 
-### other checks
+### auth checks
 
-c1authLogKeyCount() {
-  day=`date -d "$1" +'%e'`
-  echo "DEBUG: [$1] $day"
-  cat /var/log/auth.log | cut -b5-99 | grep "^$day" | 
+c0login() {
+  echo "<br><b>login</b>"
+  last | head | grep '^[a-z]' | sed 's/\(^reboot .*\) - *[0-9].*/\1/'
+}
+
+c2logKeyCount() {
+  day=`date -d "$2" +'%e'`
+  cat $1 | cut -b5-99 | grep "^$day" | 
     grep ' Accepted publickey for ' | 
     sed 's/.* Accepted publickey for \(.*\) from \(.*\) port .*/\1/' | 
     uniq -c | sort -nr
 }
 
+c1authLogKeyCount() {
+  c1logKeyCount /var/log/auth.log "$2"
+}
+
 c0authLogKeyCount() {
   c1authLogKeyCount yesterday
 }
+
+
+### clock checks
 
 c1ntp() {
   echo "NtpOffsetSec:" `ntpdate -q $1 | tail -1 | sed 's/.* offset \(.*\) sec$/\1/'`
@@ -415,11 +426,6 @@ c1metric() {
 
 
 ### other common checks
-
-c0login() {
-  echo "<br><b>login</b>"
-  last | head | grep '^[a-z]' | sed 's/\(^reboot .*\) - *[0-9].*/\1/'
-}
 
 c0load() {
   loadStatus=OK
