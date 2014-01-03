@@ -390,14 +390,14 @@ c1logPeriod() {
 }
 
 c2logAcceptedKeyCount() {
-  c1logPeriod $1 | grep sshd |
+  c1logPeriod $2 | grep sshd |
     grep ' Accepted publickey for ' | 
     sed 's/.* Accepted publickey for \(.*\) from \(.*\) port .*/\1/' | 
     uniq -c | sort -nr
 }
 
 c2logFailedPasswordCount() {
-  c1logPeriod $1 | grep sshd |
+  c1logPeriod $2 | grep sshd |
     grep ' Failed password for ' | 
     sed 's/.* Failed password for \(.*\) from \(.*\) port .*/\1/' | 
     uniq -c | sort -nr
