@@ -379,15 +379,18 @@ c2rtcp() {
 
 # file checks
 
-#declare -A fileSizes
-#declare -A fileHashes
+unset fileSizes
+unset fileHashes
+
+declare -A fileSizes
+declare -A fileHashes
 
 c1pushSize() {
   fileSizes[$1]=`stat -c %s $1`
 }
 
 c1verifyHead() {
-  if [ -z "${fileSizes[$1]}" ]
+  if [[ -z "${fileSizes[$1]}" ]]
   then
     fileSizes[$1]=`stat -c %s $1`
     fileHashes[$1]=`head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1`
