@@ -384,7 +384,7 @@ c1fileSize() {
 }
 
 c0sha1AuthLog() {
-  sha1sum /var/log/auth.log* | cut -d' ' -f1 
+  sha1sum /var/log/auth.log*
 }
 
 c0sha1() {
