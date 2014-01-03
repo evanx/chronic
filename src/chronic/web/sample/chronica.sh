@@ -384,20 +384,31 @@ c0login() {
   last | head | grep '^[a-z]' | sed 's/\(^reboot .*\) - *[0-9].*/\1/'
 }
 
-c2logKeyCount() {
-  day=`date -d "$2" +'%e'`
-  cat $1 | cut -b5-99 | grep "^$day" | 
+c1logPeriod() {
+  day=`date -d "$1" +'%e'`
+  cat $1 | cut -b5-99 | grep "^$day"
+}
+
+c2logAcceptedKeyCount() {
+  c1logPeriod $1 | grep sshd |
     grep ' Accepted publickey for ' | 
     sed 's/.* Accepted publickey for \(.*\) from \(.*\) port .*/\1/' | 
     uniq -c | sort -nr
 }
 
-c1authLogKeyCount() {
-  c2logKeyCount /var/log/auth.log "$1"
+c2logFailedPasswordCount() {
+  c1logPeriod $1 | grep sshd |
+    grep ' Failed password for ' | 
+    sed 's/.* Failed password for \(.*\) from \(.*\) port .*/\1/' | 
+    uniq -c | sort -nr
 }
 
-c0authLogKeyCount() {
-  c1authLogKeyCount yesterday
+c0authLogAcceptedKeyCount() {
+  c2logAcceptedKeyCount /var/log/auth.log yesterday
+}
+
+c0authLogFailedPasswordCount() {
+  c2logFailedPasswordCount /var/log/auth.log yesterday
 }
 
 
