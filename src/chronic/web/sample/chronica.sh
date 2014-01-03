@@ -383,21 +383,21 @@ c1fileSize() {
   stat -c %s $1
 }
 
-c0sha1AuthLog() {
-  sha1sum /var/log/auth.log*[0-9]
-  sha1sum /var/log/auth.log*gz
-}
-
 c0sha1() {
   sha1sum | cut -d' ' -f1 
 }
 
 c2headSha1() {
-  head -c $1 | sha1sum | cut -d' ' -f1
+  head -c $1 $2 | sha1sum | cut -d' ' -f1
 }
 
 c2headVerify() {
   head -c $1 | sha1sum | cut -d' ' -f1 | grep -q "$2" 
+}
+
+c0sha1AuthLog() {
+  sha1sum /var/log/auth.log*[0-9]
+  sha1sum /var/log/auth.log*gz
 }
 
 ### auth checks
