@@ -385,19 +385,19 @@ c0login() {
 }
 
 c1logPeriod() {
-  day=`date -d "$1" +'%e'`
+  day=`date -d "$2" +'%e'`
   cat $1 | cut -b5-99 | grep "^$day"
 }
 
 c2logAcceptedKeyCount() {
-  c1logPeriod $2 | grep sshd |
+  c1logPeriod $@ | grep sshd |
     grep ' Accepted publickey for ' | 
     sed 's/.* Accepted publickey for \(.*\) from \(.*\) port .*/\1/' | 
     uniq -c | sort -nr
 }
 
 c2logFailedPasswordCount() {
-  c1logPeriod $2 | grep sshd |
+  c1logPeriod $@ | grep sshd |
     grep ' Failed password for ' | 
     sed 's/.* Failed password for \(.*\) from \(.*\) port .*/\1/' | 
     uniq -c | sort -nr
