@@ -377,6 +377,16 @@ c2rtcp() {
 }
 
 
+# file checks
+
+c1fileSize() {
+  stat -c %s $1
+}
+
+c2headVerify() {
+  head -c $1 | sha1sum | cut -d' ' -f1 | grep -q "$2" 
+}
+
 ### auth checks
 
 c0login() {
