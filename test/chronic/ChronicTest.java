@@ -176,10 +176,10 @@ public class ChronicTest {
     @Test
     public void cronSubject() {
         Matcher matcher = TopicMessagePatterns.CRON_SUBJECT.matcher(
-                "Subject: Cron <root@client> ~/scripts/test.sh");
+                "Subject: Cron <root@ip-10-11-12-13> ~/scripts/test.sh");
         Assert.assertTrue(matcher.find());
         Assert.assertEquals("root", matcher.group(1));
-        Assert.assertEquals("client", matcher.group(2));
+        Assert.assertEquals("ip-10-11-12-13", matcher.group(2));
         Assert.assertEquals("~/scripts/test.sh", matcher.group(3));
     }
 
@@ -190,7 +190,6 @@ public class ChronicTest {
         sanitary(true, "<b>hello</b> indeed");
         sanitary(true, "<i>hello</i>");
         sanitary(true, "<h4>title</h4>");
-        sanitary(true, "");
         sanitary(false, "<script>alert()</script>");
         sanitary(false, "<p style='expression:call()'>");
     }
