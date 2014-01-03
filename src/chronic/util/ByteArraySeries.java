@@ -100,7 +100,7 @@ public class ByteArraySeries {
             byte value = values[capacity - i];
             if (value > max) max = value;
         }
-        return max * maximum / count / Byte.MAX_VALUE;
+        return max * maximum / Byte.MAX_VALUE;
     }
     
     public synchronized float average() {

@@ -31,7 +31,7 @@ public class TopicMessagePatterns {
     public final static Pattern FROM_CRON
             = Pattern.compile("([a-z]+) \\(Cron Daemon\\)$");
     public final static Pattern CRON_SUBJECT
-            = Pattern.compile("Cron <(\\w+)@(\\w+)> (.*)");
+            = Pattern.compile("Cron <(\\w+)@([\\w-]+)> (.*)");
     public final static Pattern HEADER
             = Pattern.compile("^([A-Z][a-zA-Z-]+):\\s*(.*)\\s*$");
     public final static Pattern LOG
