@@ -24,6 +24,7 @@ import chronic.check.TcpChecker;
 import chronic.bundle.Bundle;
 import chronic.check.ClockChecker;
 import chronic.check.HttpsChecker;
+import chronic.check.NtpChecker;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
@@ -156,6 +157,8 @@ public class TopicMessageParser {
             parseContentType(string);
         } else if (header.equals("From")) {
             topicMessage.setFrom(string);
+        } else if (header.equals("NtpOffsetSec")) {
+            topicMessage.getChecks().add(NtpChecker.parse(string));
         } else if (header.equals("Period")) {
             topicMessage.setPeriodMillis(Millis.parse(string));
         } else if (header.equals("Service")) {

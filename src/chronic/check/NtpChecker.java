@@ -21,33 +21,32 @@
 package chronic.check;
 
 import chronic.alert.StatusCheck;
-import java.net.Socket;
-import vellum.data.Millis;
+import chronic.type.StatusType;
 
 /**
  *
  * @author evan.summers
  */
-public class ClockChecker implements StatusCheck {
-    long epochSeconds;
-    
-    private ClockChecker(long epochSeconds) {
-        this.epochSeconds = epochSeconds;
-    }   
-        
-    @Override
-    public String check() {
-        long differenceSeconds = Math.abs(System.currentTimeMillis()/1000 - epochSeconds);
-        if (differenceSeconds < 30) {
-            return String.format("Clock OK - %d second difference", differenceSeconds);
-        } else if (differenceSeconds < 60) {
-            return String.format("Clock WARNING - %d second difference", differenceSeconds);
-        } else {
-            return String.format("Clock CRITICAL - %d second difference", differenceSeconds);
-        }
+public class NtpChecker implements StatusCheck {
+
+    float seconds;
+
+    private NtpChecker(float seconds) {
+        this.seconds = seconds;
     }
 
-    public static ClockChecker parse(String string) {
-        return new ClockChecker(Long.parseLong(string));
-    }    
+    @Override
+    public String check() {
+        StatusType status = StatusType.OK;
+        if (Math.abs(seconds) > 15) {
+            status = StatusType.CRITICAL;
+        } else if (Math.abs(seconds) > 5) {
+            status = StatusType.WARNING;
+        }
+        return String.format("Ntp %s: %f offset seconds", status, seconds);
+    }
+
+    public static NtpChecker parse(String string) {
+        return new NtpChecker(Float.parseFloat(string));
+    }
 }
