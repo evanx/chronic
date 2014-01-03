@@ -693,7 +693,7 @@ c0update() {
   fi
 }
 
-c0sha1Git() {
+c0checkGit() {
   c0updateCheck
   echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
   echo 'WARNING: In this case you are trusting that the github.com repository is not compromised.'
