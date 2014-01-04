@@ -759,7 +759,9 @@ c0updateCheck() {
   echo ' sha1sum https://chronica.co/sample/chronica.sh' 
   echo -n `curl -s https://chronica.co/sample/chronica.sh.sha1.txt` 
   echo ' - https://chronica.co/sample/chronica.sh.sha1.txt'
-  echo `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` '- chronica.sh.sha1.txt on github (may be different)'
+  echo `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` '- chronica.sh.sha1.txt on github'
+  echo `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum` - chronica.sh on github
+
 }
 
 c0update() {
@@ -784,12 +786,6 @@ c0update() {
       exit $?
     fi
   fi
-}
-
-c0checkGit() {
-  c0updateCheck
-  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
-  echo 'WARNING: In this case you are trusting that the github.com repository is not compromised.'
 }
 
 
