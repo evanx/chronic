@@ -330,6 +330,25 @@ c2nohttp() {
   fi
 }
 
+
+c2certExpiry() {
+  expiryDate=`openssl s_client -connect $1:$2 2> /dev/null < /dev/null | openssl x509 -text |
+    grep '^ *Not After :' | sed 's/^ *Not After : \(\S*\) \(\S*\) \S* \(20[0-9]*\) \(.*\)/\1 \2 \3/'`
+  expiryMonth=`echo "$expiryDate" | cut -f1`
+  if date -d '1 month' | grep -q "$expiryMonth"
+  then
+    echo "WARNING: $1 cert expires next month: $expiryDate"  
+  elif date | grep -q "$expiryMonth"
+  then
+    echo "WARNING: $1 cert expires this month: $expiryDate"  
+  else 
+    echo "OK: $1 cert expires: $expiryDate"  
+  fi
+}
+
+
+### ssh password or key checks
+
 c2nosshpass() {
   if ! which sshpass > /dev/null
   then
@@ -359,6 +378,9 @@ c2sshkey() {
   fi
 }
 
+
+### database checks 
+
 c2postgres() {
   if timeout $databaseTimeout psql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q '^psql: FATAL:  role\| 1 \|^$' 
   then
@@ -374,25 +396,6 @@ c2mysql() {
     echo "OK: MySQL server is running on $1, port $2"
   else
     echo "CRITICAL: MySQL server not running on $1, port $2"
-  fi
-}
-
-c1sha1sum() {
-  echo `curl -s $1 | sha1sum` "$1" 
-}
-
-c2certExpiry() {
-  expiryDate=`openssl s_client -connect $1:$2 2> /dev/null < /dev/null | openssl x509 -text |
-    grep '^ *Not After :' | sed 's/^ *Not After : \(\S*\) \(\S*\) \S* \(20[0-9]*\) \(.*\)/\1 \2 \3/'`
-  expiryMonth=`echo "$expiryDate" | cut -f1`
-  if date -d '1 month' | grep -q "$expiryMonth"
-  then
-    echo "WARNING: $1 cert expires next month: $expiryDate"  
-  elif date | grep -q "$expiryMonth"
-  then
-    echo "WARNING: $1 cert expires this month: $expiryDate"  
-  else 
-    echo "OK: $1 cert expires: $expiryDate"  
   fi
 }
 
