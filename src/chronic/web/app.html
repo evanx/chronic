@@ -329,9 +329,9 @@
             </div>
         </div>
 
-        <div class="container" ng-show="!persona.email || view === 'start'" ng-cloak>
+        <div class="container" ng-show="!persona.email || view === 'start'">
             <div class="row well-lg">
-                <h2 ng-cloak ng-show="!persona.email">
+                <h2 ng-show="!persona.email">
                     <b>Instant</b> cloud monitoring, <i>as follows.</i></h2>
                 <h2 ng-cloak ng-show="persona.email">Getting started</h2>
                 <p><a href="#faq" class="btn btn-primary btn-lg" role="button"
@@ -350,11 +350,11 @@ orgDomain="your.org"</pre>
                 <p>
                     Step 4: <b>Test</b>
                 </p>
-                <pre>sh chronica.sh</pre>
+                <pre>bash chronica.sh</pre>
                 <p>
                     Step 5: <b>Run</b>
                 </p>
-                <pre>sh chronica.sh run</pre>
+                <pre>bash chronica.sh run</pre>
                 <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
                     <i>(to <a href="https://chronica.co">https://chronica.co</a> 
                         using Mozilla Persona)</i>
@@ -362,7 +362,7 @@ orgDomain="your.org"</pre>
                 <p>Click on alert rows to see their content (except on <a href="https://chronica.co/demo">https://chronica.co/demo</a> where you can preview the admin's alerts.)
                 </p>
                 <p>ps. The script posts to <tt>https://secure.chronica.co</tt>, which you can check as follows, i.e. that it is allowed by your firewall.</p>
-                <pre>$ sh chronica.sh https secure.chronica.co 443
+                <pre>$ bash chronica.sh https secure.chronica.co 443
 OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
                 <hr>
                 <h3>Getting jiggy with it</h3>
@@ -375,7 +375,7 @@ OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
   c2tcp chronica.co 80
   c2https chronica.co 443
 }</pre><p>where the convention for naming functions indicates the number of parameters. Commands can be tested from the command-line, as follows.</p>
-                <pre>$ sh chronica.sh nohttp chronica.co 80
+                <pre>$ bash chronica.sh nohttp chronica.co 80
 OK - chronica.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
                 <p>Add Nagios plugins and adhoc scripts as required.</p>
                 <pre>c0minutely() {
@@ -385,13 +385,14 @@ OK - chronica.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pr
   /usr/lib/nagios/plugins/check_pgsql -H localhost 
   ssh postgres@localhost scripts/check_replication.sh
 }</pre>
+
                 <p>We suggest creating functions for your custom checks.</p>
                 <pre>c0pgsql() { 
   /usr/lib/nagios/plugins/check_pgsql -H localhost &&
     ssh postgres@localhost scripts/check_replication.sh
 }</pre>
                 <p>Then you can test such functions individually from the command-line as follows.</p>
-                <pre>$ sh scripts/chronica.sh pgsql
+                <pre>$ bash scripts/chronica.sh pgsql
 CRITICAL - no connection</pre>        
                 <p>As good practice, run <tt>chronica.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>su</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
                 <pre>$ cat /etc/rc.local
@@ -405,14 +406,21 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
                 <p><a href="/sample/chronica.sh">
                         https://chronica.co/sample/chronica.sh</a> - operational script
                 </p>
+                <hr>
             </div>
         </div>
 
         <div class="container" ng-show="!persona.email || view === 'about'" ng-cloak>
             <div class="row well-lg">
+                <h2 ng-cloak ng-show="persona.email && view === 'about'"><b>Instant</b> cloud monitoring</h2>
 
-                <hr>
-                <h4>News</h4>
+                <h3><a name="news">News</a></h3>
+
+                <p>
+                    <i>2014-01-04</i> &nbsp;
+                    <b>PCI DSS checks added</b> 
+                    <br>Some more checks as required by PCI DSS section 10 (logging).   
+                </p>
 
                 <p>
                     <i>2014-01-02</i> &nbsp;
@@ -422,7 +430,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
 
                 <p>
                     <i>2013-12-28</i> &nbsp;
-                    <b>Charts added (minutely)</b> 
+                    <b>Charts added</b> 
                     <br>Support implemented for metrics (values) which are graphed using Chartjs.org.
                 </p>
 
@@ -446,43 +454,43 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
                 <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks. This project was abandoned in favour of pursing of multi-tenancy cloud-based approach. 
                 <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica. Bootstrap 2 and jQuery as used for its UI, and JDBC for persistence. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed e.g. JPA for back-end persistence, and a Javascript data-binding framework for the front-end.
                 <p>The result is Chronica, which will use the AngularJS front-end framework, and JPA.
+                <hr>
             </div>
         </div>
 
         <div class="container" ng-show="!persona.email || view === 'about'">
             <div class="row well-lg">
-                <h2 ng-cloak ng-show="persona.email && view === 'about'"><b>Instant</b> cloud monitoring</h2>
-
-                <hr>
-                <h4><a name="faq">Frequently asked questions</a></h4>
+                <h3><a name="faq">Frequently asked questions</a></h3>
 
                 <p><b>What's this?</b>          
                     <br>A cloud-computing monitoring service.
                 </p>
 
                 <p><b>What does it compute for me?</b>
-                    <br>Information you submit that you want to monitor, e.g. scheduled checks. As a default criterion, our server checks if the information has changed, and if so, will alert you. If the messages stop, we will alert you that something might be wrong. If it is changing all the time, we will ignore it for you, since alerts are not useful in that case.
+                    <br>Output that you want to monitor, e.g. from scheduled tasks e.g. performing system checks. As a default criterion, our server checks if the information or the status has changed, and if so, will alert you. If the messages stop, we will alert you that something might be wrong. If it is changing all the time, we will ignore it for you, since alerts are not useful in that case.
                 </p>
 
                 <p><b>What security?</b>
-                    <br>SSL certificates authenticate publishers, and Mozilla Persona authenticates subscriptions.
+                    <br>SSL certificates authenticate publishers, and Mozilla Persona authenticates admins and subscribers.
                 </p>
 
                 <p><b>How much does it cost?</b>
                     <br>It's free and open. Bits and bytes are priceless ;)
                 </p>
 
-                <p><b>What use cases?</b>
-                    <br>Use Chronica to monitor your networks and services, internally and externally, to ensure performance and security. Add custom checks to monitor your specific infrastructure and applications. When something is wrong, be the first to know :)
+                <p><b>What is it for?</b>
+                    <br>You can use Chronica to monitor your systems, networks and applications, internally and externally, to ensure performance and security. Add custom checks to monitor your specific infrastructure and applications. When something is wrong, be the first to know :)
                 </p>
 
                 <p><b>Who should try it?</b>
-                    <br>At this stage, anyone who wants monitoring, without any server setup or customistion required, up and running in a minute. 
-                    Also, Linux admins who want a monitoring solution that enables custom checks using shell commands.
+                    <br>Someone who has an unmonitored Linux system, and wants an instant solution, without any server setup.
+                    <br>Linux admins who want a monitoring solution enabling custom checks using shell commands.
+                    <br>Someone who deploys a Java application with log4j they wish to monitor.
+                    <br>Organizations who require PCI DSS compliance, or information security, i.e. everyone ;)
                 </p>
 
                 <p><b>How is this different from some other cloud-based monitoring services?</b>
-                    <br>It's simple yet powerful for custom monitoring. It's opensource, so you can own it.
+                    <br>It's trivial to add custom checks. It includes infosec. It's free and opensource.
                 </p>
 
                 <p><b>How is this different from some other opensource monitoring projects?</b>
@@ -492,22 +500,26 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
                 <p><b>What notification mechanisms are supported?</b>
                     <br>Primarily, email. Also "push" notification via HTTPS post to a URL you can register. (Naturally this URL should require client auth and trust our SSL cert, and allow our IP number to connect.) This could provide an SMS gateway on your account. 
                 </p>
-                <pre>$ sh chronica.sh push https://myserver:8443/myapp</pre>
+                <pre>$ bash chronica.sh push https://myserver:8443/myapp</pre>
                 <p><b>What about mobile push notifications?</b>
-                    <br>We want to support mobile push notifications, perhaps via our own app e.g. using PhoneGap aka Apache Cordova with its PushPlugin. Also Facebook, Google+ and Twitter integration for messaging via those platforms. Perhaps even a Jabber server to which you hook up a mobile IM app e.g. Xabber.
+                    <br>We want to support mobile push notifications, perhaps via our own app e.g. using PhoneGap aka Apache Cordova with its PushPlugin. Also Facebook, Google+ and Twitter integration for messaging via those platforms, according to demand.
                 </p>
                 <p><b>What other notification mechanisms are already supported?</b>
                     <br>You can poll our server via HTTPS for your alerts. 
                 </p>
-                <pre>$ sh chronica.sh poll
+                <pre>$ bash chronica.sh poll
 Time: 16:02:54
 Subject: root@hostx checksys CRITICAL</pre>
 
                 <p><b>What technologies are used?</b>
-                    <br>AngularJS for the front-end, making JSON requests to a Java back-end. 
+                    <br>AngularJS front-end with JSON interaction to a Java back-end.  
                     We use the JRE's built-in HTTPS server rather than Apache Tomcat. 
                     <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
+                    Also: Bootstrap, Chartjs.org, Angles (see page source).
                 </p>
+
+                <p><b>Why JRE's built-in HTTPS server rather than Apache Tomcat?</b>
+                    <br>For prototyping we wanted the quickest possible startup. Also we wanted control of the SSL context, and thread executor pool. 
 
                 <p><b>Why doesn't the site work on my phone's browser?</b>
                     <br>It will, soon! We use Twitter Bootstrap 3, which is "mobile first" and responsive to desktop, tablet and phone.
@@ -530,12 +542,12 @@ Subject: root@hostx checksys CRITICAL</pre>
                 <br>Also, you can pipe the output of custom cron jobs to this script. 
                 <br>Finally, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
                 </p>
-                <pre>$ sh chronica.sh start</pre>
+                <pre>$ bash chronica.sh start</pre>
 
                 <p><b>How is it updated?</b>
                     <br>The script itself will provide hints, to verify and update.
                 </p>
-                <pre>$ sh chronica.sh update
+                <pre>$ bash chronica.sh update
 curl -s https://chronica.co/sample/chronica.sh | sha1sum
 Verifying signature using ~/.chronica/etc/chronica.pub.pem
 OK: verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt</pre>
@@ -544,17 +556,17 @@ OK: verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt</pre>
                 <br>Text document with email-style headers, submitted via HTTPS POST. (HTTP headers are parsed as well). This means we can pipe the output of a shell script to <tt>curl</tt>, to post to <tt>https://secure.chronica.co</tt>. The content typically contains headers such as "Topic" and "Subscribe." Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
                 But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
                 </p>
-                <pre>$ echo "OK - &lt;i&gt;nothing wrong&lt;/i&gt;" | sh chronica.sh postheaders \
-  'Topic: System Health' 'Alert: STATUS_CHANGED' 'Subscribe: me@mine.org'</pre>
+                <pre>$ echo "CRITICAL: The beast has &lt;i&gt;escaped&lt;/i&gt; from the mold!" | sh chronica.sh postheaders \
+  'Topic: Operation Alien Destruction' 'Subscribe: ripley@wycorp.net'</pre>
                 <p><b>How are checks performed?</b>
                     <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. 
                 <br>For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. 
-                <br>So it's totally customisable. As such, we will extend our script soon to satisfy PCI DSS compliancy, out of the box :)
+                <br>So it's totally customisable. For example, we intend our script to address various PCI DSS compliancy requirements, out of the box :)
                 </p>
 
                 <p><b>What about checking my site from the outside?</b>
                     <br>Naturally you can use Chronica from a server in a different data center, or even your home computer, to monitor your site externally. 
-                    But the easiest is to request the Chronica server to perform external checks for you.
+                    <br>But the easiest is to request the Chronica server to perform external checks for you.
                 </p>
                 <pre>$ echo "Check-https: www.google.com 443" | sh chronica.sh post
 OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain View,ST=California,C=US</pre>
@@ -577,6 +589,10 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
                 <p><b>How are alerts triggered?</b>
                 <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore suprious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
                 And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
+                </p>
+
+                <p><b>What about escalation?</b>
+                    <br>Escalation is an upcoming feature, whereby one can subscribe to an escalation level, and may do so conditionally on another subscriber having acknowledged the alert. (Obviously managers might want alerts if an issue is not resolved after certain period of time, whereas standby engineers might want an alert only when it has not been timeously acknowledged by an on-duty engineer.) 
                 </p>
 
                 <p><b>What other applications?</b>

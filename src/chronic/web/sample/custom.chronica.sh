@@ -29,12 +29,15 @@ subscribers="$admins" # emails of default subcribers
 # Notes: 
 #   The generated client cert will have: commonName, orgUnit, orgDomain.
 #   Additionally you can specify: locality, region, country.
-#   Admins can approve certs via the site: https://chronica.co
+#   Admins can approve certs via the site: https://chronica.co.
 #   Designated subscribers are allowed to subscribe via the site.
 
 locality='none'
 region='none'
 country='none'
+
+#scheduledHour=''
+#scheduledMinute=''
 
 
 ### customizable jobs
@@ -47,28 +50,57 @@ c0minutely() {
   #c2tcp chronica.co 443
   #c2nossl chronica.co 80
   #c2nohttps chronica.co 80
-  #c2notcp chronica 21
-  #c2notcp chronica 25
-  #c2notcp chronica 5432
+  #c2notcp chronica.co 21
+  #c2notcp chronica.co 25
+  #c2notcp chronica.co 5432
   #c2https chronica.co 443 
   #c2httpsAuth secure.chronica.co 443
   #c2postgres localhost 5432
+  #c2mysql localhost 5432
 }
 
 c0hourly() {
   c1topic hourly
   c0diskspace
-  #c0shaAuth
-  #c0megaRaid
-  #c0mdstat
+  #c0megaRaid # LSI megaraid cards
+  #c0mdstat # linux software raid
 }
+
+#c0hourlyPriviledged() {
+#  c0shaAuth
+#}
 
 c0daily() {
   c1topic daily
   c0ntp
   c0clock
   #c0checkChronicaPubKey
-  #c0yumVerify
-  #c0rpmVerify
   #c2certExpiry chronica.co 443
 }
+
+# Notes:
+#   We implement auth and log checks required for PCI DSS compliance. 
+#   However some such checks require priviledged access: 
+#   - Read auth logs to ensure that they are not modified.
+#   - Monitoring auth config files e.g. /etc/ssh/sshd_config
+#   - file integrity monitoring for installed packages e.g. yum verify. 
+
+c0minutelyPriviledged() {
+  #c0verifyHead /var/log/secure # rhel, centos, amazon linux
+  #c0verifyHead /var/log/auth.log # ubuntu
+}
+
+c0dailyPriviledged() {
+  #c0yumVerify
+  #c0rpmVerify
+}
+
+# Notes:
+#   Some auth checks required for PCI DSS compliance must be run as an
+#   unpriviledged user, e.g. to check that auth config and logs are inaccessible.
+
+c0dailyNonPriviledged() {
+  c1nowrite /etc/ssh/sshd_config
+  c1noread /var/log/secure
+}
+

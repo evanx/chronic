@@ -476,9 +476,8 @@ app.controller("chartController", function($scope, $http) {
         console.log("renderCharts", $scope.metrics.length);
         for (var i = 0; i < $scope.metrics.length; i++) {
             var metrics = $scope.metrics[i];
-            console.log("renderCharts labels", metrics.labels.length, metrics.labels);
-            console.log("renderCharts data", metrics.data.length, metrics.data);
             var chart = {
+                commonName: $scope.metrics[i].commonName,
                 topicLabel: $scope.metrics[i].topicLabel,
                 metricLabel: $scope.metrics[i].metricLabel,
                 labels: $scope.metrics[i].labels,
