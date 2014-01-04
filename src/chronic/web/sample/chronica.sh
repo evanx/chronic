@@ -60,7 +60,7 @@ c1topic() {
 }
 
 
-### init 
+### init custom context
 
 startTimestamp=`date '+%s'`
 
@@ -68,11 +68,13 @@ set -u
 
 dir=~/.chronica
 mkdir -p $dir/etc
-cp -f $0 $dir/script
 
 cd `dirname $0`
 custom=`pwd`/custom.chronica.sh
 script=`pwd`/chronica.sh
+
+echo cp -f $script $dir/copy.chronica.sh
+exit 1
 
 cd $dir
 
@@ -83,9 +85,45 @@ then
 fi
 
 
+### init custom
+
+if [ ! -f $custom ]
+then
+  echo "No $custom"
+  exit 1
+fi
+
+if ! grep -q '^[a-zA-Z]*=' $custom
+then
+  echo "Invalid $custom"
+  exit 1
+fi
+
+if grep '^[a-zA-Z]*=[\s"]*$' $custom
+then
+  echo "Please edit $custom to configure the above settings"
+  exit 1
+fi
+
+. $custom
+
+
+### overridable defaults
+
+if ! set | grep -q '^scheduledHour='
+then
+  scheduledHour=`date +%H`
+fi
+
+if ! set | grep -q '^scheduledMinute='
+then
+  scheduledMinute=`date -d '1 minute' +%M`
+fi
+
+
 ### debug 
 
-debug=3 # 0 no debugging 1 log to stdout, 2 to sterr, 3 debug file only
+debug=3 # 0 no debugging, 1 log to stdout, 2 to sterr, 3 debug file only
 
 rm -f debug
 
@@ -103,8 +141,6 @@ decho() {
     echo "chronica: $*" >> debug
   fi
 }
-
-decho custom $custom
 
 dcat() {
   if [ $debug -eq 1 ]
@@ -146,39 +182,6 @@ bcat() {
     fi
   fi
 }
-
-
-### init custom
-
-if [ ! -f $custom ]
-then
-  echo "No $custom"
-  exit 1
-fi
-
-if ! grep -q '^[a-zA-Z]*=' $custom
-then
-  echo "Invalid $custom"
-  exit 1
-fi
-
-if grep '^[a-zA-Z]*=[\s"]*$' $custom
-then
-  echo "Please edit $custom to configure the above settings"
-  exit 1
-fi
-
-. $custom
-
-if ! set | grep -q '^scheduledHour='
-then
-  scheduledHour=`date +%H`
-fi
-
-if ! set | grep -q '^scheduledMinute='
-then
-  scheduledMinute=`date -d '1 minute' +%M`
-fi
 
 
 ### tcp check functions 
