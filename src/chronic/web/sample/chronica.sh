@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set | grep bash 
+set | grep BASH
+
 # Source https://github.com/evanx by @evanxsummers
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -19,8 +20,8 @@ set | grep bash
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.  
-
-# see https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh
+#
+# see https://chronica.co/web/sample/chronica.sh
 
 ### default settings
 
