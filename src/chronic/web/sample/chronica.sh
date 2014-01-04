@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set | grep bash 
 # Source https://github.com/evanx by @evanxsummers
 #
 # Licensed to the Apache Software Foundation (ASF) under one
