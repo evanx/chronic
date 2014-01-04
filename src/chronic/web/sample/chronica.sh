@@ -59,6 +59,23 @@ c1topic() {
   echo "Subscribe: $subscribers"
 }
 
+### ensure expected environment
+
+if ! set | grep -q 'BASH=/bin/bash'
+then
+  echo "ERROR: this script requires the bash shell"
+  exit 1
+fi
+
+for prog in sha1sum stat sdsdfsd
+do
+  if [ `which $prog` != "/usr/bin/$prog" ]
+  then
+    echo "ERROR: which $prog is not /usr/bin/$prog"
+    exit 1
+  fi
+fi
+
 
 ### init custom context
 
@@ -380,12 +397,6 @@ c2rtcp() {
 
 ### log file checks
 
-if ! set | grep -q 'BASH=/bin/bash'
-then
-  echo "ERROR: this script requires the bash shell"
-  exit 1
-fi
-
 declare -A fileSizes
 declare -A fileHashes
 
@@ -400,7 +411,7 @@ c1verifyHead() {
       echo "WARNING: $1: size decreased from ${fileSizes[$1]} to" `stat -c %s $1` 
     elif head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1 | grep -q "${fileHashes[$1]}"
     then
-      echo "OK: $1: first ${fileSizes[$1]} bytes: ${fileHashes[$1]}"
+      echo "OK: $1: head ${fileSizes[$1]} bytes unchanged: ${fileHashes[$1]}"
     else
       echo "WARNING: $1: first ${fileSizes[$1]} bytes changed: ${fileHashes[$1]}" `
         head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1` 
@@ -537,12 +548,12 @@ c0diskspace() {
 ### rpm and yum installed package integrity checks
 
 c0yumVerify() {
-  /usr/bin/sha1sum /usr/bin/yum
+  sha1sum /usr/bin/yum
   /usr/bin/yum verify
 }
 
 c0rpmVerify() {
-  /usr/bin/sha1sum /bin/rpm
+  sha1sum /bin/rpm
   /bin/rpm -Va
 }
 
@@ -551,12 +562,12 @@ c0rpmVerify() {
 
 c0shaAuth() {
   echo "<br><b>shaAuth</b>"
-  /usr/bin/sha1sum /usr/bin/sha1sum
-  /usr/bin/sha1sum /etc/group
-  /usr/bin/sha1sum /etc/passwd
-  /usr/bin/sha1sum /etc/ssh/sshd_config
-  [ -f /root/.ssh/authorized_keys ] && /usr/bin/sha1sum /root/.ssh/authorized_keys
-  /usr/bin/sha1sum `locate authorized_keys | grep '^/home/[a-z]*/\.*ssh/authorized_keys$'`
+  sha1sum sha1sum
+  sha1sum /etc/group
+  sha1sum /etc/passwd
+  sha1sum /etc/ssh/sshd_config
+  [ -f /root/.ssh/authorized_keys ] && sha1sum /root/.ssh/authorized_keys
+  sha1sum `locate authorized_keys | grep '^/home/[a-z]*/\.*ssh/authorized_keys$'`
 }
 
 
@@ -728,8 +739,8 @@ c0minutelyCron() {
 ### update script
 
 c0checkChronicaPubKey() {
-  ( curl -s https://chronica.co/sample/chronica.pub.pem | /usr/bin/sha1sum | cut -f1 -d' ' |
-    grep -v `cat  ~/.chronica/etc/chronica.pub.pem | /usr/bin/sha1sum | cut -f1 -d' '` &&
+  ( curl -s https://chronica.co/sample/chronica.pub.pem | sha1sum | cut -f1 -d' ' |
+    grep -v `cat  ~/.chronica/etc/chronica.pub.pem | sha1sum | cut -f1 -d' '` &&
     echo 'CRITICAL: chronica.pub.key' ) || echo 'OK: chronica.pub.key'
 }
 
