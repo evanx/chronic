@@ -368,6 +368,15 @@ c2postgres() {
   fi
 }
 
+c2mysql() {
+  if timeout $databaseTimeout mysql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q 'Access denied for user\| 1 \|^$' 
+  then
+    echo "OK - PostgreSQL server is running on $1, port $2"
+  else
+    echo "CRITICAL - PostgreSQL server not running on $1, port $2"
+  fi
+}
+
 c1sha1sum() {
   echo `curl -s $1 | sha1sum` "$1" 
 }
