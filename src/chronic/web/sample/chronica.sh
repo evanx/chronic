@@ -377,62 +377,59 @@ c2rtcp() {
 }
 
 
-# file checks
-
-unset fileSizes
-unset fileHashes
+### log file checks
 
 declare -A fileSizes
 declare -A fileHashes
 
-c1pushSize() {
-  fileSizes[$1]=`stat -c %s $1`
-}
-
 c1verifyHead() {
-  if [[ -z "${fileSizes[$1]}" ]]
+  if echo " ${!fileSizes[@]} " | grep -q " $1 " 
+  then
+    if [ ! -f $1 ]
+    then
+      echo "WARNING: $1: no longer readable"
+    elif [ `stat -c %s $1` -lt "${fileSizes[$1]}" ]
+    then
+      echo "WARNING: $1: size decreased from ${fileSizes[$1]} to" `stat -c %s $1` 
+    elif head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1 | grep -q "${fileHashes[$1]}"
+    then
+      echo "OK: $1: first ${fileSizes[$1]} bytes: ${fileHashes[$1]}"
+    else
+      echo "WARNING: $1: first ${fileSizes[$1]} bytes changed: ${fileHashes[$1]}" `
+        head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1` 
+    fi
+  fi
+  if [ -f $1 ]
   then
     fileSizes[$1]=`stat -c %s $1`
     fileHashes[$1]=`head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1`
-  elif head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1 | grep -q "${fileHashes[$1]}"
-  then
-    echo "OK: $1: first ${fileSizes[$1]} bytes: ${fileHashes[$1]}"
-  else
-    echo "WARNING: $1: first ${fileSizes[$1]} bytes changed: ${fileHashes[$1]}" `
-      head -c "${fileSizes[$1]}" $1 | sha1sum | cut -d' ' -f1` 
   fi
 }
 
-c0verifyHeadTest() {
-  c1verifyHead /var/log/syslog
-  c1verifyHead /var/log/syslog
+### test log monitoring 
+
+c1verifyHeadTest() {
+  while [ 1 ]
+  do
+    c1verifyHead $1
+    sleep 5
+  done
 }
 
-c1size() {
-  stat -c %s $1
+
+### ubuntu logs
+
+c0verifyAuthLog() {
+  c1verifyHead /var/log/auth.log
 }
 
-c0sha1() {
-  sha1sum | cut -d' ' -f1 
+
+### rh logs 
+
+c0verifySecureAuthLog() {
+  c1verifyHead /var/log/secure
 }
 
-c2sha1Head() {
-  head -c $2 $1 | sha1sum | cut -d' ' -f1
-}
-
-c3verifyHead() {
-  if head -c $2 $1 | sha1sum | cut -d' ' -f1 | grep -q "$3"
-  then
-    echo "OK: $1: first $2 bytes: $3"
-  else
-    echo "WARNING: $1: first $2 bytes changed: $3" `head -c $2 $1 | sha1sum | cut -d' ' -f1` 
-  fi 
-}
-
-c0sha1AuthLog() {
-  sha1sum /var/log/auth.log*[0-9]
-  sha1sum /var/log/auth.log*gz
-}
 
 ### auth checks
 
@@ -493,6 +490,24 @@ c1metric() {
 }
 
 
+### mega raid 
+
+c0megaRaid() {
+  echo "<br><b>megaRaid</b>"
+  /usr/sbin/MegaCli -ldinfo -lall -aall | grep '^State'
+  /usr/sbin/MegaCli -pdlist -aall | grep '^Firmware'
+}
+
+
+### linux software raid 
+
+c0mdstat() {
+  echo "<br><b>mdstat</b>"
+  cat /proc/mdstat 2>/dev/null | grep ^md -A1 | sed 's/.*\[\([U_]*\)\]/\1/' |
+    sed '/^\s*$/d' | grep 'U\|^md'
+}
+
+
 ### other common checks
 
 c0load() {
@@ -511,27 +526,21 @@ c0diskspace() {
   echo "Diskspace $diskStatus - $diskUsage%"
 }
 
+
+### rpm and yum installed package integrity checks
+
 c0yumVerify() {
-  sha1sum /usr/bin/yum
+  /usr/bin/sha1sum /usr/bin/yum
   /usr/bin/yum verify
 }
 
 c0rpmVerify() {
-  sha1sum /bin/rpm
+  /usr/bin/sha1sum /bin/rpm
   /bin/rpm -Va
 }
 
-c0megaRaid() {
-  echo "<br><b>megaRaid</b>"
-  /usr/sbin/MegaCli -ldinfo -lall -aall | grep '^State'
-  /usr/sbin/MegaCli -pdlist -aall | grep '^Firmware'
-}
 
-c0mdstat() {
-  echo "<br><b>mdstat</b>"
-  cat /proc/mdstat 2>/dev/null | grep ^md -A1 | sed 's/.*\[\([U_]*\)\]/\1/' |
-    sed '/^\s*$/d' | grep 'U\|^md'
-}
+### auth checks
 
 c0shaAuth() {
   echo "<br><b>shaAuth</b>"
@@ -588,6 +597,7 @@ c0ensureCert() {
 c0ensurePubKey
 c0ensureKey
 c0ensureCert
+
 
 ### java keystore for chronica log4j appender connection
 
