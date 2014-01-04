@@ -428,6 +428,7 @@ c1verifyHead() {
   fi
 }
 
+
 ### test log monitoring 
 
 c1verifyHeadTest() {
@@ -694,8 +695,8 @@ c0minutelyPost() {
   c0enroll
 }
 
-c0minutelySim() {
-  for i in $(seq 50) 
+c0minutelySim() { # invoke minutely many times in succession to test charting
+  for i in $(seq 150) 
   do
     c0minutely | c0post
   done
