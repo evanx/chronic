@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set | grep BASH
+exit 1
 
 # Source https://github.com/evanx by @evanxsummers
 #
