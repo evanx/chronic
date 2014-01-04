@@ -1,8 +1,5 @@
 #!/bin/bash
 
-set | grep BASH
-exit 1
-
 # Source https://github.com/evanx by @evanxsummers
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -75,9 +72,7 @@ mkdir -p $dir/etc
 cd `dirname $0`
 custom=`pwd`/custom.chronica.sh
 script=`pwd`/chronica.sh
-
-echo cp -f $script $dir/copy.chronica.sh
-exit 1
+cp -f $script $dir/copy.chronica.sh
 
 cd $dir
 
@@ -384,6 +379,12 @@ c2rtcp() {
 
 
 ### log file checks
+
+if ! set | grep -q 'BASH=/bin/bash'
+then
+  echo "ERROR: this script requires the bash shell"
+  exit 1
+fi
 
 declare -A fileSizes
 declare -A fileHashes
@@ -912,7 +913,7 @@ c0start() {
 
 c0help() {
   echo "commands and their required number of arguments:"
-  cat script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
+  cat $script | grep '^c[0-9]\S*() {\S*$' | sed 's/^c\([0-9]\)\(\S*\)() {/\1: \2/'
 }
 
 if [ $# -gt 0 ]
