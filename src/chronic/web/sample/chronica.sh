@@ -48,7 +48,6 @@ then
   server=secure.chronica.co:443
 fi
 
-
 if ! set | grep -q '^commonName='
 then
   commonName=$USER@`hostname -s`
@@ -58,6 +57,7 @@ c1topic() {
   echo "Topic: $commonName $1"
   echo "Subscribe: $subscribers"
 }
+
 
 ### ensure expected environment
 
@@ -69,7 +69,11 @@ fi
 
 for prog in sha1sum stat sdsdfsd
 do
-  if [ `which $prog` != "/usr/bin/$prog" ]
+  if ! which $prog >/dev/null
+  then
+    echo "ERROR: required program not installed: /usr/bin/$prog"
+    exit 1  
+  elif [ `which $prog` != "/usr/bin/$prog" ]
   then
     echo "ERROR: which $prog is not /usr/bin/$prog"
     exit 1
@@ -95,7 +99,7 @@ cd $dir
 
 if ! pwd | grep -q '/.chronica$'
 then 
-  echo "Chronica CRITICAL - pwd sanity check failed:" `pwd`
+  echo "ERROR: pwd sanity check failed:" `pwd`
   exit 1
 fi
 
