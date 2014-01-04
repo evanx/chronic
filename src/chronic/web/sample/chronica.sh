@@ -54,7 +54,7 @@ then
 fi
 
 c1topic() {
-  echo "Topic: $commonName $1"
+  echo "Topic: $1"
   echo "Subscribe: $subscribers"
 }
 
