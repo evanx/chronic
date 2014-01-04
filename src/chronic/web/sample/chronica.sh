@@ -74,7 +74,7 @@ do
     echo "ERROR: which $prog is not /usr/bin/$prog"
     exit 1
   fi
-fi
+done
 
 
 ### init custom context
