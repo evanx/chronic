@@ -477,17 +477,16 @@ app.controller("chartController", function($scope, $http) {
         for (var i = 0; i < $scope.metrics.length; i++) {
             var metrics = $scope.metrics[i];
             var chart = {
-                commonName: $scope.metrics[i].commonName,
-                topicLabel: $scope.metrics[i].topicLabel,
-                metricLabel: $scope.metrics[i].metricLabel,
-                labels: $scope.metrics[i].labels,
-                datasets: [
-                    {
+                commonName: metrics.commonName,
+                topicLabel: metrics.topicLabel,
+                metricLabel: metrics.metricLabel,
+                labels: metrics.labels,
+                datasets: [{
                         fillColor: "rgba(151,187,205,0)",
                         strokeColor: "#e67e22",
                         pointColor: "rgba(151,187,205,0)",
                         pointStrokeColor: "#e67e22",
-                        data: $scope.metrics[i].data
+                        data: metrics.data
                     }
                 ]
             };
