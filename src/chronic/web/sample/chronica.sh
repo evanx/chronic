@@ -369,7 +369,7 @@ c2postgres() {
 }
 
 c2mysql() {
-  if timeout $databaseTimeout mysql -h $1 -p $2 -c 'select 1' 2>&1 | grep -q 'Access denied for user\| 1 \|^$' 
+  if timeout $databaseTimeout mysql -h $1 -P $2 -B -e 'select 1' 2>&1 | grep -q 'Access denied for user\|^1$' 
   then
     echo "OK: MySQL server is running on $1, port $2"
   else
