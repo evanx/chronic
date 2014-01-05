@@ -32,42 +32,43 @@ import vellum.data.Timestamped;
  *
  * @author evan.summers
  */
-public class AlertEvent implements Timestamped {
+public class TopicEvent implements Timestamped {
 
-    static Logger logger = LoggerFactory.getLogger(AlertEvent.class);
+    static Logger logger = LoggerFactory.getLogger(TopicEvent.class);
     TopicMessage message;
     TopicMessage previousMessage;
-    AlertEvent previousAlert;
+    TopicEvent previousEvent;
     List<String> changedLines;
     String htmlContent;
     String preContent;
     int ignoreCount;
-    AlertEvent ignoredAlert;
+    TopicEvent ignoredEvent;
+    TopicEvent alertEvent;
     TopicMessage alertedMessage;
     AlertEventType alertEventType;
     boolean polled;
     long notificationTimestamp;
     long polledTimestamp;
     
-    public AlertEvent(TopicMessage message) {
+    public TopicEvent(TopicMessage message) {
         this.message = message;
     }
     
-    public AlertEvent(TopicMessage message, TopicMessage previous) {
-        this.message = message;
-        this.previousMessage = previous;
-    }
-
-    public AlertEvent(TopicMessage message, TopicMessage previousMessage, AlertEvent previousAlert) {
+    public TopicEvent(TopicMessage message, TopicMessage previousMessage) {
         this.message = message;
         this.previousMessage = previousMessage;
-        this.previousAlert = previousAlert;
+    }
+
+    public TopicEvent(TopicMessage message, TopicMessage previousMessage, TopicEvent previousEvent) {
+        this.message = message;
+        this.previousMessage = previousMessage;
+        this.previousEvent = previousEvent;
     }
 
     @Override
     public long getTimestamp() {
-        if (ignoredAlert != null) {
-            return ignoredAlert.getTimestamp();
+        if (ignoredEvent != null) {
+            return ignoredEvent.getTimestamp();
         } 
         return message.getTimestamp();
     }    
@@ -80,8 +81,8 @@ public class AlertEvent implements Timestamped {
         return alertEventType;
     }
         
-    public void setIgnoredAlert(AlertEvent ignoredAlert) {
-        this.ignoredAlert = ignoredAlert;
+    public void setIgnoredEvent(TopicEvent ignoredAlert) {
+        this.ignoredEvent = ignoredAlert;
         ignoreCount++;
     }
         
@@ -89,15 +90,13 @@ public class AlertEvent implements Timestamped {
         return message;
     }
     
-    public void setPrevious(TopicMessage previousMessage) {
+    public void setPreviousMessage(TopicMessage previousMessage) {
         this.previousMessage = previousMessage;
     }
-    
-    @Override
-    public String toString() {
-        return message.toString();
-    }        
 
+    public TopicEvent getPreviousEvent() {
+        return previousEvent;
+    }
     public void setAlertedMessage(TopicMessage alertedMessage) {
         this.alertedMessage = alertedMessage;
     }    
@@ -109,5 +108,9 @@ public class AlertEvent implements Timestamped {
     public boolean isPolled() {
         return polled;
     }
-   
+
+    @Override
+    public String toString() {
+        return message.toString();
+    }    
 }

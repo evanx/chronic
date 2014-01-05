@@ -40,11 +40,11 @@ public class TopicMessageChecker {
         this.message = message;
     }    
 
-    public boolean isAlertable(TopicMessage previous, AlertEvent alert) {
+    public boolean isAlertable(TopicMessage previous, TopicEvent alert) {
         return isAlertable(message, previous, alert);
     }
     
-    public static boolean isAlertable(TopicMessage message, TopicMessage previous, AlertEvent alert) {
+    public static boolean isAlertable(TopicMessage message, TopicMessage previous, TopicEvent alert) {
         logger.info("isAlertable {}", Args.format(message.topicLabel, message.alertType, 
                 message.statusType, previous.statusType, message.matches(previous),
                 alert.getMessage().getStatusType()));

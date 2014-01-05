@@ -4,7 +4,7 @@
 package chronic.securehandler;
 
 import chronic.app.ChronicHttpx;
-import chronic.alert.AlertEvent;
+import chronic.alert.TopicEvent;
 import chronic.alert.TopicMessage;
 import chronic.api.ChronicPlainHttpxHandler;
 import chronic.app.ChronicApp;
@@ -39,7 +39,7 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
         if (!cert.isEnabled()) {
             return "Cert not enabled\n";
         }
-        for (AlertEvent alert : Lists.sortedLinkedList(app.getAlertMap().values(),
+        for (TopicEvent alert : Lists.sortedLinkedList(app.getEventMap().values(),
                 TimestampedComparator.reverse())) {
             if (!alert.isPolled() && alert.getMessage().getStatusType().isStatusKnown() && 
                     alert.getMessage().getAlertType().isPollable() &&
@@ -51,7 +51,7 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
         return "NONE\n";
     }
     
-    public String buildPlain(AlertEvent alert) {
+    public String buildPlain(TopicEvent alert) {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("Time: %s\n", CalendarFormats.timestampZoneFormat.format(timeZone, alert.getTimestamp())));
         builder.append(String.format("Topic: %s\n", alert.getMessage().getTopicLabel()));

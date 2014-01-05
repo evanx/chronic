@@ -370,7 +370,7 @@ OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
                 <pre>c0hourly() {
   c1topic hourly
   c0diskspace
-  c2rhttps bizswitch.net 443 # request external check by chronica server
+  c2rhttps my.org 443 # request external check by chronica server
   c2notcp chronica.co 21
   c2tcp chronica.co 80
   c2https chronica.co 443
@@ -486,7 +486,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
                     <br>Someone who has an unmonitored Linux system, and wants an instant solution, without any server setup.
                     <br>Linux admins who want a monitoring solution enabling custom checks using shell commands.
                     <br>Someone who deploys a Java application with log4j they wish to monitor.
-                    <br>Organizations who require PCI DSS compliance, or information security, i.e. everyone ;)
+                    <br>Organizations who want PCI DSS compliance, or information security, i.e. everyone ;)
                 </p>
 
                 <p><b>How is this different from some other cloud-based monitoring services?</b>

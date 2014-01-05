@@ -224,7 +224,7 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
         return statusType != null && statusType.isStatusAlertable();
     }
 
-    public boolean isAlertable(TopicMessage previous, AlertEvent alert) {
+    public boolean isAlertable(TopicMessage previous, TopicEvent alert) {
         return TopicMessageChecker.isAlertable(this, previous, alert);
     }
 

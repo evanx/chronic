@@ -21,7 +21,7 @@
 package chronic.message;
 
 import chronic.alert.AlertMailBuilder;
-import chronic.alert.AlertEvent;
+import chronic.alert.TopicEvent;
 import chronic.alert.AlertEventMapper;
 import chronic.app.ChronicApp;
 import java.util.TimeZone;
@@ -46,7 +46,7 @@ public class ChronicScriptMessenger {
         logger.info("initialized");
     }
 
-    public synchronized void alert(AlertEvent alert, TimeZone timeZone) {
+    public synchronized void alert(TopicEvent alert, TimeZone timeZone) {
         logger.info("alert {}", alert.toString());
         if (app.getProperties().getAlertScript() != null) {
             try {

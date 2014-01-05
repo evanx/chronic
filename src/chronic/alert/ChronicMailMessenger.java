@@ -45,7 +45,7 @@ public class ChronicMailMessenger {
     static Logger logger = LoggerFactory.getLogger(ChronicMailMessenger.class);
     ChronicApp app;
     Mailer mailer;
-    Map<String, AlertEvent> alertMap = new HashMap();
+    Map<String, TopicEvent> alertMap = new HashMap();
 
     public ChronicMailMessenger(ChronicApp app) {
         this.app = app;
@@ -56,28 +56,28 @@ public class ChronicMailMessenger {
         mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
-    public void alert(AlertEvent alert, List<Subscription> subscriptions) {
-         logger.warn("alert {}", alert.toString());
+    public void alert(TopicEvent event, List<Subscription> subscriptions) {
+         logger.warn("alert {}", event.toString());
         for (Subscription subscription : subscriptions) {
             String email = subscription.getEmail();
             TimeZone timeZone = subscription.getTimeZone();
             try {
-                AlertEvent previous = alertMap.put(email, alert);
+                TopicEvent previous = alertMap.put(email, event);
                 if (previous != null) {
-                    long elapsed = alert.getTimestamp() - previous.getTimestamp();
+                    long elapsed = event.getTimestamp() - previous.getTimestamp();
                     if (elapsed < app.getProperties().getAlertPeriod()
-                            && alert.getMessage().getKey().equals(previous.message.getKey())) {
+                            && event.getMessage().getKey().equals(previous.message.getKey())) {
                         logger.warn("elapsed {}", Args.format(email, Millis.formatPeriod(elapsed),
-                                alert.getMessage().getKey()));
+                                event.getMessage().getKey()));
                     }
                 }
-                alert.setAlertedMessage(alert.getMessage());
+                event.setAlertedMessage(event.getMessage());
                 if (app.getProperties().getAdminDomains().contains(email)) {
-                    mailer.send(email, alert.getMessage().getTopicLabel(),
-                        new AlertMailBuilder(app).build(alert, timeZone));
+                    mailer.send(email, event.getMessage().getTopicLabel(),
+                        new AlertMailBuilder(app).build(event, timeZone));
                 }
             } catch (IOException | MessagingException e) {
-                logger.warn("{} {}", e.getMessage(), alert);
+                logger.warn("{} {}", e.getMessage(), event);
             }
         }
     }

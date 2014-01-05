@@ -36,11 +36,11 @@ import vellum.jx.JMap;
 public class AlertEventMapper {
     static Logger logger = LoggerFactory.getLogger(AlertEventMapper.class);
 
-    AlertEvent alert;
+    TopicEvent alert;
     TopicMessage status;
     String timestampLabel;
     
-    public AlertEventMapper(AlertEvent alert, TimeZone timeZone) {
+    public AlertEventMapper(TopicEvent alert, TimeZone timeZone) {
         this.alert = alert;
         this.status = alert.message;        
         DateFormat format = new SimpleDateFormat("HH:mm:ss");

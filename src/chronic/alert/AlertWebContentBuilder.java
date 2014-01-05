@@ -34,10 +34,10 @@ public class AlertWebContentBuilder {
 
     static Logger logger = LoggerFactory.getLogger(AlertWebContentBuilder.class);
 
-    AlertEvent alert;
+    TopicEvent alert;
     String string;
 
-    public void build(AlertEvent alert) {
+    public void build(TopicEvent alert) {
         this.alert = alert;
         if (alert.message.isHtmlContent()) {
             logger.info("html content");

@@ -22,7 +22,7 @@ package chronic.app;
 
 import chronic.alert.TopicMessage;
 import chronic.alert.ChronicMailMessenger;
-import chronic.alert.AlertEvent;
+import chronic.alert.TopicEvent;
 import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
 import chronic.entitykey.TopicMetricKey;
@@ -64,17 +64,16 @@ public class ChronicApp {
     VellumHttpServer insecureServer = new VellumHttpServer();
     Map<TopicMetricKey, MetricSeries> seriesMap = new ConcurrentHashMap();
     Map<ComparableTuple, TopicMessage> recordMap = new ConcurrentHashMap();
-    Map<ComparableTuple, AlertEvent> alertMap = new ConcurrentHashMap();
-    ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
-    LinkedBlockingQueue<AlertEvent> alertQueue = new LinkedBlockingQueue(100);
+    Map<ComparableTuple, TopicEvent> eventMap = new ConcurrentHashMap();
+    LinkedBlockingQueue<TopicEvent> eventQueue = new LinkedBlockingQueue(100);
     LinkedBlockingQueue<TopicMessage> messageQueue = new LinkedBlockingQueue(100);
-    DataSource dataSource = new DataSource();
     EntityManagerFactory emf;
     boolean initalized = false;
     boolean running = true;
     Thread initThread = new InitThread();
     Thread messageThread = new MessageThread();
-    Thread alertThread = new AlertThread();
+    Thread alertThread = new EventThread();
+    ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
 
     public ChronicApp() {
         super();
@@ -104,7 +103,6 @@ public class ChronicApp {
     }
 
     public void initDeferred() throws Exception {
-        dataSource.setPoolProperties(properties.getPoolProperties());
         emf = Persistence.createEntityManagerFactory("chronicPU");;
         initalized = true;
         logger.info("initialized");
@@ -134,10 +132,6 @@ public class ChronicApp {
 
     public ChronicProperties getProperties() {
         return properties;
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
     }
 
     public void shutdown() throws Exception {
@@ -173,7 +167,7 @@ public class ChronicApp {
         return seriesMap;
     }
         
-    class AlertThread extends Thread {
+    class EventThread extends Thread {
 
         @Override
         public void run() {
@@ -181,10 +175,15 @@ public class ChronicApp {
                 ChronicEntityService es = newEntityService();
                 try {
                     es.begin();
-                    AlertEvent alert = alertQueue.poll(60, TimeUnit.SECONDS);
-                    if (alert != null) {
-                        messenger.alert(alert, 
-                                es.listSubscriptions(alert.getMessage().getTopic()));
+                    TopicEvent topicEvent = eventQueue.poll(60, TimeUnit.SECONDS);
+                    if (topicEvent != null) {
+                        long elapsedMillis = topicEvent.getTimestamp() - topicEvent.getPreviousEvent().getTimestamp();
+                        if (elapsedMillis < properties.getAlertPeriod()) {
+                            logger.warn("alert period not elapsed {}: {}", elapsedMillis, topicEvent);
+                        } else {                           
+                            messenger.alert(topicEvent, 
+                                es.listSubscriptions(topicEvent.getMessage().getTopic()));
+                        }
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
@@ -217,7 +216,7 @@ public class ChronicApp {
                                     series = new MetricSeries(75, 50);
                                     seriesMap.put(key, series);
                                 }
-                                series.add(System.currentTimeMillis(), value.getValue());
+                                series.add(message.getTimestamp(), value.getValue());
                                 logger.info("series {} {}", value.getLabel(), series);
                             }                            
                         }
@@ -254,13 +253,13 @@ public class ChronicApp {
         long elapsed = Millis.elapsed(message.getTimestamp());
         logger.debug("checkElapsed {} {}", elapsed, message);
         if (elapsed > message.getPeriodMillis() + properties.getPeriod()) {
-            AlertEvent previousAlert = alertMap.get(message.getKey());
+            TopicEvent previousAlert = eventMap.get(message.getKey());
             if (previousAlert == null
                     || previousAlert.getMessage().getStatusType() != StatusType.ELAPSED) {
                 message.setStatusType(StatusType.ELAPSED);
-                AlertEvent alert = new AlertEvent(message);
-                alertMap.put(message.getKey(), alert);
-                alertQueue.add(alert);
+                TopicEvent alert = new TopicEvent(message);
+                eventMap.put(message.getKey(), alert);
+                eventQueue.add(alert);
             }
         }
         if (!alertThread.isAlive()) {
@@ -275,33 +274,27 @@ public class ChronicApp {
         MDC.put("method", "checkMessage");
         logger.info("{}", message);
         TopicMessage previousMessage = recordMap.put(message.getKey(), message);
-        AlertEvent previousAlert = alertMap.get(message.getKey());
+        TopicEvent previousEvent = eventMap.get(message.getKey());
         if (previousMessage == null) {
             logger.info("no previous status");
-            AlertEvent alert = new AlertEvent(message);            
-            alert.setAlertEventType(AlertEventType.INITIAL);
-            alertMap.put(message.getKey(), alert);
+            TopicEvent event = new TopicEvent(message);            
+            event.setAlertEventType(AlertEventType.INITIAL);
+            eventMap.put(message.getKey(), event);
         } else if (message.getAlertType() == AlertType.NEVER) {
-            AlertEvent alert = new AlertEvent(message, previousMessage);
-            alertMap.put(message.getKey(), alert);
+            TopicEvent event = new TopicEvent(message, previousMessage, previousEvent);
+            eventMap.put(message.getKey(), event);
         } else if (message.getStatusType() == StatusType.CONTENT_ERROR) {
-            AlertEvent alert = new AlertEvent(message, previousMessage);
-            alertMap.put(message.getKey(), alert);
-        } else if (message.isAlertable(previousMessage, previousAlert)) {
-            AlertEvent alert = new AlertEvent(message, previousMessage);
-            if (previousAlert.getAlertEventType() == AlertEventType.INITIAL && 
-                       !previousAlert.getMessage().isStatusAlertable()) {
-                previousAlert.setAlertEventType(AlertEventType.INITIAL);
-                alertMap.put(message.getKey(), alert);
+            TopicEvent event = new TopicEvent(message, previousMessage, previousEvent);
+            eventMap.put(message.getKey(), event);
+        } else if (message.isAlertable(previousMessage, previousEvent)) {
+            TopicEvent event = new TopicEvent(message, previousMessage, previousEvent);
+            if (previousEvent.getAlertEventType() == AlertEventType.INITIAL && 
+                       !previousEvent.getMessage().isStatusAlertable()) {
+                previousEvent.setAlertEventType(AlertEventType.INITIAL);
+                eventMap.put(message.getKey(), event);
             } else {
-                long elapsedMillis = alert.getTimestamp() - previousAlert.getTimestamp();
-                if (elapsedMillis < properties.getAlertPeriod()) {
-                    logger.warn("alert period not elapsed {}: {}", elapsedMillis, previousAlert);
-                    previousAlert.setIgnoredAlert(alert);
-                } else {
-                    alertMap.put(message.getKey(), alert);
-                    alertQueue.add(alert);
-                }
+                eventMap.put(message.getKey(), event);
+                eventQueue.add(event);
             }
         } else {
             long period = message.getTimestamp() - previousMessage.getTimestamp();
@@ -318,7 +311,7 @@ public class ChronicApp {
         }
     }
 
-    public Map<ComparableTuple, AlertEvent> getAlertMap() {
-        return alertMap;
+    public Map<ComparableTuple, TopicEvent> getEventMap() {
+        return eventMap;
     }   
 }

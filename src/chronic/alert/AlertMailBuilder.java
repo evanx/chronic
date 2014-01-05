@@ -41,14 +41,14 @@ public class AlertMailBuilder {
     static Logger logger = LoggerFactory.getLogger(AlertMailBuilder.class);
     StringBuilder builder = new StringBuilder();
     ChronicApp app;
-    AlertEvent alert;
+    TopicEvent alert;
     TimeZone timeZone;
 
     public AlertMailBuilder(ChronicApp app) {
         this.app = app;
     }
 
-    public String build(AlertEvent alert, TimeZone timeZone) {
+    public String build(TopicEvent alert, TimeZone timeZone) {
         this.alert = alert;
         this.timeZone = timeZone;
         logger.info("build {}", alert.message);
