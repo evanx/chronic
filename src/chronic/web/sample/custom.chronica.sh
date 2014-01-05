@@ -86,11 +86,13 @@ c0daily() {
 #   - file integrity monitoring for installed packages e.g. yum verify. 
 
 c0minutelyPriviledged() {
+  echo "INFO: minutely priviledged"
   #c0verifyHead /var/log/secure # rhel, centos, amazon linux
   #c0verifyHead /var/log/auth.log # ubuntu
 }
 
 c0dailyPriviledged() {
+  echo "INFO: daily priviledged"
   #c0yumVerify
   #c0rpmVerify
 }
@@ -100,6 +102,7 @@ c0dailyPriviledged() {
 #   unpriviledged user, e.g. to check that auth config and logs are inaccessible.
 
 c0dailyNonPriviledged() {
+  echo "INFO: daily nonpriviledged"
   c1nowrite /etc/ssh/sshd_config
   c1noread /var/log/secure
 }
