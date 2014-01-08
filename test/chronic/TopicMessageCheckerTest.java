@@ -21,7 +21,7 @@
  */
 package chronic;
 
-import chronic.alert.AlertEvent;
+import chronic.alert.TopicEvent;
 import chronic.alert.TopicMessage;
 import chronic.alert.TopicMessageParser;
 import java.io.IOException;
@@ -57,8 +57,8 @@ public class TopicMessageCheckerTest {
                 "Load WARNING - 10",
                 "Disk CRITICAL - 20");
         Assert.assertEquals("Disk", topicMessage3.getServiceLabel());
-        AlertEvent alert1 = new AlertEvent(topicMessage1);
-        AlertEvent alert2 = new AlertEvent(topicMessage2);
+        TopicEvent alert1 = new TopicEvent(topicMessage1);
+        TopicEvent alert2 = new TopicEvent(topicMessage2);
         Assert.assertFalse(topicMessage1.isAlertable(topicMessage1, alert1));
         Assert.assertTrue(topicMessage2.isAlertable(topicMessage2, alert1));
         Assert.assertFalse(topicMessage3.isAlertable(topicMessage2, alert2));
