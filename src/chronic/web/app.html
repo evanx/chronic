@@ -515,7 +515,7 @@ Subject: root@hostx checksys CRITICAL</pre>
                     <br>AngularJS front-end with JSON interaction to a Java back-end.  
                     We use the JRE's built-in HTTPS server rather than Apache Tomcat. 
                     <a href="https://mozilla.org/persona">Mozilla Persona</a> is used for authentication.
-                    Also: Bootstrap, Chartjs.org, Angles (see page source).
+                    Also: Bootstrap, Chartjs.org, Angles - view the HTML source for this page to see what it includes :)
                 </p>
 
                 <p><b>Why JRE's built-in HTTPS server rather than Apache Tomcat?</b>
@@ -527,7 +527,7 @@ Subject: root@hostx checksys CRITICAL</pre>
 
                 <p><b>Windows or Linux?</b>
                     <br>We provide a "starter" script for Linux, which can be used out the box to actively monitor Windows machines remotely via TCP. 
-                    We will integrate an opensource Windows agent, such as the Nagios Cross-Platform Agent (NCPA), and/or our own Chronica Java-based agent.
+                   We plan to support the Nagios Cross-Platform Agent (NCPA), which can be installed on Windows.
                 </p>
 
                 <p><b>What can be installed on Linux clients right now?</b>
@@ -539,7 +539,7 @@ Subject: root@hostx checksys CRITICAL</pre>
 
                 <p><b>How is it run?</b>
                 <br>The script can be run as a background process, to run minutely, hourly and daily checks, without needing <tt>crond</tt>. (It sleeps in a loop.)
-                <br>Also, you can pipe the output of custom cron jobs to this script. 
+                <br>Also, you can pipe the output of cron jobs to this script. 
                 <br>Finally, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
                 </p>
                 <pre>$ bash chronica.sh start</pre>
@@ -587,7 +587,7 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
                 </p>
 
                 <p><b>How are alerts triggered?</b>
-                <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore suprious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
+                <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore spurious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
                 And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
                 </p>
 
@@ -596,7 +596,7 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
                 </p>
 
                 <p><b>What other applications?</b>
-                    <br>We are looking at using the platform for scheduling reminders.
+                    <br>We are looking at using the platform for scheduling reminders, for ourselves ;)
                 </p>
 
                 <p><b>How do I to contribute my improvements for inclusion?</b>        
