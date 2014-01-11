@@ -21,22 +21,17 @@
 package chronic.alert;
 
 import chronic.app.ChronicApp;
-import static chronic.alert.TopicEventMailBuilder.formatFooter;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Alert;
 import chronic.entity.Subscription;
 import java.io.IOException;
-import vellum.mail.Mailer;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import javax.mail.MessagingException;
+import javax.persistence.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
-import vellum.exception.Exceptions;
-import vellum.util.Args;
 import vellum.util.Calendars;
 
 /**
@@ -47,61 +42,81 @@ public class ChronicAlerter {
 
     static Logger logger = LoggerFactory.getLogger(ChronicAlerter.class);
     ChronicApp app;
-    Mailer mailer;
-    Map<String, TopicEvent> alertMap = new HashMap();
-
-    public ChronicAlerter(ChronicApp app) {
+    ChronicEntityService es;
+    TopicEvent event;
+    
+    public void alert(ChronicApp app, TopicEvent event) {
         this.app = app;
-    }
-
-    public void init() throws Exception {
-        logger.info("initialized");
-        mailer = new Mailer(app.getProperties().getMailerProperties());
-    }
-
-    public void alert(ChronicEntityService es, TopicEvent event) {
-        List<Subscription> subscriptions =
-                es.listSubscriptions(event.getMessage().getTopic());
-         logger.warn("alert {}", event.toString());
-        for (Subscription subscription : subscriptions) {
-            String email = subscription.getEmail();
-            TimeZone timeZone = subscription.getTimeZone();
-            try {
-                TopicEvent previous = alertMap.put(email, event);
-                if (previous != null) {
-                    long elapsed = event.getTimestamp() - previous.getTimestamp();
-                    if (elapsed < app.getProperties().getAlertPeriod()
-                            && event.getMessage().getKey().equals(previous.message.getKey())) {
-                        logger.warn("elapsed {}", Args.format(email, Millis.formatPeriod(elapsed),
-                                event.getMessage().getKey()));
+        this.event = event;
+        es = new ChronicEntityService(app);
+        try {
+            es.begin();
+            List<Subscription> subscriptions = es.listSubscriptions(event.getMessage().getTopic());
+            es.close();
+            for (Subscription subscription : subscriptions) {
+                event.getPendingEmails().add(subscription.getEmail());
+            }
+            logger.warn("alert {}", event.toString());
+            for (Subscription subscription : subscriptions) {
+                try {
+                    if (event.getPendingEmails().contains(subscription.getEmail())) {
+                        if (alert(subscription)) {
+                            event.getPendingEmails().remove(subscription.getEmail());
+                        }
                     }
+                } catch (IOException | MessagingException e) {
+                    logger.warn("{} {}", e.getMessage(), event);
+                } finally {
+                    es.close();
                 }
-                if (app.getProperties().getAdminDomains().contains(email)) {
-                    Alert alert = new Alert(event.getMessage().getTopic(),
-                            event.getMessage().getStatusType(),
-                            Calendars.newCalendar(timeZone, event.getMessage().getTimestamp()),
-                            email);
-                    mailer.send(email, event.getMessage().getTopicLabel(),
-                            new TopicEventMailBuilder(app).build(event, timeZone));
-                }
-            } catch (IOException | MessagingException e) {
-                logger.warn("{} {}", e.getMessage(), event);
+            }
+        } catch (PersistenceException e) {
+            logger.error("alert", e);
+        } catch (Exception e) {
+            logger.error("alert", e);
+        } finally {
+            es.close();
+        }
+    }
+
+    private boolean alert(Subscription subscription) throws MessagingException, IOException {
+        String email = subscription.getEmail();
+        TimeZone timeZone = subscription.getTimeZone();
+        logger.info("alert {}: {}", subscription, event.getMessage());
+        TopicEvent previousEvent = app.getSentMap().get(email);
+        if (previousEvent != null) {
+            long elapsed = System.currentTimeMillis() - previousEvent.getTimestamp();
+            if (elapsed < app.getProperties().getAlertPeriod()
+                    && event.getMessage().getKey().equals(previousEvent.message.getKey())) {
+                logger.warn("elapsed {}", Millis.formatPeriod(elapsed));
+                return false;
             }
         }
-    }
-    
-    public void alert(Throwable t) {
-        logger.warn("alert throwable", t);
-        StringBuilder builder = new StringBuilder();
-        builder.append("<pre>\n");
-        builder.append(Exceptions.printStackTrace(t));
-        builder.append("</pre>");
-        builder.append(formatFooter(app.getProperties().getSiteUrl()));
-        try {
-            mailer.send(app.getProperties().getAdminEmail(), "Chronica exception",
-                    builder.toString());
-        } catch (MessagingException | IOException e) {
-            logger.warn("alert throwable email", e);
+        Alert previousAlert = app.getAlertMap().get(subscription.getSubscriptionKey());
+        if (previousAlert != null) {
+            long elapsed = System.currentTimeMillis() - previousAlert.getAlerted().getTimeInMillis();
+            if (elapsed < app.getProperties().getAlertPeriod()) {
+                logger.warn("elapsed {}: {}", Millis.formatPeriod(elapsed), previousAlert);
+            } else if (previousAlert.getStatusType().isStatusAlertable() &&
+                    previousAlert.getStatusType() == event.getMessage().getStatusType()) {
+                logger.error("status: {}", previousAlert);
+                return true;
+            }
+        }        
+        if (app.getProperties().isAdmin(email)) {
+            app.getMailer().send(email, event.getMessage().getTopicLabel(),
+                    new TopicEventMailBuilder(app).build(event, timeZone));
+            app.getSentMap().put(email, event);
+            Alert alert = new Alert(event.getMessage().getTopic(),
+                    event.getMessage().getStatusType(),
+                    Calendars.newCalendar(timeZone, event.getMessage().getTimestamp()),
+                    email);
+            es.begin();
+            es.persist(alert);
+            es.commit();
+            app.getAlertMap().put(alert.getSubscriptionKey(), alert);
         }
+        return true;
     }
+
 }

@@ -4,6 +4,8 @@
  */
 package chronic.entity;
 
+import chronic.entitykey.SubscriptionKey;
+import chronic.entitykey.SubscriptionKeyed;
 import chronic.type.StatusType;
 import java.io.Serializable;
 import java.util.Calendar;
@@ -18,13 +20,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import vellum.entity.ComparableEntity;
+import vellum.util.Args;
 
 /**
  *
  * @author evan.summers
  */
 @Entity
-public class Alert extends ComparableEntity implements Serializable {
+public class Alert extends ComparableEntity implements SubscriptionKeyed, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -82,4 +85,23 @@ public class Alert extends ComparableEntity implements Serializable {
     public String getEmail() {
         return email;
     }        
+
+    public Calendar getAlerted() {
+        return alerted;
+    }
+
+    public Calendar getOccurred() {
+        return occurred;
+    }
+    
+    @Override
+    public SubscriptionKey getSubscriptionKey() {
+        return new SubscriptionKey(topic.getId(), email);
+    }
+
+    @Override
+    public String toString() {
+        return Args.format(topic.getTopicLabel(), statusType, email, alerted);
+    }
+        
 }

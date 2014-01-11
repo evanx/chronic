@@ -39,6 +39,7 @@ import java.util.List;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
 import javax.security.cert.X509Certificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,9 +70,11 @@ public class ChronicEntityService {
         this.emf = emf;
     }
     
-    
-
     public void begin() {
+        if (em != null && em.isOpen()) {
+            em.close();
+            throw new PersistenceException("entity manager is open");
+        }
         em = emf.createEntityManager();
         em.getTransaction().begin();
     }

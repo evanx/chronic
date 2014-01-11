@@ -20,8 +20,9 @@
  */
 package chronic.app;
 
-import chronic.alert.TopicMessage;
 import chronic.alert.ChronicAlerter;
+import chronic.alert.TopicMessage;
+import chronic.alert.ChronicMessenger;
 import chronic.alert.TopicEvent;
 import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
@@ -33,6 +34,7 @@ import chronic.entitykey.TopicMetricKey;
 import chronic.type.AlertEventType;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,6 +51,7 @@ import vellum.data.Millis;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.httphandler.RedirectHttpsHandler;
+import vellum.mail.Mailer;
 import vellum.ssl.OpenTrustManager;
 
 /**
@@ -59,7 +62,8 @@ public class ChronicApp {
 
     Logger logger = LoggerFactory.getLogger(ChronicApp.class);
     ChronicProperties properties = new ChronicProperties();
-    ChronicAlerter alerter = new ChronicAlerter(this);
+    Mailer mailer;
+    ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
     VellumHttpServer httpRedirectServer = new VellumHttpServer();
@@ -71,6 +75,7 @@ public class ChronicApp {
     LinkedBlockingQueue<TopicEvent> eventQueue = new LinkedBlockingQueue(100);
     LinkedList<TopicEvent> eventList = new LinkedList();
     Map<SubscriptionKey, Alert> alertMap = new ConcurrentHashMap();
+    Map<String, TopicEvent> sentMap = new HashMap();
     EntityManagerFactory emf;
     boolean initalized = false;
     boolean running = true;
@@ -85,6 +90,7 @@ public class ChronicApp {
 
     public void init() throws Exception {
         properties.init();
+        mailer = new Mailer(properties.getMailerProperties());
         logger.info("properties {}", properties);
         webServer.start(properties.getWebServer(), 
                 new OpenTrustManager(),
@@ -96,7 +102,6 @@ public class ChronicApp {
         appServer.start(properties.getAppServer(), 
                 new ChronicTrustManager(this),
                 new ChronicSecureHttpService(this));
-        alerter.init();
         initThread.start();
     }
 
@@ -118,8 +123,8 @@ public class ChronicApp {
         logger.info("started");
     }
 
-    public EntityManager createEntityManager() {
-        return emf.createEntityManager();
+    public Mailer getMailer() {
+        return mailer;
     }
 
     class InitThread extends Thread {
@@ -158,45 +163,58 @@ public class ChronicApp {
         }
     }
 
+    public EntityManager createEntityManager() {
+        return emf.createEntityManager();
+    }
+
     public LinkedBlockingQueue<TopicMessage> getMessageQueue() {
         return messageQueue;
         
     }
     
-    ChronicEntityService newEntityService() {
-        return new ChronicEntityService(this);
-    }
-
     public Map<TopicMetricKey, MetricSeries> getSeriesMap() {
         return seriesMap;
     }
         
+    public Map<TopicKey, TopicEvent> getEventMap() {
+        return eventMap;
+    }   
+    
     class EventThread extends Thread {
 
         @Override
         public void run() {
             while (running) {
-                ChronicEntityService es = newEntityService();
                 try {
-                    es.begin();
                     TopicEvent topicEvent = eventQueue.poll(60, TimeUnit.SECONDS);
                     if (topicEvent == null) {
                     } else if (eventMap.get(topicEvent.getMessage().getKey()) != topicEvent) {
                         logger.warn("event from queue differs to latest event in map");
                     } else {
-                        alerter.alert(es, topicEvent);
+                        eventList.add(topicEvent);
+                        alert(topicEvent);
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
                 } catch (Throwable t) {
-                    alerter.alert(t);
-                } finally {
-                    es.close();
+                    messenger.alert(t);
                 }
             }
         }
     }
 
+    private void alert(TopicEvent event) {
+        new ChronicAlerter().alert(this, event);
+    }
+
+    public Map<SubscriptionKey, Alert> getAlertMap() {
+        return alertMap;
+    }
+    
+    public Map<String, TopicEvent> getSentMap() {
+        return sentMap;
+    }
+        
     class MessageThread extends Thread {
 
         @Override
@@ -210,7 +228,7 @@ public class ChronicApp {
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
                 } catch (Throwable t) {
-                    alerter.alert(t);
+                    messenger.alert(t);
                 }
             }
         }
@@ -229,7 +247,7 @@ public class ChronicApp {
             } catch (Exception e) {
                 logger.warn("run", e);
             } catch (Throwable t) {
-                alerter.alert(t);
+                messenger.alert(t);
             }
         }
     }
@@ -309,8 +327,4 @@ public class ChronicApp {
             }
         }
     }
-
-    public Map<TopicKey, TopicEvent> getEventMap() {
-        return eventMap;
-    }   
 }

@@ -4,6 +4,8 @@
  */
 package chronic.entity;
 
+import chronic.entitykey.SubscriptionKey;
+import chronic.entitykey.SubscriptionKeyed;
 import chronic.entitytype.SubscriptionActionType;
 import java.io.Serializable;
 import java.util.TimeZone;
@@ -30,7 +32,8 @@ import vellum.util.Calendars;
  */
 @Entity()
 @Table(name = "topic_sub")
-public class Subscription extends ComparableEntity implements Enabled, JMapped, Serializable {
+public class Subscription extends ComparableEntity implements SubscriptionKeyed, 
+        Enabled, JMapped, Serializable {
     
     static Logger logger = LoggerFactory.getLogger(Subscription.class);
 
@@ -125,12 +128,17 @@ public class Subscription extends ComparableEntity implements Enabled, JMapped, 
         return enabled ? SubscriptionActionType.UNSUBSCRIBE : SubscriptionActionType.SUBSCRIBE;
     }
         
-    @Override
-    public String toString() {
-        return getId().toString();
-    }
-
     public TimeZone getTimeZone() {
         return Calendars.getTimeZone(timeZoneId);
     }
+
+    @Override
+    public SubscriptionKey getSubscriptionKey() {
+        return new SubscriptionKey(topicId, email);
+    }
+    
+    @Override
+    public String toString() {
+        return getId().toString();
+    }    
 }

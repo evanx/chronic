@@ -40,6 +40,7 @@ public class TopicEvent implements Timestamped {
     TopicMessage previousMessage;
     TopicEvent previousEvent;
     List<String> changedLines;
+    List<String> pendingEmails;
     String htmlContent;
     String preContent;
     AlertEventType alertEventType;
@@ -90,6 +91,10 @@ public class TopicEvent implements Timestamped {
 
     public void setPolled(Calendar polled) {
         this.polled = polled;
+    }
+
+    public List<String> getPendingEmails() {
+        return pendingEmails;
     }
         
     @Override
