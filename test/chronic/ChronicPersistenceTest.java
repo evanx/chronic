@@ -32,6 +32,8 @@ import chronic.entitykey.CertKey;
 import chronic.entitytype.OrgRoleType;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -54,10 +56,10 @@ public class ChronicPersistenceTest {
     String orgUnit = "test";
     String address = "127.0.0.1";    
     String encoded = "encoded";
-    TestProperties p1 = new TestProperties("chronica.co", "root", "minutely", "evan.summers@gmail.com");
-    TestProperties p2 = new TestProperties("test.org", "chronica", "hourly", "evanx@chronica.co");
+    Props p1 = new Props("chronica.co", "root", "minutely", "evan.summers@gmail.com");
+    Props p2 = new Props("test.org", "chronica", "hourly", "evanx@chronica.co");
     
-    class TestProperties {
+    class Props {
 
         String commonName;
         String orgDomain;
@@ -70,7 +72,7 @@ public class ChronicPersistenceTest {
         Topic topic;
         Person person;
         
-        public TestProperties(String orgDomain, String commonName, String topicLabel, String email) {
+        public Props(String orgDomain, String commonName, String topicLabel, String email) {
             this.orgDomain = orgDomain;
             this.commonName = commonName;
             this.topicLabel = topicLabel;
@@ -102,7 +104,8 @@ public class ChronicPersistenceTest {
 
     @Test
     public void testEntityManager() throws Exception {
-        EntityManager em = app.createEntityManager();
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("testPU");
+        EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         p1.org = new Org(p1.orgDomain);
         em.persist(p1.org);
@@ -159,7 +162,8 @@ public class ChronicPersistenceTest {
     
     @Test
     public void testEntityService() throws Exception {
-        ChronicEntityService es = new ChronicEntityService(app);
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("testPU");
+        ChronicEntityService es = new ChronicEntityService(app, emf);
         es.begin();
         p1.person = es.persistPerson(p1.email);
         p2.person = es.persistPerson(p2.email);
