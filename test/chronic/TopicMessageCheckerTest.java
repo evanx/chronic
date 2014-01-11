@@ -23,6 +23,7 @@ package chronic;
 
 import chronic.alert.TopicEvent;
 import chronic.alert.TopicMessage;
+import chronic.alert.TopicMessageChecker;
 import chronic.alert.TopicMessageParser;
 import java.io.IOException;
 import org.junit.Assert;
@@ -59,9 +60,9 @@ public class TopicMessageCheckerTest {
         Assert.assertEquals("Disk", topicMessage3.getServiceLabel());
         TopicEvent alert1 = new TopicEvent(topicMessage1);
         TopicEvent alert2 = new TopicEvent(topicMessage2);
-        Assert.assertFalse(topicMessage1.isAlertable(topicMessage1, alert1));
-        Assert.assertTrue(topicMessage2.isAlertable(topicMessage2, alert1));
-        Assert.assertFalse(topicMessage3.isAlertable(topicMessage2, alert2));
+        Assert.assertFalse(TopicMessageChecker.isAlertable(topicMessage1, topicMessage1, alert1));
+        Assert.assertTrue(TopicMessageChecker.isAlertable(topicMessage2, topicMessage2, alert1));
+        Assert.assertFalse(TopicMessageChecker.isAlertable(topicMessage3, topicMessage2, alert2));
     }
     
     private TopicMessage newTopicMessage(String ... lines) throws IOException, ParseException {

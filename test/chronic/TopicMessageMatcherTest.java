@@ -56,13 +56,13 @@ public class TopicMessageMatcherTest {
         TopicMessage record2 = new TopicMessage(cert);
         record1.getLineList().add("ACME OK - some detail");
         record2.getLineList().add("ACME OK - other detail");
-        Assert.assertTrue(record1.matches(record2));
+        Assert.assertTrue(TopicMessageMatcher.matches(record1, record2));
         record2 = new TopicMessage(cert);
         record2.getLineList().add("ACMY OK - other detail");
-        Assert.assertFalse(record1.matches(record2));
+        Assert.assertFalse(TopicMessageMatcher.matches(record1, record2));
         record2 = new TopicMessage(cert);
         record2.getLineList().add("ACME CRITICAL - some detail");
-        Assert.assertFalse(record1.matches(record2));
+        Assert.assertFalse(TopicMessageMatcher.matches(record1, record2));
     }
 
     

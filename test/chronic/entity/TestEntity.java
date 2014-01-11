@@ -22,6 +22,8 @@
 package chronic.entity;
 
 import chronic.TimeZoneTest;
+import chronic.type.StatusType;
+import java.util.Calendar;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -65,9 +67,9 @@ public class TestEntity {
         em.persist(p1.topic);
         Assert.assertNotNull(p1.topic.getId());
         Assert.assertNotNull(em.find(Topic.class, p1.topic.getId()));
-        p1.alert = new Alert(p1.topic, p1.person);
+        p1.alert = new Alert(p1.topic, StatusType.OK, Calendar.getInstance(), p1.person.getEmail());
         em.persist(p1.alert);
-        p2.alert = new Alert(p1.topic, p2.person);
+        p2.alert = new Alert(p1.topic, StatusType.OK, Calendar.getInstance(), p2.person.getEmail());
         em.persist(p2.alert);
         TestEntityInfo.assertSize("alert", 2, em.createQuery("select a from Alert a")
                 .getResultList());
