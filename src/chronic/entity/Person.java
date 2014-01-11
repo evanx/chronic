@@ -26,7 +26,7 @@ import vellum.type.Enabled;
 public class Person extends ComparableEntity implements PersonKeyed, Enabled, Serializable {
 
     @Id
-    @Column()
+    @Column(length = 64)
     String email;
     
     @Column()    

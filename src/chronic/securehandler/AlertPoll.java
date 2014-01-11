@@ -10,6 +10,7 @@ import chronic.api.ChronicPlainHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
+import java.util.Calendar;
 import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +40,13 @@ public class AlertPoll implements ChronicPlainHttpxHandler {
         if (!cert.isEnabled()) {
             return "Cert not enabled\n";
         }
-        for (TopicEvent alert : Lists.sortedLinkedList(app.getEventMap().values(),
+        for (TopicEvent event : Lists.sortedLinkedList(app.getEventMap().values(),
                 TimestampedComparator.reverse())) {
-            if (!alert.isPolled() && alert.getMessage().getStatusType().isStatusKnown() && 
-                    alert.getMessage().getAlertType().isPollable() &&
-                    System.currentTimeMillis() - alert.getTimestamp() < Millis.fromMinutes(3)) {
-                alert.setPolled(true);
-                return buildPlain(alert);
+            if (event.getPolled() == null && event.getMessage().getStatusType().isStatusKnown() && 
+                    event.getMessage().getAlertType().isPollable() &&
+                    System.currentTimeMillis() - event.getTimestamp() < Millis.fromMinutes(3)) {
+                event.setPolled(Calendar.getInstance(timeZone));
+                return buildPlain(event);
             }
         }
         return "NONE\n";

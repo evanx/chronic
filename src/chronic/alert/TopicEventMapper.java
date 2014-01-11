@@ -33,15 +33,15 @@ import vellum.jx.JMap;
  *
  * @author evan.summers
  */
-public class AlertEventMapper {
-    static Logger logger = LoggerFactory.getLogger(AlertEventMapper.class);
+public class TopicEventMapper {
+    static Logger logger = LoggerFactory.getLogger(TopicEventMapper.class);
 
-    TopicEvent alert;
+    TopicEvent event;
     TopicMessage status;
     String timestampLabel;
     
-    public AlertEventMapper(TopicEvent alert, TimeZone timeZone) {
-        this.alert = alert;
+    public TopicEventMapper(TopicEvent alert, TimeZone timeZone) {
+        this.event = alert;
         this.status = alert.message;        
         DateFormat format = new SimpleDateFormat("HH:mm:ss");
         format.setTimeZone(timeZone);
@@ -55,7 +55,7 @@ public class AlertEventMapper {
     }
         
     public JMap getBasicMap() {
-        AlertFormatter formatter = new AlertFormatter(status);
+        TopicMessageFormatter formatter = new TopicMessageFormatter(status);
         JMap map = new JMap();
         map.put("orgDomain", status.cert.getOrgDomain());
         map.put("orgUnit", status.cert.getOrgUnit());
@@ -72,8 +72,8 @@ public class AlertEventMapper {
     }
 
     public void putExtended(JMap map) {
-        new AlertWebContentBuilder().build(alert);
-        map.put("htmlContent", alert.htmlContent);
-        map.put("preContent", alert.preContent);
+        new TopicEventWebContentBuilder().build(event);
+        map.put("htmlContent", event.htmlContent);
+        map.put("preContent", event.preContent);
     }
 }

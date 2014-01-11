@@ -23,6 +23,7 @@ package chronic.alert;
 
 
 import chronic.type.AlertEventType;
+import java.util.Calendar;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,14 +42,8 @@ public class TopicEvent implements Timestamped {
     List<String> changedLines;
     String htmlContent;
     String preContent;
-    int ignoreCount;
-    TopicEvent ignoredEvent;
-    TopicEvent alertEvent;
-    TopicMessage alertedMessage;
     AlertEventType alertEventType;
-    boolean polled;
-    long notificationTimestamp;
-    long polledTimestamp;
+    Calendar polled;
     
     public TopicEvent(TopicMessage message) {
         this.message = message;
@@ -64,26 +59,13 @@ public class TopicEvent implements Timestamped {
         this.previousMessage = previousMessage;
         this.previousEvent = previousEvent;
     }
-
-    @Override
-    public long getTimestamp() {
-        if (ignoredEvent != null) {
-            return ignoredEvent.getTimestamp();
-        } 
-        return message.getTimestamp();
-    }    
-
+    
     public void setAlertEventType(AlertEventType alertEventType) {
         this.alertEventType = alertEventType;
     }
     
     public AlertEventType getAlertEventType() {
         return alertEventType;
-    }
-        
-    public void setIgnoredEvent(TopicEvent ignoredAlert) {
-        this.ignoredEvent = ignoredAlert;
-        ignoreCount++;
     }
         
     public TopicMessage getMessage() {
@@ -94,23 +76,29 @@ public class TopicEvent implements Timestamped {
         this.previousMessage = previousMessage;
     }
 
+    public TopicMessage getPreviousMessage() {
+        return previousMessage;
+    }
+    
     public TopicEvent getPreviousEvent() {
         return previousEvent;
     }
-    public void setAlertedMessage(TopicMessage alertedMessage) {
-        this.alertedMessage = alertedMessage;
-    }    
 
-    public void setPolled(boolean polled) {
-        this.polled = polled;
-    }
-
-    public boolean isPolled() {
+    public Calendar getPolled() {
         return polled;
     }
 
+    public void setPolled(Calendar polled) {
+        this.polled = polled;
+    }
+        
     @Override
     public String toString() {
         return message.toString();
     }    
+
+    @Override
+    public long getTimestamp() {
+        return previousMessage.getTimestamp();
+    }
 }

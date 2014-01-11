@@ -27,7 +27,7 @@ import chronic.entity.Person;
 import chronic.entity.Subscription;
 import chronic.entity.Topic;
 import chronic.entitykey.CertKey;
-import chronic.entitykey.CertTopicKey;
+import chronic.entitykey.TopicKey;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.PersonKey;
 import chronic.entitytype.OrgRoleType;
@@ -158,7 +158,7 @@ public class ChronicEntityService {
         return list.get(0);
     }
 
-    public Topic find(CertTopicKey key) throws StorageException {
+    public Topic find(TopicKey key) throws StorageException {
         List<Topic> list = selectTopic(key.getCertId(), key.getTopicLabel());
         if (list.isEmpty()) {
             return null;
@@ -466,7 +466,7 @@ public class ChronicEntityService {
             throws StorageException {
         logger.info("persistTopic {} {}", topicLabel, cert);
         assert (cert.getId() != null);
-        CertTopicKey key = new CertTopicKey(cert.getId(), topicLabel);
+        TopicKey key = new TopicKey(cert.getId(), topicLabel);
         Topic topic = find(key);
         if (topic == null) {
             topic = new Topic(key);

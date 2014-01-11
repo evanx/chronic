@@ -40,10 +40,10 @@ public class OrgRole extends ComparableEntity implements Serializable {
     @Column(name = "org_domain")
     String orgDomain;
     
-    @Column()
+    @Column(length = 64)
     String email;
     
-    @Column(name = "role_type")
+    @Column(name = "role_type", length = 32)
     @Enumerated(EnumType.STRING)
     OrgRoleType roleType = OrgRoleType.ADMIN;
     

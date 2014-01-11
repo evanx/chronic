@@ -12,15 +12,15 @@ import vellum.jx.JMapException;
  *
  * @author evan.summers
  */
-public final class CertTopicKey extends ComparableTuple {
+public final class TopicKey extends ComparableTuple {
     Long certId;
     String topicLabel;
 
-    public CertTopicKey(JMap map) throws JMapException {
+    public TopicKey(JMap map) throws JMapException {
         this(map.getLong("certId"), map.getString("topicLabel"));
     }
     
-    public CertTopicKey(Long certId, String topicLabel) {
+    public TopicKey(Long certId, String topicLabel) {
         super(certId, topicLabel);
         this.certId = certId;
         this.topicLabel = topicLabel;

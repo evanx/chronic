@@ -36,40 +36,40 @@ import vellum.util.Strings;
  *
  * @author evan.summers
  */
-public class AlertMailBuilder {
+public class TopicEventMailBuilder {
 
-    static Logger logger = LoggerFactory.getLogger(AlertMailBuilder.class);
+    static Logger logger = LoggerFactory.getLogger(TopicEventMailBuilder.class);
     StringBuilder builder = new StringBuilder();
     ChronicApp app;
     TopicEvent alert;
     TimeZone timeZone;
 
-    public AlertMailBuilder(ChronicApp app) {
+    public TopicEventMailBuilder(ChronicApp app) {
         this.app = app;
     }
 
-    public String build(TopicEvent alert, TimeZone timeZone) {
-        this.alert = alert;
+    public String build(TopicEvent event, TimeZone timeZone) {
+        this.alert = event;
         this.timeZone = timeZone;
-        logger.info("build {}", alert.message);
+        logger.info("build {}", event.message);
         builder.append("<pre>\n");
-        if (alert.message.getAlertType() == AlertType.CONTENT_CHANGED) {
-            appendHeader(alert.message);
+        if (event.message.getAlertType() == AlertType.CONTENT_CHANGED) {
+            appendHeader(event.message);
             builder.append("\n<br><b>Changed lines:</b>\n");
-            builder.append(Strings.join("\n", alert.message.buildChanged(alert.previousMessage)));
-            if (alert.previousMessage != null) {
-                if (alert.previousMessage.getTimestamp() != alert.message.getTimestamp()) {
-                    appendPrevious(alert.previousMessage);
+            builder.append(Strings.join("\n", event.message.buildChanged(event.previousMessage)));
+            if (event.previousMessage != null) {
+                if (event.previousMessage.getTimestamp() != event.message.getTimestamp()) {
+                    appendPrevious(event.previousMessage);
                 }
             }
             builder.append('\n');
-        } else if (alert.message.getAlertType() == AlertType.STATUS_CHANGED) {
-            append(alert.message);
-            if (alert.previousMessage != null) {
-                appendPrevious(alert.previousMessage);
+        } else if (event.message.getAlertType() == AlertType.STATUS_CHANGED) {
+            append(event.message);
+            if (event.previousMessage != null) {
+                appendPrevious(event.previousMessage);
             }
         } else {
-            append(alert.message);
+            append(event.message);
         }
         builder.append(formatFooter(app.getProperties().getSiteUrl()));
         return builder.toString();

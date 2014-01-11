@@ -21,7 +21,9 @@
 package chronic.alert;
 
 import chronic.app.ChronicApp;
-import static chronic.alert.AlertMailBuilder.formatFooter;
+import static chronic.alert.TopicEventMailBuilder.formatFooter;
+import chronic.app.ChronicEntityService;
+import chronic.entity.Alert;
 import chronic.entity.Subscription;
 import java.io.IOException;
 import vellum.mail.Mailer;
@@ -35,19 +37,20 @@ import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.exception.Exceptions;
 import vellum.util.Args;
+import vellum.util.Calendars;
 
 /**
  *
  * @author evan.summers
  */
-public class ChronicMailMessenger {
+public class ChronicAlerter {
 
-    static Logger logger = LoggerFactory.getLogger(ChronicMailMessenger.class);
+    static Logger logger = LoggerFactory.getLogger(ChronicAlerter.class);
     ChronicApp app;
     Mailer mailer;
     Map<String, TopicEvent> alertMap = new HashMap();
 
-    public ChronicMailMessenger(ChronicApp app) {
+    public ChronicAlerter(ChronicApp app) {
         this.app = app;
     }
 
@@ -56,7 +59,9 @@ public class ChronicMailMessenger {
         mailer = new Mailer(app.getProperties().getMailerProperties());
     }
 
-    public void alert(TopicEvent event, List<Subscription> subscriptions) {
+    public void alert(ChronicEntityService es, TopicEvent event) {
+        List<Subscription> subscriptions =
+                es.listSubscriptions(event.getMessage().getTopic());
          logger.warn("alert {}", event.toString());
         for (Subscription subscription : subscriptions) {
             String email = subscription.getEmail();
@@ -71,17 +76,20 @@ public class ChronicMailMessenger {
                                 event.getMessage().getKey()));
                     }
                 }
-                event.setAlertedMessage(event.getMessage());
                 if (app.getProperties().getAdminDomains().contains(email)) {
+                    Alert alert = new Alert(event.getMessage().getTopic(),
+                            event.getMessage().getStatusType(),
+                            Calendars.newCalendar(timeZone, event.getMessage().getTimestamp()),
+                            email);
                     mailer.send(email, event.getMessage().getTopicLabel(),
-                        new AlertMailBuilder(app).build(event, timeZone));
+                            new TopicEventMailBuilder(app).build(event, timeZone));
                 }
             } catch (IOException | MessagingException e) {
                 logger.warn("{} {}", e.getMessage(), event);
             }
         }
     }
-
+    
     public void alert(Throwable t) {
         logger.warn("alert throwable", t);
         StringBuilder builder = new StringBuilder();

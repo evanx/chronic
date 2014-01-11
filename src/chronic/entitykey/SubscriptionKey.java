@@ -10,11 +10,11 @@ import vellum.data.ComparableTuple;
  *
  * @author evan.summers
  */
-public final class SubscriberKey extends ComparableTuple {
+public final class SubscriptionKey extends ComparableTuple {
     Long topicId;
     String email;
 
-    public SubscriberKey(Long topicId, String email) {
+    public SubscriptionKey(Long topicId, String email) {
         super(topicId, email);
         this.topicId = topicId;
         this.email = email;

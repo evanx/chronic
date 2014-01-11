@@ -44,10 +44,9 @@ public class TopicMessageChecker {
         return isAlertable(message, previous, alert);
     }
     
-    public static boolean isAlertable(TopicMessage message, TopicMessage previous, TopicEvent alert) {
+    public static boolean isAlertable(TopicMessage message, TopicMessage previous, TopicEvent event) {
         logger.info("isAlertable {}", Args.format(message.topicLabel, message.alertType, 
-                message.statusType, previous.statusType, message.matches(previous),
-                alert.getMessage().getStatusType()));
+                message.statusType, previous.statusType, event.getMessage().getStatusType()));
         if (message.alertType == AlertType.NEVER) {
             return false;
         }
@@ -62,15 +61,15 @@ public class TopicMessageChecker {
         } else if (message.alertType == AlertType.ERROR) {
         }
         if (message.alertType == AlertType.CONTENT_CHANGED) {
-            if (!message.matches(previous)) {
+            if (!TopicMessageMatcher.matches(message, previous)) {
                 message.statusType = StatusType.CONTENT_CHANGED;
                 return true;
             }
         }
         if (message.alertType == AlertType.STATUS_CHANGED) {
            if (message.isStatusAlertable() && message.statusType == previous.statusType
-                    && message.statusType != alert.getMessage().getStatusType()) {
-               logger.info("isAlertable {}", Args.format(alert.getMessage().getStatusType(),
+                    && message.statusType != event.getMessage().getStatusType()) {
+               logger.info("isAlertable {}", Args.format(event.getMessage().getStatusType(),
                        previous.statusType, message.statusType));
                return true;
            }

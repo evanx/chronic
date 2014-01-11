@@ -8,6 +8,7 @@
     <class>chronic.entity.OrgRole</class>
     <class>chronic.entity.Topic</class>
     <class>chronic.entity.Subscription</class>
+    <class>chronic.entity.Event</class>
     <class>chronic.entity.Alert</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/chronica"/>
@@ -15,8 +16,7 @@
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.user" value="chronica"/>
       <property name="eclipselink.logging.level" value="INFO"/>
-      <property name="eclipselink.ddl-generation" value="none"/>
-      <property name="javax.persistence.schema-generation.database.action" value="none"/>
+      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
     </properties>
   </persistence-unit>
   <persistence-unit name="testPU" transaction-type="RESOURCE_LOCAL">
@@ -27,13 +27,15 @@
     <class>chronic.entity.OrgRole</class>
     <class>chronic.entity.Topic</class>
     <class>chronic.entity.Subscription</class>
+    <class>chronic.entity.Event</class>
     <class>chronic.entity.Alert</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem"/>
-      <property name="javax.persistence.jdbc.password" value="sa"/>
-      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-      <property name="javax.persistence.jdbc.user" value="sa"/>
-      <property name="javax.persistence.schema-generation.database.action" value="create"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/chronica"/>
+      <property name="javax.persistence.jdbc.password" value="chronica"/>
+      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+      <property name="javax.persistence.jdbc.user" value="chronica"/>
+      <property name="eclipselink.logging.level" value="INFO"/>
+      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
     </properties>
   </persistence-unit>
 </persistence>

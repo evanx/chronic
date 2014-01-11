@@ -20,9 +20,9 @@
  */
 package chronic.message;
 
-import chronic.alert.AlertMailBuilder;
+import chronic.alert.TopicEventMailBuilder;
 import chronic.alert.TopicEvent;
-import chronic.alert.AlertEventMapper;
+import chronic.alert.TopicEventMapper;
 import chronic.app.ChronicApp;
 import java.util.TimeZone;
 import org.slf4j.Logger;
@@ -52,8 +52,8 @@ public class ChronicScriptMessenger {
             try {
                 Executor executor = new Executor();
                 executor.exec(app.getProperties().getAlertScript(),
-                        new AlertMailBuilder(app).build(alert, timeZone).getBytes(),
-                        new AlertEventMapper(alert, TimeZone.getDefault()).getExtendedMap());
+                        new TopicEventMailBuilder(app).build(alert, timeZone).getBytes(),
+                        new TopicEventMapper(alert, TimeZone.getDefault()).getExtendedMap());
                 if (executor.getExitCode() != 0 || !executor.getError().isEmpty()) {
                     logger.warn("process {}: {}", executor.getExitCode(), executor.getError());
                 }

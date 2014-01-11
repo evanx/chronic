@@ -24,8 +24,8 @@ import chronic.entity.Cert;
 import chronic.entity.Topic;
 import chronic.entitykey.OrgKey;
 import chronic.entitykey.OrgKeyed;
-import chronic.entitykey.CertTopicKey;
-import chronic.entitykey.CertTopicKeyed;
+import chronic.entitykey.TopicKey;
+import chronic.entitykey.TopicKeyed;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
@@ -39,7 +39,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.data.ComparableTuple;
 import vellum.data.Patterns;
 import vellum.util.Args;
 
@@ -47,7 +46,7 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-public class TopicMessage implements CertTopicKeyed, OrgKeyed {
+public class TopicMessage implements OrgKeyed {
 
     static Logger logger = LoggerFactory.getLogger(TopicMessage.class);
     List<String> lineList = new ArrayList();
@@ -80,13 +79,8 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
         this.cert = cert;
     }
 
-    public ComparableTuple getKey() {
-        return getCertTopicKey();
-    }
-
-    @Override
-    public CertTopicKey getCertTopicKey() {
-        return new CertTopicKey(cert.getId(), topicLabel);
+    public TopicKey getKey() {
+        return new TopicKey(cert.getId(), topicLabel);
     }
 
     @Override
@@ -221,14 +215,6 @@ public class TopicMessage implements CertTopicKeyed, OrgKeyed {
 
     public boolean isStatusAlertable() {
         return statusType != null && statusType.isStatusAlertable();
-    }
-
-    public boolean isAlertable(TopicMessage previous, TopicEvent alert) {
-        return TopicMessageChecker.isAlertable(this, previous, alert);
-    }
-
-    public boolean matches(TopicMessage other) {
-        return TopicMessageMatcher.matches(this, other);
     }
 
     public boolean isHtmlContent() {

@@ -42,7 +42,7 @@ public class Subscription extends ComparableEntity implements Enabled, JMapped, 
     @Column(name = "topic_id", insertable = false, updatable = false)
     long topicId;
     
-    @Column(insertable = false, updatable = false)
+    @Column(length = 64, insertable = false, updatable = false)
     String email;
     
     @Column()    

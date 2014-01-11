@@ -21,14 +21,19 @@
 package chronic.app;
 
 import chronic.alert.TopicMessage;
-import chronic.alert.ChronicMailMessenger;
+import chronic.alert.ChronicAlerter;
 import chronic.alert.TopicEvent;
 import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
+import chronic.alert.TopicMessageChecker;
+import chronic.entity.Alert;
+import chronic.entitykey.SubscriptionKey;
+import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
 import chronic.type.AlertEventType;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -38,14 +43,11 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import org.apache.log4j.MDC;
-import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
-import vellum.data.ComparableTuple;
 import vellum.httphandler.RedirectHttpsHandler;
 import vellum.ssl.OpenTrustManager;
 
@@ -57,16 +59,18 @@ public class ChronicApp {
 
     Logger logger = LoggerFactory.getLogger(ChronicApp.class);
     ChronicProperties properties = new ChronicProperties();
-    ChronicMailMessenger messenger = new ChronicMailMessenger(this);
+    ChronicAlerter alerter = new ChronicAlerter(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
     VellumHttpsServer appServer = new VellumHttpsServer();
     VellumHttpServer httpRedirectServer = new VellumHttpServer();
     VellumHttpServer insecureServer = new VellumHttpServer();
     Map<TopicMetricKey, MetricSeries> seriesMap = new ConcurrentHashMap();
-    Map<ComparableTuple, TopicMessage> recordMap = new ConcurrentHashMap();
-    Map<ComparableTuple, TopicEvent> eventMap = new ConcurrentHashMap();
-    LinkedBlockingQueue<TopicEvent> eventQueue = new LinkedBlockingQueue(100);
     LinkedBlockingQueue<TopicMessage> messageQueue = new LinkedBlockingQueue(100);
+    Map<TopicKey, TopicMessage> messageMap = new ConcurrentHashMap();
+    Map<TopicKey, TopicEvent> eventMap = new ConcurrentHashMap();
+    LinkedBlockingQueue<TopicEvent> eventQueue = new LinkedBlockingQueue(100);
+    LinkedList<TopicEvent> eventList = new LinkedList();
+    Map<SubscriptionKey, Alert> alertMap = new ConcurrentHashMap();
     EntityManagerFactory emf;
     boolean initalized = false;
     boolean running = true;
@@ -92,7 +96,7 @@ public class ChronicApp {
         appServer.start(properties.getAppServer(), 
                 new ChronicTrustManager(this),
                 new ChronicSecureHttpService(this));
-        messenger.init();
+        alerter.init();
         initThread.start();
     }
 
@@ -176,14 +180,16 @@ public class ChronicApp {
                 try {
                     es.begin();
                     TopicEvent topicEvent = eventQueue.poll(60, TimeUnit.SECONDS);
-                    if (topicEvent != null && handle(topicEvent)) {
-                            messenger.alert(topicEvent, 
-                                es.listSubscriptions(topicEvent.getMessage().getTopic()));
+                    if (topicEvent == null) {
+                    } else if (eventMap.get(topicEvent.getMessage().getKey()) != topicEvent) {
+                        logger.warn("event from queue differs to latest event in map");
+                    } else {
+                        alerter.alert(es, topicEvent);
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
                 } catch (Throwable t) {
-                    messenger.alert(t);
+                    alerter.alert(t);
                 } finally {
                     es.close();
                 }
@@ -191,18 +197,6 @@ public class ChronicApp {
         }
     }
 
-    private boolean handle(TopicEvent topicEvent) {
-        if (topicEvent.getPreviousEvent() == null) {
-            return true;
-        }
-        long elapsedMillis = topicEvent.getTimestamp() - topicEvent.getPreviousEvent().getTimestamp();
-        if (elapsedMillis < properties.getAlertPeriod()) {
-            logger.warn("alert period not elapsed {}: {}", elapsedMillis, topicEvent);
-            return false;
-        }
-        return true;
-    }
-                        
     class MessageThread extends Thread {
 
         @Override
@@ -210,29 +204,13 @@ public class ChronicApp {
             while (running) {
                 try {
                     TopicMessage message = messageQueue.poll(60, TimeUnit.SECONDS);
-                    if (message == null) {
-                    } else {
-                        int index = 0;
-                        for (MetricValue value : message.getMetricList()) {
-                            logger.info("series {}", value);
-                            if (value != null && value.getValue() != null) {
-                                TopicMetricKey key = new TopicMetricKey(message.getTopic().getId(), value.getLabel());
-                                key.setOrder(index);
-                                MetricSeries series = seriesMap.get(key);
-                                if (series == null) {
-                                    series = new MetricSeries(75, 50);
-                                    seriesMap.put(key, series);
-                                }
-                                series.add(message.getTimestamp(), value.getValue());
-                                logger.info("series {} {}", value.getLabel(), series);
-                            }                            
-                        }
-                        checkMessage(message);
+                    if (message != null) {
+                        handleMessage(message);
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
                 } catch (Throwable t) {
-                    messenger.alert(t);
+                    alerter.alert(t);
                 }
             }
         }
@@ -243,7 +221,7 @@ public class ChronicApp {
         @Override
         public void run() {
             try {
-                for (TopicMessage message : recordMap.values()) {
+                for (TopicMessage message : messageMap.values()) {
                     if (message.getPeriodMillis() != 0) {
                         checkElapsed(message);
                     }
@@ -251,7 +229,7 @@ public class ChronicApp {
             } catch (Exception e) {
                 logger.warn("run", e);
             } catch (Throwable t) {
-                messenger.alert(t);
+                alerter.alert(t);
             }
         }
     }
@@ -277,10 +255,24 @@ public class ChronicApp {
         }
     }
 
-    private void checkMessage(TopicMessage message) {
-        MDC.put("method", "checkMessage");
+    private void handleMessage(TopicMessage message) {
+        int index = 0;
+        for (MetricValue value : message.getMetricList()) {
+            logger.info("series {}", value);
+            if (value != null && value.getValue() != null) {
+                TopicMetricKey key = new TopicMetricKey(message.getTopic().getId(), value.getLabel());
+                key.setOrder(index);
+                MetricSeries series = seriesMap.get(key);
+                if (series == null) {
+                    series = new MetricSeries(75, 50);
+                    seriesMap.put(key, series);
+                }
+                series.add(message.getTimestamp(), value.getValue());
+                logger.info("series {} {}", value.getLabel(), series);
+            }
+        }
         logger.info("{}", message);
-        TopicMessage previousMessage = recordMap.put(message.getKey(), message);
+        TopicMessage previousMessage = messageMap.put(message.getKey(), message);
         TopicEvent previousEvent = eventMap.get(message.getKey());
         if (previousMessage == null) {
             logger.info("no previous status");
@@ -293,7 +285,7 @@ public class ChronicApp {
         } else if (message.getStatusType() == StatusType.CONTENT_ERROR) {
             TopicEvent event = new TopicEvent(message, previousMessage, previousEvent);
             eventMap.put(message.getKey(), event);
-        } else if (message.isAlertable(previousMessage, previousEvent)) {
+        } else if (TopicMessageChecker.isAlertable(message, previousMessage, previousEvent)) {
             TopicEvent event = new TopicEvent(message, previousMessage, previousEvent);
             if (previousEvent.getAlertEventType() == AlertEventType.INITIAL && 
                        !previousEvent.getMessage().isStatusAlertable()) {
@@ -310,7 +302,7 @@ public class ChronicApp {
                 if (period > Millis.fromSeconds(55) && period < Millis.fromSeconds(70)) {
                     message.setPeriodMillis(Millis.fromSeconds(60));
                     logger.info("set period {}", Millis.formatPeriod(period));
-                } else if (period > Millis.fromMinutes(55) && period < Millis.fromMinutes(70)) {
+                } else if (period > Millis.fromMinutes(58) && period < Millis.fromMinutes(62)) {
                     message.setPeriodMillis(Millis.fromMinutes(60));
                     logger.info("set period {}", Millis.formatPeriod(period));
                 }
@@ -318,7 +310,7 @@ public class ChronicApp {
         }
     }
 
-    public Map<ComparableTuple, TopicEvent> getEventMap() {
+    public Map<TopicKey, TopicEvent> getEventMap() {
         return eventMap;
     }   
 }

@@ -8,6 +8,6 @@ package chronic.entitykey;
  *
  * @author evan.summers
  */
-public interface AlertKeyed {
-    public AlertKey getAlertKey();
+public interface SubscriptionKeyed {
+    public SubscriptionKey getSubscriptionKey();
 }

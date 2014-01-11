@@ -30,33 +30,33 @@ import vellum.util.Strings;
  *
  * @author evan.summers
  */
-public class AlertWebContentBuilder {
+public class TopicEventWebContentBuilder {
 
-    static Logger logger = LoggerFactory.getLogger(AlertWebContentBuilder.class);
+    static Logger logger = LoggerFactory.getLogger(TopicEventWebContentBuilder.class);
 
-    TopicEvent alert;
+    TopicEvent event;
     String string;
 
-    public void build(TopicEvent alert) {
-        this.alert = alert;
-        if (alert.message.isHtmlContent()) {
+    public void build(TopicEvent event) {
+        this.event = event;
+        if (event.message.isHtmlContent()) {
             logger.info("html content");
-            alert.htmlContent = String.format("<pre>%s</pre>", 
+            event.htmlContent = String.format("<pre>%s</pre>", 
                     Strings.join("\n", getLineList()));
         } else {
             logger.info("preformatted content");
-            alert.preContent =  String.format("%s", 
+            event.preContent =  String.format("%s", 
                     Strings.join("\n", getLineList()));
         }
     }
 
     private Collection<String> getLineList() {
-        if (alert.message.statusType == StatusType.CONTENT_CHANGED) {
-            Collection changedLines = alert.message.buildChanged(alert.previousMessage);
+        if (event.message.statusType == StatusType.CONTENT_CHANGED) {
+            Collection changedLines = event.message.buildChanged(event.previousMessage);
             if (!changedLines.isEmpty()) {
                 return changedLines;
             }
         }
-        return Strings.trimLines(alert.message.lineList);
+        return Strings.trimLines(event.message.lineList);
     }
 }

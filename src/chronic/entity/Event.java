@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import vellum.entity.ComparableEntity;
 
@@ -24,16 +25,14 @@ import vellum.entity.ComparableEntity;
  * @author evan.summers
  */
 @Entity
-public class Alert extends ComparableEntity implements Serializable {
+@Table(name = "event")
+public class Event extends ComparableEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "alert_id")
+    @Column(name = "event_id")
     Long id;
 
-    @Column(length = 64)
-    String email;
-    
     @Column(name = "status", length = 32)
     @Enumerated(EnumType.STRING)
     StatusType statusType;
@@ -42,28 +41,18 @@ public class Alert extends ComparableEntity implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Calendar occurred;
 
-    @Column(name = "alerted")
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    Calendar alerted = Calendar.getInstance();
-    
-    @ManyToOne()
-    @JoinColumn(name = "email", referencedColumnName = "email",
-            insertable = false, updatable = false)
-    Person person;
-
     @ManyToOne()
     @JoinColumn(name = "topic_id", referencedColumnName = "topic_id",
             insertable = false, updatable = false)
     Topic topic;
         
-    public Alert() {
+    public Event() {
     }
 
-    public Alert(Topic topic, StatusType statusType, Calendar occurred, String email) {
+    public Event(Topic topic, StatusType statusType, Calendar occurred) {
         this.topic = topic;
         this.statusType = statusType;
         this.occurred = occurred;
-        this.email = email;
     }
     
     @Override
@@ -79,7 +68,4 @@ public class Alert extends ComparableEntity implements Serializable {
         return statusType;
     }
 
-    public String getEmail() {
-        return email;
-    }        
 }

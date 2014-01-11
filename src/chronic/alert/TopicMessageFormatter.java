@@ -26,21 +26,21 @@ import chronic.bundle.Bundle;
  *
  * @author evan.summers
  */
-public class AlertFormatter {
+public class TopicMessageFormatter {
 
-    TopicMessage status;
+    TopicMessage message;
 
-    public AlertFormatter(TopicMessage status) {
-        this.status = status;
+    public TopicMessageFormatter(TopicMessage message) {
+        this.message = message;
     }
 
     public String formatAlertTypeLabel() {
-        if (status.statusType != null && status.statusType.isStatusAlertable()) {
-            return status.statusType.getLabel();
-        } else if (status.statusType != null && status.alertType == null) {
-            return status.statusType.getLabel();
-        } else if (status.alertType != null) {
-            return status.alertType.getLabel();
+        if (message.statusType != null && message.statusType.isStatusAlertable()) {
+            return message.statusType.getLabel();
+        } else if (message.statusType != null && message.alertType == null) {
+            return message.statusType.getLabel();
+        } else if (message.alertType != null) {
+            return message.alertType.getLabel();
         } else {
             return Bundle.get("unknown");
         }

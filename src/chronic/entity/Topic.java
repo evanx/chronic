@@ -4,8 +4,8 @@
  */
 package chronic.entity;
 
-import chronic.entitykey.CertTopicKey;
-import chronic.entitykey.CertTopicKeyed;
+import chronic.entitykey.TopicKey;
+import chronic.entitykey.TopicKeyed;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
@@ -26,7 +26,7 @@ import vellum.jx.JMapped;
  * @author evan.summers
  */
 @Entity
-public class Topic extends ComparableEntity implements CertTopicKeyed, JMapped, Serializable {
+public class Topic extends ComparableEntity implements TopicKeyed, JMapped, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -55,7 +55,7 @@ public class Topic extends ComparableEntity implements CertTopicKeyed, JMapped, 
         this.topicLabel = topicLabel;
     }
     
-    public Topic(CertTopicKey key) {
+    public Topic(TopicKey key) {
         this(key.getCertId(), key.getTopicLabel());
     }
 
@@ -65,8 +65,8 @@ public class Topic extends ComparableEntity implements CertTopicKeyed, JMapped, 
     }
 
     @Override
-    public CertTopicKey getCertTopicKey() {
-        return new CertTopicKey(certId, topicLabel);
+    public TopicKey getTopicKey() {
+        return new TopicKey(certId, topicLabel);
     }    
 
     public Long getCertId() {
