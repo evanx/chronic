@@ -29,7 +29,7 @@ public class Alert extends ComparableEntity implements Serializable {
     Long id;
         
     @ManyToOne()
-    @JoinColumn(name = "person_id", referencedColumnName = "person_id",
+    @JoinColumn(name = "email", referencedColumnName = "email",
             insertable = false, updatable = false)
     Person person;
 
