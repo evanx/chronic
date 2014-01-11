@@ -32,9 +32,9 @@ import vellum.data.SafeDateFormat;
  *
  * @author evans
  */
-public class ChronicTest {
+public class TimeZoneTest {
 
-    static Logger logger = LoggerFactory.getLogger(ChronicTest.class);
+    static Logger logger = LoggerFactory.getLogger(TimeZoneTest.class);
 
     @Test
     public void timeZone() {

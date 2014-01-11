@@ -21,32 +21,40 @@
  */
 package chronic;
 
-import chronic.alert.MetricSeries;
-import chronic.type.MetricType;
-import java.util.TimeZone;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import chronic.entity.Cert;
+import chronic.entity.Org;
+import chronic.entity.OrgRole;
+import chronic.entity.Person;
+import chronic.entity.Topic;
+import chronic.entitykey.CertKey;
 
 /**
  *
  * @author evans
  */
-public class ChronicSeriesTest {
+public class EntityInfo {
 
-    static Logger logger = LoggerFactory.getLogger(ChronicSeriesTest.class);
-
-
-    public ChronicSeriesTest() {
-    }
+    String orgUnit = "test";
+    String address = "127.0.0.1";    
+    String encoded = "encoded";
     
-    @Test
-    public void test() {
-        MetricSeries series = new MetricSeries(10, 10);
-        for (int i = 0; i < 20; i++) {
-            series.add(System.currentTimeMillis(), 10 + i);
-        }
-        logger.info("map {}", series.getMap(TimeZone.getDefault(), MetricType.MINUTELY));
+    String commonName;
+    String orgDomain;
+    String topicLabel;
+    String email;
+    CertKey certKey;
+    Org org;
+    OrgRole orgRole;
+    Cert cert;
+    Topic topic;
+    Person person;
+
+    public EntityInfo(String orgDomain, String commonName, String topicLabel, String email) {
+        this.orgDomain = orgDomain;
+        this.commonName = commonName;
+        this.topicLabel = topicLabel;
+        this.email = email;
+        certKey = new CertKey(orgDomain, orgUnit, commonName);
     }
-    
+
 }
