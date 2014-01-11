@@ -19,20 +19,17 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package chronic.entity;
 
-import chronic.entity.Cert;
-import chronic.entity.Org;
-import chronic.entity.OrgRole;
-import chronic.entity.Person;
-import chronic.entity.Topic;
+import static chronic.entity.TestEntity.logger;
 import chronic.entitykey.CertKey;
+import java.util.List;
 
 /**
  *
  * @author evans
  */
-public class EntityInfo {
+public class TestEntityInfo {
 
     String orgUnit = "test";
     String address = "127.0.0.1";    
@@ -48,8 +45,9 @@ public class EntityInfo {
     Cert cert;
     Topic topic;
     Person person;
+    Alert alert;
 
-    public EntityInfo(String orgDomain, String commonName, String topicLabel, String email) {
+    public TestEntityInfo(String orgDomain, String commonName, String topicLabel, String email) {
         this.orgDomain = orgDomain;
         this.commonName = commonName;
         this.topicLabel = topicLabel;
@@ -57,4 +55,14 @@ public class EntityInfo {
         certKey = new CertKey(orgDomain, orgUnit, commonName);
     }
 
+    static void assertSize(String message, int size, List list) throws Exception {
+          if (list.size() != size) {
+              int index = 0;
+              for (Object element : list) {
+                  logger.info("list {} {}: " + element, index++, element.getClass().getSimpleName());
+              }
+              throw new Exception(message + ": list size " + list.size() + "; expected " + size);
+          }
+    }
+    
 }

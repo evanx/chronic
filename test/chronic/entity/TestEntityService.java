@@ -19,8 +19,9 @@
  specific language governing permissions and limitations
  under the License.  
  */
-package chronic;
+package chronic.entity;
 
+import chronic.TimeZoneTest;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entitytype.OrgRoleType;
@@ -36,16 +37,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author evans
  */
-public class EntityServiceTest {
+public class TestEntityService {
 
     static Logger logger = LoggerFactory.getLogger(TimeZoneTest.class);
 
     static ChronicApp app = new ChronicApp();
 
-    EntityInfo p1 = new EntityInfo("chronica.co", "root", "minutely", "evan.summers@gmail.com");
-    EntityInfo p2 = new EntityInfo("test.org", "chronica", "hourly", "evanx@chronica.co");
+    TestEntityInfo p1 = new TestEntityInfo("chronica.co", "root", "minutely", "evan.summers@gmail.com");
+    TestEntityInfo p2 = new TestEntityInfo("test.org", "chronica", "hourly", "evanx@chronica.co");
     
-    public EntityServiceTest() throws Exception {
+    public TestEntityService() throws Exception {
     }
 
     @BeforeClass
@@ -84,7 +85,7 @@ public class EntityServiceTest {
         Assert.assertEquals("org role", 2, es.listOrg(p1.email).size());
         Assert.assertEquals("org role", 1, es.listOrg(p2.email).size());
         Assert.assertEquals("certs org size", 1, es.listCerts(p1.org).size());
-        Assert.assertEquals("certs org size", 2, es.listCerts(p2.org).size());
+        TestEntityInfo.assertSize("certs org size", 2, es.listCerts(p2.org));
         es.rollback();
     }
     
