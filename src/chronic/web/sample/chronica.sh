@@ -67,7 +67,7 @@ then
   exit 1
 fi
 
-for prog in sha1sum stat
+for prog in sha1sum stat curl
 do
   if ! which $prog >/dev/null
   then

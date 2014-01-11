@@ -176,14 +176,9 @@ public class ChronicApp {
                 try {
                     es.begin();
                     TopicEvent topicEvent = eventQueue.poll(60, TimeUnit.SECONDS);
-                    if (topicEvent != null) {
-                        long elapsedMillis = topicEvent.getTimestamp() - topicEvent.getPreviousEvent().getTimestamp();
-                        if (elapsedMillis < properties.getAlertPeriod()) {
-                            logger.warn("alert period not elapsed {}: {}", elapsedMillis, topicEvent);
-                        } else {                           
+                    if (topicEvent != null && handle(topicEvent)) {
                             messenger.alert(topicEvent, 
                                 es.listSubscriptions(topicEvent.getMessage().getTopic()));
-                        }
                     }
                 } catch (InterruptedException e) {
                     logger.warn("run", e);
@@ -196,6 +191,18 @@ public class ChronicApp {
         }
     }
 
+    private boolean handle(TopicEvent topicEvent) {
+        if (topicEvent.getPreviousEvent() == null) {
+            return true;
+        }
+        long elapsedMillis = topicEvent.getTimestamp() - topicEvent.getPreviousEvent().getTimestamp();
+        if (elapsedMillis < properties.getAlertPeriod()) {
+            logger.warn("alert period not elapsed {}: {}", elapsedMillis, topicEvent);
+            return false;
+        }
+        return true;
+    }
+                        
     class MessageThread extends Thread {
 
         @Override

@@ -8,13 +8,32 @@
     <class>chronic.entity.OrgRole</class>
     <class>chronic.entity.Topic</class>
     <class>chronic.entity.Subscription</class>
+    <class>chronic.entity.Alert</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/chronica"/>
       <property name="javax.persistence.jdbc.password" value="chronica"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.user" value="chronica"/>
       <property name="eclipselink.logging.level" value="INFO"/>
-      <property name="eclipselink.ddl-generation" value="NONE"/>
+      <property name="eclipselink.ddl-generation" value="none"/>
+      <property name="javax.persistence.schema-generation.database.action" value="none"/>
+    </properties>
+  </persistence-unit>
+  <persistence-unit name="testPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>chronic.entity.Org</class>
+    <class>chronic.entity.Cert</class>
+    <class>chronic.entity.Person</class>
+    <class>chronic.entity.OrgRole</class>
+    <class>chronic.entity.Topic</class>
+    <class>chronic.entity.Subscription</class>
+    <class>chronic.entity.Alert</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem"/>
+      <property name="javax.persistence.jdbc.password" value="sa"/>
+      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+      <property name="javax.persistence.jdbc.user" value="sa"/>
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
 </persistence>

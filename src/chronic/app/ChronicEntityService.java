@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.security.cert.X509Certificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,18 +57,22 @@ public class ChronicEntityService {
     static Logger logger = LoggerFactory.getLogger(ChronicEntityService.class);
 
     ChronicApp app;
+    EntityManagerFactory emf;
     EntityManager em;
 
     public ChronicEntityService(ChronicApp app) {
-        this.app = app;
+        this(app, app.emf);
     }
 
-    public EntityManager getEntityManager() {
-        return em;
+    public ChronicEntityService(ChronicApp app, EntityManagerFactory emf) {
+        this.app = app;
+        this.emf = emf;
     }
     
+    
+
     public void begin() {
-        em = app.createEntityManager();
+        em = emf.createEntityManager();
         em.getTransaction().begin();
     }
 
