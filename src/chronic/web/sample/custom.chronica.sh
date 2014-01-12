@@ -20,10 +20,11 @@
 
 ### custom config 
 
-commonName='' # name of this publisher e.g. user@host
-orgUnit='' # network or group
 orgDomain='' # internet domain of your organisation 
-admins='' # emails of chronica admins for this organisation
+admins='' # emails of chronica admins for this organisation (comma/space separated)
+
+commonName=$USER@`hostname -s` # name of this publisher
+orgUnit='default' # network or group
 subscribers="$admins" # emails of default subcribers
 
 # Notes: 
