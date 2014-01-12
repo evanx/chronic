@@ -480,7 +480,8 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
 
                 <p><b>How much does it cost?</b>
                     <br>It's free and open. Bits and bytes are priceless ;)
-                    <br>When our AWS instance becomes overloaded, the largest users will be asked to allocate an AWS instance to the project, or to manage their own instance.
+                    <br>When our AWS instance is nearing its capacity, the largest users will be asked to contribute an AWS instance to the project, or to manage their own installation on their own infrastructure.
+                    Additional resource-intensive features can be enabled for users who have contributed an instance, e.g. their events and metrics recorded into the database.
                 </p>
 
                 <p><b>Who should try it?</b>
@@ -589,7 +590,7 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
 
                 <p><b>How are alerts triggered?</b>
                 <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore spurious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
-                And send us any suggestions for improvements e.g. how to better filter content. Code is even better.
+                And send us any suggestions for improvements e.g. how to better filter content. Code is even better ;)
                 </p>
 
                 <p><b>What about escalation?</b>
@@ -600,6 +601,14 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
                     <br>We are looking at using the platform for scheduling reminders, for ourselves ;)
                 </p>
 
+                <p><b>What about mobile app monitoring?</b>
+                    <br>We are looking at how to scale e.g. to handle millions of devices running a specific app which uses Chronica to report metrics on the app's performance.
+                    <br>Our thoughts are that metrics would be submitted using HTTPS without a client cert. These metrics are then aggregated across all devices, and presented via the site.
+                    This enables scalability, and also ensures privacy.
+                    If you are mobile app developer interested in such monitoring, please discuss your requirements with us. 
+                    Your contribution to the project would include an AWS account for Auto Scaling dedicated to your app.
+                </p>
+                
                 <p><b>How do I to contribute my improvements for inclusion?</b>        
                     <br>Contact evan.summers@gmail.com. 
                 </p>

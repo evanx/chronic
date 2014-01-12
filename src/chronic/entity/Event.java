@@ -37,6 +37,9 @@ public class Event extends ComparableEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     StatusType statusType;
     
+    @Column(length = 4096)
+    String content;
+    
     @Column(name = "occurred")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Calendar occurred;
