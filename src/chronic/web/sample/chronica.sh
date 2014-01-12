@@ -43,24 +43,6 @@ databaseTimeout=2
 
 ### default functions
 
-if ! set | grep -q '^commonName='
-then
-  commonName=$USER@`hostname -s`
-fi
-
-if ! set | grep -q '^orgDomain='
-then
-  custom=`dirname $0`/custom.chronica.sh
-  echo "No $custom"
-  exit 1
-fi
-
-if ! set | grep -q '^server='
-then
-  server="$orgDomain.secure.chronica.co:443"
-  echo "$server"
-fi
-
 c1topic() {
   echo "Topic: $1"
   echo "Subscribe: $subscribers"
@@ -139,6 +121,24 @@ then
 fi
 
 . $custom
+
+if ! set | grep -q '^commonName=.*[a-z]'
+then
+  commonName=$USER@`hostname -s`
+fi
+
+if ! set | grep -q '^orgDomain=.*[a-z]'
+then
+  custom=`dirname $0`/custom.chronica.sh
+  echo "No custom orgDomain defined in $custom"
+  exit 1
+fi
+
+if ! set | grep -q '^server='
+then
+  server="$orgDomain.secure.chronica.co:443"
+  echo "$server"
+fi
 
 
 ### overridable defaults
