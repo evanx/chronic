@@ -48,7 +48,7 @@ then
   commonName=$USER@`hostname -s`
 fi
 
-if set | grep -q '^orgDomain='
+if ! set | grep -q '^orgDomain='
 then
   custom=`dirname $0`/custom.chronica.sh
   echo "No $custom"
@@ -58,7 +58,7 @@ fi
 if ! set | grep -q '^server='
 then
   server="$orgDomain.secure.chronica.co:443"
-  echo $server
+  echo "$server"
 fi
 
 c1topic() {
