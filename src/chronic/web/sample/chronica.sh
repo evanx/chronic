@@ -43,14 +43,21 @@ databaseTimeout=2
 
 ### default functions
 
-if ! set | grep -q '^server='
-then
-  server=secure.chronica.co:443
-fi
-
 if ! set | grep -q '^commonName='
 then
   commonName=$USER@`hostname -s`
+fi
+
+if set | grep -q '^orgDomain='
+then
+  custom=`dirname $0`/custom.chronica.sh
+  echo "No $custom"
+  exit 1
+fi
+
+if ! set | grep -q '^server='
+then
+  server=$orgDomain.secure.chronica.co:443
 fi
 
 c1topic() {
@@ -806,7 +813,6 @@ c0updateCheck() {
   echo ' - chronica.sh.sha1.txt on github'
   echo -n `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum` 
   echo ' - chronica.sh on github'
-
 }
 
 c0update() {
