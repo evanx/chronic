@@ -775,6 +775,7 @@ c0updateInfo() {
   c0ensurePubKey
   echo 'Run the following commands to verify the digest and signature:'
   echo '('
+  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
   echo 'curl -s https://chronica.co/sample/chronica.sh | sha1sum'
   echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.txt'
   echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |'
