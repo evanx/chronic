@@ -1,4 +1,3 @@
-chronic
-=======
+See https://chronica.co (If logged in, click on "Chronica.co" for info)
 
-Acceptor, processor and messenger for scheduled custom monitoring 
+For (un)related articles, see https://github.com/evanx/vellum/wiki
