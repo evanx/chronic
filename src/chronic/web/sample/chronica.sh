@@ -58,6 +58,7 @@ fi
 if ! set | grep -q '^server='
 then
   server=$orgDomain.secure.chronica.co:443
+  echo $server
 fi
 
 c1topic() {
