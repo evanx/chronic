@@ -104,6 +104,9 @@ public class TopicEvent implements Timestamped {
 
     @Override
     public long getTimestamp() {
-        return previousMessage.getTimestamp();
+        if (previousMessage != null) {
+            return previousMessage.getTimestamp();
+        }
+        return message.getTimestamp();
     }
 }
