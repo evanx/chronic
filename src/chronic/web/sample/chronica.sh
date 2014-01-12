@@ -61,24 +61,30 @@ c1topic() {
 
 ### ensure expected environment
 
-if ! set | grep -q 'BASH=/bin/bash'
-then
-  echo "ERROR: this script requires the bash shell"
-  exit 1
-fi
-
-for prog in sha1sum stat curl
-do
-  if ! which $prog >/dev/null
+c0ensureBash() {
+  if ! set | grep -q 'BASH=/bin/bash'
   then
-    echo "ERROR: required program not installed: /usr/bin/$prog"
-    exit 1  
-  elif [ `which $prog` != "/usr/bin/$prog" ]
-  then
-    echo "ERROR: which $prog is not /usr/bin/$prog"
+    echo "ERROR: this script requires the bash shell"
     exit 1
   fi
-done
+}
+
+c0ensureBin() {
+  for prog in sha1sum stat curl
+  do
+    if ! which $prog >/dev/null
+    then
+      echo "ERROR: required program not installed: /usr/bin/$prog"
+      exit 1  
+    elif [ `which $prog` != "/usr/bin/$prog" ]
+    then
+      echo "ERROR: which $prog is not /usr/bin/$prog"
+      exit 1
+    fi
+  done
+}
+
+c0ensureBin
 
 
 ### init custom context
@@ -413,10 +419,14 @@ c2rtcp() {
 
 ### log file checks
 
-declare -A fileSizes
-declare -A fileHashes
+if set | grep -q 'BASH=/bin/bash'
+then
+  declare -A fileSizes
+  declare -A fileHashes
+fi
 
 c1verifyHead() {
+  c0ensureBash
   if echo " ${!fileSizes[@]} " | grep -q " $1 " 
   then
     if [ ! -f $1 ]
