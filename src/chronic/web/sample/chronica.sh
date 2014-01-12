@@ -802,8 +802,10 @@ c0updateCheck() {
   echo ' sha1sum https://chronica.co/sample/chronica.sh' 
   echo -n `curl -s https://chronica.co/sample/chronica.sh.sha1.txt` 
   echo ' - https://chronica.co/sample/chronica.sh.sha1.txt'
-  echo `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` '- chronica.sh.sha1.txt on github'
-  echo `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum` - chronica.sh on github
+  echo -n `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` 
+  echo ' - chronica.sh.sha1.txt on github'
+  echo -n `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum` 
+  echo ' - chronica.sh on github'
 
 }
 
