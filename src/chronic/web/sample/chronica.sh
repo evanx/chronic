@@ -838,6 +838,11 @@ c3postheaders() {
     --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" -H "$3" https://$server/post 
 }
 
+c2postTopicSub() {
+  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+    --data-binary @- -H 'Content-Type: text/plain' -H "Topic: $1" -H "Subscribe: $2" https://$server/post 
+}
+
 
 ### logging
 
