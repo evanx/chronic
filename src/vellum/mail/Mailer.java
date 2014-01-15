@@ -44,6 +44,7 @@ public class Mailer {
             logger.warn("disabled {} {}", recipient, subject);
             return;
         }
+        logger.info("email {}: {}", recipient, subject);
         Properties props = new Properties();
         props.put("mail.smtp.host", properties.getHost());
         props.put("mail.smtp.port", properties.getPort());

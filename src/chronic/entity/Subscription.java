@@ -139,6 +139,6 @@ public class Subscription extends ComparableEntity implements SubscriptionKeyed,
     
     @Override
     public String toString() {
-        return getId().toString();
+        return getSubscriptionKey().toString();
     }    
 }

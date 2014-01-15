@@ -24,6 +24,7 @@ package chronic.alert;
 
 import chronic.type.AlertEventType;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class TopicEvent implements Timestamped {
     TopicMessage previousMessage;
     TopicEvent previousEvent;
     List<String> changedLines;
-    List<String> pendingEmails;
+    List<String> pendingEmails = new LinkedList();
     String htmlContent;
     String preContent;
     AlertEventType alertEventType;

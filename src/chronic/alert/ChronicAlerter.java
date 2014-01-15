@@ -25,6 +25,7 @@ import chronic.app.ChronicEntityService;
 import chronic.entity.Alert;
 import chronic.entity.Subscription;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import javax.mail.MessagingException;
@@ -52,11 +53,12 @@ public class ChronicAlerter {
         try {
             es.begin();
             List<Subscription> subscriptions = es.listSubscriptions(event.getMessage().getTopic());
+            logger.info("subscriptions {}", subscriptions);
             es.close();
             for (Subscription subscription : subscriptions) {
                 event.getPendingEmails().add(subscription.getEmail());
             }
-            logger.warn("alert {}", event.toString());
+            logger.info("alert {}: pending emails {}", event.toString(), event.getPendingEmails());
             for (Subscription subscription : subscriptions) {
                 try {
                     if (event.getPendingEmails().contains(subscription.getEmail())) {
@@ -103,7 +105,9 @@ public class ChronicAlerter {
                 return true;
             }
         }        
-        if (app.getProperties().isAdmin(email)) {
+        if (!app.getProperties().isAdmin(email)) {
+            logger.warn("omit email alert: {}", email);
+        } else {
             app.getMailer().send(email, event.getMessage().getTopicLabel(),
                     new TopicEventMailBuilder(app).build(event, timeZone));
             app.getSentMap().put(email, event);
