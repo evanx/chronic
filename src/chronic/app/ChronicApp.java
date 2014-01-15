@@ -118,8 +118,10 @@ public class ChronicApp {
         messageThread.start();
         alertThread.start();
         logger.info("schedule {}", properties.getPeriod());
-        elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(), properties.getPeriod(),
-                properties.getPeriod(), TimeUnit.MILLISECONDS);
+        if (properties.getPeriod() > 0) {
+            elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(), properties.getPeriod(),
+                    properties.getPeriod(), TimeUnit.MILLISECONDS);
+        }
         logger.info("started");
     }
 
