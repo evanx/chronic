@@ -572,7 +572,7 @@ c0load() {
 
 c0diskspace() {
   diskStatus=OK
-  diskUsage=`df -h | grep '[0-9]%' | sed 's/.* \([0-9]*\)% .*/\1/' | sort -nr | head -1`
+  diskUsage=`df -h 2>/dev/null | grep '[0-9]%' | sed 's/.* \([0-9]*\)% .*/\1/' | sort -nr | head -1`
   [ $diskUsage -gt $diskWarningThreshold ] && diskStatus=WARNING
   [ $diskUsage -gt $diskCriticalThreshold ] && diskStatus=CRITICAL
   echo "Diskspace $diskStatus - $diskUsage%"
