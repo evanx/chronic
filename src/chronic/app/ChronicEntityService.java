@@ -31,7 +31,7 @@ import chronic.entitykey.TopicKey;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.PersonKey;
 import chronic.entitytype.OrgRoleType;
-import chronic.handler.CertInfo;
+import chronic.handler.web.CertInfo;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Calendar;

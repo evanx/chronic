@@ -5,11 +5,11 @@
 package chronic.app;
 
 import chronic.api.ChronicPlainHttpxHandler;
-import chronic.securehandler.AdminEnroll;
-import chronic.securehandler.AlertPoll;
-import chronic.securehandler.PushRegister;
-import chronic.securehandler.CertSubscribe;
-import chronic.securehandler.Post;
+import chronic.handler.secure.AdminEnroll;
+import chronic.handler.secure.AlertPoll;
+import chronic.handler.secure.PushRegister;
+import chronic.handler.secure.CertSubscribe;
+import chronic.handler.secure.Post;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -24,13 +24,13 @@ import vellum.httpserver.Httpx;
  *
  * @author evan.summers
  */
-public class ChronicSecureHttpService implements HttpHandler {
+public class SecureHttpService implements HttpHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ChronicSecureHttpService.class);
+    private final static Logger logger = LoggerFactory.getLogger(SecureHttpService.class);
     private final Map<String, Class<? extends ChronicPlainHttpxHandler>> plainHandlerClasses = new HashMap();
     private ChronicApp app;
 
-    public ChronicSecureHttpService(ChronicApp app) {
+    public SecureHttpService(ChronicApp app) {
         this.app = app;
         plainHandlerClasses.put("/post", Post.class);
         plainHandlerClasses.put("/push", PushRegister.class);

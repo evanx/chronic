@@ -60,7 +60,7 @@ public class ChronicHttpService implements HttpHandler {
 
     private ChronicHttpxHandler getHandler(String handlerName) throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        String className = "chronic.handler."
+        String className = "chronic.handler.web."
                 + Character.toUpperCase(handlerName.charAt(0)) + handlerName.substring(1);
         logger.trace("handler {}", className);
         return (ChronicHttpxHandler) Class.forName(className).newInstance();

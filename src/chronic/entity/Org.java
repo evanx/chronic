@@ -29,6 +29,9 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
     @Id
     @Column(name = "org_domain")
     String orgDomain;
+
+    @Column()
+    String server;
     
     @Column()
     String label;

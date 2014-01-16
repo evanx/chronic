@@ -101,7 +101,7 @@ public class ChronicApp {
                 new ChronicInsecureHttpService(this));
         appServer.start(properties.getAppServer(), 
                 new ChronicTrustManager(this),
-                new ChronicSecureHttpService(this));
+                new SecureHttpService(this));
         initThread.start();
     }
 

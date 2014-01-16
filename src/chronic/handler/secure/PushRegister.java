@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.securehandler;
+package chronic.handler.secure;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicPlainHttpxHandler;

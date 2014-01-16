@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.securehandler;
+package chronic.handler.access;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
@@ -15,9 +15,9 @@ import vellum.jx.JMap;
  *
  * @author evan.summers
  */
-public class OrgEnroll implements ChronicHttpxHandler {
+public class Sign implements ChronicHttpxHandler {
     
-    Logger logger = LoggerFactory.getLogger(OrgEnroll.class);
+    Logger logger = LoggerFactory.getLogger(Sign.class);
  
     
     @Override

@@ -5,7 +5,7 @@
 package chronic.app;
 
 import chronic.api.ChronicPlainHttpxHandler;
-import chronic.securehandler.Post;
+import chronic.handler.secure.Post;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;

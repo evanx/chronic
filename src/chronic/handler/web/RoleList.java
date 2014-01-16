@@ -1,7 +1,7 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.handler;
+package chronic.handler.web;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
@@ -19,24 +19,22 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class RoleActionAll implements ChronicHttpxHandler {
+public class RoleList implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(RoleActionAll.class);
+    Logger logger = LoggerFactory.getLogger(RoleList.class);
   
-    ChronicHttpx httpx;
-    String email;
-    
     @Override
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
-        this.httpx = httpx;
-        email = httpx.getEmail();
         List roles = new LinkedList();
         for (OrgRole role : es.listRoles(httpx.getEmail())) {
-            if (!role.isEnabled()) {
-                role.setEnabled(true);
-            }
             roles.add(role.getMap());
+        }
+        if (roles.isEmpty() && httpx.getReferer().endsWith("/demo")) {
+            String adminEmail = app.getProperties().getAdminEmails().iterator().next();
+            for (OrgRole role : es.listRoles(adminEmail)) {
+                roles.add(role.getMap());
+            }
         }
         return JMaps.mapValue("roles", roles);
     }
