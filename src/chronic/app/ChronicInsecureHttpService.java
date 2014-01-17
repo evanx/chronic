@@ -4,7 +4,7 @@
  */
 package chronic.app;
 
-import chronic.api.ChronicPlainHttpxHandler;
+import chronic.api.PlainHttpxHandler;
 import chronic.handler.secure.Post;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -23,7 +23,7 @@ import vellum.exception.Exceptions;
 public class ChronicInsecureHttpService implements HttpHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ChronicInsecureHttpService.class);
-    private final Map<String, Class<? extends ChronicPlainHttpxHandler>> plainHandlerClasses = new HashMap();
+    private final Map<String, Class<? extends PlainHttpxHandler>> plainHandlerClasses = new HashMap();
     private ChronicApp app;
 
     public ChronicInsecureHttpService(ChronicApp app) {
@@ -39,7 +39,7 @@ public class ChronicInsecureHttpService implements HttpHandler {
             if (!httpx.isLocalhost()) {
                 throw new Exception("Only localhost allowed on this insecure http service");
             }
-            Class<? extends ChronicPlainHttpxHandler> handlerClass = plainHandlerClasses.get(path);
+            Class<? extends PlainHttpxHandler> handlerClass = plainHandlerClasses.get(path);
             logger.trace("handlerClass {} {}", path, handlerClass);
             if (handlerClass == null) {
                 throw new InstantiationException("No handler: " + path);
@@ -54,7 +54,7 @@ public class ChronicInsecureHttpService implements HttpHandler {
         }
     }
 
-    private void handle(ChronicPlainHttpxHandler handler, ChronicHttpx httpx) throws Exception {
+    private void handle(PlainHttpxHandler handler, ChronicHttpx httpx) throws Exception {
         ChronicEntityService es = new ChronicEntityService(app);
         try {
             app.ensureInitialized();

@@ -11,7 +11,7 @@ import chronic.app.ChronicHttpx;
  *
  * @author evan.summers
  */
-public interface ChronicPlainHttpxHandler {
+public interface PlainHttpxHandler {
     
     public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) throws Exception;
 }

@@ -6,7 +6,7 @@ package chronic.handler.secure;
 import chronic.app.ChronicHttpx;
 import chronic.alert.TopicEvent;
 import chronic.alert.TopicMessage;
-import chronic.api.ChronicPlainHttpxHandler;
+import chronic.api.PlainHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
@@ -25,7 +25,7 @@ import vellum.util.Strings;
  *
  * @author evan.summers
  */
-public class AlertPoll implements ChronicPlainHttpxHandler {
+public class AlertPoll implements PlainHttpxHandler {
 
     Logger logger = LoggerFactory.getLogger(AlertPoll.class);
     

@@ -4,10 +4,10 @@
  */
 package chronic.app;
 
-import chronic.api.ChronicPlainHttpxHandler;
+import chronic.api.PlainHttpxHandler;
 import chronic.handler.secure.AdminEnroll;
 import chronic.handler.secure.AlertPoll;
-import chronic.handler.secure.PushRegister;
+import chronic.handler.secure.Push;
 import chronic.handler.secure.CertSubscribe;
 import chronic.handler.secure.Post;
 import com.sun.net.httpserver.HttpExchange;
@@ -27,13 +27,13 @@ import vellum.httpserver.Httpx;
 public class SecureHttpService implements HttpHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(SecureHttpService.class);
-    private final Map<String, Class<? extends ChronicPlainHttpxHandler>> plainHandlerClasses = new HashMap();
+    private final Map<String, Class<? extends PlainHttpxHandler>> plainHandlerClasses = new HashMap();
     private ChronicApp app;
 
     public SecureHttpService(ChronicApp app) {
         this.app = app;
         plainHandlerClasses.put("/post", Post.class);
-        plainHandlerClasses.put("/push", PushRegister.class);
+        plainHandlerClasses.put("/push", Push.class);
         plainHandlerClasses.put("/enroll", AdminEnroll.class);
         plainHandlerClasses.put("/subscribe", CertSubscribe.class);
         plainHandlerClasses.put("/poll", AlertPoll.class);        
@@ -45,7 +45,7 @@ public class SecureHttpService implements HttpHandler {
         ChronicHttpx httpx = new ChronicHttpx(app, httpExchange);
         logger.trace("handle {}", path);
         try {
-            Class<? extends ChronicPlainHttpxHandler> handlerClass = plainHandlerClasses.get(path);
+            Class<? extends PlainHttpxHandler> handlerClass = plainHandlerClasses.get(path);
             logger.trace("handlerClass {} {}", path, handlerClass);
             if (handlerClass == null) {
                 throw new InstantiationException("No handler: " + path);
@@ -60,7 +60,7 @@ public class SecureHttpService implements HttpHandler {
         }
     }
 
-    private void handle(ChronicPlainHttpxHandler handler, ChronicHttpx httpx) throws Exception {
+    private void handle(PlainHttpxHandler handler, ChronicHttpx httpx) throws Exception {
         ChronicEntityService es = new ChronicEntityService(app);
         try {
             app.ensureInitialized();

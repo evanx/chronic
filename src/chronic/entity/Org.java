@@ -31,7 +31,7 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
     String orgDomain;
 
     @Column()
-    String server;
+    String server = "secure.chronica.co";
     
     @Column()
     String label;
@@ -124,6 +124,14 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
         return orgDomain;
     }
 
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    public String getServer() {
+        return server;
+    }
+    
     @Override
     public boolean isEnabled() {
         return enabled;

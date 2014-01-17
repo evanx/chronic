@@ -4,7 +4,7 @@
 package chronic.handler.secure;
 
 import chronic.app.ChronicHttpx;
-import chronic.api.ChronicPlainHttpxHandler;
+import chronic.api.PlainHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
@@ -20,7 +20,7 @@ import vellum.util.Strings;
  *
  * @author evan.summers
  */
-public class AdminEnroll implements ChronicPlainHttpxHandler {
+public class AdminEnroll implements PlainHttpxHandler {
     
     static Logger logger = LoggerFactory.getLogger(AdminEnroll.class);
     

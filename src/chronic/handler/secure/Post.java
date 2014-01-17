@@ -8,7 +8,7 @@ import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.alert.TopicMessage;
 import chronic.alert.TopicMessageParser;
-import chronic.api.ChronicPlainHttpxHandler;
+import chronic.api.PlainHttpxHandler;
 import chronic.alert.StatusCheck;
 import chronic.entity.Cert;
 import chronic.entity.Person;
@@ -22,7 +22,7 @@ import vellum.util.Streams;
  *
  * @author evan.summers
  */
-public class Post implements ChronicPlainHttpxHandler {
+public class Post implements PlainHttpxHandler {
 
     final static int contentLengthLimit = 4000;
     final static Logger logger = LoggerFactory.getLogger(Post.class);

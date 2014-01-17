@@ -4,7 +4,7 @@
 package chronic.handler.secure;
 
 import chronic.app.ChronicHttpx;
-import chronic.api.ChronicPlainHttpxHandler;
+import chronic.api.PlainHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author evan.summers
  */
-public class PushRegister implements ChronicPlainHttpxHandler {
+public class Push implements PlainHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(PushRegister.class);
+    Logger logger = LoggerFactory.getLogger(Push.class);
 
     @Override
     public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
