@@ -5,16 +5,16 @@ Content-Type: text/plain; charset=UTF-8
 Auto-Submitted: auto-generated
 X-Cron-Env: <SHELL=/bin/sh>
 
+
+Topic: much ado about nothing
+Alert: STATUS_CHANGED
+Period: 1m
 test
 Subject: custom subject
 INFO info here 
 WARN a warning
-arb
 ERROR an error
 blah blah
 INFO more info 
-that's all folks
-Alert: STATUS_CHANGED support
-Period: 1m
 TestService OK - info
 TestService CRITICAL - info
