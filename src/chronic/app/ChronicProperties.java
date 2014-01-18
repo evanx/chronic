@@ -57,6 +57,7 @@ public class ChronicProperties {
     private HttpServerProperties insecureServer = new HttpServerProperties(8081);
     private ExtendedProperties appServer;
     private ExtendedProperties webServer;
+    private ExtendedProperties signing;
     private Set<String> adminDomains;
     private Set<String> adminEmails;
     private Set<String> allowedOrgDomains;
@@ -88,6 +89,7 @@ public class ChronicProperties {
         }
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
+        signing = object.getProperties("signing");
         if (siteUrl.contains("chronica")) {
             byte[] bytes = Streams.readBytes(MailerTest.class.getResourceAsStream("app48.png"));
             mailerProperties.init(bytes, "chronica.co", "alerts@chronica.co");
@@ -213,4 +215,9 @@ public class ChronicProperties {
     public boolean isAllowedAddress(String remoteHostAddress) {
         return true;
     }
+
+    public ExtendedProperties getSigning() {
+        return signing;
+    }
+       
 }

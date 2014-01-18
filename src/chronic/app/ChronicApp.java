@@ -99,7 +99,7 @@ public class ChronicApp {
     public void init() throws Exception {
         properties.init();
         mailer = new Mailer(properties.getMailerProperties());
-        initSigning(properties.getWebServer());
+        initSigning(properties.getSigning());
         logger.info("properties {}", properties);
         webServer.start(properties.getWebServer(), 
                 new OpenTrustManager(),
