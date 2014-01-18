@@ -57,7 +57,7 @@ public class Sign implements PlainHttpxHandler {
         X509Certificate signedCert = CertReqs.sign(certReq, signingInfo.getSigningKey(), 
                 signingInfo.getSigningCert(), cert.getIssued().getTime(), 
                 cert.getExpired().getTime(), cert.getId());
-        logger.info("signedCert {}", signedCert);
+        logger.info("signedCert {}", signedCert.getSubjectDN());
         return Pems.buildCertPem(signedCert);
     }
 

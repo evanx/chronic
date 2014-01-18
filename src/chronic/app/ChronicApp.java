@@ -342,6 +342,7 @@ public class ChronicApp {
     private void initSigning(ExtendedProperties properties) 
             throws GeneralSecurityException, IOException {
         String keyStoreLocation = properties.getString("keyStoreLocation");
+        logger.info("signing {}", keyStoreLocation);
         char[] pass = properties.getPassword("pass");
         KeyStore keyStore = KeyStores.loadKeyStore("JKS", keyStoreLocation, pass);
         PrivateKey privateKey = KeyStores.findPrivateKey(keyStore, pass);
