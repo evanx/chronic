@@ -8,6 +8,8 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import javax.net.ssl.HttpsURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,17 +20,21 @@ import org.slf4j.LoggerFactory;
 public class Forward implements HttpHandler {
     
     static Logger logger = LoggerFactory.getLogger(Forward.class);
-    final int port;
     
-    public Forward(int port) {
-        this.port = port;
+    public Forward() {
     }
     
     @Override
-    public void handle(HttpExchange he) throws IOException {
-        String text = he.getRequestHeaders().getFirst("Cookie");
+    public void handle(HttpExchange http) throws IOException {
+        String text = http.getRequestHeaders().getFirst("Cookie");
         logger.info("cookie: {}", text);
-        
+        String url = "https://secure.chronica.co:8443" + http.getRequestURI().getPath();
+        HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+        copyStream(256, http.getRequestBody(), connection.getOutputStream());
+        copyStream(1024, connection.getInputStream(), http.getResponseBody());
+        http.close();
     }
     
     public static void copyStream(final int capacity, InputStream input, 
