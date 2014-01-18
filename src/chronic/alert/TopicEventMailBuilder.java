@@ -75,39 +75,39 @@ public class TopicEventMailBuilder {
         return builder.toString();
     }
 
-    private void appendPrevious(TopicMessage status) {
+    private void appendPrevious(TopicMessage message) {
         builder.append("\n<br><hr><b>Previously:</b>\n");
-        appendHeader(status);
-        appendContent(status);
+        appendHeader(message);
+        appendContent(message);
     }
 
-    private void append(TopicMessage status) {
-        appendHeader(status);
-        appendContent(status);
+    private void append(TopicMessage message) {
+        appendHeader(message);
+        appendContent(message);
     }
 
-    private void appendHeader(TopicMessage status) {
-        builder.append(String.format("<i>%s</i>", CalendarFormats.timestampFormat.format(timeZone, status.getTimestamp())));
-        builder.append(String.format(" <b>%s</b>", formatHeading(status)));
+    private void appendHeader(TopicMessage message) {
+        builder.append(String.format("<i>%s</i>", CalendarFormats.timestampFormat.format(timeZone, message.getTimestamp())));
+        builder.append(String.format(" <b>%s</b>", formatHeading(message)));
         String alertTypeStyle = "font-color: gray";
         builder.append(String.format(" <i style='%s'>(Alert on %s)</i>\n\n", alertTypeStyle,
-                status.getAlertType().getLabel()));
+                message.getAlertType().getLabel()));
     }
 
-    private void appendContent(TopicMessage status) {
-        builder.append(buildContent(status));
+    private void appendContent(TopicMessage message) {
+        builder.append(buildContent(message));
     }
 
-    public static String buildContent(TopicMessage status) {
+    public static String buildContent(TopicMessage message) {
         StringBuilder builder = new StringBuilder();
-        for (String line : Strings.trimLines(status.getLineList())) {
+        for (String line : Strings.trimLines(message.getLineList())) {
             if (line.trim().isEmpty() && builder.length() == 0) {
                 continue;
             }
-            if (line.equals(status.getSubject())) {
+            if (line.equals(message.getSubject())) {
                 continue;
             }
-            if (status.getAlertFormatType() == AlertFormatType.MINIMAL) {
+            if (message.getAlertFormatType() == AlertFormatType.MINIMAL) {
                 Matcher matcher = TopicMessagePatterns.SERVICE_STATUS.matcher(line);
                 if (matcher.find()) {
                     int index = line.indexOf(" - ");
@@ -134,23 +134,23 @@ public class TopicEventMailBuilder {
         builder.append(String.format(string, args));
     }
 
-    public static String formatHeading(TopicMessage status) {
-        logger.info("formatSubject {} {}", status.getStatusType());
-        if (status.isStatusKnown()) {
-            if (status.getStatusType() == StatusType.ELAPSED || status.getSubject() == null) {
-                return status.getTopicLabel()
-                        + " <i>" + status.getStatusType().getLabel() + "</i>";
-            } else if (!status.getSubject().contains(status.getStatusType().name())) {
-                return status.getSubject()
-                        + " <i>" + status.getStatusType().getLabel() + "</i>";
+    public static String formatHeading(TopicMessage message) {
+        logger.info("formatSubject {} {}", message.getStatusType());
+        if (message.isStatusKnown()) {
+            if (message.getStatusType() == StatusType.ELAPSED || message.getSubject() == null) {
+                return String.format("%s <b>%s</b> <i>%s</i>", message.getCert().getCommonName(),
+                        message.getTopicLabel(), message.getStatusType().getLabel());
+            } else if (!message.getSubject().contains(message.getStatusType().name())) {
+                return String.format("%s <i>%s</i>", message.getSubject(),
+                        message.getStatusType().getLabel());
             } else {
-                return status.getSubject();
+                return message.getSubject();
             }
         }
-        if (status.getSubject() == null) {
-            return status.getTopicLabel();
+        if (message.getSubject() == null) {
+            return message.getTopicLabel();
         }
-        return status.getSubject();
+        return message.getSubject();
     }
 
     public static String formatFooter(String siteUrl) {

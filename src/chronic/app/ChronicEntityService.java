@@ -21,6 +21,7 @@
 package chronic.app;
 
 import chronic.entity.Cert;
+import chronic.entity.IssuedCert;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
 import chronic.entity.Person;
@@ -63,7 +64,7 @@ public class ChronicEntityService {
     EntityManager em;
 
     public ChronicEntityService(ChronicApp app) {
-        this(app, app.emf);
+        this.app = app;
     }
 
     public ChronicEntityService(ChronicApp app, EntityManagerFactory emf) {
@@ -75,6 +76,9 @@ public class ChronicEntityService {
         if (em != null && em.isOpen()) {
             em.close();
             throw new PersistenceException("entity manager is open");
+        }
+        if (emf == null) {
+            emf = app.emf;
         }
         em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -150,6 +154,21 @@ public class ChronicEntityService {
         return list.get(0);
     }
 
+    public IssuedCert findIssuedCert(CertKey key, boolean enabled) throws StorageException {
+        List<IssuedCert> list = selectIssuedCert(key, enabled);
+        if (list.isEmpty()) {
+            return null;
+        }
+        if (list.size() > 1) {
+            throw new StorageException(StorageExceptionType.MULTIPLE_FOUND, IssuedCert.class, key);
+        }
+        return list.get(0);
+    }
+
+    public void remove(Object entity) throws StorageException {
+        em.remove(entity);
+    }
+    
     public OrgRole findOrgRole(OrgRoleKey key) throws StorageException {
         logger.info("findOrgRole {}", key);
         List<OrgRole> list = selectOrgRole(key);
@@ -303,6 +322,32 @@ public class ChronicEntityService {
                 setParameter("orgDomain", orgDomain).
                 getResultList();
     }
+
+    public List<IssuedCert> selectIssuedCert(CertKey certKey) {
+        return em.createQuery("select c from IssuedCert c"
+                + " where c.commonName = :commonName"
+                + " and c.orgUnit = :orgUnit"
+                + " and c.orgDomain = :orgDomain",
+                IssuedCert.class).
+                setParameter("commonName", certKey.getCommonName()).
+                setParameter("orgUnit", certKey.getOrgUnit()).
+                setParameter("orgDomain", certKey.getOrgDomain()).
+                getResultList();
+    }
+    
+    private List<IssuedCert> selectIssuedCert(CertKey certKey, boolean enabled) {
+        return em.createQuery("select c from IssuedCert c"
+                + " where c.commonName = :commonName"
+                + " and c.orgUnit = :orgUnit"
+                + " and c.orgDomain = :orgDomain"
+                + " and c.enabled = :enabled", 
+                IssuedCert.class).
+                setParameter("commonName", certKey.getCommonName()).
+                setParameter("orgUnit", certKey.getOrgUnit()).
+                setParameter("orgDomain", certKey.getOrgDomain()).
+                setParameter("enabled", enabled).
+                getResultList();
+    }
     
     private List<Cert> selectCert(CertKey certKey) {
         return em.createQuery("select c from Cert c"
@@ -365,6 +410,16 @@ public class ChronicEntityService {
                 getResultList();
     }
 
+    public Org persistOrg(String orgDomain) throws StorageException {
+        Org org = em.find(Org.class, orgDomain);
+        if (org == null) {
+            org = new Org(orgDomain);
+            em.persist(org);
+            logger.info("persist org {}", org);
+        }
+        return org;
+    }
+    
     public Cert persistCert(Httpx httpx) throws StorageException, CertificateException,
             SSLPeerUnverifiedException {
         X509Certificate certificate = httpx.getPeerCertficate();
@@ -391,9 +446,10 @@ public class ChronicEntityService {
         return persistCert(certInfo.getOrgDomain(), certInfo.getOrgUnit(), certInfo.getCommonName(), 
                 certInfo.getRemoteHostAddress(), certInfo.getEncoded());
     }
-    
-    public Cert persistCert(String orgDomain, String orgUnit, String commonName, String remoteHostAddress,
-            String encoded) throws StorageException, CertificateException {
+
+    public Cert persistCert(String orgDomain, String orgUnit, String commonName, 
+            String remoteHostAddress, String encoded) 
+            throws StorageException, CertificateException {
         boolean enabled = false;
         Org org = em.find(Org.class, orgDomain);
         if (org == null) {

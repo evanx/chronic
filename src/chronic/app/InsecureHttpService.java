@@ -9,7 +9,6 @@ import chronic.handler.secure.Post;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -20,13 +19,13 @@ import vellum.exception.Exceptions;
  *
  * @author evan.summers
  */
-public class ChronicInsecureHttpService implements HttpHandler {
+public class InsecureHttpService implements HttpHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ChronicInsecureHttpService.class);
+    private final static Logger logger = LoggerFactory.getLogger(InsecureHttpService.class);
     private final Map<String, Class<? extends PlainHttpxHandler>> plainHandlerClasses = new HashMap();
     private ChronicApp app;
 
-    public ChronicInsecureHttpService(ChronicApp app) {
+    public InsecureHttpService(ChronicApp app) {
         this.app = app;
         plainHandlerClasses.put("/post", Post.class);
     }

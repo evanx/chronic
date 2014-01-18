@@ -3,6 +3,7 @@
   <persistence-unit name="chronicPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>chronic.entity.Org</class>
+    <class>chronic.entity.IssuedCert</class>
     <class>chronic.entity.Cert</class>
     <class>chronic.entity.Person</class>
     <class>chronic.entity.OrgRole</class>
@@ -22,6 +23,7 @@
   <persistence-unit name="testPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>chronic.entity.Org</class>
+    <class>chronic.entity.IssuedCert</class>
     <class>chronic.entity.Cert</class>
     <class>chronic.entity.Person</class>
     <class>chronic.entity.OrgRole</class>

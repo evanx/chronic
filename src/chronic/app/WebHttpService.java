@@ -5,6 +5,8 @@
 package chronic.app;
 
 import chronic.api.ChronicHttpxHandler;
+import chronic.api.PlainHttpxHandler;
+import chronic.handler.access.Sign;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -18,28 +20,33 @@ import vellum.jx.JMap;
  *
  * @author evan.summers
  */
-public class ChronicHttpService implements HttpHandler {
+public class WebHttpService implements HttpHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ChronicHttpService.class);
+    private final static Logger logger = LoggerFactory.getLogger(WebHttpService.class);
     private final static WebHttpHandler webHandler = new WebHttpHandler("/chronic/web");
+    private final static String handlerPathPrefix = "/chronicapp/";
+    private final static String handlerClassPrefix = "chronic.handler.web.";
     private final ChronicApp app;
 
-    public ChronicHttpService(ChronicApp app) {
+    public WebHttpService(ChronicApp app) {
         this.app = app;
     }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        logger.info("handle");
         String path = httpExchange.getRequestURI().getPath();
-        logger.trace("handle {}", path);
+        logger.info("handle {}", path);
         try {
-            String handlerName = getHandlerName(path);
-            logger.trace("handlerName {} {}", path, handlerName);
-            if (handlerName != null) {
-                handle(getHandler(handlerName), httpExchange);
+            if (path.equals("/sign")) {
+                handle(new Sign(), new ChronicHttpx(app, httpExchange));
             } else {
-                webHandler.handle(httpExchange);
+                String handlerName = getHandlerName(path);
+                logger.trace("handlerName {} {}", path, handlerName);
+                if (handlerName != null) {
+                    handle(getHandler(handlerName), new ChronicHttpx(app, httpExchange));
+                } else {
+                    webHandler.handle(httpExchange);
+                }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
                 IOException e) {
@@ -51,23 +58,21 @@ public class ChronicHttpService implements HttpHandler {
     }
 
     private String getHandlerName(String path) {
-        final String prefix = "/chronicapp/";
-        if (path.startsWith(prefix)) {
-            return path.substring(prefix.length());
+        if (path.startsWith(handlerPathPrefix)) {
+            return path.substring(handlerPathPrefix.length());
         }
         return null;
     }
 
     private ChronicHttpxHandler getHandler(String handlerName) throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        String className = "chronic.handler.web."
+        String className = handlerClassPrefix
                 + Character.toUpperCase(handlerName.charAt(0)) + handlerName.substring(1);
         logger.trace("handler {}", className);
         return (ChronicHttpxHandler) Class.forName(className).newInstance();
     }
 
-    private void handle(ChronicHttpxHandler handler, HttpExchange httpe) {
-        ChronicHttpx httpx = new ChronicHttpx(app, httpe);        
+    private void handle(ChronicHttpxHandler handler, ChronicHttpx httpx) {
         ChronicEntityService es = new ChronicEntityService(app);
         try {
             app.ensureInitialized();
@@ -78,6 +83,24 @@ public class ChronicHttpService implements HttpHandler {
             es.commit();
         } catch (Exception e) {
             httpx.sendError(e);
+            es.rollback();
+            e.printStackTrace(System.out);
+        } finally {
+            es.close();
+        }
+    }
+    
+    private void handle(PlainHttpxHandler handler, ChronicHttpx httpx) {
+        ChronicEntityService es = new ChronicEntityService(app);
+        try {
+            app.ensureInitialized();
+            es.begin();
+            String response = handler.handle(app, httpx, es);
+            logger.trace("response {}", response);
+            httpx.sendPlainResponse(response);
+            es.commit();
+        } catch (Exception e) {
+            httpx.sendPlainError(String.format("ERROR: %s\n", e.getMessage()));
             es.rollback();
             e.printStackTrace(System.out);
         } finally {

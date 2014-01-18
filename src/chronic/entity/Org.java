@@ -45,7 +45,7 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
     String country;
 
     @Column()
-    boolean enabled;
+    boolean enabled = true;
             
     public Org() {
     }

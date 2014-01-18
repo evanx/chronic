@@ -34,6 +34,11 @@ import chronic.entitykey.TopicMetricKey;
 import chronic.type.AlertEventType;
 import chronic.type.AlertType;
 import chronic.type.StatusType;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -52,7 +57,9 @@ import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.httphandler.RedirectHttpsHandler;
 import vellum.mail.Mailer;
+import vellum.security.KeyStores;
 import vellum.ssl.OpenTrustManager;
+import vellum.util.ExtendedProperties;
 
 /**
  *
@@ -83,6 +90,7 @@ public class ChronicApp {
     Thread messageThread = new MessageThread();
     Thread alertThread = new EventThread();
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
+    SigningInfo signingInfo;
 
     public ChronicApp() {
         super();
@@ -91,14 +99,15 @@ public class ChronicApp {
     public void init() throws Exception {
         properties.init();
         mailer = new Mailer(properties.getMailerProperties());
+        initSigning(properties.getWebServer());
         logger.info("properties {}", properties);
         webServer.start(properties.getWebServer(), 
                 new OpenTrustManager(),
-                new ChronicHttpService(this));
+                new WebHttpService(this));
         httpRedirectServer.start(properties.getHttpRedirectServer(), 
                 new RedirectHttpsHandler());
         insecureServer.start(properties.getInsecureServer(), 
-                new ChronicInsecureHttpService(this));
+                new InsecureHttpService(this));
         appServer.start(properties.getAppServer(), 
                 new ChronicTrustManager(this),
                 new SecureHttpService(this));
@@ -329,4 +338,20 @@ public class ChronicApp {
             }
         }
     }
+
+    private void initSigning(ExtendedProperties properties) 
+            throws GeneralSecurityException, IOException {
+        String keyStoreLocation = properties.getString("keyStoreLocation");
+        char[] pass = properties.getPassword("pass");
+        KeyStore keyStore = KeyStores.loadKeyStore("JKS", keyStoreLocation, pass);
+        PrivateKey privateKey = KeyStores.findPrivateKey(keyStore, pass);
+        X509Certificate cert = KeyStores.findPrivateKeyCertificate(keyStore);
+        logger.info("signing {}", cert.getSubjectDN());
+        int validityDays = properties.getInt("validityDays", 365);
+        signingInfo = new SigningInfo(validityDays, privateKey, cert);
+    }
+
+    public SigningInfo getSigningInfo() {
+        return signingInfo;
+    }        
 }
