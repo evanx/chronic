@@ -11,6 +11,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.cert.X509Certificate;
 import vellum.httpserver.Httpx;
 import vellum.security.Certificates;
+import vellum.security.DnameType;
 import vellum.security.X509Certificates;
 import vellum.storage.StorageException;
 
@@ -31,9 +32,9 @@ public class CertInfo implements CertKeyed {
         certificate = httpx.getPeerCertficate();
         remoteHostAddress = httpx.getRemoteHostAddress();
         encoded = X509Certificates.getEncodedPublicKey(certificate);
-        commonName = Certificates.getCommonName(certificate.getSubjectDN());
-        orgDomain = Certificates.getOrg(certificate.getSubjectDN());
-        orgUnit = Certificates.getOrgUnit(certificate.getSubjectDN());
+        commonName = Certificates.get(DnameType.CN, certificate.getSubjectDN());
+        orgDomain = Certificates.get(DnameType.O, certificate.getSubjectDN());
+        orgUnit = Certificates.get(DnameType.OU, certificate.getSubjectDN());
     }
 
     public X509Certificate getCertificate() {

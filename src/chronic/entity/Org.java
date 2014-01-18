@@ -14,7 +14,6 @@ import vellum.data.Patterns;
 import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
-import vellum.security.Certificates;
 import vellum.type.Enabled;
 import vellum.validation.ValidationException;
 import vellum.validation.ValidationExceptionType;
@@ -141,10 +140,6 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
         this.enabled = enabled;
     }
 
-    public String formatDname(String cn, String ou) {
-        return Certificates.formatDname(cn, ou, orgDomain, locality, region, country);
-    }
-    
     public void validate() throws ValidationException {
         if (!Patterns.matchesDomain(orgDomain)) {
             throw new ValidationException(ValidationExceptionType.INVALID_DOMAIN, orgDomain);

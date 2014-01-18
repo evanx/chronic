@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httpserver.Httpx;
 import vellum.security.Certificates;
+import vellum.security.DnameType;
 import vellum.security.X509Certificates;
 import vellum.storage.StorageException;
 import vellum.storage.StorageExceptionType;
@@ -375,9 +376,9 @@ public class ChronicEntityService {
             throws StorageException, CertificateException,
             SSLPeerUnverifiedException {
         String encoded = X509Certificates.getEncodedPublicKey(certificate);
-        String commonName = Certificates.getCommonName(certificate.getSubjectDN());
-        String orgDomain = Certificates.getOrg(certificate.getSubjectDN());
-        String orgUnit = Certificates.getOrgUnit(certificate.getSubjectDN());
+        String commonName = Certificates.get(DnameType.CN, certificate.getSubjectDN());
+        String orgDomain = Certificates.get(DnameType.O, certificate.getSubjectDN());
+        String orgUnit = Certificates.get(DnameType.OU, certificate.getSubjectDN());
         if (!app.getProperties().isAllowedDomain(orgDomain)) {
             throw new CertificateException("org not allowed: " + orgDomain);
         } else if (!app.getProperties().isAllowedAddress(remoteHostAddress)) {
