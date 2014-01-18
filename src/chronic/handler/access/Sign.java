@@ -43,8 +43,9 @@ public class Sign implements PlainHttpxHandler {
             if (cert.isEnabled()) {
                 logger.warn("issued cert exists {}", certKey);
                 return "ERROR: certificate already exists" ;
-            } else {
-                es.remove(cert);
+            } else if (cert.getRevoked() != null) {
+                cert.setRevoked(Calendar.getInstance());
+                es.persist(cert);
             }
         }
         IssuedCert cert = new IssuedCert(certKey);
