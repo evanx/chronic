@@ -86,14 +86,6 @@ public class TopicEventMailBuilder {
         appendContent(message);
     }
 
-    private void appendHeader(TopicMessage message) {
-        builder.append(String.format("<i>%s</i>", CalendarFormats.timestampFormat.format(timeZone, message.getTimestamp())));
-        builder.append(String.format(" <b>%s</b>", formatHeading(message)));
-        String alertTypeStyle = "font-color: gray";
-        builder.append(String.format(" <i style='%s'>(Alert on %s)</i>\n\n", alertTypeStyle,
-                message.getAlertType().getLabel()));
-    }
-
     private void appendContent(TopicMessage message) {
         builder.append(buildContent(message));
     }
@@ -125,32 +117,14 @@ public class TopicEventMailBuilder {
         return builder.toString();
     }
 
-    private void appendln(String string) {
-        builder.append(string);
-        builder.append('\n');
-    }
-
-    private void appendf(String string, Object... args) {
-        builder.append(String.format(string, args));
-    }
-
-    public static String formatHeading(TopicMessage message) {
+    private void appendHeader(TopicMessage message) {
         logger.info("formatSubject {} {}", message.getStatusType());
-        if (message.isStatusKnown()) {
-            if (message.getStatusType() == StatusType.ELAPSED || message.getSubject() == null) {
-                return String.format("%s <b>%s</b> <i>%s</i>", message.getCert().getCommonName(),
-                        message.getTopicLabel(), message.getStatusType().getLabel());
-            } else if (!message.getSubject().contains(message.getStatusType().name())) {
-                return String.format("%s <i>%s</i>", message.getSubject(),
-                        message.getStatusType().getLabel());
-            } else {
-                return message.getSubject();
-            }
+        builder.append(String.format("<i>%s</i>", CalendarFormats.timestampFormat.format(timeZone, message.getTimestamp())));
+        if (!message.topicLabel.contains(message.getCert().getCommonName())) {
+            builder.append(String.format(" %s", message.getCert().getCommonName()));
         }
-        if (message.getSubject() == null) {
-            return message.getTopicLabel();
-        }
-        return message.getSubject();
+        builder.append(String.format(" <b>%s</b>", message.getTopic()));
+        builder.append(String.format(" %s", message.getStatusType().getLabel()));
     }
 
     public static String formatFooter(String siteUrl) {
@@ -158,5 +132,4 @@ public class TopicEventMailBuilder {
         return String.format("<hr><a style='%s' href='%s'><img src='cid:image'/></a>", style,
                 siteUrl, siteUrl);
     }
-
 }
