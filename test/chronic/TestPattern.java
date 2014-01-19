@@ -21,9 +21,10 @@
  */
 package chronic;
 
-import chronic.alert.TopicMessageMatcher;
 import chronic.alert.TopicMessagePatterns;
+import chronic.handler.access.Forward;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -48,6 +49,21 @@ public class TestPattern {
         Assert.assertEquals("test", matcher.group(2));
     }
 
+    @Test
+    public void serverPatternDesign() {
+        final Pattern serverPattern = Pattern.compile(" server=([^ ;]*)");    
+        Matcher matcher = serverPattern.matcher(" server=s123.chronica.co ; ");
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals("s123.chronica.co", matcher.group(1));
+    }
+    
+    //@Test
+    public void serverPattern() {
+        Matcher matcher = Forward.SERVER_PATTERN.matcher(" server=s123.chronica.co");
+        Assert.assertTrue(matcher.find());
+        Assert.assertEquals("s123.chronica.co", matcher.group(1));
+    }
+    
     @Test
     public void mimicPattern() {
         Assert.assertTrue("https://chronica/mimic".matches(".*\\Wmimic\\W*.*"));
