@@ -99,7 +99,7 @@ public class ChronicAlerter {
             long elapsed = System.currentTimeMillis() - previousAlert.getAlerted().getTimeInMillis();
             if (elapsed < app.getProperties().getAlertPeriod()) {
                 logger.warn("elapsed {}: {}", Millis.formatPeriod(elapsed), previousAlert);
-            } else if (previousAlert.getStatusType().isStatusAlertable() &&
+            } else if (previousAlert.getStatusType().isStatus() &&
                     previousAlert.getStatusType() == event.getMessage().getStatusType()) {
                 logger.error("status: {}", previousAlert);
                 return true;

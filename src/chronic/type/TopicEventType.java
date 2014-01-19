@@ -11,7 +11,7 @@ import vellum.type.Labelled;
  *
  * @author evan.summers
  */
-public enum AlertEventType implements Labelled {
+public enum TopicEventType implements Labelled {
     ERROR,
     INITIAL;
     

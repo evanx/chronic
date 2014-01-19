@@ -39,7 +39,7 @@ public class AlertList implements ChronicHttpxHandler {
             if (es.isSubscription(event.getMessage().getTopic().getId(), email)) {
                 alerts.add(mapper.getExtendedMap());
             } else if (httpx.getReferer().endsWith("/demo")) {
-                if (event.getMessage().getStatusType().isStatusKnown() && event.getMessage().getAlertType().isPollable()) {
+                if (event.getMessage().getStatusType().isKnown() && event.getMessage().getAlertType().isPollable()) {
                     alerts.add(mapper.getBasicMap());
                 }
             } else if (app.getProperties().isAdmin(email)) {

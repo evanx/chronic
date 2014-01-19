@@ -59,7 +59,7 @@ public class ServiceStatus {
     }
     
     public boolean isStatusAlertable() {
-        return statusType != null && statusType.isStatusAlertable();
+        return statusType != null && statusType.isStatus();
     }
     
     @Override

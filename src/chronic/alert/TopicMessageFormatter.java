@@ -35,7 +35,7 @@ public class TopicMessageFormatter {
     }
 
     public String formatAlertTypeLabel() {
-        if (message.statusType != null && message.statusType.isStatusAlertable()) {
+        if (message.statusType != null && message.statusType.isStatus()) {
             return message.statusType.getLabel();
         } else if (message.statusType != null && message.alertType == null) {
             return message.statusType.getLabel();

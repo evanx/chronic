@@ -22,7 +22,8 @@ package chronic.alert;
  */
 
 
-import chronic.type.AlertEventType;
+import chronic.type.TopicEventType;
+import chronic.type.StatusType;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,35 +40,40 @@ public class TopicEvent implements Timestamped {
     static Logger logger = LoggerFactory.getLogger(TopicEvent.class);
     TopicMessage message;
     TopicMessage previousMessage;
-    TopicEvent previousEvent;
     List<String> changedLines;
     List<String> pendingEmails = new LinkedList();
     String htmlContent;
     String preContent;
-    AlertEventType alertEventType;
+    TopicEventType eventType;
     Calendar polled;
-    
+    long timestamp;
+    long period;
+
     public TopicEvent(TopicMessage message) {
         this.message = message;
     }
-    
+
+    public TopicEvent(TopicMessage message, TopicEventType eventType) {
+        this.message = message;
+        this.eventType = eventType;
+    }
+        
     public TopicEvent(TopicMessage message, TopicMessage previousMessage) {
         this.message = message;
         this.previousMessage = previousMessage;
     }
-
-    public TopicEvent(TopicMessage message, TopicMessage previousMessage, TopicEvent previousEvent) {
-        this.message = message;
-        this.previousMessage = previousMessage;
-        this.previousEvent = previousEvent;
+    
+    @Override
+    public long getTimestamp() {
+        return message.getTimestamp();
     }
     
-    public void setAlertEventType(AlertEventType alertEventType) {
-        this.alertEventType = alertEventType;
+    public void setAlertEventType(TopicEventType alertEventType) {
+        this.eventType = alertEventType;
     }
     
-    public AlertEventType getAlertEventType() {
-        return alertEventType;
+    public TopicEventType getAlertEventType() {
+        return eventType;
     }
         
     public TopicMessage getMessage() {
@@ -82,10 +88,6 @@ public class TopicEvent implements Timestamped {
         return previousMessage;
     }
     
-    public TopicEvent getPreviousEvent() {
-        return previousEvent;
-    }
-
     public Calendar getPolled() {
         return polled;
     }
@@ -97,17 +99,9 @@ public class TopicEvent implements Timestamped {
     public List<String> getPendingEmails() {
         return pendingEmails;
     }
-        
+
     @Override
     public String toString() {
         return message.toString();
-    }    
-
-    @Override
-    public long getTimestamp() {
-        if (previousMessage != null) {
-            return previousMessage.getTimestamp();
-        }
-        return message.getTimestamp();
     }
 }

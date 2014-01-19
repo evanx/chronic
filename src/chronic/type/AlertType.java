@@ -14,17 +14,21 @@ import vellum.type.Labelled;
 public enum AlertType implements Labelled {
     STATUS_CHANGED,
     CONTENT_CHANGED,
-    NEVER,
+    ALWAYS,
     WARNING,
     ERROR,
     PATTERN,
-    SERVER_RESTARTED,
-    ALWAYS;
-    
+    NEVER,
+    SERVER_RESTARTED;
+
     public boolean isPollable() {
-        return ordinal() <= CONTENT_CHANGED.ordinal();
+        return ordinal() < ALWAYS.ordinal();
     }
     
+    public boolean isAlertable() {
+        return ordinal() < NEVER.ordinal();
+    }
+        
     public static AlertType parse(String string) {
         for (AlertType type : values()) {
             if (string.equalsIgnoreCase(type.name())) {
@@ -38,6 +42,5 @@ public enum AlertType implements Labelled {
     public String getLabel() {
         return Bundle.get(getClass()).getString(name());
     }
-    
     
 }

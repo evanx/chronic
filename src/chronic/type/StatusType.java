@@ -11,30 +11,25 @@ import chronic.bundle.Bundle;
  * @author evan.summers
  */
 public enum StatusType {            
+    CONTENT_ERROR,
     UNKNOWN,    
     OK,
     WARNING,
     CRITICAL,
     CONTENT_CHANGED,
     ELAPSED,
-    RESUMED,
-    CONTENT_ERROR;
+    RESUMED;
 
-    public boolean isStatusAlertable() {
+    public boolean isKnown() {
+        return ordinal() > UNKNOWN.ordinal();
+    }
+        
+    public boolean isStatus() {
         return this == OK || this == WARNING || this == CRITICAL;
     }
 
-    public boolean isStatusKnown() {
-        return this != UNKNOWN;
-    }
-
-    public boolean isStatusGreater(StatusType statusType) {
-        return statusType == null || statusType == UNKNOWN || statusType.ordinal() < ordinal();
-    }
-    
     public String getLabel() {
         return Bundle.get(StatusType.class).getString(name());
     }
-    
-    
+
 }

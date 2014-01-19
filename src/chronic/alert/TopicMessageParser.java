@@ -196,7 +196,7 @@ public class TopicMessageParser {
     private void parseStatusInfo(String status, String info) {
         logger.debug("parseStatusInfo {} {}", status, info);
         StatusType statusType = StatusType.valueOf(status);
-        if (statusType.isStatusGreater(topicMessage.statusType)) {
+        if (topicMessage.statusType == null || statusType.ordinal() > topicMessage.statusType.ordinal()) {
             topicMessage.statusType = statusType;
         }
     }
@@ -289,7 +289,7 @@ public class TopicMessageParser {
         }
         for (ServiceStatus status : topicMessage.statusList) {
             StatusType statusType = status.getStatusType();
-            if (statusType.isStatusGreater(topicMessage.statusType)) {
+            if (topicMessage.statusType == null || statusType.ordinal() > topicMessage.statusType.ordinal()) {
                 topicMessage.statusType = statusType;
                 serviceLabel = status.getServiceLabel();
             }

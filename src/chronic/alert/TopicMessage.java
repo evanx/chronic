@@ -213,8 +213,8 @@ public class TopicMessage implements OrgKeyed {
         return statusType != null && statusType != StatusType.UNKNOWN;
     }
 
-    public boolean isStatusAlertable() {
-        return statusType != null && statusType.isStatusAlertable();
+    public boolean isStatus() {
+        return statusType != null && statusType.isStatus();
     }
 
     public boolean isHtmlContent() {

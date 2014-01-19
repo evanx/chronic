@@ -42,7 +42,7 @@ public class AlertPoll implements PlainHttpxHandler {
         }
         for (TopicEvent event : Lists.sortedLinkedList(app.getEventMap().values(),
                 TimestampedComparator.reverse())) {
-            if (event.getPolled() == null && event.getMessage().getStatusType().isStatusKnown() && 
+            if (event.getPolled() == null && event.getMessage().getStatusType().isKnown() && 
                     event.getMessage().getAlertType().isPollable() &&
                     System.currentTimeMillis() - event.getTimestamp() < Millis.fromMinutes(3)) {
                 event.setPolled(Calendar.getInstance(timeZone));
