@@ -86,12 +86,17 @@ public class TopicEventMailBuilder {
         appendContent(message);
     }
 
-    private void appendContent(TopicMessage message) {
-        builder.append(buildContent(message));
-    }
 
-    public static String buildContent(TopicMessage message) {
-        StringBuilder builder = new StringBuilder();
+    private void appendHeader(TopicMessage message) {
+        builder.append(String.format("<i>%s</i>", CalendarFormats.timestampFormat.format(timeZone, message.getTimestamp())));
+        if (!message.topicLabel.contains(message.getCert().getCommonName())) {
+            builder.append(String.format(" %s", message.getCert().getCommonName()));
+        }
+        builder.append(String.format(" <b>%s</b>", message.getTopic().getTopicLabel()));
+        builder.append(String.format(" %s\n", message.getStatusType().getLabel()));
+    }
+    
+    private void appendContent(TopicMessage message) {
         for (String line : Strings.trimLines(message.getLineList())) {
             if (line.trim().isEmpty() && builder.length() == 0) {
                 continue;
@@ -114,17 +119,6 @@ public class TopicEventMailBuilder {
                 builder.append('\n');
             }
         }
-        return builder.toString();
-    }
-
-    private void appendHeader(TopicMessage message) {
-        logger.info("formatSubject {} {}", message.getStatusType());
-        builder.append(String.format("<i>%s</i>", CalendarFormats.timestampFormat.format(timeZone, message.getTimestamp())));
-        if (!message.topicLabel.contains(message.getCert().getCommonName())) {
-            builder.append(String.format(" %s", message.getCert().getCommonName()));
-        }
-        builder.append(String.format(" <b>%s</b>", message.getTopic().getTopicLabel()));
-        builder.append(String.format(" %s", message.getStatusType().getLabel()));
     }
 
     public static String formatFooter(String siteUrl) {
