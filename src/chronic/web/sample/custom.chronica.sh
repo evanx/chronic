@@ -88,8 +88,8 @@ c0daily() {
 
 c0minutelyPriviledged() {
   echo "INFO: minutely priviledged"
-  #c0verifyHead /var/log/secure # rhel, centos, amazon linux
-  #c0verifyHead /var/log/auth.log # ubuntu
+  #c1verifyHead /var/log/secure # rhel, centos, amazon linux
+  #c1verifyHead /var/log/auth.log # ubuntu
 }
 
 c0dailyPriviledged() {
