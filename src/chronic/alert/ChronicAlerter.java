@@ -62,7 +62,7 @@ public class ChronicAlerter {
             for (Subscription subscription : subscriptions) {
                 try {
                     if (event.getPendingEmails().contains(subscription.getEmail())) {
-                        if (alert(subscription)) {
+                        if (alertSub(subscription)) {
                             event.getPendingEmails().remove(subscription.getEmail());
                         }
                     }
@@ -81,10 +81,10 @@ public class ChronicAlerter {
         }
     }
 
-    private boolean alert(Subscription subscription) throws MessagingException, IOException {
+    private boolean alertSub(Subscription subscription) throws MessagingException, IOException {
         String email = subscription.getEmail();
         TimeZone timeZone = subscription.getTimeZone();
-        logger.info("alert {}: {}", subscription, event.getMessage());
+        logger.info("alertSub {}: {}", subscription, event.getMessage());
         TopicEvent previousEvent = app.getSentMap().get(email);
         if (previousEvent != null) {
             long elapsed = System.currentTimeMillis() - previousEvent.getTimestamp();

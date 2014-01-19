@@ -123,7 +123,7 @@ public class TopicEventMailBuilder {
         if (!message.topicLabel.contains(message.getCert().getCommonName())) {
             builder.append(String.format(" %s", message.getCert().getCommonName()));
         }
-        builder.append(String.format(" <b>%s</b>", message.getTopic()));
+        builder.append(String.format(" <b>%s</b>", message.getTopic().getTopicLabel()));
         builder.append(String.format(" %s", message.getStatusType().getLabel()));
     }
 
