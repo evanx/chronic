@@ -22,8 +22,8 @@
 package chronic;
 
 import chronic.alert.TopicEvent;
+import chronic.alert.TopicEventChecker;
 import chronic.alert.TopicMessage;
-import chronic.alert.TopicMessageChecker;
 import chronic.alert.TopicMessageParser;
 import java.io.IOException;
 import org.junit.Assert;
@@ -36,12 +36,12 @@ import vellum.exception.ParseException;
  *
  * @author evans
  */
-public class TopicMessageCheckerTest {
+public class TestTopicEventChecker {
 
-    static Logger logger = LoggerFactory.getLogger(TopicMessageCheckerTest.class);
+    static Logger logger = LoggerFactory.getLogger(TestTopicEventChecker.class);
 
 
-    public TopicMessageCheckerTest() {
+    public TestTopicEventChecker() {
     }
 
     @Test
@@ -60,9 +60,9 @@ public class TopicMessageCheckerTest {
         Assert.assertEquals("Disk", topicMessage3.getServiceLabel());
         TopicEvent alert1 = new TopicEvent(topicMessage1);
         TopicEvent alert2 = new TopicEvent(topicMessage2);
-        Assert.assertFalse(TopicMessageChecker.isAlertable(topicMessage1, topicMessage1, alert1));
-        Assert.assertTrue(TopicMessageChecker.isAlertable(topicMessage2, topicMessage2, alert1));
-        Assert.assertFalse(TopicMessageChecker.isAlertable(topicMessage3, topicMessage2, alert2));
+        Assert.assertNull(TopicEventChecker.check(topicMessage1, topicMessage1, alert1));
+        Assert.assertNotNull(TopicEventChecker.check(topicMessage2, topicMessage2, alert1));
+        Assert.assertNull(TopicEventChecker.check(topicMessage3, topicMessage2, alert2));
     }
     
     private TopicMessage newTopicMessage(String ... lines) throws IOException, ParseException {

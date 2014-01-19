@@ -20,11 +20,10 @@
  under the License.  
  */
 package chronic;
-import chronic.bundle.Bundle;
-import chronic.entitytype.OrgRoleType;
-import chronic.type.AlertType;
-import chronic.type.StatusType;
-import java.util.ResourceBundle;
+
+import chronic.alert.MetricSeries;
+import chronic.type.MetricType;
+import java.util.TimeZone;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,20 +32,21 @@ import org.slf4j.LoggerFactory;
  *
  * @author evans
  */
-public class BundleTest {
-    static Logger logger = LoggerFactory.getLogger(BundleTest.class);
+public class TestSeries {
+
+    static Logger logger = LoggerFactory.getLogger(TestSeries.class);
+
+
+    public TestSeries() {
+    }
     
     @Test
     public void test() {
-        verify(AlertType.class);
-        verify(StatusType.class);
-        verify(OrgRoleType.class);
-    } 
-
-    private void verify(Class enumClass) {
-        ResourceBundle bundle = Bundle.get(enumClass);
-        for (Object value : enumClass.getEnumConstants()) {
-            logger.info("label {} {}", value.toString(), bundle.getString(value.toString()));
+        MetricSeries series = new MetricSeries(10, 10);
+        for (int i = 0; i < 20; i++) {
+            series.add(System.currentTimeMillis(), 10 + i);
         }
-    }         
+        logger.info("map {}", series.getMap(TimeZone.getDefault(), MetricType.MINUTELY));
+    }
+    
 }

@@ -18,9 +18,9 @@ import org.junit.Test;
  *
  * @author evans
  */
-public class MailerTest {
+public class TestMailer {
     
-    public MailerTest() {
+    public TestMailer() {
     }
     
     @BeforeClass

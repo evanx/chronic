@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author evans
  */
-public class TopicMessageMatcherTest {
+public class TestTopicMessageMatcher {
 
-    static Logger logger = LoggerFactory.getLogger(TopicMessageMatcherTest.class);
+    static Logger logger = LoggerFactory.getLogger(TestTopicMessageMatcher.class);
 
 
-    public TopicMessageMatcherTest() {
+    public TestTopicMessageMatcher() {
     }
 
     @Test

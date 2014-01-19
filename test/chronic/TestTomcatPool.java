@@ -19,10 +19,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author evans
  */
-public class TomcatPoolTest {
-    Logger logger = LoggerFactory.getLogger(TomcatPoolTest.class);
+public class TestTomcatPool {
+    Logger logger = LoggerFactory.getLogger(TestTomcatPool.class);
         
-    public TomcatPoolTest() {
+    public TestTomcatPool() {
     }
     
     @BeforeClass

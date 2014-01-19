@@ -21,7 +21,7 @@
  */
 package chronic.entity;
 
-import chronic.TimeZoneTest;
+import chronic.TestTimeZone;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entitytype.OrgRoleType;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TestEntityService {
 
-    static Logger logger = LoggerFactory.getLogger(TimeZoneTest.class);
+    static Logger logger = LoggerFactory.getLogger(TestTimeZone.class);
 
     static ChronicApp app = new ChronicApp();
 

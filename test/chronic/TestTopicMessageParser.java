@@ -40,12 +40,12 @@ import vellum.util.Strings;
  *
  * @author evans
  */
-public class TopicMessageParserTest {
+public class TestTopicMessageParser {
 
-    static Logger logger = LoggerFactory.getLogger(TopicMessageParserTest.class);
+    static Logger logger = LoggerFactory.getLogger(TestTopicMessageParser.class);
 
 
-    public TopicMessageParserTest() {
+    public TestTopicMessageParser() {
     }
 
     @Test

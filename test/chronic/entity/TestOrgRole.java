@@ -21,7 +21,7 @@
  */
 package chronic.entity;
 
-import chronic.TimeZoneTest;
+import chronic.TestTimeZone;
 import chronic.entitytype.OrgRoleType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TestOrgRole {
 
-    static Logger logger = LoggerFactory.getLogger(TimeZoneTest.class);
+    static Logger logger = LoggerFactory.getLogger(TestTimeZone.class);
 
     TestEntityInfo p1 = new TestEntityInfo("chronica.co", "root", "minutely", "evan.summers@gmail.com");
     TestEntityInfo p2 = new TestEntityInfo("test.org", "chronica", "hourly", "evanx@chronica.co");

@@ -33,11 +33,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author evans
  */
-public class PatternTest {
+public class TestPattern {
 
-    static Logger logger = LoggerFactory.getLogger(PatternTest.class);
+    static Logger logger = LoggerFactory.getLogger(TestPattern.class);
 
-    public PatternTest() {
+    public TestPattern() {
     }
 
     @Test

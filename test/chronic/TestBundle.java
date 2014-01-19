@@ -20,30 +20,33 @@
  under the License.  
  */
 package chronic;
-
-import java.util.TimeZone;
-import org.junit.Assert;
+import chronic.bundle.Bundle;
+import chronic.entitytype.OrgRoleType;
+import chronic.type.AlertType;
+import chronic.type.StatusType;
+import java.util.ResourceBundle;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.data.SafeDateFormat;
 
 /**
  *
  * @author evans
  */
-public class TimeZoneTest {
-
-    static Logger logger = LoggerFactory.getLogger(TimeZoneTest.class);
-
+public class TestBundle {
+    static Logger logger = LoggerFactory.getLogger(TestBundle.class);
+    
     @Test
-    public void timeZone() {
-        String id = String.format("GMT%+03d", 2);
-        long timestamp = System.currentTimeMillis();
-        logger.info("timestamp {}", timestamp);
-        Assert.assertEquals("GMT+02:00", TimeZone.getTimeZone(id).getID().toString());
-        Assert.assertTrue(new SafeDateFormat("yyyy-MM-dd HH:mm:ss,SSS Z").format(
-                TimeZone.getTimeZone(id), timestamp).endsWith(" +0200"));
-    }
+    public void test() {
+        verify(AlertType.class);
+        verify(StatusType.class);
+        verify(OrgRoleType.class);
+    } 
 
+    private void verify(Class enumClass) {
+        ResourceBundle bundle = Bundle.get(enumClass);
+        for (Object value : enumClass.getEnumConstants()) {
+            logger.info("label {} {}", value.toString(), bundle.getString(value.toString()));
+        }
+    }         
 }
