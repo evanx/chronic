@@ -68,7 +68,7 @@ c0ensureBin() {
       exit 1  
     elif [ `which $prog` != "/usr/bin/$prog" ]
     then
-      echo "ERROR: which $prog is not /usr/bin/$prog"
+      echo "ERROR: 'which $prog' is not /usr/bin/$prog"
       exit 1
     fi
   done
@@ -604,7 +604,6 @@ c0rpmVerify() {
 
 c0shaAuth() {
   echo "<br><b>shaAuth</b>"
-  sha1sum sha1sum
   sha1sum /etc/group
   sha1sum /etc/passwd
   sha1sum /etc/ssh/sshd_config
