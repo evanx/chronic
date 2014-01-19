@@ -41,7 +41,7 @@ public class ChronicHttpx extends Httpx {
         if (getCookie() != null) {
             if (cookie.getEmail() != null) {
                 if (app.properties.isTesting()) {
-                    if (getReferer().endsWith("/mimic")
+                    if (getReferer() != null && getReferer().endsWith("/mimic")
                             && app.properties.getMimicEmail() != null
                             && app.properties.isAdmin(cookie.getEmail())) {
                         return app.properties.getMimicEmail();

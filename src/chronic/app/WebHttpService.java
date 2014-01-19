@@ -6,6 +6,7 @@ package chronic.app;
 
 import chronic.api.ChronicHttpxHandler;
 import chronic.api.PlainHttpxHandler;
+import chronic.handler.access.Forward;
 import chronic.handler.access.Sign;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -37,7 +38,10 @@ public class WebHttpService implements HttpHandler {
         String path = httpExchange.getRequestURI().getPath();
         logger.info("handle {}", path);
         try {
-            if (path.equals("/sign")) {
+            app.ensureInitialized();
+            if (path.equals("/chronicapp/forward")) {
+                new Forward(app).handle(httpExchange);
+            } else if (path.equals("/sign")) {
                 handle(new Sign(), new ChronicHttpx(app, httpExchange));
             } else {
                 String handlerName = getHandlerName(path);
@@ -49,7 +53,7 @@ public class WebHttpService implements HttpHandler {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
-                IOException e) {
+                IOException | InterruptedException e) {
             logger.warn("error {} {}", path, Exceptions.getMessage(e));
             e.printStackTrace(System.err);
         } finally {
@@ -75,7 +79,6 @@ public class WebHttpService implements HttpHandler {
     private void handle(ChronicHttpxHandler handler, ChronicHttpx httpx) {
         ChronicEntityService es = new ChronicEntityService(app);
         try {
-            app.ensureInitialized();
             es.begin();
             JMap responseMap = handler.handle(app, httpx, es);
             logger.trace("response {}", responseMap);
@@ -93,7 +96,6 @@ public class WebHttpService implements HttpHandler {
     private void handle(PlainHttpxHandler handler, ChronicHttpx httpx) {
         ChronicEntityService es = new ChronicEntityService(app);
         try {
-            app.ensureInitialized();
             es.begin();
             String response = handler.handle(app, httpx, es);
             logger.trace("response {}", response);
