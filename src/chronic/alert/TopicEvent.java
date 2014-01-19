@@ -23,7 +23,6 @@ package chronic.alert;
 
 
 import chronic.type.TopicEventType;
-import chronic.type.StatusType;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;

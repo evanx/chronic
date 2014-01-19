@@ -134,7 +134,7 @@ app.controller("topicEventsController", ["$scope", "$http",
             });
         };
         $scope.setSelected = function() {
-            $scope.selected = this.event;
+            $scope.selected = this.topicEvent;
             console.log("selected", $scope.selected);
         };
         $scope.$on("loggedOn", function(email) {
