@@ -67,9 +67,9 @@ c0hourly() {
   #c0mdstat # linux software raid
 }
 
-#c0hourlyPriviledged() {
-#  c0shaAuth
-#}
+c0hourlyPriviledged() {
+  c0shaAuth
+}
 
 c0daily() {
   c1topic daily
@@ -87,15 +87,13 @@ c0daily() {
 #   - file integrity monitoring for installed packages e.g. yum verify. 
 
 c0minutelyPriviledged() {
-  echo "INFO: minutely priviledged"
-  #c1verifyHead /var/log/secure # rhel, centos, amazon linux
-  #c1verifyHead /var/log/auth.log # ubuntu
+  c1verifyHead /var/log/secure # rhel, centos, amazon linux
+  c1verifyHead /var/log/auth.log # ubuntu
 }
 
 c0dailyPriviledged() {
-  echo "INFO: daily priviledged"
   #c0yumVerify
-  #c0rpmVerify
+  c0rpmVerify
 }
 
 # Notes:
@@ -107,4 +105,3 @@ c0dailyNonPriviledged() {
   c1nowrite /etc/ssh/sshd_config
   c1noread /var/log/secure
 }
-
