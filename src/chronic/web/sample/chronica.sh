@@ -530,7 +530,7 @@ c0ntp() {
 
 c0clock() {
   echo "Timestamp:" `date +'%Y-%m-%d %T %Z'`
-  echo "Timezone:" `cat /etc/timezone` 
+  [ -f /etc/timezone ] && echo "Timezone:" `cat /etc/timezone` 
   echo "Clock:" `date +%s`
 }
 
