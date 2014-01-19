@@ -109,28 +109,32 @@ app.controller("personaController", ["$scope", "$location", "personaService",
         });
     }]);
 
-app.controller("alertsController", ["$scope", "$http",
+app.controller("topicEventsController", ["$scope", "$http",
     function($scope, $http) {
         $scope.loading = false;
-        $scope.alertsList = function() {
-            console.log("alerts", $scope.persona.email);
-            $scope.alerts = undefined;
+        $scope.errorMessage = undefined;
+        $scope.topicEventList = function() {
+            console.log("topicEvents", $scope.persona.email);
+            $scope.topicEvents = undefined;
             $scope.selected = undefined;
+            $scope.errorMessage = undefined;
             $scope.loading = true;
-            $http.post("/chronicapp/alertList", {
+            $http.post("/chronicapp/topicEventList", {
                 email: $scope.persona.email
             }).then(function(response) {
                 $scope.loading = false;
-                console.log("alerts", response.data);
-                if (response.data && response.data.alerts) {
-                    $scope.alerts = response.data.alerts;
+                console.log("topicEvents", response.data);
+                if (response.data && response.data.topicEvents) {
+                    $scope.topicEvents = response.data.topicEvents;
+                } else if (response.data.errorMessage) {
+                    $scope.errorMessage = response.data.errorMessage;
                 } else {
-                    console.warn("alerts", response);
+                    console.warn("topicEvents", response);
                 }
             });
         };
         $scope.setSelected = function() {
-            $scope.selected = this.alert;
+            $scope.selected = this.event;
             console.log("selected", $scope.selected);
         };
         $scope.$on("loggedOn", function(email) {
@@ -138,10 +142,10 @@ app.controller("alertsController", ["$scope", "$http",
             //$scope.changeView("info");
         });
         $scope.$on("changeView", function(event, view) {
-            if (view === "alerts") {
-                $scope.alertsList();
+            if (view === "topicEvents") {
+                $scope.topicEventList();
             } else {
-                $scope.alerts = undefined;
+                $scope.topicEvents = undefined;
                 $scope.loading = false;
             }
         });
@@ -198,7 +202,6 @@ app.controller("topicsController", ["$scope", "$http",
                 "topic": $scope.selected
             }).then(function(response) {
                 if (response.data && response.data.topic) {
-                    console.warn("topicAction", response.data.topic.actionLabel);
                     $scope.selected.actionLabel = response.data.topic.actionLabel;
                 } else {
                     console.warn("topicAction", response);
@@ -209,7 +212,7 @@ app.controller("topicsController", ["$scope", "$http",
             $scope.selected = this.topic;
             console.log("selected", $scope.selected);
         };
-        $scope.$on("changeView", function(event, view) {
+        $scope.$on("changeView", function(topicEvent, view) {
             if (view === "topics") {
                 $scope.topicsList();
             } else {
@@ -382,7 +385,6 @@ app.controller("certsController", ["$scope", "$http",
             $http.post("/chronicapp/certActionAll", {
             }).then(function(response) {
                 if (response.data && response.data.certs) {
-                    console.warn("certActionAll", response.data);
                     $scope.certs = response.data.certs;
                 } else {
                     console.warn("certActionAll", response);
@@ -396,7 +398,6 @@ app.controller("certsController", ["$scope", "$http",
                 "cert": $scope.selected
             }).then(function(response) {
                 if (response.data && response.data.cert) {
-                    console.warn("certAction", response.data.cert.actionLabel);
                     $scope.selected.actionLabel = response.data.cert.actionLabel;
                 } else {
                     console.warn("certAction", response);
@@ -410,7 +411,6 @@ app.controller("certsController", ["$scope", "$http",
                 "cert": $scope.selected
             }).then(function(response) {
                 if (response.data && response.data.cert) {
-                    console.warn("certAction", response.data.cert.actionLabel);
                     $scope.selected.actionLabel = response.data.cert.actionLabel;
                 } else {
                     console.warn("certAction", response);
@@ -434,7 +434,6 @@ app.controller("chartController", function($scope, $http) {
     $http.post("/chronicapp/intervalList", {
     }).then(function(response) {
         if (response.data && response.data.intervals) {
-            console.log("intervalList", response.data.intervals);
             $scope.intervals = response.data.intervals;
         } else {
             console.warn("intervalList", response);

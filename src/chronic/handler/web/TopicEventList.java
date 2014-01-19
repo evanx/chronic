@@ -9,6 +9,7 @@ import chronic.alert.TopicEvent;
 import chronic.alert.TopicEventMapper;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
+import chronic.persona.PersonaException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
@@ -23,29 +24,33 @@ import vellum.util.Lists;
  *
  * @author evan.summers
  */
-public class AlertList implements ChronicHttpxHandler {
+public class TopicEventList implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(AlertList.class);
+    Logger logger = LoggerFactory.getLogger(TopicEventList.class);
     
     @Override
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
         String email = httpx.getEmail();
         TimeZone timeZone = httpx.getTimeZone();
-        List alerts = new LinkedList();
-        for (TopicEvent event : Lists.sortedLinkedList(app.getEventMap().values(),
+        List topicEvents = new LinkedList();
+        for (TopicEvent topicEvent : Lists.sortedLinkedList(app.getEventMap().values(),
                 TimestampedComparator.reverse())) {            
-            TopicEventMapper mapper = new TopicEventMapper(event, timeZone);
-            if (es.isSubscription(event.getMessage().getTopic().getId(), email)) {
-                alerts.add(mapper.getExtendedMap());
+            TopicEventMapper mapper = new TopicEventMapper(topicEvent, timeZone);
+            if (es.isSubscription(topicEvent.getMessage().getTopic().getId(), email)) {
+                topicEvents.add(mapper.getExtendedMap());
             } else if (httpx.getReferer().endsWith("/demo")) {
-                if (event.getMessage().getStatusType().isKnown() && event.getMessage().getAlertType().isPollable()) {
-                    alerts.add(mapper.getBasicMap());
+                if (topicEvent.getMessage().getStatusType().isKnown() && topicEvent.getMessage().getAlertType().isPollable()) {
+                    topicEvents.add(mapper.getBasicMap());
                 }
             } else if (app.getProperties().isAdmin(email)) {
-                alerts.add(mapper.getExtendedMap());
+                topicEvents.add(mapper.getExtendedMap());
             }
         }
-        return JMaps.mapValue("alerts", alerts);
+        if (false) {
+            Thread.sleep(2000);
+            throw new PersonaException("test persona exception");
+        }
+        return JMaps.mapValue("topicEvents", topicEvents);
     }
 }
