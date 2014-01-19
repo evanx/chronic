@@ -7,7 +7,10 @@ package chronic.app;
 import chronic.api.ChronicHttpxHandler;
 import chronic.api.PlainHttpxHandler;
 import chronic.handler.access.Forward;
+import chronic.handler.access.ErrorHttpHandler;
 import chronic.handler.access.Sign;
+import chronic.handler.access.PersonaLogin;
+import chronic.handler.access.PersonaLogout;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -25,8 +28,6 @@ public class WebHttpService implements HttpHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(WebHttpService.class);
     private final static WebHttpHandler webHandler = new WebHttpHandler("/chronic/web");
-    private final static String handlerPathPrefix = "/chronicapp/";
-    private final static String handlerClassPrefix = "chronic.handler.web.";
     private final ChronicApp app;
 
     public WebHttpService(ChronicApp app) {
@@ -39,29 +40,43 @@ public class WebHttpService implements HttpHandler {
         logger.info("handle {}", path);
         try {
             app.ensureInitialized();
-            if (path.equals("/chronicapp/forward")) {
-                new Forward(app).handle(httpExchange);
-            } else if (path.equals("/sign")) {
+            if (path.equals("/sign")) {
                 handle(new Sign(), new ChronicHttpx(app, httpExchange));
-            } else {
-                String handlerName = getHandlerName(path);
-                logger.trace("handlerName {} {}", path, handlerName);
-                if (handlerName != null) {
-                    handle(getHandler(handlerName), new ChronicHttpx(app, httpExchange));
+            } else if (path.equals("/chronicapp/personaLogin")) {
+                handle(new PersonaLogin(), new ChronicHttpx(app, httpExchange));
+            } else if (path.equals("/chronicapp/personaLogout")) {
+                handle(new PersonaLogout(), new ChronicHttpx(app, httpExchange));
+            } else if (path.startsWith("/chronicapp/")) {
+                if (path.endsWith("/forwarded")) {
+                    String handlerName = getHandlerName(path);
+                    if (handlerName != null) {
+                        handle(getHandler(handlerName), new ChronicHttpx(app, httpExchange));
+                    } else {
+                        new ErrorHttpHandler(app).handle(httpExchange, "Service not found: " + path);
+                    }
                 } else {
-                    webHandler.handle(httpExchange);
+                    new Forward(app).handle(httpExchange);
                 }
+            } else {
+                webHandler.handle(httpExchange);
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
                 IOException | InterruptedException e) {
-            logger.warn("error {} {}", path, Exceptions.getMessage(e));
+            String errorMessage = Exceptions.getMessage(e);
+            logger.warn("error {} {}", path, errorMessage);
             e.printStackTrace(System.err);
+            new ErrorHttpHandler(app).handle(httpExchange, errorMessage);
         } finally {
             httpExchange.close();
         }
     }
 
     private String getHandlerName(String path) {
+        int index = path.lastIndexOf("/forwarded");
+        if (index > 0) {
+            path = path.substring(0, index);
+        }
+        final String handlerPathPrefix = "/chronicapp/";
         if (path.startsWith(handlerPathPrefix)) {
             return path.substring(handlerPathPrefix.length());
         }
@@ -70,7 +85,7 @@ public class WebHttpService implements HttpHandler {
 
     private ChronicHttpxHandler getHandler(String handlerName) throws ClassNotFoundException,
             InstantiationException, IllegalAccessException {
-        String className = handlerClassPrefix
+        String className = "chronic.handler.app."
                 + Character.toUpperCase(handlerName.charAt(0)) + handlerName.substring(1);
         logger.trace("handler {}", className);
         return (ChronicHttpxHandler) Class.forName(className).newInstance();
@@ -92,7 +107,7 @@ public class WebHttpService implements HttpHandler {
             es.close();
         }
     }
-    
+
     private void handle(PlainHttpxHandler handler, ChronicHttpx httpx) {
         ChronicEntityService es = new ChronicEntityService(app);
         try {

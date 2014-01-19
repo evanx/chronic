@@ -1,15 +1,15 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.handler.web;
+package chronic.handler.app;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entity.Cert;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.LinkedList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
@@ -19,24 +19,21 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class CertList implements ChronicHttpxHandler {
+public class CertActionAll implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(CertList.class);
+    Logger logger = LoggerFactory.getLogger(CertActionAll.class);
   
     @Override
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
-        String email = httpx.getEmail();
-        Set certs = new TreeSet();
-        for (Cert cert : es.listCerts(email)) {
-            certs.add(cert);
-        }
-        if (certs.isEmpty() && httpx.getReferer().endsWith("/demo")) {
-            String adminEmail = app.getProperties().getAdminEmail();
-            for (Cert cert : es.listCerts(adminEmail)) {
-                certs.add(cert);
+        List certs = new LinkedList();
+        for (Cert cert : es.listCerts(httpx.getEmail())) {
+            if (!cert.isEnabled()) {
+                cert.setEnabled(true);
             }
-        } 
+            certs.add(cert);
+            logger.info("cert {}", cert);
+        }
         logger.info("certs {}", certs.size());
         return JMaps.map("certs", certs);
     }

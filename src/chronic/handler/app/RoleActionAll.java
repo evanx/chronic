@@ -1,13 +1,13 @@
 /*
  * Source https://github.com/evanx by @evanxsummers
  */
-package chronic.handler.web;
+package chronic.handler.app;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
-import chronic.entity.Cert;
+import chronic.entity.OrgRole;
 import java.util.LinkedList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -19,20 +19,26 @@ import vellum.jx.JMaps;
  *
  * @author evan.summers
  */
-public class CertActionNone implements ChronicHttpxHandler {
+public class RoleActionAll implements ChronicHttpxHandler {
 
-    Logger logger = LoggerFactory.getLogger(CertActionNone.class);
+    Logger logger = LoggerFactory.getLogger(RoleActionAll.class);
   
+    ChronicHttpx httpx;
+    String email;
+    
     @Override
     public JMap handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es) 
             throws Exception {
-        List certs = new LinkedList();
-        for (Cert cert : es.listCerts(httpx.getEmail())) {
-            if (cert.isEnabled()) {
-                cert.setEnabled(false);
+        this.httpx = httpx;
+        email = httpx.getEmail();
+        List roles = new LinkedList();
+        for (OrgRole role : es.listRoles(httpx.getEmail())) {
+            if (!role.isEnabled()) {
+                role.setEnabled(true);
             }
+            roles.add(role.getMap());
         }
-        return JMaps.map("certs", certs);
+        return JMaps.mapValue("roles", roles);
     }
     
 }

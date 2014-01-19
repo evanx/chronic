@@ -32,7 +32,7 @@ import chronic.entitykey.TopicKey;
 import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.PersonKey;
 import chronic.entitytype.OrgRoleType;
-import chronic.handler.web.CertInfo;
+import chronic.handler.app.CertInfo;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -220,13 +220,23 @@ public class ChronicEntityService {
 
     public List<Org> listOrg(String email) {
         return em.createQuery("select o from Org o inner join OrgRole r"
-                + " where r.email = :email"
-                + " and o.orgDomain = r.orgDomain"
-                + "").
+                + " where o.orgDomain = r.orgDomain"
+                + " and r.email = :email").
                 setParameter("email", email).
                 getResultList();
     }
 
+    public List<Org> listOrg(String email, boolean enabled) {
+        return em.createQuery("select o from Org o inner join OrgRole r"
+                + " where o.orgDomain = r.orgDomain"
+                + " and r.email = :email"
+                + " and o.enabled = :enabled"
+                + " and r.enabled = :enabled").
+                setParameter("email", email).
+                setParameter("enabled", enabled).
+                getResultList();
+    }
+    
     public List<Cert> listCerts(Org org) {
         return em.createQuery("select c from Cert c"
                 + " where c.org = :org").

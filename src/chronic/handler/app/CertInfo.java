@@ -2,7 +2,7 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.handler.web;
+package chronic.handler.app;
 
 import chronic.entitykey.CertKey;
 import chronic.entitykey.CertKeyed;

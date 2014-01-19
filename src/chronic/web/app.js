@@ -365,7 +365,7 @@ app.controller("certsController", ["$scope", "$http",
             $scope.certs = undefined;
             $scope.loading = true;
             $scope.selected = undefined;
-            $http.post("/chronicapp/forward", {
+            $http.post("/chronicapp/certList", {
                 email: $scope.persona.email
             }).then(function(response) {
                 $scope.loading = false;

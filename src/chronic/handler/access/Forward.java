@@ -11,15 +11,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.GeneralSecurityException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMaps;
 import vellum.ssl.OpenHostnameVerifier;
-import vellum.ssl.OpenTrustManager;
-import vellum.ssl.SSLContexts;
 
 /**
  *
@@ -27,7 +25,8 @@ import vellum.ssl.SSLContexts;
  */
 public class Forward implements HttpHandler {
 
-    static Logger logger = LoggerFactory.getLogger(Forward.class);
+    private static Logger logger = LoggerFactory.getLogger(Forward.class);
+    public static final Pattern SERVER_PATTERN = Pattern.compile(" server=([^;]*)");
 
     ChronicApp app;
     
@@ -37,19 +36,22 @@ public class Forward implements HttpHandler {
 
     @Override
     public void handle(HttpExchange http) throws IOException {
-        for (String key : http.getRequestHeaders().keySet()) {
-            String header = http.getRequestHeaders().getFirst(key);
-            logger.debug("incoming request header: {}: {}", key, header);
-        }
         String cookie = http.getRequestHeaders().getFirst("Cookie");
-        logger.info("Cookie: {}", cookie);
         String referer = http.getRequestHeaders().getFirst("Referer");
-        logger.info("Referer: {}", referer);
+        logger.info("cookie {}", cookie);
+        String server = "localhost:8443"; // TODO
+        Matcher matcher = SERVER_PATTERN.matcher(cookie);
+        if (!matcher.find()) {
+            logger.warn("server not found: {}", cookie);
+        } else {        
+            server = matcher.group(1);
+        }
+        logger.info("server", server);
         try {
-            SSLContext sslContext = SSLContexts.create(new OpenTrustManager());
-            String url = "https://localhost:8443/chronicapp/certList"; // + http.getRequestURI().getPath();
-            HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-            connection.setSSLSocketFactory(sslContext.getSocketFactory());
+            String urlString = String.format("https://%s%s/forwarded", server, http.getRequestURI().getPath());
+            logger.info("url {}", urlString);
+            HttpsURLConnection connection = (HttpsURLConnection) new URL(urlString).openConnection();
+            connection.setSSLSocketFactory(app.getProxyClientSSLContext().getSocketFactory());
             connection.setUseCaches(false);
             connection.setDoOutput(true);
             connection.setDoInput(true);
@@ -64,7 +66,7 @@ public class Forward implements HttpHandler {
             http.getResponseHeaders().set("Content-type", "text/json");
             http.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
             copyStream(1024, connection.getInputStream(), http.getResponseBody());
-        } catch (GeneralSecurityException e) {
+        } catch (IOException e) {
             String errorResponse = JMaps.mapValue("errorMessage", e.getMessage()).toJson();
             sendResponse(http, "plain/json", errorResponse.getBytes());
         } finally {
@@ -72,7 +74,8 @@ public class Forward implements HttpHandler {
         }
     }
 
-    public static void sendResponse(HttpExchange http, String contentType, byte[] bytes) throws IOException {
+    public static void sendResponse(HttpExchange http, String contentType, byte[] bytes) 
+            throws IOException {
         http.getResponseHeaders().set("Content-type", contentType);
         http.getResponseHeaders().set("Content-length", Integer.toString(bytes.length));
         http.sendResponseHeaders(HttpURLConnection.HTTP_OK, bytes.length);
@@ -90,4 +93,5 @@ public class Forward implements HttpHandler {
             output.write(buffer, 0, length);
         }
     }
+    
 }

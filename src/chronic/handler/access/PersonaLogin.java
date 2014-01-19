@@ -2,7 +2,7 @@
  * Source https://github.com/evanx by @evanxsummers
  * 
  */
-package chronic.handler.web;
+package chronic.handler.access;
 
 import chronic.app.ChronicHttpx;
 import chronic.api.ChronicHttpxHandler;
@@ -10,12 +10,15 @@ import chronic.app.ChronicApp;
 import chronic.entity.Person;
 import chronic.app.ChronicCookie;
 import chronic.app.ChronicEntityService;
+import chronic.entity.Org;
 import chronic.persona.PersonaInfo;
 import chronic.persona.PersonaVerifier;
 import java.util.Date;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.jx.JMap;
+import vellum.util.Lists;
 
 /**
  *
@@ -53,12 +56,24 @@ public class PersonaLogin implements ChronicHttpxHandler {
             person.setEnabled(true);
             person.setLoginTime(new Date());
         }
+        List<Org> orgList = es.listOrg(email);
+        String server = null;
+        if (orgList.isEmpty()) {
+            logger.warn("orgList empty");
+        } else if (orgList.size() == 1) {
+            server = orgList.get(0).getServer();
+        } else {
+            server = orgList.get(0).getServer(); // TODO
+            logger.info("orgList {}", Lists.toString(orgList));            
+        }
+        logger.info("server {}", server);   
         cookie = new ChronicCookie(person.getEmail(), person.getLabel(),
-                person.getLoginTime().getTime(), timezoneOffset, assertion);
+                person.getLoginTime().getTime(), timezoneOffset, assertion, server);
         JMap cookieMap = cookie.toMap();
         logger.trace("cookie {}", cookieMap);
         cookieMap.put("timezoneOffset", timezoneOffset);
         httpx.setCookie(cookieMap, ChronicCookie.MAX_AGE_MILLIS);
+        cookieMap.put("orgList", orgList);
         cookieMap.put("demo", httpx.getReferer().endsWith("/demo"));
         return cookieMap;
     }

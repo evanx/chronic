@@ -47,6 +47,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -59,6 +60,7 @@ import vellum.httphandler.RedirectHttpsHandler;
 import vellum.mail.Mailer;
 import vellum.security.KeyStores;
 import vellum.ssl.OpenTrustManager;
+import vellum.ssl.SSLContexts;
 import vellum.util.ExtendedProperties;
 
 /**
@@ -91,6 +93,7 @@ public class ChronicApp {
     Thread alertThread = new EventThread(this);
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
     SigningInfo signingInfo;
+    SSLContext proxyClientSSLContext;
 
     public ChronicApp() {
         super();
@@ -98,6 +101,7 @@ public class ChronicApp {
 
     public void init() throws Exception {
         properties.init();
+        proxyClientSSLContext = SSLContexts.create(new OpenTrustManager());
         mailer = new Mailer(properties.getMailerProperties());
         initSigning(properties.getSigning());
         logger.info("properties {}", properties);
@@ -186,6 +190,10 @@ public class ChronicApp {
 
     public ChronicProperties getProperties() {
         return properties;
+    }
+
+    public SSLContext getProxyClientSSLContext() {
+        return proxyClientSSLContext;
     }
 
     public SigningInfo getSigningInfo() {

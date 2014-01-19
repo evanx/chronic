@@ -21,7 +21,7 @@ import vellum.jx.JMapException;
 public class ChronicHttpx extends Httpx {
 
     static Logger logger = LoggerFactory.getLogger(ChronicHttpx.class);
-
+    
     ChronicApp app;
     ChronicCookie cookie;
     
@@ -31,8 +31,12 @@ public class ChronicHttpx extends Httpx {
     }
 
     public ChronicCookie getCookie() throws JMapException {
-        if (cookie == null && ChronicCookie.matches(getCookieMap())) {
-           cookie = new ChronicCookie(getCookieMap());
+        if (cookie == null) {
+            if (ChronicCookie.matches(getCookieMap())) {
+                cookie = new ChronicCookie(getCookieMap());
+            } else {
+                return null;
+            }
         }
         return cookie;
     }
@@ -76,7 +80,5 @@ public class ChronicHttpx extends Httpx {
             return TimeZone.getTimeZone(timeZoneId);
         }        
         return TimeZone.getTimeZone(String.format("GMT%+03d", timeZoneOffset));
-    }
-    
-    
+    }    
 }

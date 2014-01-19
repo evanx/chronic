@@ -36,15 +36,13 @@ import vellum.util.Bytes;
 public class ChronicCookie {
     public static final long MAX_AGE_MILLIS = Millis.fromHours(16);
     
-    private final static String path = "/chronicapp";
-    private final static String version = "2";
-    
     private String email;
     private String label;
     private long loginMillis;
     private int timeZoneOffset;
     private String assertion;
     private String authCode; 
+    private String server;
             
     public ChronicCookie() {
     }
@@ -57,17 +55,23 @@ public class ChronicCookie {
             this.timeZoneOffset = map.getInteger("timeZoneOffset");
             this.assertion = map.getString("assertion");
             this.authCode = map.getString("authCode", null);
+            this.server = map.getString("server", null);
         }
     }
 
-    public ChronicCookie(String email, String displayName, long loginMillis, int timezoneOffset, String assertion) {
+    public ChronicCookie(String email, String displayName, long loginMillis, int timezoneOffset, String assertion, String server) {
         this.email = email;
         this.label = displayName;
         this.loginMillis = loginMillis;
         this.timeZoneOffset = timezoneOffset;
         this.assertion = assertion;
+        this.server = server;
     }
 
+    public String getServer() {
+        return server;
+    }
+    
     public String getAssertion() {
         return assertion;
     }
@@ -116,6 +120,7 @@ public class ChronicCookie {
         map.put("timeZoneOffset", timeZoneOffset);
         map.put("assertion", assertion);
         map.put("authCode", authCode);
+        map.put("server", server);
         return map;
     }
 
@@ -127,6 +132,7 @@ public class ChronicCookie {
         map.put("timeZoneOffset", 0);
         map.put("authCode", "");
         map.put("assertion", "");
+        map.put("server", "");
         return map;        
     }
     
@@ -136,6 +142,6 @@ public class ChronicCookie {
     }
     
     public static boolean matches(JMap map) {
-        return !map.isEmpty("email", "label", "loginMillis", "timeZoneOffset", "authCode", "assertion");
+        return !map.isEmpty("email", "label", "loginMillis", "timeZoneOffset", "authCode", "assertion", "server");
     }
 }

@@ -30,7 +30,7 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
     String orgDomain;
 
     @Column()
-    String server = "secure.chronica.co";
+    String server = "localhost:8443";
     
     @Column()
     String label;

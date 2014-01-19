@@ -48,7 +48,7 @@ public class OrgRole extends ComparableEntity implements Serializable {
     OrgRoleType roleType = OrgRoleType.ADMIN;
     
     @Column()    
-    boolean enabled = false;
+    boolean enabled = true;
     
     @ManyToOne()    
     @JoinColumn(name = "org_domain", referencedColumnName = "org_domain", insertable = false, updatable = false)
