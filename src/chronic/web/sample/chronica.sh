@@ -609,7 +609,7 @@ c0shaAuth() {
   sha1sum /etc/passwd
   sha1sum /etc/ssh/sshd_config
   [ -f /root/.ssh/authorized_keys ] && sha1sum /root/.ssh/authorized_keys
-  sha1sum `locate authorized_keys | grep '^/home/[a-z]*/\.*ssh/authorized_keys$'`
+  sha1sum `locate authorized_keys | grep '^/home/[a-z]*/\.*ssh/authorized_keys$'` | sed 's/\/home\/\([a-z]\{3\}\).*/\1/'
 }
 
 
