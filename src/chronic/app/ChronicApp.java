@@ -294,8 +294,11 @@ public class ChronicApp {
             TopicEvent event = TopicEventChecker.check(message, previousMessage, previousEvent);
             if (event != null) {
                 eventMap.put(message.getKey(), event);
-                if (message.getAlertType().isAlertable() && message.getStatusType().isKnown() 
-                        && event.getAlertEventType() != TopicEventType.INITIAL) {
+                assert message.getAlertType() != null;
+                assert message.getStatusType() != null;
+                if (message.getStatusType().isKnown()  
+                        && event.getAlertEventType() != TopicEventType.INITIAL
+                        && message.getAlertType().isAlertable()) {
                     eventQueue.add(event);
                 }
             } else {
