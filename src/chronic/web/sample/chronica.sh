@@ -606,9 +606,12 @@ c0shaAuth() {
   echo "<br><b>shaAuth</b>"
   sha1sum /etc/group
   sha1sum /etc/passwd
-  sha1sum /etc/ssh/sshd_config
+  [ -f /etc/ssh/sshd_config ] && sha1sum /etc/ssh/sshd_config
   [ -f /root/.ssh/authorized_keys ] && sha1sum /root/.ssh/authorized_keys
-  sha1sum `locate authorized_keys | grep '^/home/[a-z]*/\.*ssh/authorized_keys$'` | sed 's/\/home\/\([a-z]\{3\}\).*/\1/'
+  for file in `locate authorized_keys | grep '^/home/[a-z]*/\.*ssh/authorized_keys$'` 
+  do
+    [ -f $file ] && sha1sum $file | sed 's/\/home\/\([a-z]\{3\}\).*/\1/'
+  done
 }
 
 
