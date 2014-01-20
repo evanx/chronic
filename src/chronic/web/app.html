@@ -428,12 +428,9 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
                     <br>Initial support for horizontal scaling of servers has been implemented, namely an HTTP request proxy. 
                     The idea is that each organisation is allocated to a specific (multi-tenancy) cloud server instance with its own database. 
                     The chronica.sh script will be updated to use a "resolve" web query to the central server, to be advised of the server address for a specified organisation, i.e. which host to post to. 
-                    Logging in is handled by central servers off a shared database for all users i.e. admins and subscribers. 
-                    When the user signs in, he or she specifies an organisation for the session. 
-                    Thereafter, web app HTTP requests are proxied to the appropriate server.
-                    Choosing an organisation after login will be implemented next, 
-                    and also messages from server instances to update some information in the central database, 
-                    e.g. organisations with which a person is known to be associated. 
+                    Login is handled by central servers (as per DNS for chronica.co) with a shared database describing organisations and users. 
+                    If you are monitoring multiple organisations, you choose an organisation upon login.
+                    Thereafter, your web app HTTP requests are proxied to the appropriate server i.e. where the data resides for that organisation.
                 </p>
                 
                 <p>
