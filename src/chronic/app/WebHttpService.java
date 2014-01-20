@@ -11,6 +11,7 @@ import chronic.handler.access.ErrorHttpHandler;
 import chronic.handler.access.Sign;
 import chronic.handler.access.PersonaLogin;
 import chronic.handler.access.PersonaLogout;
+import chronic.handler.access.Resolve;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -42,6 +43,8 @@ public class WebHttpService implements HttpHandler {
             app.ensureInitialized();
             if (path.equals("/sign")) {
                 handle(new Sign(), new ChronicHttpx(app, httpExchange));
+            } else if (path.equals("/resolve")) {
+                new Resolve(app).handle(httpExchange);
             } else if (path.equals("/chronicapp/personaLogin")) {
                 handle(new PersonaLogin(), new ChronicHttpx(app, httpExchange));
             } else if (path.equals("/chronicapp/personaLogout")) {

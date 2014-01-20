@@ -136,7 +136,12 @@ fi
 
 if ! set | grep -q '^server='
 then
-  server="$orgDomain.secure.chronica.co:443"
+  server="secure.chronica.co"
+fi
+
+if ! set | grep -q '^webServer='
+then
+  webServer="chronica.co"
 fi
 
 
@@ -700,6 +705,11 @@ c1curl() {
     --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 # > curl.out 2> curl.err
 }
 
+c0resolve() {
+  echo $orgDomain | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem --data-binary @- \
+    -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$webServer/resolve
+}
+
 c0enroll() {
   echo "$admins" | c1curl enroll 
 }
@@ -870,13 +880,6 @@ c3postheaders() {
 c2postTopicSub() {
   tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
     --data-binary @- -H 'Content-Type: text/plain' -H "Topic: $1" -H "Subscribe: $2" https://$server/post 
-}
-
-
-### resolve
-
-c0resolve() {
-  echo $orgDomain | c2postheaders "Subscribe: $subscribers" "Admin: $admins"
 }
 
 

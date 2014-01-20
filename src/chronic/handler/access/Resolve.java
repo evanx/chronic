@@ -45,10 +45,10 @@ public class Resolve implements HttpHandler {
         }
         if (server == null) {
             logger.warn("not found: {}", orgDomain);
-            httpx.sendPlainResponse("secure.chronica.co");
-        } else {
-            httpx.sendPlainResponse(server);
+            server = "secure.chronica.co";
         }
+        logger.info("server {}", server);
+        httpx.sendPlainResponse(String.format("%s\n", server));
         httpx.close();                
     }
 }
