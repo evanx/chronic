@@ -50,7 +50,7 @@ public class ChronicProperties {
     private String mimicEmail;
     private String alertScript = null;
     private long alertPeriod = Millis.fromMinutes(5);
-    private long period = Millis.fromMinutes(3);
+    private long period = Millis.fromMinutes(2);
     private boolean testing = false;
     private boolean mockStorage = false;
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);

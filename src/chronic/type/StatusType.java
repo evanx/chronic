@@ -28,6 +28,10 @@ public enum StatusType {
         return this == OK || this == WARNING || this == CRITICAL;
     }
 
+    public boolean isChangedStatus(StatusType statusType) {
+        return isStatus() && statusType != null & statusType.isStatus() && this != statusType;
+    }
+    
     public String getLabel() {
         return Bundle.get(StatusType.class).getString(name());
     }

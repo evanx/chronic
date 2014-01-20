@@ -25,7 +25,6 @@ import chronic.entity.Topic;
 import chronic.entitykey.OrgKey;
 import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.TopicKey;
-import chronic.entitykey.TopicKeyed;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
@@ -77,6 +76,12 @@ public class TopicMessage implements OrgKeyed {
 
     public TopicMessage(Cert cert) {
         this.cert = cert;
+    }
+
+    public TopicMessage(TopicMessage message) {
+        cert = message.cert;
+        topicLabel = message.topicLabel;
+        periodMillis = message.periodMillis;
     }
 
     public TopicKey getKey() {
@@ -217,6 +222,10 @@ public class TopicMessage implements OrgKeyed {
         return statusType != null && statusType.isStatus();
     }
 
+    public boolean isStatusChanged(StatusType statusType) {
+        return statusType != null &&  statusType.isChangedStatus(this.statusType);
+    }
+    
     public boolean isHtmlContent() {
         for (String line : lineList) {
             if (Patterns.matchesTag(line)) {

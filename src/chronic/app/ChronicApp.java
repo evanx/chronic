@@ -32,7 +32,6 @@ import chronic.entitykey.SubscriptionKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
 import chronic.type.TopicEventType;
-import chronic.type.AlertType;
 import chronic.type.StatusType;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -90,7 +89,7 @@ public class ChronicApp {
     boolean running = true;
     Thread initThread = new InitThread();
     Thread messageThread = new MessageThread(this);
-    Thread alertThread = new EventThread(this);
+    Thread eventThread = new EventThread(this);
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
     SigningInfo signingInfo;
     SSLContext proxyClientSSLContext;
@@ -129,7 +128,7 @@ public class ChronicApp {
         initalized = true;
         logger.info("initialized");
         messageThread.start();
-        alertThread.start();
+        eventThread.start();
         logger.info("schedule {}", properties.getPeriod());
         if (properties.getPeriod() > 0) {
             elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(this), properties.getPeriod(),
@@ -177,9 +176,9 @@ public class ChronicApp {
             messageThread.interrupt();
             messageThread.join(2000);
         }
-        if (alertThread != null) {
-            alertThread.interrupt();
-            alertThread.join(2000);
+        if (eventThread != null) {
+            eventThread.interrupt();
+            eventThread.join(2000);
 
         }
     }
@@ -351,17 +350,19 @@ public class ChronicApp {
         private void checkElapsed(TopicMessage message) {
             long elapsed = Millis.elapsed(message.getTimestamp());
             logger.debug("checkElapsed {} {}", elapsed, message);
-            if (elapsed > message.getPeriodMillis() + properties.getPeriod()) {
+            if (message.getPeriodMillis() > 0 && 
+                    elapsed > message.getPeriodMillis() + properties.getPeriod()) {
                 TopicEvent previousAlert = eventMap.get(message.getKey());
                 if (previousAlert == null
                         || previousAlert.getMessage().getStatusType() != StatusType.ELAPSED) {
-                    message.setStatusType(StatusType.ELAPSED);
-                    TopicEvent alert = new TopicEvent(message);
+                    TopicMessage elapsedMessage = new TopicMessage(message);
+                    elapsedMessage.setStatusType(StatusType.ELAPSED);
+                    TopicEvent alert = new TopicEvent(elapsedMessage, message);
                     eventMap.put(message.getKey(), alert);
                     eventQueue.add(alert);
                 }
             }
-            if (!alertThread.isAlive()) {
+            if (!eventThread.isAlive()) {
                 logger.warn("alertThread");
             }
             if (!messageThread.isAlive()) {

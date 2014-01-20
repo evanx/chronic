@@ -59,7 +59,7 @@ public class TopicEventChecker {
            if (message.isStatus() && message.statusType == previousMessage.statusType) {
                if (previousEvent == null) {
                     return new TopicEvent(previousMessage, TopicEventType.INITIAL);                   
-               } else if (message.statusType != previousEvent.getMessage().getStatusType()) {
+               } else if (message.isStatusChanged(previousEvent.getMessage().getStatusType())) {
                    logger.info("status changed {}", previousMessage);
                    return new TopicEvent(previousMessage, previousEvent.getMessage());
                }
