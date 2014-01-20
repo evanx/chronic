@@ -51,13 +51,13 @@ public class TestPattern {
 
     @Test
     public void serverPatternDesign() {
-        final Pattern serverPattern = Pattern.compile(" server=([^ ;]*)");    
+        final Pattern serverPattern = Pattern.compile(" server=(\\w[^ ;]*)");    
         Matcher matcher = serverPattern.matcher(" server=s123.chronica.co ; ");
         Assert.assertTrue(matcher.find());
         Assert.assertEquals("s123.chronica.co", matcher.group(1));
     }
     
-    //@Test
+    @Test
     public void serverPattern() {
         Matcher matcher = Forward.SERVER_PATTERN.matcher(" server=s123.chronica.co");
         Assert.assertTrue(matcher.find());
