@@ -873,6 +873,13 @@ c2postTopicSub() {
 }
 
 
+### resolve
+
+c0resolve() {
+  echo $orgDomain | c2postheaders "Subscribe: $subscribers" "Admin: $admins"
+}
+
+
 ### logging
 
 c0log() {
@@ -880,6 +887,7 @@ c0log() {
   ls -l
   cat run.out
 }
+
 
 ### lifecycle
 
