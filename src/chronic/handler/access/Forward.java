@@ -28,7 +28,7 @@ import vellum.ssl.OpenHostnameVerifier;
 public class Forward implements HttpHandler {
 
     private static Logger logger = LoggerFactory.getLogger(Forward.class);
-    public static final Pattern SERVER_PATTERN = Pattern.compile(" server=([^;]*)");
+    public static final Pattern SERVER_PATTERN = Pattern.compile(" server=(\\w[^;]*)");
 
     ChronicApp app;
     
@@ -43,8 +43,8 @@ public class Forward implements HttpHandler {
         String server = "localhost:8443"; // TODO
         Matcher matcher = SERVER_PATTERN.matcher(cookie);
         if (!matcher.find()) {
-            logger.warn("server not found: {}", cookie);
-        } else {        
+            logger.warn("server not found in cookie");
+        } else {
             server = matcher.group(1);
         }
         logger.info("server", server);
@@ -61,6 +61,7 @@ public class Forward implements HttpHandler {
             connection.setRequestProperty("Content-Type", "text/json");
             for (String key : http.getRequestHeaders().keySet()) {
                 for (String value : http.getRequestHeaders().get(key)) {
+                    logger.info("header {} {}", key, value);
                     connection.setRequestProperty(key, value);
                     if (key.equals("Subscribe")) {
                         logger.info("Subscribe: {}", value);

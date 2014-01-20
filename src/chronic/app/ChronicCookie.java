@@ -24,6 +24,7 @@ import java.security.GeneralSecurityException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base32;
+import vellum.data.Maps;
 import vellum.data.Millis;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
@@ -65,7 +66,7 @@ public class ChronicCookie {
         this.loginMillis = loginMillis;
         this.timeZoneOffset = timezoneOffset;
         this.assertion = assertion;
-        this.server = server;
+        this.server = server;        
     }
 
     public String getServer() {
@@ -95,7 +96,11 @@ public class ChronicCookie {
     public int getTimeZoneOffset() {
         return timeZoneOffset;
     }
-          
+     
+    public static boolean matches(JMap map) {
+        return Maps.containsKeys(map, "email", "label", "loginMillis", "timeZoneOffset", "authCode", "assertion", "server");
+    }
+    
     public void validateAuthCode(byte[] secret) throws Exception {
         String code = createAuthCode(secret, email, loginMillis);
         if (!code.equals(code)) {
@@ -139,9 +144,5 @@ public class ChronicCookie {
     @Override
     public String toString() {
         return toMap().toString();
-    }
-    
-    public static boolean matches(JMap map) {
-        return !map.isEmpty("email", "label", "loginMillis", "timeZoneOffset", "authCode", "assertion", "server");
-    }
+    }    
 }

@@ -36,6 +36,7 @@ public class ChronicHttpx extends Httpx {
             if (ChronicCookie.matches(getCookieMap())) {
                 cookie = new ChronicCookie(getCookieMap());
             } else {
+                logger.warn("cookie not matching");
                 return null;
             }
         }
@@ -56,7 +57,9 @@ public class ChronicHttpx extends Httpx {
                 }
                 PersonaInfo personInfo = new PersonaVerifier(app, cookie).
                         getPersonaInfo(getHostUrl(), cookie.getAssertion());
-                if (cookie.getEmail().equals(personInfo.getEmail())) {
+                if (!cookie.getEmail().equals(personInfo.getEmail())) {
+                    logger.warn("email differs: persona {}, cookie {}", personInfo.getEmail(), cookie.getEmail());
+                } else {
                     return personInfo.getEmail();
                 }
             }
