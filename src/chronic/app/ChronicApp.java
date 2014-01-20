@@ -28,6 +28,7 @@ import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
 import chronic.alert.TopicEventChecker;
 import chronic.entity.Alert;
+import chronic.entity.OrgRole;
 import chronic.entitykey.SubscriptionKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
@@ -53,6 +54,7 @@ import javax.persistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
+import vellum.enumtype.DelimiterType;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.httphandler.RedirectHttpsHandler;
@@ -61,6 +63,7 @@ import vellum.security.KeyStores;
 import vellum.ssl.OpenTrustManager;
 import vellum.ssl.SSLContexts;
 import vellum.util.ExtendedProperties;
+import vellum.util.Strings;
 
 /**
  *
@@ -149,6 +152,14 @@ public class ChronicApp {
         logger.info("signing {}", cert.getSubjectDN());
         int validityDays = properties.getInt("validityDays", 365);
         signingInfo = new SigningInfo(validityDays, privateKey, cert);
+    }
+
+    public String getServer(String orgDomain) {
+        return "localhost:8443"; // TODO
+    }
+
+    public void add(OrgRole orgRole) {
+        // TODO
     }
 
     class InitThread extends Thread {
@@ -370,4 +381,5 @@ public class ChronicApp {
             }
         }
     }
+    
 }
