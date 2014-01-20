@@ -4,6 +4,7 @@
 package chronic.handler.access;
 
 import chronic.app.ChronicApp;
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
@@ -37,8 +39,7 @@ public class Forward implements HttpHandler {
     @Override
     public void handle(HttpExchange http) throws IOException {
         String cookie = http.getRequestHeaders().getFirst("Cookie");
-        String referer = http.getRequestHeaders().getFirst("Referer");
-        logger.info("cookie {}", cookie);
+        logger.trace("cookie {}", cookie);
         String server = "localhost:8443"; // TODO
         Matcher matcher = SERVER_PATTERN.matcher(cookie);
         if (!matcher.find()) {
@@ -52,14 +53,20 @@ public class Forward implements HttpHandler {
             logger.info("url {}", urlString);
             HttpsURLConnection connection = (HttpsURLConnection) new URL(urlString).openConnection();
             connection.setSSLSocketFactory(app.getProxyClientSSLContext().getSocketFactory());
+            connection.setHostnameVerifier(new OpenHostnameVerifier());
             connection.setUseCaches(false);
             connection.setDoOutput(true);
             connection.setDoInput(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "text/json");
-            connection.setRequestProperty("Cookie", cookie);
-            connection.setRequestProperty("Referer", referer);
-            connection.setHostnameVerifier(new OpenHostnameVerifier());
+            for (String key : http.getRequestHeaders().keySet()) {
+                for (String value : http.getRequestHeaders().get(key)) {
+                    connection.setRequestProperty(key, value);
+                    if (key.equals("Subscribe")) {
+                        logger.info("Subscribe: {}", value);
+                    }
+                }
+            }
             copyStream(256, http.getRequestBody(), connection.getOutputStream());
             String setCookie = connection.getHeaderField("Set-Cookie");
             logger.info("setCookie {}", setCookie);

@@ -431,6 +431,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
                     Login is handled by central servers (as per DNS for chronica.co) with a shared database describing organisations and users. 
                     If you are monitoring multiple organisations, you choose an organisation upon login.
                     Thereafter, your web app HTTP requests are proxied to the appropriate server i.e. where the data resides for that organisation.
+                    (See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/WebHttpService.java">WebHttpService.java</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/handler/access/Forward.java">Forward.java</a>.)
                 </p>
                 
                 <p>
