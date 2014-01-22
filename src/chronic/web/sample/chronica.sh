@@ -710,6 +710,20 @@ c0resolve() {
     -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$webServer/resolve
 }
 
+c0ensureResolve() {
+  while [ 1 ]
+  do
+    resolveServer=`c0resolve`
+    if echo "$resolveServer" | grep -q "ERROR:"
+    then
+      echo "$resolveServer"
+    else
+      server="$resolveServer"
+      break
+    fi
+  done
+}
+
 c0enroll() {
   echo "$admins" | c1curl enroll 
 }
