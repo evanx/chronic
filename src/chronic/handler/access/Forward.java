@@ -42,17 +42,14 @@ public class Forward implements HttpHandler {
             if (cookie == null) {
                 throw new IOException("no cookie");
             }
-            String server = "localhost"; // TODO
             Matcher matcher = SERVER_PATTERN.matcher(cookie);
             if (!matcher.find()) {
                 throw new IOException("server not found in cookie");
-            } else {
-                server = matcher.group(1);
             }
-            logger.info("server", server);
-            server = "localhost"; // TODO
+            String server = matcher.group(1);
             int port = 8443; // TODO
-            String urlString = String.format("https://%s:%d%s/forwarded", server, port, http.getRequestURI().getPath());
+            String address = String.format("%s:%d", server, port);
+            String urlString = String.format("https://%s%s/forwarded", address, http.getRequestURI().getPath());            
             logger.info("url {}", urlString);
             HttpsURLConnection connection = (HttpsURLConnection) new URL(urlString).openConnection();
             connection.setSSLSocketFactory(app.getProxyClientSSLContext().getSocketFactory());
