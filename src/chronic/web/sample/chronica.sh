@@ -717,10 +717,15 @@ c0ensureResolve() {
     if echo "$resolveServer" | grep -q "ERROR:"
     then
       echo "$resolveServer"
+    elif [ -z "$resolveServer" ]
+    then
+      echo "ERROR: no response from resolve server query"
     else
       server="$resolveServer"
+      echo "OK: resolve server: $resolveServer"
       break
     fi
+    sleep 5
   done
 }
 
