@@ -39,6 +39,8 @@ public class Resolve implements PlainHttpxHandler {
         if (org.getServer().equals("localhost")) {
             port = 8444;
         }
-        return String.format("%s:%d\n", org.getServer(), port);
+        String address = String.format("%s:%d", org.getServer(), port);
+        logger.info("server address {}", address);
+        return address;
     }
 }
