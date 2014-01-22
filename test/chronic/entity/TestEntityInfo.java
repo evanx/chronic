@@ -34,6 +34,7 @@ public class TestEntityInfo {
     String orgUnit = "test";
     String address = "127.0.0.1";    
     String encoded = "encoded";
+    String server = "localhost";
     
     String commonName;
     String orgDomain;

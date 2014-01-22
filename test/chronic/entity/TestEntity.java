@@ -48,7 +48,7 @@ public class TestEntity {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("testPU");
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        p1.org = new Org(p1.orgDomain);
+        p1.org = new Org(p1.orgDomain, "localhost");
         em.persist(p1.org);
         Assert.assertNotNull(em.find(Org.class, p1.orgDomain));
         p1.cert = new Cert(p1.orgDomain, p1.orgUnit, p1.commonName);

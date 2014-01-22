@@ -50,7 +50,7 @@ public class TestOrgRole {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("testPU");
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        p1.org = new Org(p1.orgDomain);
+        p1.org = new Org(p1.orgDomain, "localhost");
         em.persist(p1.org);
         Assert.assertNotNull(em.find(Org.class, p1.orgDomain));
         p1.cert = new Cert(p1.orgDomain, p1.orgUnit, p1.commonName);
@@ -78,7 +78,7 @@ public class TestOrgRole {
                 "select r from OrgRole r join Org o join Cert c where r.email = :email")
                 .setParameter("email", p1.email)
                 .getResultList().size());
-        p2.org = new Org(p2.orgDomain);
+        p2.org = new Org(p2.orgDomain, "localhost");
         em.persist(p2.org);
         TestEntityInfo.assertSize("org role", 1, em.createQuery("select r from OrgRole r"
                 + " join Org o on (o.orgDomain = r.orgDomain)"
