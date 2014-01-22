@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TimeZone;
 import javax.mail.MessagingException;
-import javax.persistence.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;

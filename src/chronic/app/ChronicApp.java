@@ -28,7 +28,7 @@ import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
 import chronic.alert.TopicEventChecker;
 import chronic.entity.Alert;
-import chronic.entity.OrgRole;
+import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.SubscriptionKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
@@ -42,7 +42,9 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -54,7 +56,6 @@ import javax.persistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
-import vellum.enumtype.DelimiterType;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.httphandler.RedirectHttpsHandler;
@@ -63,7 +64,6 @@ import vellum.security.KeyStores;
 import vellum.ssl.OpenTrustManager;
 import vellum.ssl.SSLContexts;
 import vellum.util.ExtendedProperties;
-import vellum.util.Strings;
 
 /**
  *
@@ -84,6 +84,7 @@ public class ChronicApp {
     Map<TopicKey, TopicMessage> messageMap = new ConcurrentHashMap();
     Map<TopicKey, TopicEvent> eventMap = new ConcurrentHashMap();
     LinkedBlockingQueue<TopicEvent> eventQueue = new LinkedBlockingQueue(100);
+    LinkedBlockingQueue<OrgRoleKey> orgRoleKeyQueue = new LinkedBlockingQueue(100);
     LinkedList<TopicEvent> eventList = new LinkedList();
     Map<SubscriptionKey, Alert> alertMap = new ConcurrentHashMap();
     Map<String, TopicEvent> sentMap = new HashMap();
@@ -96,7 +97,8 @@ public class ChronicApp {
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
     SigningInfo signingInfo;
     SSLContext proxyClientSSLContext;
-
+    Set<OrgRoleKey> orgRoleSet = new ConcurrentSkipListSet();
+    
     public ChronicApp() {
         super();
     }
@@ -154,12 +156,11 @@ public class ChronicApp {
         signingInfo = new SigningInfo(validityDays, privateKey, cert);
     }
 
-    public String getServer(String orgDomain) {
-        return "localhost:8443"; // TODO
-    }
-
-    public void add(OrgRole orgRole) {
-        // TODO
+    public String getResolvedServer(String orgDomain) {
+        if (properties.getSiteUrl().contains("localhost")) {
+            return "localhost";
+        }
+        return "secure.chronica.co"; // TODO
     }
 
     class InitThread extends Thread {
@@ -194,46 +195,6 @@ public class ChronicApp {
         }
     }
 
-    public EntityManager createEntityManager() {
-        return emf.createEntityManager();
-    }
-
-    public ChronicProperties getProperties() {
-        return properties;
-    }
-
-    public SSLContext getProxyClientSSLContext() {
-        return proxyClientSSLContext;
-    }
-
-    public SigningInfo getSigningInfo() {
-        return signingInfo;
-    }        
-    
-    public Mailer getMailer() {
-        return mailer;
-    }
-    
-    public LinkedBlockingQueue<TopicMessage> getMessageQueue() {
-        return messageQueue;        
-    }
-    
-    public Map<TopicMetricKey, MetricSeries> getSeriesMap() {
-        return seriesMap;
-    }
-        
-    public Map<TopicKey, TopicEvent> getEventMap() {
-        return eventMap;
-    }   
-
-    public Map<SubscriptionKey, Alert> getAlertMap() {
-        return alertMap;
-    }
-    
-    public Map<String, TopicEvent> getSentMap() {
-        return sentMap;
-    }
-            
     class EventThread extends Thread {
         ChronicApp app;
 
@@ -333,6 +294,7 @@ public class ChronicApp {
         }        
     }
 
+    
     class ElapsedRunnable implements Runnable {
 
         ChronicApp app;
@@ -379,5 +341,93 @@ public class ChronicApp {
             }
         }
     }
+
+    class OrgRoleThread extends Thread {
+        
+        ChronicApp app;
+
+        public OrgRoleThread(ChronicApp app) {
+            this.app = app;
+        }
+        
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    OrgRoleKey orgRoleKey = orgRoleKeyQueue.poll(60, TimeUnit.SECONDS);
+                    if (orgRoleKey != null) {
+                        if (!orgRoleSet.contains(orgRoleKey)) {
+                            persist(orgRoleKey);
+                            orgRoleSet.add(orgRoleKey);
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    logger.warn("run", e);
+                } catch (Throwable t) {
+                    messenger.alert(t);
+                }
+            }
+        }
+
+        private void persist(OrgRoleKey orgRoleKey) {
+            ChronicEntityService es = new ChronicEntityService(app);
+            try {
+                es.begin();
+                es.persistOrgRole(orgRoleKey);
+                es.commit();
+            } catch (Throwable e) {
+                es.rollback();
+                logger.error(e.getMessage(), e);
+            } finally {
+                es.close();
+            }
+
+        }
+    }
+        
+    public EntityManager createEntityManager() {
+        return emf.createEntityManager();
+    }
+
+    public ChronicProperties getProperties() {
+        return properties;
+    }
+
+    public SSLContext getProxyClientSSLContext() {
+        return proxyClientSSLContext;
+    }
+
+    public SigningInfo getSigningInfo() {
+        return signingInfo;
+    }        
+    
+    public Mailer getMailer() {
+        return mailer;
+    }
+
+    public LinkedBlockingQueue<OrgRoleKey> getOrgRoleQueue() {
+        return orgRoleKeyQueue;
+    }
+
+    public LinkedBlockingQueue<TopicMessage> getMessageQueue() {
+        return messageQueue;        
+    }
+    
+    public Map<TopicMetricKey, MetricSeries> getSeriesMap() {
+        return seriesMap;
+    }
+        
+    public Map<TopicKey, TopicEvent> getEventMap() {
+        return eventMap;
+    }   
+
+    public Map<SubscriptionKey, Alert> getAlertMap() {
+        return alertMap;
+    }
+    
+    public Map<String, TopicEvent> getSentMap() {
+        return sentMap;
+    }
+            
     
 }

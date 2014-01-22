@@ -713,16 +713,16 @@ c0resolve() {
 c0ensureResolve() {
   while [ 1 ]
   do
-    resolveServer=`c0resolve`
-    if echo "$resolveServer" | grep -q "ERROR:"
+    resolvedServer=`c0resolve`
+    if echo "$resolvedServer" | grep -q "ERROR:"
     then
-      echo "$resolveServer"
-    elif [ -z "$resolveServer" ]
+      echo "$resolvedServer"
+    elif [ -z "$resolvedServer" ]
     then
       echo "ERROR: no response from resolve server query"
     else
-      server="$resolveServer"
-      echo "OK: resolve server: $resolveServer"
+      server="$resolvedServer"
+      echo "OK: resolved server: $resolvedServer"
       break
     fi
     sleep 5
@@ -965,6 +965,7 @@ c0run() {
   trap 'rm -f pid' EXIT
   echo $$ > pid
   debug=2
+  c0ensureResolve
   c0enroll
   rm -f hourly minutely
   c0hourlyCron
@@ -991,7 +992,7 @@ c0run() {
   done
 }
 
-c0restart() {  
+c0restart() {    
   debug=0  
   c0kill
   c0run 2> run.err > run.out < /dev/null & 

@@ -64,8 +64,7 @@ public class WebHttpService implements HttpHandler {
             } else {
                 webHandler.handle(httpExchange);
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
-                IOException | InterruptedException e) {
+        } catch (Throwable e) {
             String errorMessage = Exceptions.getMessage(e);
             logger.warn("error {} {}", path, errorMessage);
             e.printStackTrace(System.err);
@@ -103,7 +102,7 @@ public class WebHttpService implements HttpHandler {
             logger.trace("response {}", responseMap);
             httpx.sendResponse(responseMap);
             es.commit();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             httpx.sendError(e);
             es.rollback();
             e.printStackTrace(System.out);
@@ -120,7 +119,7 @@ public class WebHttpService implements HttpHandler {
             logger.trace("response {}", response);
             httpx.sendPlainResponse(response);
             es.commit();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             httpx.sendPlainError(String.format("ERROR: %s\n", e.getMessage()));
             es.rollback();
             e.printStackTrace(System.out);

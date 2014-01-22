@@ -6,6 +6,7 @@ package chronic.entity;
 
 import chronic.entitytype.OrgRoleType;
 import chronic.entitykey.OrgRoleKey;
+import chronic.entitykey.OrgRoleKeyed;
 import chronic.entitytype.OrgRoleActionType;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -30,7 +31,7 @@ import vellum.util.Args;
  */
 @Entity()
 @Table(name = "org_role")
-public class OrgRole extends ComparableEntity implements Serializable {
+public class OrgRole extends ComparableEntity implements Serializable, OrgRoleKeyed {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -57,7 +58,6 @@ public class OrgRole extends ComparableEntity implements Serializable {
     @ManyToOne()    
     @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
     Person person; 
-
     
     public OrgRole() {
     }
@@ -91,6 +91,10 @@ public class OrgRole extends ComparableEntity implements Serializable {
         return id;
     }
 
+    public OrgRoleKey getOrgRoleKey() {
+        return new OrgRoleKey(orgDomain, email, roleType);
+    }
+    
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -156,5 +160,5 @@ public class OrgRole extends ComparableEntity implements Serializable {
     @Override
     public String toString() {
         return Args.format(orgDomain, email, roleType);
-    }    
+    }
 }

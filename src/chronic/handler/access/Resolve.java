@@ -4,7 +4,7 @@
 package chronic.handler.access;
 
 import chronic.app.ChronicApp;
-import chronic.entity.OrgRole;
+import chronic.entitykey.OrgRoleKey;
 import chronic.entitytype.OrgRoleType;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -33,21 +33,25 @@ public class Resolve implements HttpHandler {
     public void handle(HttpExchange he) throws IOException {
         Httpx httpx = new Httpx(he);
         String orgDomain = httpx.readString();
-        String server = app.getServer(orgDomain);
+        String server = app.getResolvedServer(orgDomain);
         for (String adminEmail : Strings.split(httpx.getRequestHeader("Admin"), DelimiterType.COMMA_OR_SPACE)) {
             logger.info("admin: {}", adminEmail);
-            app.add(new OrgRole(orgDomain, adminEmail, OrgRoleType.ADMIN));
+            app.getOrgRoleQueue().add(new OrgRoleKey(orgDomain, adminEmail, OrgRoleType.ADMIN));
         }
         for (String subscriberEmail : Strings.split(httpx.getRequestHeader("Subscribe"), DelimiterType.COMMA_OR_SPACE)) {
             logger.info("subscriber: {}", subscriberEmail);
-            app.add(new OrgRole(orgDomain, subscriberEmail, OrgRoleType.SUBSCRIBER));
+            app.getOrgRoleQueue().add(new OrgRoleKey(orgDomain, subscriberEmail, OrgRoleType.SUBSCRIBER));
         }
         if (server == null) {
             logger.warn("not found: {}", orgDomain);
             server = "secure.chronica.co";
         }
         logger.info("server {}", server);
-        httpx.sendPlainResponse(String.format("%s\n", server));
+        int port = 443;
+        if (server.equals("localhost")) {
+            port = 8444;
+        }
+        httpx.sendPlainResponse(String.format("%s:%d\n", server, port));
         httpx.close();                
     }
 }

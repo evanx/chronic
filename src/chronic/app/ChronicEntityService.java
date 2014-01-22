@@ -55,7 +55,7 @@ import vellum.storage.StorageExceptionType;
  *
  * @author evan.summers
  */
-public class ChronicEntityService {
+public class ChronicEntityService implements AutoCloseable {
 
     static Logger logger = LoggerFactory.getLogger(ChronicEntityService.class);
 
@@ -518,6 +518,23 @@ public class ChronicEntityService {
 
     }
 
+    public OrgRole persistOrgRole(OrgRoleKey key)
+            throws StorageException {
+        Person person = persistPerson(key.getEmail());
+        Org org = persistOrg(key.getOrgDomain());
+        logger.info("persistOrgRole person {}", person);
+        OrgRole orgRole = findOrgRole(key);
+        if (orgRole == null) {
+            orgRole = new OrgRole(key);
+            orgRole.setEnabled(true);
+            em.persist(orgRole);
+            logger.info("persistOrgRole {}", orgRole);
+        }
+        orgRole.setPerson(person);
+        orgRole.setOrg(org);
+        return orgRole;
+    }
+    
     public OrgRole persistOrgRole(Org org, String email, OrgRoleType roleType)
             throws StorageException {
         Person person = persistPerson(email);
@@ -528,6 +545,7 @@ public class ChronicEntityService {
             orgRole = new OrgRole(key);
             orgRole.setEnabled(true);
             em.persist(orgRole);
+            logger.info("persistOrgRole {}", orgRole);
         }
         orgRole.setPerson(person);
         orgRole.setOrg(org);

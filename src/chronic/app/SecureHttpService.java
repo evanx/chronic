@@ -50,7 +50,7 @@ public class SecureHttpService implements HttpHandler {
                 throw new InstantiationException("No handler: " + path);
             }
             handle(handlerClass.newInstance(), httpx);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             httpx.sendPlainError(e.getMessage());
             logger.warn("error {} {}", path, Exceptions.getMessage(e));
             e.printStackTrace(System.err);
@@ -68,7 +68,7 @@ public class SecureHttpService implements HttpHandler {
             logger.trace("response {}", response);
             httpx.sendPlainResponse(response);
             es.commit();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             es.rollback();
             throw e;
         } finally {

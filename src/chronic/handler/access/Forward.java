@@ -4,7 +4,6 @@
 package chronic.handler.access;
 
 import chronic.app.ChronicApp;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
@@ -40,7 +38,7 @@ public class Forward implements HttpHandler {
     public void handle(HttpExchange http) throws IOException {
         String cookie = http.getRequestHeaders().getFirst("Cookie");
         logger.trace("cookie {}", cookie);
-        String server = "localhost:8443"; // TODO
+        String server = "localhost"; // TODO
         Matcher matcher = SERVER_PATTERN.matcher(cookie);
         if (!matcher.find()) {
             logger.warn("server not found in cookie");
@@ -48,8 +46,10 @@ public class Forward implements HttpHandler {
             server = matcher.group(1);
         }
         logger.info("server", server);
+        server = "localhost"; // TODO
         try {
-            String urlString = String.format("https://%s%s/forwarded", server, http.getRequestURI().getPath());
+            int port = 8443; // TODO
+            String urlString = String.format("https://%s:%d%s/forwarded", server, port, http.getRequestURI().getPath());
             logger.info("url {}", urlString);
             HttpsURLConnection connection = (HttpsURLConnection) new URL(urlString).openConnection();
             connection.setSSLSocketFactory(app.getProxyClientSSLContext().getSocketFactory());
