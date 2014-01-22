@@ -39,6 +39,7 @@ public class WebHttpService implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         String path = httpExchange.getRequestURI().getPath();
         logger.info("handle {}", path);
+        Thread.currentThread().setName(path);        
         try {
             app.ensureInitialized();
             if (path.equals("/sign")) {

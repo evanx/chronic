@@ -253,8 +253,6 @@ public class ChronicApp {
                         eventList.add(topicEvent);
                         new ChronicAlerter().alert(app, topicEvent);
                     }
-                } catch (InterruptedException e) {
-                    logger.warn("run", e);
                 } catch (Throwable t) {
                     messenger.alert(t);
                 }

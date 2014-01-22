@@ -25,7 +25,6 @@ import chronic.app.ChronicEntityService;
 import chronic.entity.Alert;
 import chronic.entity.Subscription;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import javax.mail.MessagingException;
@@ -47,6 +46,7 @@ public class ChronicAlerter {
     TopicEvent event;
     
     public void alert(ChronicApp app, TopicEvent event) {
+        logger.info("alert {}", event);
         this.app = app;
         this.event = event;
         es = new ChronicEntityService(app);
@@ -72,10 +72,6 @@ public class ChronicAlerter {
                     es.close();
                 }
             }
-        } catch (PersistenceException e) {
-            logger.error("alert", e);
-        } catch (Exception e) {
-            logger.error("alert", e);
         } finally {
             es.close();
         }

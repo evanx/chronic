@@ -295,6 +295,8 @@ public class ChronicEntityService {
     }
 
     public List<Subscription> listSubscriptions(Topic topic) {
+        assert em != null;
+        assert topic != null;
         return em.createQuery("select s from Subscription s"
                 + " where s.topicId = :topicId"
                 + " and s.enabled = true").
