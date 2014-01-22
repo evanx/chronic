@@ -45,7 +45,7 @@ public class WebHttpService implements HttpHandler {
             if (path.equals("/sign")) {
                 handle(new Sign(), new ChronicHttpx(app, httpExchange));
             } else if (path.equals("/resolve")) {
-                new Resolve(app).handle(httpExchange);
+                handle(new Resolve(), new ChronicHttpx(app, httpExchange));
             } else if (path.equals("/chronicapp/personaLogin")) {
                 handle(new PersonaLogin(), new ChronicHttpx(app, httpExchange));
             } else if (path.equals("/chronicapp/personaLogout")) {

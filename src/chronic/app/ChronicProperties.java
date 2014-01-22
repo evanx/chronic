@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.exception.ParseException;
 import vellum.httpserver.HttpServerProperties;
+import vellum.jx.JMapException;
 import vellum.util.Args;
 import vellum.util.ExtendedProperties;
 import vellum.util.Streams;
@@ -46,7 +47,8 @@ public class ChronicProperties {
 
     static Logger logger = LoggerFactory.getLogger(ChronicProperties.class);
 
-    private String siteUrl = "https://localhost:8443";
+    private String siteUrl;
+    private String allocateServer;
     private String mimicEmail;
     private String alertScript = null;
     private long alertPeriod = Millis.fromMinutes(5);
@@ -66,10 +68,11 @@ public class ChronicProperties {
     private final ExtendedProperties properties = new ExtendedProperties(System.getProperties());
     private final MailerProperties mailerProperties = new MailerProperties();
 
-    public void init() throws IOException, ParseException {
+    public void init() throws IOException, ParseException, JMapException {
         String jsonConfigFileName = properties.getString("config.json", "config.json");
         JsonObjectDelegate object = new JsonObjectDelegate(new File(jsonConfigFileName));
-        siteUrl = object.getString("siteUrl", siteUrl);
+        siteUrl = object.getString("siteUrl");
+        allocateServer = object.getString("allocateServer");
         alertScript = object.getString("alertScript", alertScript);
         mimicEmail = object.getString("mimicEmail", null);
         alertPeriod = object.getMillis("alertPeriod", alertPeriod);
@@ -101,6 +104,10 @@ public class ChronicProperties {
         return siteUrl;
     }
 
+    public String getAllocateServer() {
+        return allocateServer;
+    }
+    
     public String getAlertScript() {
         return alertScript;
     }

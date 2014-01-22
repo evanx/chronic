@@ -30,7 +30,7 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
     String orgDomain;
 
     @Column()
-    String server = "secure.chronica.co";
+    String server;
     
     @Column()
     String label;
@@ -50,12 +50,14 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
     public Org() {
     }
 
-    public Org(String orgDomain) {
+    public Org(String orgDomain, String server) {
         this.orgDomain = orgDomain;
+        this.server = server;
     }
 
     public Org(JMap map) throws JMapException {
         orgDomain = map.getString("org_domain");
+        server = map.getString("server");
         label = map.getString("label");
         region = map.getString("region");
         locality = map.getString("locality");
@@ -65,6 +67,7 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
     public JMap getMap() {
         JMap map = new JMap();
         map.put("orgDomain", orgDomain);
+        map.put("server", server);
         map.put("label", label);
         map.put("locality", locality);
         map.put("region", region);

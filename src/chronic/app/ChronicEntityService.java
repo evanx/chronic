@@ -425,7 +425,7 @@ public class ChronicEntityService implements AutoCloseable {
     public Org persistOrg(String orgDomain) throws StorageException {
         Org org = em.find(Org.class, orgDomain);
         if (org == null) {
-            org = new Org(orgDomain);
+            org = new Org(orgDomain, app.getProperties().getAllocateServer());
             em.persist(org);
             logger.info("persist org {}", org);
         }
@@ -466,7 +466,7 @@ public class ChronicEntityService implements AutoCloseable {
         Org org = em.find(Org.class, orgDomain);
         if (org == null) {
             enabled = true;
-            org = new Org(orgDomain);
+            org = new Org(orgDomain, app.getProperties().getAllocateServer());
             em.persist(org);
             logger.info("persist org {}", org);
         }
@@ -518,23 +518,6 @@ public class ChronicEntityService implements AutoCloseable {
 
     }
 
-    public OrgRole persistOrgRole(OrgRoleKey key)
-            throws StorageException {
-        Person person = persistPerson(key.getEmail());
-        Org org = persistOrg(key.getOrgDomain());
-        logger.info("persistOrgRole person {}", person);
-        OrgRole orgRole = findOrgRole(key);
-        if (orgRole == null) {
-            orgRole = new OrgRole(key);
-            orgRole.setEnabled(true);
-            em.persist(orgRole);
-            logger.info("persistOrgRole {}", orgRole);
-        }
-        orgRole.setPerson(person);
-        orgRole.setOrg(org);
-        return orgRole;
-    }
-    
     public OrgRole persistOrgRole(Org org, String email, OrgRoleType roleType)
             throws StorageException {
         Person person = persistPerson(email);
@@ -544,6 +527,8 @@ public class ChronicEntityService implements AutoCloseable {
         if (orgRole == null) {
             orgRole = new OrgRole(key);
             orgRole.setEnabled(true);
+            orgRole.setOrg(org);
+            orgRole.setPerson(person);
             em.persist(orgRole);
             logger.info("persistOrgRole {}", orgRole);
         }

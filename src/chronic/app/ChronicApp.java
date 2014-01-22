@@ -84,7 +84,6 @@ public class ChronicApp {
     Map<TopicKey, TopicMessage> messageMap = new ConcurrentHashMap();
     Map<TopicKey, TopicEvent> eventMap = new ConcurrentHashMap();
     LinkedBlockingQueue<TopicEvent> eventQueue = new LinkedBlockingQueue(100);
-    LinkedBlockingQueue<OrgRoleKey> orgRoleKeyQueue = new LinkedBlockingQueue(100);
     LinkedList<TopicEvent> eventList = new LinkedList();
     Map<SubscriptionKey, Alert> alertMap = new ConcurrentHashMap();
     Map<String, TopicEvent> sentMap = new HashMap();
@@ -94,11 +93,9 @@ public class ChronicApp {
     Thread initThread = new InitThread();
     Thread messageThread = new MessageThread(this);
     Thread eventThread = new EventThread(this);
-    Thread orgRoleThread = new OrgRoleThread(this);
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
     SigningInfo signingInfo;
     SSLContext proxyClientSSLContext;
-    Set<OrgRoleKey> orgRoleSet = new ConcurrentSkipListSet();
     
     public ChronicApp() {
         super();
@@ -135,7 +132,6 @@ public class ChronicApp {
         logger.info("initialized");
         messageThread.start();
         eventThread.start();
-        orgRoleThread.start();
         logger.info("schedule {}", properties.getPeriod());
         if (properties.getPeriod() > 0) {
             elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(this), properties.getPeriod(),
@@ -143,7 +139,6 @@ public class ChronicApp {
         }
         logger.info("started");
     }
-
     
     private void initSigning(ExtendedProperties properties) 
             throws GeneralSecurityException, IOException {
@@ -156,13 +151,6 @@ public class ChronicApp {
         logger.info("signing {}", cert.getSubjectDN());
         int validityDays = properties.getInt("validityDays", 365);
         signingInfo = new SigningInfo(validityDays, privateKey, cert);
-    }
-
-    public String getResolvedServer(String orgDomain) {
-        if (properties.getSiteUrl().contains("localhost")) {
-            return "localhost";
-        }
-        return "secure.chronica.co"; // TODO
     }
 
     class InitThread extends Thread {
@@ -344,49 +332,6 @@ public class ChronicApp {
         }
     }
 
-    class OrgRoleThread extends Thread {
-        
-        ChronicApp app;
-
-        public OrgRoleThread(ChronicApp app) {
-            this.app = app;
-        }
-        
-        @Override
-        public void run() {
-            while (running) {
-                try {
-                    OrgRoleKey orgRoleKey = orgRoleKeyQueue.poll(60, TimeUnit.SECONDS);
-                    if (orgRoleKey != null) {
-                        if (!orgRoleSet.contains(orgRoleKey)) {
-                            persist(orgRoleKey);
-                            orgRoleSet.add(orgRoleKey);
-                        }
-                    }
-                } catch (InterruptedException e) {
-                    logger.warn("run", e);
-                } catch (Throwable t) {
-                    messenger.alert(t);
-                }
-            }
-        }
-
-        private void persist(OrgRoleKey orgRoleKey) {
-            ChronicEntityService es = new ChronicEntityService(app);
-            try {
-                es.begin();
-                es.persistOrgRole(orgRoleKey);
-                es.commit();
-            } catch (Throwable e) {
-                es.rollback();
-                logger.error(e.getMessage(), e);
-            } finally {
-                es.close();
-            }
-
-        }
-    }
-        
     public EntityManager createEntityManager() {
         return emf.createEntityManager();
     }
@@ -405,10 +350,6 @@ public class ChronicApp {
     
     public Mailer getMailer() {
         return mailer;
-    }
-
-    public LinkedBlockingQueue<OrgRoleKey> getOrgRoleQueue() {
-        return orgRoleKeyQueue;
     }
 
     public LinkedBlockingQueue<TopicMessage> getMessageQueue() {
