@@ -38,16 +38,19 @@ public class Forward implements HttpHandler {
     public void handle(HttpExchange http) throws IOException {
         String cookie = http.getRequestHeaders().getFirst("Cookie");
         logger.trace("cookie {}", cookie);
-        String server = "localhost"; // TODO
-        Matcher matcher = SERVER_PATTERN.matcher(cookie);
-        if (!matcher.find()) {
-            logger.warn("server not found in cookie");
-        } else {
-            server = matcher.group(1);
-        }
-        logger.info("server", server);
-        server = "localhost"; // TODO
         try {
+            if (cookie == null) {
+                throw new IOException("no cookie");
+            }
+            String server = "localhost"; // TODO
+            Matcher matcher = SERVER_PATTERN.matcher(cookie);
+            if (!matcher.find()) {
+                throw new IOException("server not found in cookie");
+            } else {
+                server = matcher.group(1);
+            }
+            logger.info("server", server);
+            server = "localhost"; // TODO
             int port = 8443; // TODO
             String urlString = String.format("https://%s:%d%s/forwarded", server, port, http.getRequestURI().getPath());
             logger.info("url {}", urlString);

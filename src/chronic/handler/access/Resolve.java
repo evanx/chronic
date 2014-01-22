@@ -32,7 +32,7 @@ public class Resolve implements HttpHandler {
     @Override
     public void handle(HttpExchange he) throws IOException {
         Httpx httpx = new Httpx(he);
-        String orgDomain = httpx.readString();
+        String orgDomain = httpx.readString().trim();
         String server = app.getResolvedServer(orgDomain);
         for (String adminEmail : Strings.split(httpx.getRequestHeader("Admin"), DelimiterType.COMMA_OR_SPACE)) {
             logger.info("admin: {}", adminEmail);

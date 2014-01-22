@@ -94,6 +94,7 @@ public class ChronicApp {
     Thread initThread = new InitThread();
     Thread messageThread = new MessageThread(this);
     Thread eventThread = new EventThread(this);
+    Thread orgRoleThread = new OrgRoleThread(this);
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
     SigningInfo signingInfo;
     SSLContext proxyClientSSLContext;
@@ -134,6 +135,7 @@ public class ChronicApp {
         logger.info("initialized");
         messageThread.start();
         eventThread.start();
+        orgRoleThread.start();
         logger.info("schedule {}", properties.getPeriod());
         if (properties.getPeriod() > 0) {
             elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(this), properties.getPeriod(),
