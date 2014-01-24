@@ -83,6 +83,7 @@ public class TopicMessage implements OrgKeyed {
         topicLabel = message.topicLabel;
         periodMillis = message.periodMillis;
         alertType = message.alertType;
+        topic = message.topic;
     }
 
     public TopicKey getKey() {

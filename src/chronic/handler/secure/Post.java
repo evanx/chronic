@@ -31,16 +31,16 @@ public class Post implements PlainHttpxHandler {
     public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
             throws Exception {
         Cert cert = es.persistCert(httpx);
-        TopicMessage status = new TopicMessage(cert);
+        TopicMessage message = new TopicMessage(cert);
         int contentLength = Integer.parseInt(httpx.getRequestHeader("Content-length"));
         if (contentLength > contentLengthLimit) {
             logger.warn("contentLength {} {}", contentLength, cert);
-            status.setStatusType(StatusType.CONTENT_ERROR);
-            status.setTopicLabel("Chronica");
-            status.getLineList().add("INFO: Content length limit exceeded");
-            Topic topic = es.persistTopic(cert, status.getTopicLabel());
-            status.setTopic(topic);
-            app.getMessageQueue().add(status);
+            message.setStatusType(StatusType.CONTENT_ERROR);
+            message.setTopicLabel("Chronica");
+            message.getLineList().add("INFO: Content length limit exceeded");
+            Topic topic = es.persistTopic(cert, message);
+            message.setTopic(topic);
+            app.getMessageQueue().add(message);
             cert.setEnabled(false);
             throw new Exception("Content length limit exceeded: " + cert);
         }
@@ -48,13 +48,13 @@ public class Post implements PlainHttpxHandler {
         byte[] content = Streams.readBytes(httpx.getDelegate().getRequestBody());
         String contentString = new String(content);
         logger.trace("content {}", contentString);
-        new TopicMessageParser(status).parse(httpx.getRequestHeaders(), contentString);
-        logger.debug("status {}", status);
-        Topic topic = es.persistTopic(cert, status.getTopicLabel());
-        status.setTopic(topic);
-        if (status.getSubscribers() != null) {
-            if (status.getSubscribers().size() > 0) {
-                for (String email : status.getSubscribers()) {
+        new TopicMessageParser(message).parse(httpx.getRequestHeaders(), contentString);
+        logger.debug("status {}", message);
+        Topic topic = es.persistTopic(cert, message);
+        message.setTopic(topic);
+        if (message.getSubscribers() != null) {
+            if (message.getSubscribers().size() > 0) {
+                for (String email : message.getSubscribers()) {
                     Person person = es.persistPerson(email);
                     logger.info("subscribe {}", person);
                     es.persistTopicSubscription(topic, person);
@@ -62,15 +62,15 @@ public class Post implements PlainHttpxHandler {
             }
         }
         StringBuilder builder = new StringBuilder();
-        for (StatusCheck check : status.getChecks()) {
+        for (StatusCheck check : message.getChecks()) {
             String result = check.check();
             logger.info("check {}: {}", check.getClass().getSimpleName(), result);
-            status.getLineList().add(result);
+            message.getLineList().add(result);
             builder.append(result);
             builder.append("\n");
         }
         es.commit();
-        app.getMessageQueue().add(status);
+        app.getMessageQueue().add(message);
         if (builder.length() == 0) {
             builder.append(String.format("OK: %s\n", topic.getTopicLabel()));
         }

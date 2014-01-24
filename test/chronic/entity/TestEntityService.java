@@ -22,6 +22,7 @@
 package chronic.entity;
 
 import chronic.TestTimeZone;
+import chronic.alert.TopicMessage;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.entitytype.OrgRoleType;
@@ -73,8 +74,10 @@ public class TestEntityService {
         es.persistOrgRole(p2.org, p1.email, OrgRoleType.ADMIN);
         p2.orgRole = es.persistOrgRole(p2.org, p2.email, OrgRoleType.ADMIN);
         logger.info("org {}", p1.org);
-        p1.topic = es.persistTopic(p1.cert, p1.topicLabel);
-        p2.topic = es.persistTopic(p2.cert, p2.topicLabel);
+        p1.message = new TopicMessage(p1.cert);
+        p1.topic = es.persistTopic(p1.cert, p1.message);
+        p2.message = new TopicMessage(p2.cert);
+        p2.topic = es.persistTopic(p2.cert, p2.message);
         logger.info("topic {}", p1.topic);
         logger.info("topic {}", p2.topic);
         es.commit();

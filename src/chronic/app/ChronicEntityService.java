@@ -20,6 +20,7 @@
  */
 package chronic.app;
 
+import chronic.alert.TopicMessage;
 import chronic.entity.Cert;
 import chronic.entity.IssuedCert;
 import chronic.entity.Org;
@@ -295,7 +296,6 @@ public class ChronicEntityService implements AutoCloseable {
     }
 
     public List<Subscription> listSubscriptions(Topic topic) {
-        assert em != null;
         assert topic != null;
         return em.createQuery("select s from Subscription s"
                 + " where s.topicId = :topicId"
@@ -537,17 +537,21 @@ public class ChronicEntityService implements AutoCloseable {
         return orgRole;
     }
 
-    public Topic persistTopic(Cert cert, String topicLabel)
+    public Topic persistTopic(Cert cert, TopicMessage message)
             throws StorageException {
-        logger.info("persistTopic {} {}", topicLabel, cert);
+        logger.info("persistTopic {} {}", cert, message);
         assert (cert.getId() != null);
-        TopicKey key = new TopicKey(cert.getId(), topicLabel);
+        TopicKey key = new TopicKey(cert.getId(), message.getTopicLabel());
         Topic topic = find(key);
         if (topic == null) {
             topic = new Topic(key);
             em.persist(topic);
         }
         topic.setCert(cert);
+        topic.setAlertType(message.getAlertType());
+        if (message.getPeriodMillis() > 0) {
+            topic.setPeriodSeconds(message.getPeriodMillis() / 1000);
+        }
         return topic;
     }
 

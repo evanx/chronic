@@ -21,6 +21,7 @@
  */
 package chronic.entity;
 
+import chronic.alert.TopicMessage;
 import static chronic.entity.TestEntity.logger;
 import chronic.entitykey.CertKey;
 import java.util.List;
@@ -45,6 +46,7 @@ public class TestEntityInfo {
     OrgRole orgRole;
     Cert cert;
     Topic topic;
+    TopicMessage message;
     Person person;
     Alert alert;
 

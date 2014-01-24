@@ -6,10 +6,13 @@ package chronic.entity;
 
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicKeyed;
+import chronic.type.AlertType;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,6 +41,13 @@ public class Topic extends ComparableEntity implements TopicKeyed, JMapped, Seri
     
     @Column(name = "topic_label")
     String topicLabel;
+
+    @Column(name = "alert_type", length = 32)
+    @Enumerated(EnumType.STRING)
+    AlertType alertType;
+
+    @Column(name = "period_secs")
+    long periodSeconds;
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cert_id", referencedColumnName = "cert_id",
@@ -99,7 +109,23 @@ public class Topic extends ComparableEntity implements TopicKeyed, JMapped, Seri
     public void setTopicLabel(String topicLabel) {
         this.topicLabel = topicLabel;
     }
-    
+
+    public void setAlertType(AlertType alertType) {
+        this.alertType = alertType;
+    }
+
+    public AlertType getAlertType() {
+        return alertType;
+    }
+
+    public void setPeriodSeconds(long periodSeconds) {
+        this.periodSeconds = periodSeconds;
+    }
+
+    public long getPeriodSeconds() {
+        return periodSeconds;
+    }
+        
     @Override
     public JMap getMap() {
         JMap map = new JMap();
