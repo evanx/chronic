@@ -47,7 +47,8 @@ public class TopicEvent implements Timestamped {
     Calendar polled;
     long timestamp;
     long period;
-
+    TopicEvent previousEvent;
+            
     public TopicEvent(TopicMessage message) {
         this.message = message;
     }
@@ -86,7 +87,15 @@ public class TopicEvent implements Timestamped {
     public TopicMessage getPreviousMessage() {
         return previousMessage;
     }
-    
+
+    public void setPreviousEvent(TopicEvent previousEvent) {
+        this.previousEvent = previousEvent;
+    }
+
+    public TopicEvent getPreviousEvent() {
+        return previousEvent;
+    }
+        
     public Calendar getPolled() {
         return polled;
     }

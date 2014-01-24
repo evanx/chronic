@@ -96,7 +96,7 @@ public class ChronicApp {
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
     SigningInfo signingInfo;
     SSLContext proxyClientSSLContext;
-    
+
     public ChronicApp() {
         super();
     }
@@ -107,19 +107,19 @@ public class ChronicApp {
         mailer = new Mailer(properties.getMailerProperties());
         initSigning(properties.getSigning());
         logger.info("properties {}", properties);
-        webServer.start(properties.getWebServer(), 
+        webServer.start(properties.getWebServer(),
                 new OpenTrustManager(),
                 new WebHttpService(this));
-        httpRedirectServer.start(properties.getHttpRedirectServer(), 
+        httpRedirectServer.start(properties.getHttpRedirectServer(),
                 new RedirectHttpsHandler());
-        insecureServer.start(properties.getInsecureServer(), 
+        insecureServer.start(properties.getInsecureServer(),
                 new InsecureHttpService(this));
-        appServer.start(properties.getAppServer(), 
+        appServer.start(properties.getAppServer(),
                 new ChronicTrustManager(this),
                 new SecureHttpService(this));
         initThread.start();
     }
-    
+
     public void ensureInitialized() throws InterruptedException {
         if (initThread.isAlive()) {
             initThread.join();
@@ -139,8 +139,8 @@ public class ChronicApp {
         }
         logger.info("started");
     }
-    
-    private void initSigning(ExtendedProperties properties) 
+
+    private void initSigning(ExtendedProperties properties)
             throws GeneralSecurityException, IOException {
         String keyStoreLocation = properties.getString("keyStoreLocation");
         logger.info("signing {}", keyStoreLocation);
@@ -185,40 +185,14 @@ public class ChronicApp {
         }
     }
 
-    class EventThread extends Thread {
-        ChronicApp app;
-
-        public EventThread(ChronicApp app) {
-            this.app = app;
-        }
-                
-        @Override
-        public void run() {
-            while (running) {
-                try {
-                    TopicEvent topicEvent = eventQueue.poll(60, TimeUnit.SECONDS);
-                    if (topicEvent == null) {
-                    } else if (eventMap.get(topicEvent.getMessage().getKey()) != topicEvent) {
-                        logger.warn("event from queue differs to latest event in map");
-                    } else {
-                        eventList.add(topicEvent);
-                        new ChronicAlerter().alert(app, topicEvent);
-                    }
-                } catch (Throwable t) {
-                    messenger.alert(t);
-                }
-            }
-        }
-    }
-
     class MessageThread extends Thread {
-        
+
         ChronicApp app;
 
         public MessageThread(ChronicApp app) {
             this.app = app;
         }
-        
+
         @Override
         public void run() {
             while (running) {
@@ -260,14 +234,20 @@ public class ChronicApp {
             TopicEvent previousEvent = eventMap.get(message.getKey());
             TopicEvent event = TopicEventChecker.check(message, previousMessage, previousEvent);
             if (event != null) {
+                event.setPreviousEvent(previousEvent);
                 eventMap.put(message.getKey(), event);
                 if (message.getAlertType() == null) {
                     logger.warn("alertType null {}", message);
                 } else if (message.getStatusType() == null) {
                     logger.warn("statusType null {}", message);
-                } else if (message.getStatusType().isKnown()  
+                } else if (message.getStatusType().isKnown()
                         && event.getAlertEventType() != TopicEventType.INITIAL
                         && message.getAlertType().isAlertable()) {
+                    if (previousEvent != null
+                            && previousEvent.getAlertEventType() != TopicEventType.INITIAL) {
+                        long elapsed = event.getTimestamp() - previousEvent.getTimestamp();
+                        // TODO                        
+                    }
                     eventQueue.add(event);
                 }
             } else {
@@ -283,9 +263,36 @@ public class ChronicApp {
                     }
                 }
             }
-        }        
+        }
     }
 
+    class EventThread extends Thread {
+
+        ChronicApp app;
+
+        public EventThread(ChronicApp app) {
+            this.app = app;
+        }
+
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    TopicEvent topicEvent = eventQueue.poll(60, TimeUnit.SECONDS);
+                    if (topicEvent == null) {
+                        if (eventMap.get(topicEvent.getMessage().getKey()) != topicEvent) {
+                            logger.warn("event from queue differs to latest event in map");
+                        } else {
+                            eventList.add(topicEvent);
+                            new ChronicAlerter().alert(app, topicEvent);
+                        }
+                    }
+                } catch (Throwable t) {
+                    messenger.alert(t);
+                }
+            }
+        }
+    }
     
     class ElapsedRunnable implements Runnable {
 
@@ -313,8 +320,8 @@ public class ChronicApp {
         private void checkElapsed(TopicMessage message) {
             long elapsed = Millis.elapsed(message.getTimestamp());
             logger.debug("checkElapsed {} {}", elapsed, message);
-            if (message.getPeriodMillis() > 0 && 
-                    elapsed > message.getPeriodMillis() + properties.getPeriod()) {
+            if (message.getPeriodMillis() > 0
+                    && elapsed > message.getPeriodMillis() + properties.getPeriod()) {
                 TopicEvent previousAlert = eventMap.get(message.getKey());
                 if (previousAlert == null
                         || previousAlert.getMessage().getStatusType() != StatusType.ELAPSED) {
@@ -348,31 +355,29 @@ public class ChronicApp {
 
     public SigningInfo getSigningInfo() {
         return signingInfo;
-    }        
-    
+    }
+
     public Mailer getMailer() {
         return mailer;
     }
 
     public LinkedBlockingQueue<TopicMessage> getMessageQueue() {
-        return messageQueue;        
+        return messageQueue;
     }
-    
+
     public Map<TopicMetricKey, MetricSeries> getSeriesMap() {
         return seriesMap;
     }
-        
+
     public Map<TopicKey, TopicEvent> getEventMap() {
         return eventMap;
-    }   
+    }
 
     public Map<SubscriptionKey, Alert> getAlertMap() {
         return alertMap;
     }
-    
+
     public Map<String, TopicEvent> getSentMap() {
         return sentMap;
     }
-            
-    
 }
