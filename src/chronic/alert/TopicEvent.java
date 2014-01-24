@@ -20,8 +20,7 @@ package chronic.alert;
  specific language governing permissions and limitations
  under the License.  
  */
-
-
+import chronic.type.StatusType;
 import chronic.type.TopicEventType;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -45,10 +44,11 @@ public class TopicEvent implements Timestamped {
     String preContent;
     TopicEventType eventType;
     Calendar polled;
+    StatusType previousStatusType;
+    long previousTimestamp;
     long timestamp;
     long period;
-    TopicEvent previousEvent;
-            
+
     public TopicEvent(TopicMessage message) {
         this.message = message;
     }
@@ -57,29 +57,29 @@ public class TopicEvent implements Timestamped {
         this.message = message;
         this.eventType = eventType;
     }
-        
+
     public TopicEvent(TopicMessage message, TopicMessage previousMessage) {
         this.message = message;
         this.previousMessage = previousMessage;
     }
-    
+
     @Override
     public long getTimestamp() {
         return message.getTimestamp();
     }
-    
+
     public void setAlertEventType(TopicEventType alertEventType) {
         this.eventType = alertEventType;
     }
-    
+
     public TopicEventType getAlertEventType() {
         return eventType;
     }
-        
+
     public TopicMessage getMessage() {
         return message;
     }
-    
+
     public void setPreviousMessage(TopicMessage previousMessage) {
         this.previousMessage = previousMessage;
     }
@@ -88,14 +88,6 @@ public class TopicEvent implements Timestamped {
         return previousMessage;
     }
 
-    public void setPreviousEvent(TopicEvent previousEvent) {
-        this.previousEvent = previousEvent;
-    }
-
-    public TopicEvent getPreviousEvent() {
-        return previousEvent;
-    }
-        
     public Calendar getPolled() {
         return polled;
     }
@@ -104,10 +96,30 @@ public class TopicEvent implements Timestamped {
         this.polled = polled;
     }
 
+    public StatusType getPreviousStatusType() {
+        return previousStatusType;
+    }
+
+    public void setPreviousStatusType(StatusType previousStatusType) {
+        this.previousStatusType = previousStatusType;
+    }
+    
+    public long getPreviousTimestamp() {
+        return previousTimestamp;
+    }
+
+    public void setPreviousTimestamp(long previousTimestamp) {
+        this.previousTimestamp = previousTimestamp;
+    }
+    
+    public boolean isStatus() {
+        return eventType != TopicEventType.INITIAL && message.isStatus();        
+    }
+
     public List<String> getPendingEmails() {
         return pendingEmails;
     }
-
+    
     @Override
     public String toString() {
         return message.toString();

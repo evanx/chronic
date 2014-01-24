@@ -20,6 +20,9 @@
  */
 package chronic.alert;
 
+import chronic.entity.Cert;
+import chronic.entitykey.ServiceStatusKey;
+import chronic.entitykey.ServiceStatusKeyed;
 import chronic.type.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +32,16 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-public class ServiceStatus {
+public class ServiceStatus implements ServiceStatusKeyed {
 
     static Logger logger = LoggerFactory.getLogger(ServiceStatus.class);
     String serviceLabel;
     StatusType statusType;
     String statusInfo;
-    
-    public ServiceStatus(String serviceLabel, StatusType statusType, String statusInfo) {
+    Cert cert;
+        
+    public ServiceStatus(Cert cert, String serviceLabel, StatusType statusType, String statusInfo) {
+        this.cert = cert;
         this.serviceLabel = serviceLabel;
         this.statusType = statusType;
         this.statusInfo = statusInfo;
@@ -65,5 +70,10 @@ public class ServiceStatus {
     @Override
     public String toString() {
         return Args.format(serviceLabel, statusType, statusInfo);
+    }
+
+    @Override
+    public ServiceStatusKey getServiceStatusKey() {
+        return new ServiceStatusKey(cert.getId(), serviceLabel, statusType);
     }
 }

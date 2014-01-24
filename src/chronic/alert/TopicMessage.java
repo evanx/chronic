@@ -55,6 +55,7 @@ public class TopicMessage implements OrgKeyed {
     StatusType statusType;
     long timestamp = System.currentTimeMillis();
     long periodMillis;
+    long alertPeriodMillis;
     String contentType;
     String from;
     String subject;
@@ -79,10 +80,12 @@ public class TopicMessage implements OrgKeyed {
     }
 
     public TopicMessage(TopicMessage message) {
-        cert = message.cert;
-        topicLabel = message.topicLabel;
-        periodMillis = message.periodMillis;
+        alertPeriodMillis = message.alertPeriodMillis;
         alertType = message.alertType;
+        cert = message.cert;
+        periodMillis = message.periodMillis;
+        serviceLabel = message.serviceLabel;
+        topicLabel = message.topicLabel;
         topic = message.topic;
     }
 
@@ -196,6 +199,14 @@ public class TopicMessage implements OrgKeyed {
         return alertFormatType;
     }
 
+    public void setAlertPeriodMillis(long alertPeriodMillis) {
+        this.alertPeriodMillis = alertPeriodMillis;
+    }
+
+    public long getAlertPeriodMillis() {
+        return alertPeriodMillis;
+    }
+    
     public void setPeriodMillis(long periodMillis) {
         this.periodMillis = periodMillis;
     }

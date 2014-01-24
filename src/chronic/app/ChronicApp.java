@@ -28,7 +28,6 @@ import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
 import chronic.alert.TopicEventChecker;
 import chronic.entity.Alert;
-import chronic.entitykey.OrgRoleKey;
 import chronic.entitykey.SubscriptionKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
@@ -42,9 +41,7 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -56,9 +53,11 @@ import javax.persistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
+import vellum.exception.ParseException;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.httphandler.RedirectHttpsHandler;
+import vellum.jx.JMapException;
 import vellum.mail.Mailer;
 import vellum.security.KeyStores;
 import vellum.ssl.OpenTrustManager;
@@ -96,11 +95,16 @@ public class ChronicApp {
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
     SigningInfo signingInfo;
     SSLContext proxyClientSSLContext;
+    TopicEventChecker eventChecker = new TopicEventChecker(this);
 
     public ChronicApp() {
         super();
     }
 
+    public void initProperties() throws IOException, ParseException, JMapException {
+        properties.init();
+    }
+    
     public void init() throws Exception {
         properties.init();
         proxyClientSSLContext = SSLContexts.create(new OpenTrustManager());
@@ -232,9 +236,12 @@ public class ChronicApp {
                 return;
             }
             TopicEvent previousEvent = eventMap.get(message.getKey());
-            TopicEvent event = TopicEventChecker.check(message, previousMessage, previousEvent);
+            TopicEvent event = eventChecker.check(message, previousMessage, previousEvent);
             if (event != null) {
-                event.setPreviousEvent(previousEvent);
+                if (previousEvent != null) {
+                    event.setPreviousStatusType(previousEvent.getMessage().getStatusType());
+                    event.setPreviousTimestamp(previousEvent.getTimestamp());
+                }
                 eventMap.put(message.getKey(), event);
                 if (message.getAlertType() == null) {
                     logger.warn("alertType null {}", message);
@@ -243,12 +250,9 @@ public class ChronicApp {
                 } else if (message.getStatusType().isKnown()
                         && event.getAlertEventType() != TopicEventType.INITIAL
                         && message.getAlertType().isAlertable()) {
-                    if (previousEvent != null
-                            && previousEvent.getAlertEventType() != TopicEventType.INITIAL) {
-                        long elapsed = event.getTimestamp() - previousEvent.getTimestamp();
-                        // TODO                        
+                    if (previousEvent == null || eventChecker.check(event, previousEvent)) {
+                        eventQueue.add(event);
                     }
-                    eventQueue.add(event);
                 }
             } else {
                 long period = message.getTimestamp() - previousMessage.getTimestamp();
@@ -279,7 +283,7 @@ public class ChronicApp {
             while (running) {
                 try {
                     TopicEvent topicEvent = eventQueue.poll(60, TimeUnit.SECONDS);
-                    if (topicEvent == null) {
+                    if (topicEvent != null) {
                         if (eventMap.get(topicEvent.getMessage().getKey()) != topicEvent) {
                             logger.warn("event from queue differs to latest event in map");
                         } else {

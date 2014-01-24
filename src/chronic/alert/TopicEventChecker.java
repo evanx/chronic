@@ -20,6 +20,7 @@
  */
 package chronic.alert;
 
+import chronic.app.ChronicApp;
 import chronic.type.TopicEventType;
 import chronic.type.StatusType;
 import chronic.type.AlertType;
@@ -34,7 +35,13 @@ public class TopicEventChecker {
 
     static Logger logger = LoggerFactory.getLogger(TopicEventChecker.class);
     
-    public static TopicEvent check(TopicMessage message, TopicMessage previousMessage, TopicEvent previousEvent) {
+    ChronicApp app;
+
+    public TopicEventChecker(ChronicApp app) {
+        this.app = app;
+    }
+        
+    public TopicEvent check(TopicMessage message, TopicMessage previousMessage, TopicEvent previousEvent) {
         assert previousMessage != null;
         logger.info("check: {}", message);
         if (message.alertType == AlertType.ALWAYS) {
@@ -67,4 +74,23 @@ public class TopicEventChecker {
         }
         return null;
     }    
+
+    public boolean check(TopicEvent event, TopicEvent previousEvent) {
+        if (previousEvent == null) {
+            return true;
+        }
+        event.setPreviousTimestamp(previousEvent.getTimestamp());
+        if (event.isStatus()
+                && event.getPreviousTimestamp() > 0
+                && previousEvent.isStatus()
+                && previousEvent.getPreviousStatusType() != null
+                && previousEvent.getPreviousStatusType().isStatus()
+                && previousEvent.getPreviousTimestamp() > 0) {
+            long elapsed = event.getTimestamp() - previousEvent.getPreviousTimestamp();
+            if (elapsed < app.getProperties().getDebouncePeriod()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

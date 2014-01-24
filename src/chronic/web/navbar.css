@@ -8,7 +8,7 @@ body {
   margin-bottom: 20px;
 }
 
-pre {
+pre.ubuntumono {
   font-family: Ubuntu Mono;
   font-size: 12pt;
 }

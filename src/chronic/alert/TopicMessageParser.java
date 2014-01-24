@@ -214,7 +214,8 @@ public class TopicMessageParser {
             }
         }
         StatusType statusType = StatusType.valueOf(status);
-        ServiceStatus serviceStatus = new ServiceStatus(serviceLabel, statusType, info);
+        ServiceStatus serviceStatus = new ServiceStatus(topicMessage.getCert(), 
+                serviceLabel, statusType, info);
         topicMessage.statusList.add(serviceStatus);
     }
 
