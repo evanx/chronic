@@ -25,12 +25,14 @@ import chronic.alert.TopicEvent;
 import chronic.alert.TopicEventChecker;
 import chronic.alert.TopicMessage;
 import chronic.alert.TopicMessageParser;
+import chronic.app.ChronicApp;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.exception.ParseException;
+import vellum.jx.JMapException;
 
 /**
  *
@@ -40,12 +42,15 @@ public class TestTopicEventChecker {
 
     static Logger logger = LoggerFactory.getLogger(TestTopicEventChecker.class);
 
+    ChronicApp app = new ChronicApp();
+    TopicEventChecker eventChecker = new TopicEventChecker(app);
 
     public TestTopicEventChecker() {
     }
 
     @Test
-    public void testSingleStatus() throws IOException, ParseException {
+    public void testSingleStatus() throws IOException, ParseException, JMapException {
+        app.initProperties();
         TopicMessage topicMessage1 = newTopicMessage(
                 "Load OK - 10",
                 "Disk OK - 20");
@@ -60,9 +65,9 @@ public class TestTopicEventChecker {
         Assert.assertEquals("Disk", topicMessage3.getServiceLabel());
         TopicEvent alert1 = new TopicEvent(topicMessage1);
         TopicEvent alert2 = new TopicEvent(topicMessage2);
-        Assert.assertNull(TopicEventChecker.check(topicMessage1, topicMessage1, alert1));
-        Assert.assertNotNull(TopicEventChecker.check(topicMessage2, topicMessage2, alert1));
-        Assert.assertNull(TopicEventChecker.check(topicMessage3, topicMessage2, alert2));
+        Assert.assertNull(eventChecker.check(topicMessage1, topicMessage1, alert1));
+        Assert.assertNotNull(eventChecker.check(topicMessage2, topicMessage2, alert1));
+        Assert.assertNull(eventChecker.check(topicMessage3, topicMessage2, alert2));
     }
     
     private TopicMessage newTopicMessage(String ... lines) throws IOException, ParseException {
