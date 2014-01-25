@@ -285,7 +285,7 @@ public class ChronicEntityService implements AutoCloseable {
 
     public List<Subscription> listSubscription(String email) {
         return em.createQuery("select s from Subscription s"
-                + " where s.email = :email").
+                + " where s.person.email = :email").
                 setParameter("email", email).
                 getResultList();
     }
@@ -400,7 +400,7 @@ public class ChronicEntityService implements AutoCloseable {
     private List<Subscription> selectSubscription(Topic topic, String email) {
         return em.createQuery("select s from Subscription s"
                 + " where s.topic = :topic"
-                + " and s.email = :email").
+                + " and s.person.email = :email").
                 setParameter("topic", topic).
                 setParameter("email", email).
                 getResultList();
