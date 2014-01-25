@@ -27,10 +27,12 @@ import chronic.alert.TopicEvent;
 import chronic.alert.MetricSeries;
 import chronic.alert.MetricValue;
 import chronic.alert.TopicEventChecker;
+import chronic.alert.TopicStatus;
 import chronic.entity.Alert;
 import chronic.entitykey.SubscriptionKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
+import chronic.entitykey.TopicStatusKey;
 import chronic.type.TopicEventType;
 import chronic.type.StatusType;
 import java.io.IOException;
@@ -82,6 +84,7 @@ public class ChronicApp {
     LinkedBlockingQueue<TopicMessage> messageQueue = new LinkedBlockingQueue(100);
     Map<TopicKey, TopicMessage> messageMap = new ConcurrentHashMap();
     Map<TopicKey, TopicEvent> eventMap = new ConcurrentHashMap();
+    Map<TopicStatusKey, TopicStatus> statusMap = new ConcurrentHashMap();
     LinkedBlockingQueue<TopicEvent> eventQueue = new LinkedBlockingQueue(100);
     LinkedList<TopicEvent> eventList = new LinkedList();
     Map<SubscriptionKey, Alert> alertMap = new ConcurrentHashMap();
@@ -247,12 +250,20 @@ public class ChronicApp {
                     logger.warn("alertType null {}", message);
                 } else if (message.getStatusType() == null) {
                     logger.warn("statusType null {}", message);
-                } else if (message.getStatusType().isKnown()
-                        && event.getAlertEventType() != TopicEventType.INITIAL
-                        && message.getAlertType().isAlertable()) {
-                    if (previousEvent == null || eventChecker.check(event, previousEvent)) {
-                        eventQueue.add(event);
+                } else if (event.isAlertable()) {
+                    if (message.isStatus()) {
+                        TopicStatus status = new TopicStatus(message.getTopic().getId(),
+                                message.getStatusType());
+                        TopicStatus previousStatus = statusMap.put(status.getTopicStatusKey(),
+                                status);
+                        if (previousStatus != null) {
+                            long elapsed = event.getTimestamp() - previousStatus.getTimestamp();
+                            if (elapsed < properties.getStatusPeriod()) {                                
+                                return;
+                            }
+                        }
                     }
+                    eventQueue.add(event);
                 }
             } else {
                 long period = message.getTimestamp() - previousMessage.getTimestamp();

@@ -8,6 +8,6 @@ package chronic.entitykey;
  *
  * @author evan.summers
  */
-public interface ServiceStatusKeyed {
-    public ServiceStatusKey getServiceStatusKey();
+public interface TopicStatusKeyed {
+    public TopicStatusKey getTopicStatusKey();
 }

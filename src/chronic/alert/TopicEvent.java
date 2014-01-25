@@ -103,7 +103,7 @@ public class TopicEvent implements Timestamped {
     public void setPreviousStatusType(StatusType previousStatusType) {
         this.previousStatusType = previousStatusType;
     }
-    
+
     public long getPreviousTimestamp() {
         return previousTimestamp;
     }
@@ -111,15 +111,22 @@ public class TopicEvent implements Timestamped {
     public void setPreviousTimestamp(long previousTimestamp) {
         this.previousTimestamp = previousTimestamp;
     }
-    
+
     public boolean isStatus() {
-        return eventType != TopicEventType.INITIAL && message.isStatus();        
+        return eventType != TopicEventType.INITIAL 
+                && message.isStatus();
     }
 
+    public boolean isAlertable() {
+        return eventType != TopicEventType.INITIAL 
+                && message.getAlertType().isAlertable()
+                && message.getStatusType().isKnown();
+    }
+    
     public List<String> getPendingEmails() {
         return pendingEmails;
     }
-    
+
     @Override
     public String toString() {
         return message.toString();

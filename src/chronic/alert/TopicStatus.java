@@ -20,53 +20,43 @@
  */
 package chronic.alert;
 
-import chronic.entity.Cert;
+import chronic.entitykey.TopicStatusKey;
+import chronic.entitykey.TopicStatusKeyed;
 import chronic.type.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.util.Args;
 
 /**
  *
  * @author evan.summers
  */
-public class ServiceStatus {
+public class TopicStatus implements TopicStatusKeyed {
 
-    static Logger logger = LoggerFactory.getLogger(ServiceStatus.class);
-    String serviceLabel;
+    static Logger logger = LoggerFactory.getLogger(TopicStatus.class);
+    long topicId;
     StatusType statusType;
-    String statusInfo;
-    Cert cert;
+    long timestamp = System.currentTimeMillis();
         
-    public ServiceStatus(Cert cert, String serviceLabel, StatusType statusType, String statusInfo) {
-        this.cert = cert;
-        this.serviceLabel = serviceLabel;
+    public TopicStatus(long topicId, StatusType statusType) {
+        this.topicId = topicId;
         this.statusType = statusType;
-        this.statusInfo = statusInfo;
     }
 
-    public String getServiceLabel() {
-        return serviceLabel;
+    public long getTopicId() {
+        return topicId;
     }
-        
+    
     public StatusType getStatusType() {
         return statusType;
     }
 
-    public String getStatusInfo() {
-        return statusInfo;
+    public long getTimestamp() {
+        return timestamp;
     }
-    
-    public boolean isStatusKnown() {
-        return statusType != null && statusType != StatusType.UNKNOWN;
-    }
-    
-    public boolean isStatusAlertable() {
-        return statusType != null && statusType.isStatus();
-    }
-    
+
     @Override
-    public String toString() {
-        return Args.format(serviceLabel, statusType, statusInfo);
+    public TopicStatusKey getTopicStatusKey() {
+        return new TopicStatusKey(topicId, statusType);
     }
+    
 }

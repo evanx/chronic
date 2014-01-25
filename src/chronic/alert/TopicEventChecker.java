@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory;
 public class TopicEventChecker {
 
     static Logger logger = LoggerFactory.getLogger(TopicEventChecker.class);
-    
+
     ChronicApp app;
 
     public TopicEventChecker(ChronicApp app) {
         this.app = app;
     }
-        
+
     public TopicEvent check(TopicMessage message, TopicMessage previousMessage, TopicEvent previousEvent) {
         assert previousMessage != null;
         logger.info("check: {}", message);
@@ -63,34 +63,15 @@ public class TopicEventChecker {
                 return new TopicEvent(message, previousMessage);
             }
         } else if (message.alertType == AlertType.STATUS_CHANGED) {
-           if (message.isStatus() && message.statusType == previousMessage.statusType) {
-               if (previousEvent == null) {
-                    return new TopicEvent(previousMessage, TopicEventType.INITIAL);                   
-               } else if (message.isStatusChanged(previousEvent.getMessage().getStatusType())) {
-                   logger.info("status changed {}", previousMessage);
-                   return new TopicEvent(previousMessage, previousEvent.getMessage());
-               }
-           }
-        }
-        return null;
-    }    
-
-    public boolean check(TopicEvent event, TopicEvent previousEvent) {
-        if (previousEvent == null) {
-            return true;
-        }
-        event.setPreviousTimestamp(previousEvent.getTimestamp());
-        if (event.isStatus()
-                && event.getPreviousTimestamp() > 0
-                && previousEvent.isStatus()
-                && previousEvent.getPreviousStatusType() != null
-                && previousEvent.getPreviousStatusType().isStatus()
-                && previousEvent.getPreviousTimestamp() > 0) {
-            long elapsed = event.getTimestamp() - previousEvent.getPreviousTimestamp();
-            if (elapsed < app.getProperties().getDebouncePeriod()) {
-                return false;
+            if (message.isStatus() && message.statusType == previousMessage.statusType) {
+                if (previousEvent == null) {
+                    return new TopicEvent(previousMessage, TopicEventType.INITIAL);
+                } else if (message.isStatusChanged(previousEvent.getMessage().getStatusType())) {
+                    logger.info("status changed {}", previousMessage);
+                    return new TopicEvent(previousMessage, previousEvent.getMessage());
+                }
             }
         }
-        return true;
+        return null;
     }
 }
