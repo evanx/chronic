@@ -52,7 +52,7 @@ public class ChronicProperties {
     private String mimicEmail;
     private String alertScript = null;
     private long alertPeriod = Millis.fromMinutes(5);
-    private long statusPeriod = Millis.fromMinutes(120);
+    private long statusPeriod = Millis.fromMinutes(180);
     private long period = Millis.fromMinutes(2);
     private boolean testing = false;
     private boolean mockStorage = false;

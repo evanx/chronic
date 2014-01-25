@@ -49,7 +49,7 @@ public class Topic extends ComparableEntity implements TopicKeyed, JMapped, Seri
     @Column(name = "period_secs")
     long periodSeconds;
 
-    @Column(name = "status_period")
+    @Column(name = "status_secs")
     long statusPeriodSeconds;
     
     @ManyToOne(fetch = FetchType.EAGER)
