@@ -72,7 +72,7 @@ public class TestTopicEventChecker {
     
     private TopicMessage newTopicMessage(String ... lines) throws IOException, ParseException {
         TopicMessage topicMessage = new TopicMessage();
-        TopicMessageParser parser = new TopicMessageParser(topicMessage);
+        TopicMessageParser parser = new TopicMessageParser(app, topicMessage);
         return parser.parse(lines);
         
     }

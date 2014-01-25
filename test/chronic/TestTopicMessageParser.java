@@ -24,6 +24,7 @@ package chronic;
 import chronic.alert.TopicMessage;
 import chronic.alert.TopicMessageParser;
 import chronic.alert.TopicMessagePatterns;
+import chronic.app.ChronicApp;
 import chronic.type.StatusType;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -44,15 +45,17 @@ public class TestTopicMessageParser {
 
     static Logger logger = LoggerFactory.getLogger(TestTopicMessageParser.class);
 
-
-    public TestTopicMessageParser() {
+    ChronicApp app = new ChronicApp(); 
+    
+    public TestTopicMessageParser() throws Exception {
+        app.initProperties();
     }
 
     @Test
     public void testCron() throws IOException, ParseException {
         StringBuilder builder = new StringBuilder();
         TopicMessage topicMessage = new TopicMessage();
-        TopicMessageParser parser = new TopicMessageParser(topicMessage);
+        TopicMessageParser parser = new TopicMessageParser(app, topicMessage);
         builder.append("From: root (Cron Daemon)\n");
         builder.append("Subject: Cron <root@vm> scripts/minutely.sh\n");
         parser.parse(builder.toString());
@@ -64,7 +67,7 @@ public class TestTopicMessageParser {
     public void testMetricValue() throws IOException, ParseException {
         StringBuilder builder = new StringBuilder();
         TopicMessage topicMessage = new TopicMessage();
-        TopicMessageParser parser = new TopicMessageParser(topicMessage);
+        TopicMessageParser parser = new TopicMessageParser(app, topicMessage);
         builder.append("Value: Load 3.5\n");
         parser.parse(builder.toString());
         Assert.assertEquals(1, topicMessage.getMetricList().size());
@@ -76,7 +79,7 @@ public class TestTopicMessageParser {
     public void testSingleStatus() throws IOException, ParseException {
         Deque<String> lineList = new ArrayDeque();
         TopicMessage topicMessage = new TopicMessage();
-        TopicMessageParser parser = new TopicMessageParser(topicMessage);
+        TopicMessageParser parser = new TopicMessageParser(app, topicMessage);
         lineList.add("Load CRITICAL - 3.5");
         Matcher matcher = TopicMessagePatterns.SERVICE_STATUS.matcher(lineList.getLast());
         Assert.assertTrue(matcher.find());
@@ -92,7 +95,7 @@ public class TestTopicMessageParser {
     public void testMultiStatus() throws IOException, ParseException {
         Deque<String> lineList = new ArrayDeque();
         TopicMessage topicMessage = new TopicMessage();
-        TopicMessageParser parser = new TopicMessageParser(topicMessage);
+        TopicMessageParser parser = new TopicMessageParser(app, topicMessage);
         lineList.add("Load WARNING - 3.5");
         lineList.add("Disk CRITICAL - 95%");
         Matcher matcher = TopicMessagePatterns.SERVICE_STATUS.matcher(lineList.getLast());
