@@ -706,8 +706,8 @@ c1curl() {
 }
 
 c0resolve() {
-  echo $orgDomain | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem --data-binary @- \
-    -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$webServer/resolve
+  curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem --data-binary @- \
+    -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$server/resolve
 }
 
 c0ensureResolve() {
@@ -721,8 +721,8 @@ c0ensureResolve() {
     then
       echo "ERROR: no response from resolve server query"
     else
-      server="$resolvedServer"
       echo "OK: resolved server: $resolvedServer"
+      server="$resolvedServer"
       break
     fi
     sleep 5

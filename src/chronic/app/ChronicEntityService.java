@@ -72,7 +72,7 @@ public class ChronicEntityService implements AutoCloseable {
         this.app = app;
         this.emf = emf;
     }
-    
+
     public void begin() {
         if (em != null && em.isOpen()) {
             em.close();
@@ -117,11 +117,11 @@ public class ChronicEntityService implements AutoCloseable {
     public Cert findCert(Long certId) {
         return em.find(Cert.class, certId);
     }
-    
+
     public Topic findTopic(Long topicId) {
         return em.find(Topic.class, topicId);
     }
-    
+
     public Person findPerson(String key) throws StorageException {
         List<Person> list = list(new PersonKey(key));
         if (list.isEmpty()) {
@@ -143,7 +143,7 @@ public class ChronicEntityService implements AutoCloseable {
         }
         return list.get(0);
     }
-    
+
     public Cert findCert(CertKey key) throws StorageException {
         List<Cert> list = selectCert(key);
         if (list.isEmpty()) {
@@ -169,7 +169,7 @@ public class ChronicEntityService implements AutoCloseable {
     public void remove(Object entity) throws StorageException {
         em.remove(entity);
     }
-    
+
     public OrgRole findOrgRole(OrgRoleKey key) throws StorageException {
         logger.info("findOrgRole {}", key);
         List<OrgRole> list = selectOrgRole(key);
@@ -237,14 +237,14 @@ public class ChronicEntityService implements AutoCloseable {
                 setParameter("enabled", enabled).
                 getResultList();
     }
-    
+
     public List<Cert> listCerts(Org org) {
         return em.createQuery("select c from Cert c"
                 + " where c.org = :org").
                 setParameter("org", org).
                 getResultList();
     }
-    
+
     public List<Cert> listCerts(String email) {
         List<Cert> list = new ArrayList();
         for (Org org : listOrg(email)) {
@@ -303,7 +303,7 @@ public class ChronicEntityService implements AutoCloseable {
                 setParameter("topic", topic).
                 getResultList();
     }
-    
+
     public List<String> listSubscriptionEmails(Topic topic) {
         return em.createQuery("select s.email from Subscription s"
                 + " where s.topicId = :topicId"
@@ -346,13 +346,13 @@ public class ChronicEntityService implements AutoCloseable {
                 setParameter("orgDomain", certKey.getOrgDomain()).
                 getResultList();
     }
-    
+
     private List<IssuedCert> selectIssuedCert(CertKey certKey, boolean enabled) {
         return em.createQuery("select c from IssuedCert c"
                 + " where c.commonName = :commonName"
                 + " and c.orgUnit = :orgUnit"
                 + " and c.orgDomain = :orgDomain"
-                + " and c.enabled = :enabled", 
+                + " and c.enabled = :enabled",
                 IssuedCert.class).
                 setParameter("commonName", certKey.getCommonName()).
                 setParameter("orgUnit", certKey.getOrgUnit()).
@@ -360,7 +360,7 @@ public class ChronicEntityService implements AutoCloseable {
                 setParameter("enabled", enabled).
                 getResultList();
     }
-    
+
     private List<Cert> selectCert(CertKey certKey) {
         return em.createQuery("select c from Cert c"
                 + " where c.commonName = :commonName"
@@ -384,7 +384,7 @@ public class ChronicEntityService implements AutoCloseable {
     private List<OrgRole> selectOrgRole(OrgRoleKey key) {
         return selectOrgRole(key.getOrgDomain(), key.getEmail(), key.getRoleType());
     }
-    
+
     private List<OrgRole> selectOrgRole(String orgDomain, String email, OrgRoleType roleType) {
         logger.info("selectOrgRole {} {}", orgDomain, email);
         return em.createQuery("select r from OrgRole r"
@@ -431,7 +431,7 @@ public class ChronicEntityService implements AutoCloseable {
         }
         return org;
     }
-    
+
     public Cert persistCert(Httpx httpx) throws StorageException, CertificateException,
             SSLPeerUnverifiedException {
         X509Certificate certificate = httpx.getPeerCertficate();
@@ -455,12 +455,12 @@ public class ChronicEntityService implements AutoCloseable {
     }
 
     public Cert persistCert(CertInfo certInfo) throws StorageException, CertificateException {
-        return persistCert(certInfo.getOrgDomain(), certInfo.getOrgUnit(), certInfo.getCommonName(), 
+        return persistCert(certInfo.getOrgDomain(), certInfo.getOrgUnit(), certInfo.getCommonName(),
                 certInfo.getRemoteHostAddress(), certInfo.getEncoded());
     }
 
-    public Cert persistCert(String orgDomain, String orgUnit, String commonName, 
-            String remoteHostAddress, String encoded) 
+    public Cert persistCert(String orgDomain, String orgUnit, String commonName,
+            String remoteHostAddress, String encoded)
             throws StorageException, CertificateException {
         boolean enabled = false;
         Org org = em.find(Org.class, orgDomain);
@@ -473,21 +473,36 @@ public class ChronicEntityService implements AutoCloseable {
         CertKey certKey = new CertKey(orgDomain, orgUnit, commonName);
         Cert cert = findCert(certKey);
         if (cert == null) {
+            if (!org.isEnroll()) {
+                throw new CertificateException("enroll disabled");
+            }
+            if (org.getEnrollCommonName() != null && !orgDomain.equals(org.getEnrollCommonName())) {
+                throw new CertificateException("invalid enroll certificate common name");
+            }
             cert = new Cert(certKey);
             cert.setEncoded(encoded);
-            cert.setAddress(remoteHostAddress);
             cert.setAcquired(Calendar.getInstance());
+            cert.setAddress(remoteHostAddress);
             cert.setEnabled(enabled);
             em.persist(cert);
             logger.info("certificate {}", certKey);
         } else {
             assert cert.getEncoded() != null;
-            if (!cert.getEncoded().equals(encoded)) {
-                logger.warn("invalid public key {}", certKey);
+            if (cert.getRevoked() != null) {
+                throw new CertificateException("certificate revoked");
+            } else if (!cert.getEncoded().equals(encoded)) {
+                if (cert.isEnabled()) {
+                    throw new CertificateException("invalid duplicate certificate");
+                }
+                cert.setEncoded(encoded);
+                cert.setAcquired(Calendar.getInstance());
+                cert.setAddress(remoteHostAddress);
+                logger.warn("updated certificate {}", certKey);
             } else if (!cert.isEnabled()) {
-                logger.warn("cert disabled {}", certKey);
-            } else if (!cert.getAddress().equals(remoteHostAddress)) {
-                logger.warn("host address {}", remoteHostAddress);
+                logger.warn("duplicate cert {}", certKey);
+                if (!cert.getAddress().equals(remoteHostAddress)) {
+                    logger.warn("different host address {}", remoteHostAddress);
+                }
             }
         }
         cert.setOrg(org);
@@ -550,12 +565,12 @@ public class ChronicEntityService implements AutoCloseable {
         topic.setCert(cert);
         topic.setAlertType(message.getAlertType());
         if (message.getPeriodMillis() > 0) {
-            topic.setPeriodSeconds(message.getPeriodMillis()/1000);
+            topic.setPeriodSeconds(message.getPeriodMillis() / 1000);
         }
         if (message.getStatusPeriodMillis() > 0) {
-            topic.setStatusPeriodSeconds(message.getStatusPeriodMillis()/1000);
+            topic.setStatusPeriodSeconds(message.getStatusPeriodMillis() / 1000);
         } else {
-            topic.setStatusPeriodSeconds(app.getProperties().getStatusPeriod()/1000);            
+            topic.setStatusPeriodSeconds(app.getProperties().getStatusPeriod() / 1000);
         }
         return topic;
     }

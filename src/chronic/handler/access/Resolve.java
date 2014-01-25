@@ -7,6 +7,7 @@ import chronic.api.PlainHttpxHandler;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
 import chronic.app.ChronicHttpx;
+import chronic.entity.Cert;
 import chronic.entity.Org;
 import chronic.entitytype.OrgRoleType;
 import org.slf4j.Logger;
@@ -25,8 +26,8 @@ public class Resolve implements PlainHttpxHandler {
     @Override
     public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
             throws Exception {
-        String orgDomain = httpx.readString().trim();
-        Org org = es.persistOrg(orgDomain);
+        Cert cert = es.persistCert(httpx);
+        Org org = cert.getOrg();
         for (String adminEmail : Strings.split(httpx.getRequestHeader("Admin"), DelimiterType.COMMA_OR_SPACE)) {
             logger.info("admin: {}", adminEmail);
             es.persistOrgRole(org, adminEmail, OrgRoleType.ADMIN);

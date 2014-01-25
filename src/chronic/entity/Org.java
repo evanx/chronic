@@ -46,7 +46,13 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
 
     @Column()
     boolean enabled = true;
-            
+
+    @Column()
+    boolean enroll = true;
+    
+    @Column(name = "enroll_cn")
+    String enrollCommonName;
+    
     public Org() {
     }
 
@@ -143,6 +149,22 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
         this.enabled = enabled;
     }
 
+    public void setEnroll(boolean enroll) {
+        this.enroll = enroll;
+    }
+
+    public boolean isEnroll() {
+        return enroll;
+    }
+
+    public void setEnrollCommonName(String enrollCommonName) {
+        this.enrollCommonName = enrollCommonName;
+    }
+
+    public String getEnrollCommonName() {
+        return enrollCommonName;
+    }
+    
     public void validate() throws ValidationException {
         if (!Patterns.matchesDomain(orgDomain)) {
             throw new ValidationException(ValidationExceptionType.INVALID_DOMAIN, orgDomain);

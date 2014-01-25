@@ -55,6 +55,10 @@ public class Cert extends ComparableEntity implements OrgKeyed, CertKeyed, Enabl
     @Column(name = "acquired")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Calendar acquired;
+
+    @Column(name = "revoked")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    Calendar revoked;
     
     @Column()
     String address;
@@ -156,6 +160,14 @@ public class Cert extends ComparableEntity implements OrgKeyed, CertKeyed, Enabl
     public void setAcquired(Calendar acquired) {
         this.acquired = acquired;
     }
+
+    public void setRevoked(Calendar revoked) {
+        this.revoked = revoked;
+    }
+
+    public Calendar getRevoked() {
+        return revoked;
+    }        
     
     @Override
     public JMap getMap() {
