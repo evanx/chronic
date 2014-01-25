@@ -37,7 +37,7 @@ public class TopicEventList implements ChronicHttpxHandler {
         for (TopicEvent topicEvent : Lists.sortedLinkedList(app.getEventMap().values(),
                 TimestampedComparator.reverse())) {            
             TopicEventMapper mapper = new TopicEventMapper(topicEvent, timeZone);
-            if (es.isSubscription(topicEvent.getMessage().getTopic().getId(), email)) {
+            if (es.isSubscription(topicEvent.getMessage().getTopic(), email)) {
                 topicEvents.add(mapper.getExtendedMap());
             } else if (httpx.getReferer().endsWith("/demo")) {
                 if (topicEvent.getMessage().getStatusType().isKnown() && topicEvent.getMessage().getAlertType().isPollable()) {

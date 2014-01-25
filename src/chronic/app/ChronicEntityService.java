@@ -211,8 +211,8 @@ public class ChronicEntityService implements AutoCloseable {
         return list.get(0);
     }
 
-    public boolean isSubscription(long topicId, String email) throws StorageException {
-        return selectSubscription(topicId, email).isEmpty();
+    public boolean isSubscription(Topic topic, String email) throws StorageException {
+        return selectSubscription(topic, email).isEmpty();
     }
 
     public boolean isSubscription(Topic topic, Person person) throws StorageException {
@@ -397,11 +397,11 @@ public class ChronicEntityService implements AutoCloseable {
                 getResultList();
     }
 
-    private List<Subscription> selectSubscription(long topicId, String email) {
+    private List<Subscription> selectSubscription(Topic topic, String email) {
         return em.createQuery("select s from Subscription s"
-                + " where s.topicId = :topicId"
+                + " where s.topic = :topic"
                 + " and s.email = :email").
-                setParameter("topicId", topicId).
+                setParameter("topic", topic).
                 setParameter("email", email).
                 getResultList();
     }

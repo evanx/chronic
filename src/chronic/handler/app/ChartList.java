@@ -56,7 +56,7 @@ public class ChartList implements ChronicHttpxHandler {
             if (System.currentTimeMillis() - series.getTimestamp() > Millis.fromSeconds(90)) {
                 map.put("timestampLabel", CalendarFormats.timestampFormat.format(timeZone, series.getTimestamp()));
             }
-            if (es.isSubscription(key.getTopicId(), email)) {
+            if (es.isSubscription(topic, email)) {
             } else if (httpx.getReferer().endsWith("/demo")) {
             } else if (app.getProperties().isAdmin(email)) {
             }
