@@ -33,7 +33,6 @@ import chronic.entitykey.SubscriptionKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
 import chronic.entitykey.TopicStatusKey;
-import chronic.type.TopicEventType;
 import chronic.type.StatusType;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -258,7 +257,9 @@ public class ChronicApp {
                                 status);
                         if (previousStatus != null) {
                             long elapsed = event.getTimestamp() - previousStatus.getTimestamp();
+                            logger.info("previousStatus elapsed {}", Millis.formatPeriod(elapsed));
                             if (elapsed/1000 < message.getTopic().getStatusPeriodSeconds()) {
+                                logger.warn("previousStatus seconds {}", message.getTopic().getStatusPeriodSeconds());
                                 return;
                             }
                         }

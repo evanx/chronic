@@ -32,12 +32,12 @@ import org.slf4j.LoggerFactory;
  */
 public class TopicStatus implements TopicStatusKeyed {
 
-    static Logger logger = LoggerFactory.getLogger(TopicStatus.class);
-    long topicId;
-    StatusType statusType;
-    long timestamp = System.currentTimeMillis();
+    final static Logger logger = LoggerFactory.getLogger(TopicStatus.class);
+    private long topicId;
+    private StatusType statusType;
+    private long timestamp = System.currentTimeMillis();
         
-    public TopicStatus(long topicId, StatusType statusType) {
+    public TopicStatus(long topicId, StatusType statusType) {        
         this.topicId = topicId;
         this.statusType = statusType;
     }
