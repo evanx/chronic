@@ -298,9 +298,9 @@ public class ChronicEntityService implements AutoCloseable {
     public List<Subscription> listSubscriptions(Topic topic) {
         assert topic != null;
         return em.createQuery("select s from Subscription s"
-                + " where s.topicId = :topicId"
+                + " where s.topic = :topic"
                 + " and s.enabled = true").
-                setParameter("topicId", topic.getId()).
+                setParameter("topic", topic).
                 getResultList();
     }
     

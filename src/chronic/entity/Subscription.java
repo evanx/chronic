@@ -42,11 +42,11 @@ public class Subscription extends ComparableEntity implements SubscriptionKeyed,
     @Column(name = "topic_sub_id")
     Long id;
 
-    @Column(name = "topic_id", insertable = false, updatable = false)
-    long topicId;
-    
-    @Column(length = 64, insertable = false, updatable = false)
-    String email;
+//    @Column(name = "topic_id", insertable = false, updatable = false)
+//    long topicId;
+//    
+//    @Column(length = 64, insertable = false, updatable = false)
+//    String email;
     
     @Column()    
     boolean enabled;
@@ -84,22 +84,6 @@ public class Subscription extends ComparableEntity implements SubscriptionKeyed,
         return enabled;
     }
     
-    public long getTopicId() {
-        return topicId;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-
-    public void setTopicId(long topicId) {
-        this.topicId = topicId;
-    }
-   
     public Topic getTopic() {
         return topic;
     }
@@ -134,7 +118,7 @@ public class Subscription extends ComparableEntity implements SubscriptionKeyed,
 
     @Override
     public SubscriptionKey getSubscriptionKey() {
-        return new SubscriptionKey(topicId, email);
+        return new SubscriptionKey(topic.getId(), person.getEmail());
     }
     
     @Override

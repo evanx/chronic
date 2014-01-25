@@ -62,7 +62,11 @@ public class TopicMessageParser {
     public TopicMessage parse(Headers headers, String text) throws IOException, ParseException {
         logger.trace("parse: {}", text);
         for (String key : headers.keySet()) {
-            parseHeader(key, headers.get(key));
+            try {
+                parseHeader(key, headers.get(key));
+            } catch (Throwable e) {
+                logger.error("parse {} {}", key, headers.get(key));
+            }
         }
         return parse(text);
     }
@@ -143,7 +147,8 @@ public class TopicMessageParser {
         }
     }
 
-    private boolean parseHeader(String header, String string) throws ParseException {
+    private boolean parseHeader(String header, String string) throws ParseException, 
+            NumberFormatException {
         if (header.equals("Alert")) {
             topicMessage.setAlertType(AlertType.valueOf(string));
         } else if (header.equals("AlertFormat")) {
@@ -160,7 +165,7 @@ public class TopicMessageParser {
             parseContentType(string);
         } else if (header.equals("From")) {
             topicMessage.setFrom(string);
-        } else if (header.equals("NtpOffsetSec")) {
+        } else if (header.equals("NtpOffsetSec")) {            
             topicMessage.getChecks().add(NtpChecker.parse(string));
         } else if (header.equals("Period")) {
             topicMessage.setPeriodMillis(Millis.parse(string));
