@@ -48,7 +48,7 @@ public class Post implements PlainHttpxHandler {
         byte[] content = Streams.readBytes(httpx.getDelegate().getRequestBody());
         String contentString = new String(content);
         logger.trace("content {}", contentString);
-        new TopicMessageParser(message).parse(httpx.getRequestHeaders(), contentString);
+        new TopicMessageParser(app, message).parse(httpx.getRequestHeaders(), contentString);
         logger.debug("status {}", message);
         Topic topic = es.persistTopic(cert, message);
         message.setTopic(topic);

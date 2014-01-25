@@ -258,7 +258,7 @@ public class ChronicApp {
                                 status);
                         if (previousStatus != null) {
                             long elapsed = event.getTimestamp() - previousStatus.getTimestamp();
-                            if (elapsed < properties.getStatusPeriod()) {                                
+                            if (elapsed/1000 < message.getTopic().getStatusPeriodSeconds()) {
                                 return;
                             }
                         }

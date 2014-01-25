@@ -48,6 +48,9 @@ public class Topic extends ComparableEntity implements TopicKeyed, JMapped, Seri
 
     @Column(name = "period_secs")
     long periodSeconds;
+
+    @Column(name = "status_period")
+    long statusPeriodSeconds;
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cert_id", referencedColumnName = "cert_id",
@@ -119,13 +122,21 @@ public class Topic extends ComparableEntity implements TopicKeyed, JMapped, Seri
     }
 
     public void setPeriodSeconds(long periodSeconds) {
-        this.periodSeconds = periodSeconds;
+        this.statusPeriodSeconds = periodSeconds;
     }
 
     public long getPeriodSeconds() {
-        return periodSeconds;
+        return statusPeriodSeconds;
     }
-        
+
+    public long getStatusPeriodSeconds() {
+        return statusPeriodSeconds;
+    }
+
+    public void setStatusPeriodSeconds(long statusPeriodSeconds) {
+        this.statusPeriodSeconds = statusPeriodSeconds;
+    }
+            
     @Override
     public JMap getMap() {
         JMap map = new JMap();

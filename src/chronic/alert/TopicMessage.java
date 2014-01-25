@@ -56,6 +56,7 @@ public class TopicMessage implements OrgKeyed {
     long timestamp = System.currentTimeMillis();
     long periodMillis;
     long alertPeriodMillis;
+    long statusPeriodMillis;
     String contentType;
     String from;
     String subject;
@@ -215,6 +216,14 @@ public class TopicMessage implements OrgKeyed {
         return periodMillis;
     }
 
+    public void setStatusPeriodMillis(long statusPeriodMillis) {
+        this.statusPeriodMillis = statusPeriodMillis;
+    }
+
+    public long getStatusPeriodMillis() {
+        return statusPeriodMillis;
+    }
+    
     public void setAlertPushUrl(String alertPushUrl) {
         this.alertPushUrl = alertPushUrl;
     }

@@ -20,6 +20,7 @@
  */
 package chronic.alert;
 
+import chronic.app.ChronicApp;
 import chronic.check.TcpChecker;
 import chronic.bundle.Bundle;
 import chronic.check.ClockChecker;
@@ -50,9 +51,11 @@ public class TopicMessageParser {
 
     static Logger logger = LoggerFactory.getLogger(TopicMessageParser.class);
 
+    ChronicApp app;
     TopicMessage topicMessage;
 
-    public TopicMessageParser(TopicMessage topicMessage) {
+    public TopicMessageParser(ChronicApp app, TopicMessage topicMessage) {
+        this.app = app;
         this.topicMessage = topicMessage;
     }
 
@@ -165,6 +168,8 @@ public class TopicMessageParser {
             topicMessage.setServiceLabel(string);
         } else if (header.equals("Status")) {
             topicMessage.setStatusType(StatusType.valueOf(string));
+        } else if (header.equals("StatusPeriod")) {
+            topicMessage.setStatusPeriodMillis(Millis.parse(string));
         } else if (header.equals("Subject")) {
             topicMessage.subject = string;
         } else if (header.equals("Subscribe")) {
@@ -282,6 +287,9 @@ public class TopicMessageParser {
     private void normalize() {
         if (topicMessage.alertType == null) {
             topicMessage.alertType = AlertType.CONTENT_CHANGED;
+        }
+        if (topicMessage.statusPeriodMillis == 0) {
+            topicMessage.statusPeriodMillis = app.getProperties().getStatusPeriod();
         }
         String serviceLabel = null;
         if (topicMessage.statusList.size() == 1) {

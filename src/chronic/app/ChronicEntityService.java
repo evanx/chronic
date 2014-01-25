@@ -550,7 +550,12 @@ public class ChronicEntityService implements AutoCloseable {
         topic.setCert(cert);
         topic.setAlertType(message.getAlertType());
         if (message.getPeriodMillis() > 0) {
-            topic.setPeriodSeconds(message.getPeriodMillis() / 1000);
+            topic.setPeriodSeconds(message.getPeriodMillis()/1000);
+        }
+        if (message.getStatusPeriodMillis() > 0) {
+            topic.setStatusPeriodSeconds(message.getStatusPeriodMillis()/1000);
+        } else {
+            topic.setStatusPeriodSeconds(app.getProperties().getStatusPeriod()/1000);            
         }
         return topic;
     }
