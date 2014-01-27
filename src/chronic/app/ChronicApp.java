@@ -335,7 +335,7 @@ public class ChronicApp {
 
         private void checkElapsed(TopicMessage message) {
             long elapsed = Millis.elapsed(message.getTimestamp());
-            logger.debug("checkElapsed {} {}", elapsed, message);
+            logger.trace("checkElapsed {} {}", elapsed, message);
             if (message.getPeriodMillis() > 0
                     && elapsed > message.getPeriodMillis() + properties.getPeriod()) {
                 TopicEvent previousAlert = eventMap.get(message.getTopicKey());
