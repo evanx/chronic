@@ -232,19 +232,19 @@ public class ChronicApp {
                 }
             }
             logger.info("{}", message);
-            TopicMessage previousMessage = messageMap.put(message.getKey(), message);
+            TopicMessage previousMessage = messageMap.put(message.getTopicKey(), message);
             if (previousMessage == null) {
                 logger.info("no previous status");
                 return;
             }
-            TopicEvent previousEvent = eventMap.get(message.getKey());
+            TopicEvent previousEvent = eventMap.get(message.getTopicKey());
             TopicEvent event = eventChecker.check(message, previousMessage, previousEvent);
             if (event != null) {
                 if (previousEvent != null) {
                     event.setPreviousStatusType(previousEvent.getMessage().getStatusType());
                     event.setPreviousTimestamp(previousEvent.getTimestamp());
                 }
-                eventMap.put(message.getKey(), event);
+                eventMap.put(message.getTopicKey(), event);
                 if (message.getAlertType() == null) {
                     logger.warn("alertType null {}", message);
                 } else if (message.getStatusType() == null) {
@@ -296,7 +296,7 @@ public class ChronicApp {
                 try {
                     TopicEvent topicEvent = eventQueue.poll(60, TimeUnit.SECONDS);
                     if (topicEvent != null) {
-                        if (eventMap.get(topicEvent.getMessage().getKey()) != topicEvent) {
+                        if (eventMap.get(topicEvent.getMessage().getTopicKey()) != topicEvent) {
                             logger.warn("event from queue differs to latest event in map");
                         } else {
                             eventList.add(topicEvent);
@@ -338,13 +338,13 @@ public class ChronicApp {
             logger.debug("checkElapsed {} {}", elapsed, message);
             if (message.getPeriodMillis() > 0
                     && elapsed > message.getPeriodMillis() + properties.getPeriod()) {
-                TopicEvent previousAlert = eventMap.get(message.getKey());
+                TopicEvent previousAlert = eventMap.get(message.getTopicKey());
                 if (previousAlert == null
                         || previousAlert.getMessage().getStatusType() != StatusType.ELAPSED) {
                     TopicMessage elapsedMessage = new TopicMessage(message);
                     elapsedMessage.setStatusType(StatusType.ELAPSED);
                     TopicEvent alert = new TopicEvent(elapsedMessage, message);
-                    eventMap.put(message.getKey(), alert);
+                    eventMap.put(message.getTopicKey(), alert);
                     eventQueue.add(alert);
                 }
             }

@@ -25,6 +25,7 @@ import chronic.entity.Topic;
 import chronic.entitykey.OrgKey;
 import chronic.entitykey.OrgKeyed;
 import chronic.entitykey.TopicKey;
+import chronic.entitykey.TopicKeyed;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
@@ -45,7 +46,7 @@ import vellum.util.Args;
  *
  * @author evan.summers
  */
-public class TopicMessage implements OrgKeyed {
+public class TopicMessage implements TopicKeyed, OrgKeyed {
 
     static Logger logger = LoggerFactory.getLogger(TopicMessage.class);
     List<String> lineList = new ArrayList();
@@ -90,7 +91,8 @@ public class TopicMessage implements OrgKeyed {
         topic = message.topic;
     }
 
-    public TopicKey getKey() {
+    @Override
+    public TopicKey getTopicKey() {
         return new TopicKey(cert.getId(), topicLabel);
     }
 

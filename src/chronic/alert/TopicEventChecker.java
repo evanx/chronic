@@ -71,6 +71,8 @@ public class TopicEventChecker {
                     return new TopicEvent(previousMessage, previousEvent.getMessage());
                 }
             }
+        } else {
+            logger.warn("alertType null");
         }
         return null;
     }

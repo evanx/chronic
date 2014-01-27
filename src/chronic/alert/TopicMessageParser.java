@@ -141,7 +141,7 @@ public class TopicMessageParser {
     }
 
     private void parseHeader(String header, List<String> strings) throws ParseException {
-        logger.info("parseHeader {} {}", header, strings.toString());
+        logger.trace("parseHeader {} {}", header, strings.toString());
         for (String string : strings) {
             parseHeader(header, string);
         }
@@ -181,7 +181,6 @@ public class TopicMessageParser {
             parseSubscribe(string);
         } else if (header.equals("Topic")) {
             topicMessage.topicLabel = string;
-            logger.info("topicLabel {}", topicMessage.topicLabel);
         } else if (header.equals("Metric")) {
             parseMetric(string);
         } else if (header.equals("Metrics")) {
@@ -219,7 +218,7 @@ public class TopicMessageParser {
                 logger.warn("metric {} {} ", serviceLabel, info);
             } else {
                 float value = Float.parseFloat(metricValueMatcher.group(1));
-                logger.info("metric {} {} ", serviceLabel, value);
+                logger.trace("metric {} {} ", serviceLabel, value);
                 topicMessage.getMetricMap().get(serviceLabel).setValue(value);
             }
         }

@@ -30,9 +30,10 @@ import org.apache.log4j.PatternLayout;
  * @author evan.summers
  */
 public class ChronicMain {
-    static ChronicAppender appender = new ChronicAppender("https://chronica.co:8444/post");
+    static ChronicAppender appender = new ChronicAppender();
 
     public ChronicMain() {
+        appender.setResolveUrl("https://localhost:8444/post");
     }
 
     public void init() throws Exception {
