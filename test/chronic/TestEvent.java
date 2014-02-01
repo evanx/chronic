@@ -52,7 +52,9 @@ public class TestEvent {
         poster.init(keyStore, sslPass);
         app.ensureInitialized();
         serverAddress = poster.post(resolveUrl);
+        logger.info("serverAddress {}", serverAddress);
         postUrl = String.format("https://%s/post", serverAddress);
+        logger.info("postUrl {}", postUrl);
         poster.post(postUrl, "OK: test");
     }
 
