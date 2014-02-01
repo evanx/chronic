@@ -664,38 +664,6 @@ c0ensureCert() {
 c0ensurePubKey
 c0ensureKey
 c0ensureCert
-c0ensureServer
-
-### java keystore for chronica log4j appender connection
-
-c0ensureKeyStore() {
-  if [ ! -f etc/keystore.jks ]
-  then
-    keytool -keystore etc/keystore.jks -storepass chronica -alias chronica4j -keypass chronica -genkeypair -keyalg rsa -validity 999 \
-          -dname "CN=$commonName, O=$orgDomain, OU=$orgUnit"
-    echo "Generated keystore:"
-    keytool -keystore etc/keystore.jks -storepass chronica -keypass chronica -alias chronica4j -exportcert -rfc |
-      openssl x509 -text | grep 'CN='
-    chmod 600 etc/keystore.jks
-  fi
-  if [ ! -f etc/truststore.jks ]
-  then
-    keytool -keystore etc/truststore.jks -storepass chronica -alias chronica -importcert -file etc/server.pem -noprompt
-    echo "Created truststore:"
-    keytool -keystore etc/truststore.jks -storepass chronica -alias chronica -exportcert -rfc | openssl x509 -text | grep 'CN='
-    chmod 600 etc/truststore.jks
-  fi
-}
-
-c0resetKeyStore() {
-  rm -f etc/keystore.jks
-  rm -f etc/truststore.jks
-  c0ensureKeyStore
-}
-
-c0genKeyStore() {
-  c0resetKeyStore
-}
 
 
 ### resolve server
@@ -740,6 +708,40 @@ c0ensureServer() {
 c0resetServer() {
   rm -f ~/.chronica/server
   c0ensureServer
+}
+
+c0ensureServer
+
+
+### java keystore for chronica log4j appender connection
+
+c0ensureKeyStore() {
+  if [ ! -f etc/keystore.jks ]
+  then
+    keytool -keystore etc/keystore.jks -storepass chronica -alias chronica4j -keypass chronica -genkeypair -keyalg rsa -validity 999 \
+          -dname "CN=$commonName, O=$orgDomain, OU=$orgUnit"
+    echo "Generated keystore:"
+    keytool -keystore etc/keystore.jks -storepass chronica -keypass chronica -alias chronica4j -exportcert -rfc |
+      openssl x509 -text | grep 'CN='
+    chmod 600 etc/keystore.jks
+  fi
+  if [ ! -f etc/truststore.jks ]
+  then
+    keytool -keystore etc/truststore.jks -storepass chronica -alias chronica -importcert -file etc/server.pem -noprompt
+    echo "Created truststore:"
+    keytool -keystore etc/truststore.jks -storepass chronica -alias chronica -exportcert -rfc | openssl x509 -text | grep 'CN='
+    chmod 600 etc/truststore.jks
+  fi
+}
+
+c0resetKeyStore() {
+  rm -f etc/keystore.jks
+  rm -f etc/truststore.jks
+  c0ensureKeyStore
+}
+
+c0genKeyStore() {
+  c0resetKeyStore
 }
 
 
