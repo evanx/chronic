@@ -707,6 +707,8 @@ c0ensureServer() {
   if [ ! -f ~/.chronica/server ]
   then
     c0ensureResolve
+  else 
+    echo "INFO: previously resolved server: $server"
   fi
   c0checkServer
 }
