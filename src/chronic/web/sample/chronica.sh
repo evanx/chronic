@@ -134,7 +134,10 @@ then
   exit 1
 fi
 
-if ! set | grep -q '^server='
+if [ -f ~/.chronica/server ]
+then
+  server="eomer.chronica.co:443"
+elif ! set | grep -q '^server='
 then
   server="eomer.chronica.co"
 fi
