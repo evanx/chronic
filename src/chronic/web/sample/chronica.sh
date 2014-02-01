@@ -998,6 +998,7 @@ c0run() {
   echo $$ > pid
   debug=2
   c0ensureResolve
+  c0checkServer
   c0enroll
   rm -f hourly minutely
   c0hourlyCron
