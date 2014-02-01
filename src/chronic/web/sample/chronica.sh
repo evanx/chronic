@@ -664,7 +664,7 @@ c0ensureCert() {
 c0ensurePubKey
 c0ensureKey
 c0ensureCert
-
+c0ensureServer
 
 ### java keystore for chronica log4j appender connection
 
@@ -698,15 +698,10 @@ c0genKeyStore() {
 }
 
 
-### standard functionality
-
-c1curl() {
-  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 # > curl.out 2> curl.err
-}
+### resolve server
 
 c0resolve() {
-  echo $orgDomain | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem --data-binary @- \
+  echo $orgDomain | curl -s -k --cacert etc/server.pem --data-binary @- \
     -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$webServer/resolve
 }
 
@@ -723,10 +718,36 @@ c0ensureResolve() {
     else
       echo "OK: resolved server: $resolvedServer"
       server="$resolvedServer"
+      pwd
+      echo $resolvedServer > ~/.chronica/server
       break
     fi
     sleep 5
   done
+}
+
+c0ensureServer() {
+  if [ ! -f ~/.chronica/server ]
+  then
+    c0ensureResolve
+  fi
+  if ! echo | openssl s_client -connect $server 2>/dev/null | grep -q '^subject='
+  then
+    c0ensureResolve
+  fi
+}
+
+c0resetServer() {
+  rm -f ~/.chronica/server
+  c0ensureServer
+}
+
+
+### standard functionality
+
+c1curl() {
+  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+    --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 # > curl.out 2> curl.err
 }
 
 c0enroll() {
@@ -745,6 +766,7 @@ c0reset() {
   rm -f etc/cert.pem etc/key.pem etc/server.pem
   c0ensureKey
   c0ensureCert
+  c0ensureServer
   chmod 600 etc/cert.pem etc/key.pem etc/server.pem
 }
 
