@@ -26,7 +26,10 @@ public class Resolve implements PlainHttpxHandler {
     @Override
     public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
             throws Exception {
-        String orgDomain = httpx.readString();
+        String orgDomain = httpx.readString().trim();
+        if (orgDomain.isEmpty()) {
+            throw new Exception("Empty org domain");
+        }
         Org org = es.persistOrg(orgDomain);
         for (String adminEmail : Strings.split(httpx.getRequestHeader("Admin"), DelimiterType.COMMA_OR_SPACE)) {
             logger.info("admin: {}", adminEmail);
