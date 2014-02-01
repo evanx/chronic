@@ -5,12 +5,12 @@
 package chronic.app;
 
 import chronic.api.PlainHttpxHandler;
-import chronic.handler.access.Resolve;
 import chronic.handler.secure.AdminEnroll;
 import chronic.handler.secure.AlertPoll;
 import chronic.handler.secure.Push;
 import chronic.handler.secure.CertSubscribe;
 import chronic.handler.secure.Post;
+import chronic.handler.secure.SecureResolve;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class SecureHttpService implements HttpHandler {
         plainHandlerClasses.put("/enroll", AdminEnroll.class);
         plainHandlerClasses.put("/subscribe", CertSubscribe.class);
         plainHandlerClasses.put("/poll", AlertPoll.class);        
-        plainHandlerClasses.put("/resolve", Resolve.class);        
+        plainHandlerClasses.put("/resolve", SecureResolve.class); 
     }
 
     @Override
