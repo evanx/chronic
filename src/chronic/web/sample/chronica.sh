@@ -695,7 +695,6 @@ c0ensureResolve() {
     else
       echo "OK: resolved server: $resolvedServer"
       server="$resolvedServer"
-      pwd
       echo $resolvedServer > ~/.chronica/server
       break
     fi
