@@ -672,6 +672,7 @@ c0ensureCert
 ### resolve server
 
 c0resolve() {
+  echo "INFO: resolving secure server from $webServer"
   echo $orgDomain | curl -s -k --cacert etc/server.pem --data-binary @- \
     -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$webServer/resolve
 }
