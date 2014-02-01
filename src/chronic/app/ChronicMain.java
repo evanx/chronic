@@ -33,7 +33,7 @@ public class ChronicMain {
     static ChronicAppender appender = new ChronicAppender();
 
     public ChronicMain() {
-        appender.setResolveUrl("https://localhost:8444/post");
+        appender.setResolveUrl("https://localhost:8444/resolve");
     }
 
     public void init() throws Exception {
