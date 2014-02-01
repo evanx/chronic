@@ -26,8 +26,8 @@ public class Resolve implements PlainHttpxHandler {
     @Override
     public String handle(ChronicApp app, ChronicHttpx httpx, ChronicEntityService es)
             throws Exception {
-        Cert cert = es.persistCert(httpx);
-        Org org = cert.getOrg();
+        String orgDomain = httpx.readString();
+        Org org = es.persistOrg(orgDomain);
         for (String adminEmail : Strings.split(httpx.getRequestHeader("Admin"), DelimiterType.COMMA_OR_SPACE)) {
             logger.info("admin: {}", adminEmail);
             es.persistOrgRole(org, adminEmail, OrgRoleType.ADMIN);

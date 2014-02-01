@@ -136,12 +136,12 @@ fi
 
 if ! set | grep -q '^server='
 then
-  server="secure.chronica.co"
+  server="eomer.chronica.co"
 fi
 
 if ! set | grep -q '^webServer='
 then
-  webServer="chronica.co"
+  webServer="eowyn.chronica.co"
 fi
 
 
@@ -707,7 +707,7 @@ c1curl() {
 
 c0resolve() {
   curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem --data-binary @- \
-    -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$server/resolve
+    -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$webServer/resolve
 }
 
 c0ensureResolve() {
