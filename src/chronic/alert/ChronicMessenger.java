@@ -22,11 +22,13 @@ package chronic.alert;
 
 import chronic.app.ChronicApp;
 import static chronic.alert.TopicEventMailBuilder.formatFooter;
+import chronic.app.ChronicProperties;
 import java.io.IOException;
 import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.exception.Exceptions;
+import vellum.mail.Mailer;
 
 /**
  *
@@ -35,10 +37,12 @@ import vellum.exception.Exceptions;
 public class ChronicMessenger {
 
     static Logger logger = LoggerFactory.getLogger(ChronicMessenger.class);
-    ChronicApp app;
+    ChronicProperties properties;
+    Mailer mailer;
 
     public ChronicMessenger(ChronicApp app) {
-        this.app = app;
+        this.properties = app.getProperties();
+        this.mailer = app.getMailer();
     }
 
     public void alert(Throwable t) {
@@ -47,9 +51,9 @@ public class ChronicMessenger {
         builder.append("<pre>\n");
         builder.append(Exceptions.printStackTrace(t));
         builder.append("</pre>");
-        builder.append(formatFooter(app.getProperties().getSiteUrl()));
+        builder.append(formatFooter(properties.getSiteUrl()));
         try {
-            app.getMailer().send(app.getProperties().getAdminEmail(), "Chronica exception",
+            mailer.send(properties.getAdminEmail(), "Chronica exception",
                     builder.toString());
         } catch (MessagingException | IOException e) {
             logger.warn("alert throwable email", e);

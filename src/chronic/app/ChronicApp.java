@@ -58,6 +58,7 @@ import vellum.exception.ParseException;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.httphandler.RedirectHttpsHandler;
+import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.mail.Mailer;
 import vellum.security.KeyStores;
@@ -395,5 +396,19 @@ public class ChronicApp {
 
     public Map<String, TopicEvent> getSentMap() {
         return sentMap;
+    }
+    
+    public JMap getMetrics() {
+        JMap map = new JMap();
+        map.put("messageQueue", messageQueue.size());
+        map.put("eventQueue", eventQueue.size());
+        map.put("seriesMap", seriesMap.size());
+        map.put("messageMap", messageMap.size());
+        map.put("eventMap", eventMap.size());
+        map.put("statusMap", statusMap.size());
+        map.put("eventLit", eventList.size());
+        map.put("alertMap", alertMap.size());
+        map.put("sentMap", sentMap.size());
+        return map;
     }
 }

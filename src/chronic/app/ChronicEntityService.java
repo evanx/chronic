@@ -486,23 +486,25 @@ public class ChronicEntityService implements AutoCloseable {
             cert.setEnabled(enabled);
             em.persist(cert);
             logger.info("certificate {}", certKey);
-        } else {
-            assert cert.getEncoded() != null;
-            if (cert.getRevoked() != null) {
-                throw new CertificateException("certificate revoked");
-            } else if (!cert.getEncoded().equals(encoded)) {
-                if (cert.isEnabled()) {
-                    throw new CertificateException("invalid duplicate certificate");
-                }
-                cert.setEncoded(encoded);
-                cert.setAcquired(Calendar.getInstance());
-                cert.setAddress(remoteHostAddress);
-                logger.warn("updated certificate {}", certKey);
-            } else if (!cert.isEnabled()) {
-                logger.warn("duplicate cert {}", certKey);
-                if (!cert.getAddress().equals(remoteHostAddress)) {
-                    logger.warn("different host address {}", remoteHostAddress);
-                }
+        } else if (cert.getRevoked() != null) {
+            throw new CertificateException("certificate revoked");
+        } else if (cert.getEncoded() == null) {
+            cert.setEncoded(encoded);
+            cert.setAcquired(Calendar.getInstance());
+            cert.setAddress(remoteHostAddress);
+            logger.warn("updated empty certificate {}", certKey);
+        } else if (!cert.getEncoded().equals(encoded)) {
+            if (cert.isEnabled()) {
+                throw new CertificateException("invalid duplicate certificate");
+            }
+            cert.setEncoded(encoded);
+            cert.setAcquired(Calendar.getInstance());
+            cert.setAddress(remoteHostAddress);
+            logger.warn("updated certificate {}", certKey);
+        } else if (!cert.isEnabled()) {
+            logger.warn("duplicate cert {}", certKey);
+            if (!cert.getAddress().equals(remoteHostAddress)) {
+                logger.warn("different host address {}", remoteHostAddress);
             }
         }
         cert.setOrg(org);

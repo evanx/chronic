@@ -30,13 +30,16 @@ public class WebHttpService implements HttpHandler {
     private final static Logger logger = LoggerFactory.getLogger(WebHttpService.class);
     private final static WebHttpHandler webHandler = new WebHttpHandler("/chronic/web");
     private final ChronicApp app;
-
+    private int requestCount = 0;
+    private int requestCompletedCount = 0;
+    
     public WebHttpService(ChronicApp app) {
         this.app = app;
     }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        requestCount++;
         String path = httpExchange.getRequestURI().getPath();
         logger.info("handle {}", path);
         Thread.currentThread().setName(path);        
@@ -69,6 +72,7 @@ public class WebHttpService implements HttpHandler {
             new ErrorHttpHandler(app).handle(httpExchange, errorMessage);
         } finally {
             httpExchange.close();
+            requestCompletedCount++;
         }
     }
 
@@ -125,4 +129,12 @@ public class WebHttpService implements HttpHandler {
             es.close();
         }
     }
+    
+    public JMap getMetrics() {
+        JMap map = new JMap();
+        map.put("requestCount", requestCount);
+        map.put("requestCompletedCount", requestCompletedCount);
+        return map;
+    }
+    
 }
