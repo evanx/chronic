@@ -517,6 +517,7 @@ public class ChronicEntityService implements AutoCloseable {
         if (person == null) {
             person = new Person(email);
             em.persist(person);
+            logger.info("persistPerson {} {}", email, person);
         }
         return person;
     }
