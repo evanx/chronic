@@ -672,7 +672,6 @@ c0ensureCert
 ### resolve server
 
 c0resolve() {
-  echo "INFO: resolving secure server for $orgDomain from $webServer"
   echo $orgDomain | curl -s -k --cacert etc/server.pem --data-binary @- \
     -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$webServer/resolve
 }
@@ -680,6 +679,7 @@ c0resolve() {
 c0ensureResolve() {
   while [ 1 ]
   do
+    echo "INFO: resolving secure server for $orgDomain from $webServer"
     resolvedServer=`c0resolve`
     if echo "$resolvedServer" | grep -q "ERROR:"
     then
