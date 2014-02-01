@@ -676,6 +676,7 @@ c0resolve() {
 c0checkServer() {
   if ! echo | openssl s_client -connect $server 2>/dev/null | grep -q '^subject='
   then
+    echo "INFO: $server is offline, resolving"
     c0ensureResolve
   else 
     echo "INFO: $server is online"
