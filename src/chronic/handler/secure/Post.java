@@ -33,6 +33,7 @@ public class Post implements PlainHttpxHandler {
         Cert cert = es.persistCert(httpx);
         TopicMessage message = new TopicMessage(cert);
         if (httpx.getRequestHeader("Content-Length") == null) {
+            logger.error("No content length header: {} {}", cert, httpx.listRequestHeaders());
             throw new Exception("No content length header: " + cert);
         }
         int contentLength = Integer.parseInt(httpx.getRequestHeader("Content-Length"));
