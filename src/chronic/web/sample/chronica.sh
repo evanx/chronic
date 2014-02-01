@@ -673,16 +673,6 @@ c0resolve() {
     -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$webServer/resolve
 }
 
-c0checkServer() {
-  if ! echo | openssl s_client -connect $server 2>/dev/null | grep -q '^subject='
-  then
-    echo "INFO: $server is offline, resolving"
-    c0ensureResolve
-  else 
-    echo "INFO: $server is online"
-  fi
-}
-
 c0ensureResolve() {
   while [ 1 ]
   do
@@ -701,6 +691,16 @@ c0ensureResolve() {
     fi
     sleep 5
   done
+}
+
+c0checkServer() {
+  if ! echo | openssl s_client -connect $server 2>/dev/null | grep -q '^subject='
+  then
+    echo "INFO: $server is offline, resolving"
+    c0ensureResolve
+  else 
+    echo "INFO: $server is online"
+  fi
 }
 
 c0ensureServer() {
