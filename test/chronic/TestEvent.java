@@ -23,6 +23,7 @@ package chronic;
 import chronic.app.ChronicApp;
 import chronic4j.ChronicPoster;
 import java.security.KeyStore;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,16 +47,15 @@ public class TestEvent {
     String postUrl; 
     
     @Test
-    public void test() throws Exception {
+    public void testResolve() throws Exception {
         app.init();
         keyStore = KeyStores.loadKeyStore("JKS", keyStoreLocation, sslPass);
         poster.init(keyStore, sslPass);
         app.ensureInitialized();
         serverAddress = poster.post(resolveUrl);
-        logger.info("serverAddress {}", serverAddress);
+        Assert.assertEquals("localhost:8444", serverAddress);
         postUrl = String.format("https://%s/post", serverAddress);
-        logger.info("postUrl {}", postUrl);
-        poster.post(postUrl, "OK: test");
+        Assert.assertEquals("OK:", poster.post(postUrl, "OK: test"));
     }
 
 }
