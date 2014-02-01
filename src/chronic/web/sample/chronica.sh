@@ -679,7 +679,7 @@ c0resolve() {
 c0ensureResolve() {
   while [ 1 ]
   do
-    echo "INFO: resolving secure server for $orgDomain from $webServer"
+    decho "INFO: resolving secure server for $orgDomain from $webServer"
     resolvedServer=`c0resolve`
     if echo "$resolvedServer" | grep -q "ERROR:"
     then
@@ -703,7 +703,7 @@ c0checkServer() {
     echo "INFO: $server is offline, resolving"
     c0ensureResolve
   else 
-    echo "INFO: $server is online"
+    decho "INFO: $server is online"
   fi
 }
 
@@ -712,7 +712,7 @@ c0ensureServer() {
   then
     c0ensureResolve
   else 
-    echo "INFO: previously resolved server: $server"
+    decho "INFO: previously resolved server: $server"
   fi
   c0checkServer
 }
