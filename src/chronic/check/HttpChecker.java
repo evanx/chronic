@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import vellum.data.Patterns;
+import vellum.util.Streams;
 
 /**
  *
@@ -42,14 +43,18 @@ public class HttpChecker implements StatusCheck {
         
     @Override
     public String check() {
+        HttpURLConnection connection = null;
         try {
             URL url = new URL(String.format("http://%s:%d", address, port));
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
+            String header = connection.getHeaderField(0);
+            connection.disconnect();
             return String.format("OK: %s port %d http: %s", address, port, 
-                    connection.getHeaderField(0));
+                    header);
         } catch (IOException e) {
             return String.format("WARNING: %s port %d http error: %s", address, port, e.getMessage());
-        } 
+        } finally {
+        }
     }
 
     public static HttpChecker parse(String string) {

@@ -21,9 +21,11 @@
 package chronic.check;
 
 import chronic.alert.StatusCheck;
+import java.io.IOException;
 import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 import vellum.data.Patterns;
+import vellum.util.Streams;
 
 /**
  *
@@ -41,14 +43,17 @@ public class HttpsChecker implements StatusCheck {
         
     @Override
     public String check() {
+        HttpsURLConnection connection = null;
         try {
             URL url = new URL(String.format("https://%s:%d", address, port));
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection = (HttpsURLConnection) url.openConnection();
             return String.format("OK: %s port %d https: %s: %s", address, port, 
                     connection.getPeerPrincipal().getName(), connection.getHeaderField(0));
-        } catch (Exception e) {
+        } catch (IOException e) {
             return String.format("WARNING: %s port %d https error: %s", address, port, e.getMessage());
-        } 
+        } finally {
+            connection.disconnect();
+        }
     }
 
     public static HttpsChecker parse(String string) {
