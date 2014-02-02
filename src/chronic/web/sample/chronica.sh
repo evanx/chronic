@@ -423,12 +423,20 @@ c2mysql() {
 
 ### reverse checks
 
+c2rhttp() {
+  echo "Check-http: $1 $2"
+}
+
 c2rhttps() {
   echo "Check-https: $1 $2"
 }
 
 c2rtcp() {
   echo "Check-tcp: $1 $2"
+}
+
+c2rssl() {
+  echo "Check-ssl: $1 $2"
 }
 
 
