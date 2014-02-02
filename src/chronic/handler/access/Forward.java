@@ -74,9 +74,9 @@ public class Forward implements HttpHandler {
             copyStream(256, http.getRequestBody(), connection.getOutputStream());
             String setCookie = connection.getHeaderField("Set-Cookie");
             logger.info("setCookie {}", setCookie);
+            http.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
             http.getResponseHeaders().set("Content-Type", "text/json");
             http.getResponseHeaders().set("Set-Cookie", setCookie);
-            http.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
             copyStream(1024, connection.getInputStream(), http.getResponseBody());
         } catch (IOException e) {
             String errorResponse = JMaps.mapValue("errorMessage", e.getMessage()).toJson();
