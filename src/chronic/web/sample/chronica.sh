@@ -351,30 +351,6 @@ c2nohttp() {
   fi
 }
 
-c1http() {
-  c2http $1 443
-}
-
-c1nohttp() {
-  c2nohttp $1 443
-}
-
-c1https() {
-  c2https $1 443
-}
-
-c1nohttps() {
-  c2nohttps $1 443
-}
-
-c1httpsa() {
-  c2httpsa $1 443
-}
-
-c1nohttpsa() {
-  c2nohttpsa $1 443
-}
-
 c2certExpiry() {
   expiryDate=`openssl s_client -connect $1:$2 2> /dev/null < /dev/null | openssl x509 -text |
     grep '^ *Not After :' | sed 's/^ *Not After : \(\S*\) \(\S*\) \S* \(20[0-9]*\) \(.*\)/\1 \2 \3/'`
@@ -389,6 +365,7 @@ c2certExpiry() {
     echo "OK: $1 cert expires: $expiryDate"  
   fi
 }
+
 
 
 ### ssh password or key checks
@@ -420,6 +397,33 @@ c2sshkey() {
       echo "CRITICAL: $1 port $2 ssh is not permission denied"
     fi
   fi
+}
+
+
+### convenience with default ports
+
+c1http() {
+  c2http $1 80
+}
+
+c1nohttp() {
+  c2nohttp $1 80
+}
+
+c1https() {
+  c2https $1 443
+}
+
+c1nohttps() {
+  c2nohttps $1 443
+}
+
+c1httpsa() {
+  c2httpsa $1 443
+}
+
+c1nohttpsa() {
+  c2nohttpsa $1 443
 }
 
 
