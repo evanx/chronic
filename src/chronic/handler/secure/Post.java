@@ -51,17 +51,20 @@ public class Post implements PlainHttpxHandler {
         logger.info("contentLength {} {}", contentLength, cert);
         byte[] content = Streams.readBytes(httpx.getDelegate().getRequestBody());
         String contentString = new String(content);
-        logger.trace("content {}", contentString);
+        logger.trace("contentString {}", contentString);
         new TopicMessageParser(app, message).parse(httpx.getRequestHeaders(), contentString);
-        logger.debug("status {}", message);
-        Topic topic = es.persistTopic(cert, message);
-        message.setTopic(topic);
-        if (message.getSubscribers() != null) {
-            if (message.getSubscribers().size() > 0) {
-                for (String email : message.getSubscribers()) {
-                    Person person = es.persistPerson(email);
-                    logger.info("subscribe {}", person);
-                    es.persistTopicSubscription(topic, person);
+        logger.debug("message {}", message);
+        Topic topic = null;
+        if (message.getTopicLabel() != null) {
+            topic = es.persistTopic(cert, message);
+            message.setTopic(topic);
+            if (message.getSubscribers() != null) {
+                if (message.getSubscribers().size() > 0) {
+                    for (String email : message.getSubscribers()) {
+                        Person person = es.persistPerson(email);
+                        logger.info("subscribe {}", person);
+                        es.persistTopicSubscription(topic, person);
+                    }
                 }
             }
         }
@@ -73,9 +76,9 @@ public class Post implements PlainHttpxHandler {
             builder.append(result);
             builder.append("\n");
         }
-        es.commit();
-        app.getMessageQueue().add(message);
-        if (builder.length() == 0) {
+        if (topic != null) {
+            es.commit();
+            app.getMessageQueue().add(message);            
             builder.append(String.format("OK: %s\n", topic.getTopicLabel()));
         }
         return builder.toString();

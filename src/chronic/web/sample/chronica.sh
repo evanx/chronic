@@ -311,7 +311,7 @@ c2nohttps() {
   fi
 }
 
-c2httpsAuth() {
+c2httpsa() { # client-authenticated HTTPS
   decho "curl --connect-timeout $httpTimeout -s -I https://$1:$2"
   if curl --connect-timeout $httpTimeout -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
@@ -321,7 +321,7 @@ c2httpsAuth() {
   fi
 }
 
-c2nohttpsAuth() {
+c2nohttpsa() {
   decho "curl --connect-timeout $httpTimeout -s -I https://$1:$2"
   if curl --connect-timeout $httpTimeout -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
@@ -351,6 +351,29 @@ c2nohttp() {
   fi
 }
 
+c1http() {
+  c2http $1 443
+}
+
+c1nohttp() {
+  c2nohttp $1 443
+}
+
+c1https() {
+  c2https $1 443
+}
+
+c1nohttps() {
+  c2nohttps $1 443
+}
+
+c1httpsa() {
+  c2httpsa $1 443
+}
+
+c1nohttpsa() {
+  c2nohttpsa $1 443
+}
 
 c2certExpiry() {
   expiryDate=`openssl s_client -connect $1:$2 2> /dev/null < /dev/null | openssl x509 -text |

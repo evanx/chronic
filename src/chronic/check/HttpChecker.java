@@ -47,13 +47,20 @@ public class HttpChecker implements StatusCheck {
         try {
             URL url = new URL(String.format("http://%s:%d", address, port));
             connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(timeout);
             String header = connection.getHeaderField(0);
-            connection.disconnect();
-            return String.format("OK: %s port %d http: %s", address, port, 
-                    header);
+            if (header == null) {
+                return String.format("WARNING: %s port %d no http", address, port);
+            } else {                    
+                return String.format("OK: %s port %d http: %s", address, port, header);
+            }
         } catch (IOException e) {
-            return String.format("WARNING: %s port %d http error: %s", address, port, e.getMessage());
+            return String.format("WARNING: %s port %d http error: %s: %s", address, port, 
+                    e.getClass().getSimpleName(), e.getMessage());
         } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 

@@ -342,6 +342,6 @@ public class TopicMessageParser {
         if (topicMessage.subject != null) {
             return topicMessage.subject;
         }
-        return Bundle.get("undetermined_topic");
+        return null;
     }
 }

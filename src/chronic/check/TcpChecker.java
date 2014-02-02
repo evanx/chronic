@@ -21,7 +21,10 @@
 package chronic.check;
 
 import chronic.alert.StatusCheck;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vellum.data.Patterns;
 
 /**
@@ -29,6 +32,8 @@ import vellum.data.Patterns;
  * @author evan.summers
  */
 public class TcpChecker implements StatusCheck {
+    static Logger logger = LoggerFactory.getLogger(TcpChecker.class);
+    
     String address;
     int port;
     int timeout = 4000;
@@ -40,12 +45,16 @@ public class TcpChecker implements StatusCheck {
         
     @Override
     public String check() {
-        try (Socket socket = new Socket(address, port)) {
-            socket.setSoTimeout(timeout);            
+        logger.info("check {} {}", address, port);
+        try (Socket socket = new Socket()) {
+            logger.info("check timeout {}", timeout);
+            socket.connect(new InetSocketAddress(address, port), timeout);
             return String.format("OK: %s port %d: %s", address, port, socket.toString());
         } catch (Exception e) {
             return String.format("WARNING: %s port %d: %s", address, port, e.getMessage());
-        } 
+        } finally {
+            logger.info("check done");
+        }
     }
 
     public static TcpChecker parse(String string) {
