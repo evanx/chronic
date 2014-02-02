@@ -24,8 +24,10 @@ import chronic.app.ChronicApp;
 import chronic.check.TcpChecker;
 import chronic.bundle.Bundle;
 import chronic.check.ClockChecker;
+import chronic.check.HttpChecker;
 import chronic.check.HttpsChecker;
 import chronic.check.NtpChecker;
+import chronic.check.SslChecker;
 import chronic.type.StatusType;
 import chronic.type.AlertFormatType;
 import chronic.type.AlertType;
@@ -155,10 +157,14 @@ public class TopicMessageParser {
             topicMessage.setAlertFormatType(AlertFormatType.valueOf(string));
         } else if (header.equals("AlertPush")) {
             topicMessage.setAlertPushUrl(string);
-        } else if (header.equals("Check-tcp")) {
-            topicMessage.getChecks().add(TcpChecker.parse(string));
+        } else if (header.equals("Check-http")) {
+            topicMessage.getChecks().add(HttpChecker.parse(string));
         } else if (header.equals("Check-https")) {
             topicMessage.getChecks().add(HttpsChecker.parse(string));
+        } else if (header.equals("Check-tcp")) {
+            topicMessage.getChecks().add(TcpChecker.parse(string));
+        } else if (header.equals("Check-ssl")) {
+            topicMessage.getChecks().add(SslChecker.parse(string));
         } else if (header.equals("Clock")) {
             topicMessage.getChecks().add(ClockChecker.parse(string));
         } else if (header.equals("Content-Type")) {

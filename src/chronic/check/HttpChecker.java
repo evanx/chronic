@@ -21,20 +21,21 @@
 package chronic.check;
 
 import chronic.alert.StatusCheck;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
 import vellum.data.Patterns;
 
 /**
  *
  * @author evan.summers
  */
-public class HttpsChecker implements StatusCheck {
+public class HttpChecker implements StatusCheck {
     String address;
     int port;
     int timeout = 4000;
     
-    public HttpsChecker(String address, int port) {
+    public HttpChecker(String address, int port) {
         this.address = address;
         this.port = port;
     }   
@@ -42,21 +43,21 @@ public class HttpsChecker implements StatusCheck {
     @Override
     public String check() {
         try {
-            URL url = new URL(String.format("https://%s:%d", address, port));
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            return String.format("OK: %s port %d https: %s: %s", address, port, 
-                    connection.getPeerPrincipal().getName(), connection.getHeaderField(0));
-        } catch (Exception e) {
-            return String.format("WARNING: %s port %d https error: %s", address, port, e.getMessage());
+            URL url = new URL(String.format("http://%s:%d", address, port));
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            return String.format("OK: %s port %d http: %s", address, port, 
+                    connection.getHeaderField(0));
+        } catch (IOException e) {
+            return String.format("WARNING: %s port %d http error: %s", address, port, e.getMessage());
         } 
     }
 
-    public static HttpsChecker parse(String string) {
+    public static HttpChecker parse(String string) {
         String[] fields = string.split("\\s+");
         if (fields.length == 2 && 
                 Patterns.matchesDomain(fields[0]) &&
                 Patterns.matchesInteger(fields[1])) {
-             return new HttpsChecker(fields[0], Integer.parseInt(fields[1]));
+             return new HttpChecker(fields[0], Integer.parseInt(fields[1]));
         }
         throw new IllegalArgumentException(string);
     }

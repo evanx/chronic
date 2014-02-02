@@ -21,42 +21,42 @@
 package chronic.check;
 
 import chronic.alert.StatusCheck;
-import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
 import vellum.data.Patterns;
 
 /**
  *
  * @author evan.summers
  */
-public class HttpsChecker implements StatusCheck {
+public class SslChecker implements StatusCheck {
     String address;
     int port;
     int timeout = 4000;
     
-    public HttpsChecker(String address, int port) {
+    public SslChecker(String address, int port) {
         this.address = address;
         this.port = port;
     }   
         
     @Override
     public String check() {
-        try {
-            URL url = new URL(String.format("https://%s:%d", address, port));
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            return String.format("OK: %s port %d https: %s: %s", address, port, 
-                    connection.getPeerPrincipal().getName(), connection.getHeaderField(0));
+        try (SSLSocket socket = (SSLSocket) 
+                SSLContext.getDefault().getSocketFactory().createSocket(address, port)) {
+            socket.setSoTimeout(timeout);
+            return String.format("OK: %s port %d ssl: %s", address, port, 
+                    socket.getSession().getPeerPrincipal().getName());
         } catch (Exception e) {
-            return String.format("WARNING: %s port %d https error: %s", address, port, e.getMessage());
+            return String.format("WARNING: %s port %d ssl error: %s", address, port, e.getMessage());
         } 
     }
 
-    public static HttpsChecker parse(String string) {
+    public static SslChecker parse(String string) {
         String[] fields = string.split("\\s+");
         if (fields.length == 2 && 
                 Patterns.matchesDomain(fields[0]) &&
                 Patterns.matchesInteger(fields[1])) {
-             return new HttpsChecker(fields[0], Integer.parseInt(fields[1]));
+             return new SslChecker(fields[0], Integer.parseInt(fields[1]));
         }
         throw new IllegalArgumentException(string);
     }

@@ -495,7 +495,10 @@ public class ChronicEntityService implements AutoCloseable {
             logger.warn("updated empty certificate {}", certKey);
         } else if (!cert.getEncoded().equals(encoded)) {
             if (cert.isEnabled()) {
-                throw new CertificateException("invalid duplicate certificate");
+                logger.warn("invalid duplicate certificate {}", certKey);
+                if (false) {
+                    throw new CertificateException("invalid duplicate certificate");
+                }
             }
             cert.setEncoded(encoded);
             cert.setAcquired(Calendar.getInstance());
