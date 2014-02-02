@@ -18,14 +18,13 @@
 # under the License.  
 
 
-### custom config 
+### mininum required custom config 
 
 orgDomain='' # internet domain of your organisation 
 admins='' # emails of chronica admins for this organisation (comma/space separated)
 
-commonName=$USER@`hostname -s` # name of this publisher
-orgUnit='default' # network or group
-subscribers="$admins" # emails of default subcribers
+
+### optional custom config
 
 # Notes: 
 #   The generated client cert will have: commonName, orgUnit, orgDomain.
@@ -33,13 +32,20 @@ subscribers="$admins" # emails of default subcribers
 #   Admins can approve certs via the site: https://chronica.co.
 #   Designated subscribers are allowed to subscribe via the site.
 
+commonName=$USER@`hostname -s` # name of this publisher
+orgUnit='default' # network or group
+subscribers="$admins" # emails of default subscribers
+
 locality='none'
 region='none'
 country='none'
 
+# Notes: 
+#   When running chronica.sh script, the hourly and daily checks can be scheduled
+#   to occur at a given minute past the hour, and hour of day. 
+
 #scheduledHour=''
 #scheduledMinute=''
-
 
 ### customizable jobs
 
@@ -47,7 +53,7 @@ c0minutely() {
   c1topic minutely
   c1metric Load
   c0load
-  c0login
+  #c0login
   #c2tcp chronica.co 443
   #c2nossl chronica.co 80
   #c2nohttps chronica.co 80
@@ -62,13 +68,9 @@ c0minutely() {
 
 c0hourly() {
   c1topic hourly
-  c0diskspace
+  c1diskspace /var
   #c0megaRaid # LSI megaraid cards
   #c0mdstat # linux software raid
-}
-
-c0hourlyPriviledged() {
-  c0shaAuth
 }
 
 c0daily() {
@@ -86,22 +88,26 @@ c0daily() {
 #   - Monitoring auth config files e.g. /etc/ssh/sshd_config
 #   - file integrity monitoring for installed packages e.g. yum verify. 
 
-c0minutelyPriviledged() {
-  c1verifyHead /var/log/secure # rhel, centos, amazon linux
-  c1verifyHead /var/log/auth.log # ubuntu
-}
+#c0minutelyPriviledged() {
+#  c1verifyHead /var/log/secure # rhel, centos, amazon linux
+#  c1verifyHead /var/log/auth.log # ubuntu
+#}
 
-c0dailyPriviledged() {
-  #c0yumVerify
-  c0rpmVerify
-}
+#c0hourlyPriviledged() {
+#  c0shaAuth
+#}
+
+#c0dailyPriviledged() {
+#  #c0yumVerify
+#  c0rpmVerify
+#}
 
 # Notes:
 #   Some auth checks required for PCI DSS compliance must be run as an
 #   unpriviledged user, e.g. to check that auth config and logs are inaccessible.
 
-c0dailyNonPriviledged() {
-  echo "INFO: daily nonpriviledged"
-  c1nowrite /etc/ssh/sshd_config
-  c1noread /var/log/secure
-}
+#c0dailyNonPriviledged() {
+#  echo "INFO: daily nonpriviledged"
+#  c1nowrite /etc/ssh/sshd_config
+#  c1noread /var/log/secure
+#}

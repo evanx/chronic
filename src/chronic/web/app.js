@@ -66,7 +66,7 @@ app.controller("personaController", ["$scope", "$location", "personaService",
         $scope.changeView = function(view) {
             console.log("persona changeView", view);
             $scope.view = view;
-            //$location.path("/" + view);
+            $location.path("/" + view);
             $scope.$broadcast("changeView", view);
         };
         $scope.getClass = function(path) {

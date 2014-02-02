@@ -51,6 +51,7 @@ public class HttpsChecker implements StatusCheck {
             return String.format("OK: %s port %d https: %s: %s", address, port, 
                     connection.getHeaderField(0), connection.getPeerPrincipal().getName());
         } catch (Throwable e) {
+            e.printStackTrace(System.err);
             return String.format("WARNING: %s port %d https error: %s: %s", address, port, 
                     e.getClass().getSimpleName(), e.getMessage());
         } finally {

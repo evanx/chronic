@@ -400,19 +400,20 @@ orgDomain="your.org"</pre>
                 <p>
                     Step 3. <b>Review</b> <tt>chronica.sh</tt> <i>(so you know it's cool)</i>
                 </p>
+                <pre>$ less chronica.sh</pre>
                 <p>
                     Step 4: <b>Test</b>
                 </p>
-                <pre>$ bash chronica.sh</pre>
+                <pre>$ sh chronica.sh</pre>
                 <p>
                     Step 5: <b>Run</b>
                 </p>
-                <pre>$ bash chronica.sh run</pre>
+                <pre>$ sh chronica.sh run</pre>
                 <p>
-                    However, in this case the script runs continuously in the foreground. You can terminate with Control-C, 
-                    and start it in the background as follows.
+                    However, in this case the script runs continuously in the foreground. You can terminate with Control-C 
+                    and start it in the background, as follows.
                 </p>
-                <pre>$ bash chronica.sh start</pre>
+                <pre>$ sh chronica.sh start</pre>
                 <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
                     <i>(to <a href="https://chronica.co">https://chronica.co</a> 
                         using Mozilla Persona)</i>
@@ -420,21 +421,34 @@ orgDomain="your.org"</pre>
                 <p>Click on alert rows to see their content (except on <a href="https://chronica.co/demo">https://chronica.co/demo</a> where you can preview the admin's alerts.)
                 </p>
                 <p>ps. The script resolves the latest server allocation, which you can check as follows, i.e. that its HTTPS port is allowed by your firewall.</p>
-                <pre>$ bash chronica.sh resolve
+                <pre>$ sh chronica.sh resolve
 secure.chronica.co
 
-$ bash chronica.sh httpsa secure.chronica.co 443
-OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
-                <p>(This enables scalability where we can add new cloud instances as our userbase grows.)</p>
+$ sh chronica.sh tcp secure.chronica.co 443
+OK: secure.chronica.co port 443 is open</pre>
+                <p>(This enables horizontal scalability where we can add new cloud instances as our userbase grows.)</p>
+                <p>
+                    Step 7: <b>Customize</b>
+                </p>
+                <p>
+                    The "custom" script is configured for basic minutely, hourly and daily checks e.g. load and diskspace.
+                    You can uncomment and customise the examples, and add more checks as you require, using Nagios plugins and what have you. 
+                </p>
+                <pre>$ vi custom.chronica.sh</pre>
+                <p>
+                    Incidently, security monitoring is a tenet of Chronica e.g. SSH auth and PCI DSS compliancy.
+                    So you'll see commented-out security checks requiring root priviledges, 
+                    where in practice one might use SSH forced commands for such checks. 
+                </p>
                 <hr>
-                <p><a href="#" class="btn btn-primary btn-lg" role="button"
-                      ng-show="!persona.email && view !== 'help'" ng-click="changeView('help')">Learn more &raquo;</a></p>
+                <p><a href="#learn" class="btn btn-primary btn-lg" role="button"
+                      ng-show="!persona.email && view !== 'help'" ng-click="changeView('help');">More &raquo;</a></p>
             </div>
         </div>
 
         <div class="container" ng-show="view === 'help'">
             <div class="row well-lg">
-                <h3>Going further</h3>
+                <h2 id="learn"><a name="learn">Going further</a></h2>
                 <p>Customize the <tt>custom.chronica.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or daily.</p>
                 <pre>c0hourly() {
   c1topic hourly
@@ -444,13 +458,13 @@ OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
   c2tcp chronica.co 80
   c2https chronica.co 443
 }</pre><p>where the convention for naming functions indicates the number of parameters. Commands can be tested from the command-line, e.g. the following invokes <tt>c2nohttp()</tt> with the two specified parameters.</p>
-                <pre>$ bash chronica.sh nohttp chronica.co 80
+                <pre>$ sh chronica.sh nohttp chronica.co 80
 OK - chronica.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
                 <p>Add Nagios plugins and adhoc scripts as required.</p>
                 <pre>c0minutely() {
   c1topic minutely
   c0load
-  c2httpsAuth secure.chronica.co 443 
+  c2httpsa secure.chronica.co 443 # client cert authentication
   /usr/lib/nagios/plugins/check_pgsql -H localhost 
   ssh postgres@localhost scripts/check_replication.sh
 }</pre>
@@ -461,7 +475,7 @@ OK - chronica.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pr
     ssh postgres@localhost scripts/check_replication.sh
 }</pre>
                 <p>Then you can test such functions individually from the command-line as follows.</p>
-                <pre>$ bash scripts/chronica.sh pgsql
+                <pre>$ sh scripts/chronica.sh pgsql
 CRITICAL - no connection</pre>        
                 <p>As good practice, run <tt>chronica.sh</tt> as an unpriviledged user e.g. from <tt>rc.local</tt> using <tt>su</tt>. Use <tt>ssh</tt> forced-commands and/or <tt>sudo</tt> to grant only those priviledges actually required for running your custom checks.</p>
                 <pre>$ cat /etc/rc.local
@@ -583,14 +597,14 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
                 <p><b>What notification mechanisms are supported?</b>
                     <br>Primarily, email. Also "push" notification via HTTPS post to a URL you can register. (Naturally this URL should require client auth and trust our SSL cert, and allow our IP number to connect.) This could provide an SMS gateway on your account. 
                 </p>
-                <pre>$ bash chronica.sh push https://myserver:8443/myapp</pre>
+                <pre>$ sh chronica.sh push https://myserver:8443/myapp</pre>
                 <p><b>What about mobile push notifications?</b>
                     <br>We want to support mobile push notifications, perhaps via our own app e.g. using PhoneGap aka Apache Cordova with its PushPlugin. Also Facebook, Google+ and Twitter integration for messaging via those platforms, according to demand.
                 </p>
                 <p><b>What other notification mechanisms are already supported?</b>
                     <br>You can poll our server via HTTPS for your alerts. 
                 </p>
-                <pre>$ bash chronica.sh poll
+                <pre>$ sh chronica.sh poll
 Time: 16:02:54
 Subject: root@hostx checksys CRITICAL</pre>
 
@@ -625,12 +639,12 @@ Subject: root@hostx checksys CRITICAL</pre>
                 <br>Also, you can pipe the output of cron jobs to this script. 
                 <br>Finally, the script can be used as your MTA (via the <tt>/etc/alternatives/mta</tt> symlink) to handle all cron job output, i.e. if your server only uses its MTA for cron emails.
                 </p>
-                <pre>$ bash chronica.sh start</pre>
+                <pre>$ sh chronica.sh start</pre>
 
                 <p><b>How is it updated?</b>
                     <br>The script itself will provide hints, to verify and update.
                 </p>
-                <pre>$ bash chronica.sh update
+                <pre>$ sh chronica.sh update
 curl -s https://chronica.co/sample/chronica.sh | sha1sum
 Verifying signature using ~/.chronica/etc/chronica.pub.pem
 OK: verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt</pre>
