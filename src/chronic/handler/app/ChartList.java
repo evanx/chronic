@@ -43,6 +43,7 @@ public class ChartList implements ChronicHttpxHandler {
         MetricType intervalType = MetricType.valueOf(intervalString);
         List metrics = new LinkedList();
         for (TopicMetricKey key : Lists.sortedSet(app.getSeriesMap().keySet(), new TopicMetricKeyOrderComparator())) {
+            logger.info("");
             Topic topic = es.findTopic(key.getTopicId());
             if (httpx.getReferer().endsWith("/demo")) {
             } else if (app.getProperties().isAdmin(email)) {

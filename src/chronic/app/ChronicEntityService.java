@@ -212,11 +212,11 @@ public class ChronicEntityService implements AutoCloseable {
     }
 
     public boolean isSubscription(Topic topic, String email) throws StorageException {
-        return selectSubscription(topic, email).isEmpty();
+        return !selectSubscription(topic, email).isEmpty();
     }
 
     public boolean isSubscription(Topic topic, Person person) throws StorageException {
-        return selectSubscription(topic, person).isEmpty();
+        return !selectSubscription(topic, person).isEmpty();
     }
 
     public List<Org> listOrg(String email) {

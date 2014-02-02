@@ -56,14 +56,18 @@ public class Post implements PlainHttpxHandler {
         logger.debug("message {}", message);
         Topic topic = null;
         if (message.getTopicLabel() != null) {
-            topic = es.persistTopic(cert, message);
-            message.setTopic(topic);
-            if (message.getSubscribers() != null) {
-                if (message.getSubscribers().size() > 0) {
-                    for (String email : message.getSubscribers()) {
-                        Person person = es.persistPerson(email);
-                        logger.info("subscribe {}", person);
-                        es.persistTopicSubscription(topic, person);
+            if (message.getTopicLabel().isEmpty()) {
+                logger.error("empty topic label {}", message);
+            } else {
+                topic = es.persistTopic(cert, message);
+                message.setTopic(topic);
+                if (message.getSubscribers() != null) {
+                    if (message.getSubscribers().size() > 0) {
+                        for (String email : message.getSubscribers()) {
+                            Person person = es.persistPerson(email);
+                            logger.info("subscribe {}", person);
+                            es.persistTopicSubscription(topic, person);
+                        }
                     }
                 }
             }

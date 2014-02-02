@@ -493,7 +493,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
             </div>
         </div>
 
-        <div class="container" ng-show="view === 'about'" ng-cloak>
+        <div class="container" ng-show="view === 'about' || view === 'help'" ng-cloak>
             <div class="row well-lg">
                 <h2 ng-cloak ng-show="persona.email && view === 'about'"><b>Instant</b> cloud monitoring</h2>
 
@@ -553,7 +553,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
             </div>
         </div>
 
-        <div class="container" ng-show="view === 'about'">
+        <div class="container" ng-show="view === 'about' || view === 'help'">
             <div class="row well-lg">
                 <h3><a name="faq">Frequently asked questions</a></h3>
 

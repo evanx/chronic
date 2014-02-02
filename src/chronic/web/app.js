@@ -158,7 +158,7 @@ app.controller("topicEventsController", ["$scope", "$http",
         };
         $scope.$on("loggedOn", function(email) {
             console.log("loggedOn", email);
-            //$scope.changeView("info");
+            $scope.changeView("about");
         });
         $scope.$on("changeView", function(event, view) {
             if (view === "topicEvents") {
