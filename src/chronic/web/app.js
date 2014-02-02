@@ -57,6 +57,7 @@ app.controller("personaController", ["$scope", "$location", "personaService",
     function($scope, $location, personaService) {
         $scope.login = function() {
             console.log("persona login");
+            $scope.view = 'about';
             navigator.id.request();
         };
         $scope.logout = function() {
@@ -66,7 +67,7 @@ app.controller("personaController", ["$scope", "$location", "personaService",
         $scope.changeView = function(view) {
             console.log("persona changeView", view);
             $scope.view = view;
-            $location.path("/" + view);
+            //$location.path("/" + view);
             $scope.$broadcast("changeView", view);
         };
         $scope.getClass = function(path) {
@@ -89,7 +90,7 @@ app.controller("personaController", ["$scope", "$location", "personaService",
                     $scope.persona = persona;
                     if (persona.email) {
                         localStorage.setItem("persona", JSON.stringify(persona));
-                        $scope.$broadcast("loggedOn", persona.email);
+                        $scope.$broadcast("loggedIn", persona.email);
                     } else {
                         console.warn("login", persona);
                         localStorage.clear("persona");
@@ -103,12 +104,13 @@ app.controller("personaController", ["$scope", "$location", "personaService",
             loggedInUser: loggedInUser,
             onlogin: function(assertion) {
                 $scope.loggingIn = true;
+                $scope.view = 'about';
                 personaService.login(assertion).then(function(response) {
                     $scope.loggingIn = false;
                     $scope.persona = response;
                     if (response.email) {
                         localStorage.setItem("persona", JSON.stringify($scope.persona));
-                        $scope.$broadcast("loggedOn", response.email);
+                        $scope.$broadcast("loggedIn", response.email);
                     } else {
                         console.warn("login", response);
                     }
@@ -150,15 +152,15 @@ app.controller("topicEventsController", ["$scope", "$http",
                 } else {
                     console.warn("topicEvents", response);
                 }
+                console.log("topicEvents", $scope.view, $scope.loading, $scope.topicEvents.length);
             });
         };
         $scope.setSelected = function() {
             $scope.selected = this.topicEvent;
             console.log("selected", $scope.selected);
         };
-        $scope.$on("loggedOn", function(email) {
-            console.log("loggedOn", email);
-            //$scope.changeView("about");
+        $scope.$on("loggedIn", function(email) {
+            console.log("loggedIn", email);
         });
         $scope.$on("changeView", function(event, view) {
             if (view === "topicEvents") {
