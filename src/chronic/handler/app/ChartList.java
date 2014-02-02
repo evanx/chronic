@@ -43,11 +43,16 @@ public class ChartList implements ChronicHttpxHandler {
         MetricType intervalType = MetricType.valueOf(intervalString);
         List metrics = new LinkedList();
         for (TopicMetricKey key : Lists.sortedSet(app.getSeriesMap().keySet(), new TopicMetricKeyOrderComparator())) {
+            Topic topic = es.findTopic(key.getTopicId());
+            if (httpx.getReferer().endsWith("/demo")) {
+            } else if (app.getProperties().isAdmin(email)) {
+            } else if (!es.isSubscription(topic, email)) {
+                continue;
+            }
             MetricSeries series = app.getSeriesMap().get(key);
             logger.info("series {}", series.toString());
             JMap map = series.getMap(timeZone, intervalType);
             map.put("metricLabel", key.getMetricLabel());
-            Topic topic = es.findTopic(key.getTopicId());
             map.put("topicLabel", topic.getTopicLabel());
             Cert cert = es.findCert(topic.getCertId());
             map.put("commonName", cert.getCommonName());
@@ -55,10 +60,6 @@ public class ChartList implements ChronicHttpxHandler {
             map.put("orgDomain", cert.getOrgDomain());
             if (System.currentTimeMillis() - series.getTimestamp() > Millis.fromSeconds(90)) {
                 map.put("timestampLabel", CalendarFormats.timestampFormat.format(timeZone, series.getTimestamp()));
-            }
-            if (es.isSubscription(topic, email)) {
-            } else if (httpx.getReferer().endsWith("/demo")) {
-            } else if (app.getProperties().isAdmin(email)) {
             }
             metrics.add(map);
         }
