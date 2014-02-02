@@ -70,7 +70,7 @@
                             <a href="#" ng-click="changeView('certs')">Certs</a>
                         </li>
                         <li ng-class="getClass('start')">
-                            <a href="#" ng-click="changeView('start')">Help</a>
+                            <a href="#" ng-click="changeView('help')">Help</a>
                         </li>
                     </ul>
                     <div class="navbar-collapse collapse pull-right">
@@ -108,8 +108,8 @@
                         <li ng-class="getClass('certs')">
                             <a href="#" ng-click="changeView('certs')">Certs</a>
                         </li>
-                        <li ng-class="getClass('start')">
-                            <a href="#" ng-click="changeView('start')">Help</a>
+                        <li ng-class="getClass('help')">
+                            <a href="#" ng-click="changeView('help')">Help</a>
                         </li>
                     </ul>
                 </div>
@@ -384,7 +384,7 @@
             </div>
         </div>
 
-        <div class="container" ng-show="!persona.email || view === 'start' || view === 'learn'">
+        <div class="container" ng-show="!persona.email || view === 'help'">
             <div class="row well-lg">
                 <h2 ng-show="!persona.email">
                     <b>Instant</b> cloud monitoring, <i>as follows.</i></h2>
@@ -419,19 +419,20 @@ orgDomain="your.org"</pre>
                 </p>
                 <p>Click on alert rows to see their content (except on <a href="https://chronica.co/demo">https://chronica.co/demo</a> where you can preview the admin's alerts.)
                 </p>
-                <p>ps. The script resolves the server allocated to you, which you can check as follows, i.e. that its HTTPS port is allowed by your firewall.</p>
+                <p>ps. The script resolves the latest server allocation, which you can check as follows, i.e. that its HTTPS port is allowed by your firewall.</p>
                 <pre>$ bash chronica.sh resolve
-s1.chronica.co
+secure.chronica.co
 
-$ bash chronica.sh https s1.chronica.co 443
+$ bash chronica.sh httpsa secure.chronica.co 443
 OK - chronica.co port 443 https available (HTTP/1.1 200 OK)</pre>
+                <p>(This enables scalability where we can add new cloud instances as our userbase grows.)</p>
                 <hr>
                 <p><a href="#" class="btn btn-primary btn-lg" role="button"
-                      ng-show="!persona.email && view !== 'learn'" ng-click="changeView('learn')">Learn more &raquo;</a></p>
+                      ng-show="!persona.email && view !== 'help'" ng-click="changeView('help')">Learn more &raquo;</a></p>
             </div>
         </div>
 
-        <div class="container" ng-show="view === 'learn'">
+        <div class="container" ng-show="view === 'help'">
             <div class="row well-lg">
                 <h3>Going further</h3>
                 <p>Customize the <tt>custom.chronica.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or daily.</p>
