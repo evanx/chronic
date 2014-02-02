@@ -43,10 +43,13 @@ public class Forward implements HttpHandler {
                 throw new IOException("no cookie");
             }
             Matcher matcher = SERVER_PATTERN.matcher(cookie);
+            String server;
             if (!matcher.find()) {
-                throw new IOException("server not found in cookie");
+                logger.warn("server not found in cookie");
+                server = "secure.chronica.co";
+            } else {
+                server = matcher.group(1);
             }
-            String server = matcher.group(1);
             int port = 8443; // TODO
             String address = String.format("%s:%d", server, port);
             String urlString = String.format("https://%s%s/forwarded", address, http.getRequestURI().getPath());            
@@ -71,7 +74,8 @@ public class Forward implements HttpHandler {
             copyStream(256, http.getRequestBody(), connection.getOutputStream());
             String setCookie = connection.getHeaderField("Set-Cookie");
             logger.info("setCookie {}", setCookie);
-            http.getResponseHeaders().set("Content-type", "text/json");
+            http.getResponseHeaders().set("Content-Type", "text/json");
+            http.getResponseHeaders().set("Set-Cookie", setCookie);
             http.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
             copyStream(1024, connection.getInputStream(), http.getResponseBody());
         } catch (IOException e) {
