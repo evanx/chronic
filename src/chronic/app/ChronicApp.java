@@ -218,8 +218,8 @@ public class ChronicApp {
 
         private void handle(TopicMessage message) {
             int index = 0;
+            logger.info("series {}", message.getCert());
             for (MetricValue value : message.getMetricList()) {
-                logger.info("series {}", value);
                 if (value != null && value.getValue() != null) {
                     TopicMetricKey key = new TopicMetricKey(message.getTopic().getId(), value.getLabel());
                     key.setOrder(index);

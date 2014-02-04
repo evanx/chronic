@@ -139,12 +139,12 @@ then
   server=`cat ~/.chronica/server`
 elif ! set | grep -q '^server='
 then
-  server="eomer.chronica.co:443"
+  server="secure.chronica.co:443"
 fi
 
 if ! set | grep -q '^webServer='
 then
-  webServer="eowyn.chronica.co"
+  webServer="chronica.co"
 fi
 
 
