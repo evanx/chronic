@@ -30,7 +30,7 @@ admins='' # emails of chronica admins for this organisation (comma/space separat
 #   The generated client cert will have: commonName, orgUnit, orgDomain.
 #   Additionally you can specify: locality, region, country.
 #   Admins can approve certs via the site: https://chronica.co.
-#   Designated subscribers are allowed to subscribe via the site.
+#   Designated subscribers subscribe to alerts via the site.
 
 commonName=$USER@`hostname -s` # name of this publisher
 orgUnit='default' # network or group
@@ -50,8 +50,8 @@ country='none'
 ### customizable jobs
 
 c0minutely() {
-  c1topic minutely
-  c1metric Load
+  c1topic 'minutely'
+  c1metric 'Load'
   c0load
   #c0login
   #c2tcp chronica.co 443
@@ -61,20 +61,20 @@ c0minutely() {
   #c2notcp chronica.co 25
   #c2notcp chronica.co 5432
   #c2https chronica.co 443 
-  #c2httpsAuth secure.chronica.co 443
+  #c2httpsa secure.chronica.co 443
   #c2postgres localhost 5432
   #c2mysql localhost 5432
 }
 
 c0hourly() {
-  c1topic hourly
+  c1topic 'hourly'
   c1diskspace /var
   #c0megaRaid # LSI megaraid cards
   #c0mdstat # linux software raid
 }
 
 c0daily() {
-  c1topic daily
+  c1topic 'daily'
   c0ntp
   c0clock
   #c0checkChronicaPubKey

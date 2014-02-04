@@ -394,9 +394,8 @@
 curl -s -O https://chronica.co/sample/chronica.sh</pre>   
                 <p>Step 2: <b>Edit</b> <tt>custom.chronica.sh</tt> <i>(for you and yours)</i>
                 <pre>$ vi custom.chronica.sh
-subscriptions="you@your.org"
-admins="you@your.org"
-orgDomain="your.org"</pre>                  
+orgDomain="your.org"
+admins="you@your.org"</pre>                  
                 <p>
                     Step 3. <b>Review</b> <tt>chronica.sh</tt> <i>(so you know it's cool)</i>
                 </p>
@@ -410,21 +409,18 @@ orgDomain="your.org"</pre>
                 </p>
                 <pre>$ sh chronica.sh run</pre>
                 <p>
-                    However, in this case the script runs continuously in the foreground. You can terminate with Control-C 
-                    and start it in the background, as follows.
+                    The script runs continuously in the foreground. You can terminate with Control-C 
+                    and start it in the background as follows.
                 </p>
                 <pre>$ sh chronica.sh start</pre>
                 <p>Step 6: <a ng-click="login()" href="#"><img src="images/persona-login.png"/></a> 
                     <i>(to <a href="https://chronica.co">https://chronica.co</a> 
                         using Mozilla Persona)</i>
                 </p>
-                <p>Click on alert rows to see their content (except on <a href="https://chronica.co/demo">https://chronica.co/demo</a> where you can preview the admin's alerts.)
+                <p>You won't have any "events" yet, so try <a href="https://chronica.co/demo">https://chronica.co/demo</a>.
                 </p>
                 <p>ps. The script resolves the latest server allocation, which you can check as follows, i.e. that its HTTPS port is allowed by your firewall.</p>
-                <pre>$ sh chronica.sh resolve
-secure.chronica.co
-
-$ sh chronica.sh tcp secure.chronica.co 443
+                <pre>$ sh chronica.sh tcp secure.chronica.co 443
 OK: secure.chronica.co port 443 is open</pre>
                 <p>(This enables horizontal scalability where we can add new cloud instances as our userbase grows.)</p>
                 <p>
@@ -434,11 +430,15 @@ OK: secure.chronica.co port 443 is open</pre>
                     The "custom" script is configured for basic minutely, hourly and daily checks e.g. load and diskspace.
                     You can uncomment and customise the examples, and add more checks as you require, using Nagios plugins and what have you. 
                 </p>
-                <pre>$ vi custom.chronica.sh</pre>
+                <pre>$ vi custom.chronica.sh
+c0minutely() {
+  c1topic 'minutely'
+  echo 'CRITICAL: test'
+}</pre>
                 <p>
                     Incidently, security monitoring is a tenet of Chronica e.g. SSH auth and PCI DSS compliancy.
                     So you'll see commented-out security checks requiring root priviledges, 
-                    where in practice one might use SSH forced commands for such checks. 
+                    where actually one might use SSH forced commands for such checks. 
                 </p>
                 <hr>
                 <p><a href="#" class="btn btn-primary btn-lg" role="button"
@@ -451,7 +451,7 @@ OK: secure.chronica.co port 443 is open</pre>
                 <h2 id="learn">Getting further</h2>
                 <p>Customize the <tt>custom.chronica.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or daily.</p>
                 <pre>c0hourly() {
-  c1topic hourly
+  c1topic 'hourly'
   c0diskspace
   c2rhttps my.org 443 # request external check by chronica server
   c2notcp chronica.co 21
@@ -462,7 +462,7 @@ OK: secure.chronica.co port 443 is open</pre>
 OK - chronica.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
                 <p>Add Nagios plugins and adhoc scripts as required.</p>
                 <pre>c0minutely() {
-  c1topic minutely
+  c1topic 'minutely'
   c0load
   c2httpsa secure.chronica.co 443 # client cert authentication
   /usr/lib/nagios/plugins/check_pgsql -H localhost 
