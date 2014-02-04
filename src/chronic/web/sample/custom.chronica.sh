@@ -50,9 +50,10 @@ country='none'
 ### customizable jobs
 
 c0minutely() {
-  c1topic 'minutely'
+  c1topic 'Minutely'
   c1metric 'Load'
   c0load
+  #echo 'OK: Test'
   #c0login
   #c2tcp chronica.co 443
   #c2nossl chronica.co 80
@@ -67,14 +68,14 @@ c0minutely() {
 }
 
 c0hourly() {
-  c1topic 'hourly'
+  c1topic 'Hourly'
   c1diskspace /var
   #c0megaRaid # LSI megaraid cards
   #c0mdstat # linux software raid
 }
 
 c0daily() {
-  c1topic 'daily'
+  c1topic 'Daily'
   c0ntp
   c0clock
   #c0checkChronicaPubKey

@@ -394,6 +394,7 @@
 curl -s -O https://chronica.co/sample/chronica.sh</pre>   
                 <p>Step 2: <b>Edit</b> <tt>custom.chronica.sh</tt> <i>(for you and yours)</i>
                 <pre>$ vi custom.chronica.sh
+
 orgDomain="your.org"
 admins="you@your.org"</pre>                  
                 <p>
@@ -404,6 +405,9 @@ admins="you@your.org"</pre>
                     Step 4: <b>Test</b>
                 </p>
                 <pre>$ sh chronica.sh</pre>
+                <p>To troubleshoot, check that HTTPS is allowed by your firewall.</p>
+                <pre>$ sh chronica.sh tcp secure.chronica.co 443
+OK: secure.chronica.co port 443 is open</pre>
                 <p>
                     Step 5: <b>Run</b>
                 </p>
@@ -417,12 +421,8 @@ admins="you@your.org"</pre>
                     <i>(to <a href="https://chronica.co">https://chronica.co</a> 
                         using Mozilla Persona)</i>
                 </p>
-                <p>You won't have any "events" yet, so try <a href="https://chronica.co/demo">https://chronica.co/demo</a>.
+                <p>You won't have any "events" yet, so see <a href="https://chronica.co/demo">https://chronica.co/demo</a>.
                 </p>
-                <p>ps. The script resolves the latest server allocation, which you can check as follows, i.e. that its HTTPS port is allowed by your firewall.</p>
-                <pre>$ sh chronica.sh tcp secure.chronica.co 443
-OK: secure.chronica.co port 443 is open</pre>
-                <p>(This enables horizontal scalability where we can add new cloud instances as our userbase grows.)</p>
                 <p>
                     Step 7: <b>Customize</b>
                 </p>
@@ -431,10 +431,18 @@ OK: secure.chronica.co port 443 is open</pre>
                     You can uncomment and customise the examples, and add more checks as you require, using Nagios plugins and what have you. 
                 </p>
                 <pre>$ vi custom.chronica.sh
+
 c0minutely() {
-  c1topic 'minutely'
-  echo 'CRITICAL: test'
+  c1topic 'Minutely'
+  c1metric 'Load'
+  c0load
+  echo 'OK: test'
 }</pre>
+                <p>
+                    After a few minutes, change the test status from OK to CRITICAL, and couple of minutes later see that the event shows up on the site. 
+                    Subscribe to the topic if you wish to receive email alerts of events. 
+                    (Incidently, events that re-occur e.g. within a default period of 36 hours, do not trigger alerts, but this period can be configured by topic.)
+                </p>
                 <p>
                     Incidently, security monitoring is a tenet of Chronica e.g. SSH auth and PCI DSS compliancy.
                     So you'll see commented-out security checks requiring root priviledges, 
@@ -451,7 +459,7 @@ c0minutely() {
                 <h2 id="learn">Getting further</h2>
                 <p>Customize the <tt>custom.chronica.sh</tt> script to check the ports and services you wish to monitor, every minute, hour or daily.</p>
                 <pre>c0hourly() {
-  c1topic 'hourly'
+  c1topic 'Hourly'
   c0diskspace
   c2rhttps my.org 443 # request external check by chronica server
   c2notcp chronica.co 21
@@ -462,7 +470,7 @@ c0minutely() {
 OK - chronica.co (port 80) http unavailable (HTTP/1.1 301 Moved Permanently)</pre>
                 <p>Add Nagios plugins and adhoc scripts as required.</p>
                 <pre>c0minutely() {
-  c1topic 'minutely'
+  c1topic 'Minutely'
   c0load
   c2httpsa secure.chronica.co 443 # client cert authentication
   /usr/lib/nagios/plugins/check_pgsql -H localhost 
