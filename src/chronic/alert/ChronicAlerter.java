@@ -102,20 +102,19 @@ public class ChronicAlerter {
             }
         }        
         if (!app.getProperties().isAdmin(email)) {
-            logger.warn("omit email alert: {}", email);
-        } else {
-            app.getMailer().send(email, event.getMessage().getTopicLabel(),
-                    new TopicEventMailBuilder(app).build(event, timeZone));
-            app.getSentMap().put(email, event);
-            Alert alert = new Alert(event.getMessage().getTopic(),
-                    event.getMessage().getStatusType(),
-                    Calendars.newCalendar(timeZone, event.getMessage().getTimestamp()),
-                    email);
-            es.begin();
-            es.persist(alert);
-            es.commit();
-            app.getAlertMap().put(alert.getSubscriptionKey(), alert);
+            logger.warn("send {}", email);
         }
+        app.getMailer().send(email, event.getMessage().getTopicLabel(),
+                new TopicEventMailBuilder(app).build(event, timeZone));
+        app.getSentMap().put(email, event);
+        Alert alert = new Alert(event.getMessage().getTopic(),
+                event.getMessage().getStatusType(),
+                Calendars.newCalendar(timeZone, event.getMessage().getTimestamp()),
+                email);
+        es.begin();
+        es.persist(alert);
+        es.commit();
+        app.getAlertMap().put(alert.getSubscriptionKey(), alert);
         return true;
     }
 

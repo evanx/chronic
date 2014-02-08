@@ -394,9 +394,13 @@
 curl -s -O https://chronica.co/sample/chronica.sh</pre>   
                 <p>Step 2: <b>Edit</b> <tt>custom.chronica.sh</tt> <i>(for you and yours)</i>
                 <pre>$ vi custom.chronica.sh
-
 orgDomain="your.org"
 admins="you@your.org"</pre>                  
+                <p>
+                    Incidently, security monitoring is a tenet of Chronica e.g. SSH auth and PCI DSS compliancy.
+                    So you'll see commented-out security checks requiring root priviledges, 
+                    where actually one might use SSH forced commands for such checks. 
+                </p>
                 <p>
                     Step 3. <b>Review</b> <tt>chronica.sh</tt> <i>(so you know it's cool)</i>
                 </p>
@@ -431,22 +435,15 @@ OK: secure.chronica.co port 443 is open</pre>
                     You can uncomment and customise the examples, and add more checks as you require, using Nagios plugins and what have you. 
                 </p>
                 <pre>$ vi custom.chronica.sh
-
 c0minutely() {
   c1topic 'Minutely'
-  c1metric 'Load'
   c0load
-  echo 'OK: test'
+  echo 'OK: Test'
 }</pre>
                 <p>
                     After a few minutes, change the test status from OK to CRITICAL, and couple of minutes later see that the event shows up on the site. 
                     Subscribe to the topic if you wish to receive email alerts of events. 
-                    (Incidently, events that re-occur e.g. within a default period of 36 hours, do not trigger alerts, but this period can be configured by topic.)
-                </p>
-                <p>
-                    Incidently, security monitoring is a tenet of Chronica e.g. SSH auth and PCI DSS compliancy.
-                    So you'll see commented-out security checks requiring root priviledges, 
-                    where actually one might use SSH forced commands for such checks. 
+                    Incidently, events that re-occur e.g. within a default period of 36 hours, do not trigger alerts, but this period can be configured by topic.
                 </p>
                 <hr>
                 <p><a href="#" class="btn btn-primary btn" role="button"
@@ -684,7 +681,8 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
                 </p>
 
                 <p><b>How are subcribers managed?</b>
-                    <br>The message content specifies its topic and invitees, via email-style headers. If you have approved the topic's cert, then this topic will be published. However, invitees must themselves subscribe to specific topics. This is performed via the site, which validates their email address using Mozilla Persona. So you should advise them visit the site to subscribe to available topics.
+                    <br>The message content specifies its topic and invitees, via email-style headers. If you have approved the topic's cert, then this topic will be published. However, invitees must themselves subscribe to specific topics. 
+                    This is performed via the site, which validates their email address using Mozilla Persona. 
                 </p>
 
                 <p><b>How do subcribers opt-out?</b>
@@ -692,12 +690,15 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
                 </p>
 
                 <p><b>How are alerts triggered?</b>
-                <br>Typically by any change in the monitored output content. However, the content is specially processed to ignore spurious information, to avoid unnecessary alerts. Otherwise just <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
-                And send us any suggestions for improvements e.g. how to better filter content. Code is even better ;)
+                <br>Typically by any change in the monitored output content. 
+                So <tt>grep</tt> and <tt>sed</tt> out the salient information that you wish to monitor for changes. 
                 </p>
 
                 <p><b>What about escalation?</b>
-                    <br>Escalation is an upcoming feature, whereby one can subscribe to an escalation level, and may do so conditionally on another subscriber having acknowledged the alert. (Obviously managers might want alerts if an issue is not resolved after certain period of time, whereas standby engineers might want an alert only when it has not been timeously acknowledged by an on-duty engineer.) 
+                    <br>Escalation is an upcoming feature, whereby one can subscribe to an escalation level, 
+                    and may do so conditionally on another subscriber having acknowledged the alert. 
+                    (Obviously managers might want alerts if an issue is not resolved after certain period of time, 
+                    whereas standby engineers might want an alert only when it has not been timeously acknowledged by an on-duty engineer.) 
                 </p>
 
                 <p><b>What other applications?</b>
@@ -708,8 +709,6 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
                     <br>We are looking at how to scale e.g. to handle millions of devices running a specific app which uses Chronica to report metrics on the app's performance.
                     <br>Our thoughts are that metrics would be submitted using HTTPS without a client cert. These metrics are then aggregated across all devices, and presented via the site.
                     This enables scalability, and also ensures privacy.
-                    If you are mobile app developer interested in such monitoring, please discuss your requirements with us. 
-                    Your contribution to the project would include an AWS account for Auto Scaling dedicated to your app.
                 </p>
                 
                 <p><b>How do I to contribute my improvements for inclusion?</b>        
