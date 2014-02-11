@@ -629,6 +629,11 @@ c1diskspace() {
   echo "Diskspace $diskStatus - $diskUsage%"
 }
 
+c0processes() {
+  echo 'Metric: processes'
+  echo -n 'Value: '
+  cat /proc/stat | grep ^processes
+}
 
 ### rpm and yum installed package integrity checks
 
@@ -749,7 +754,6 @@ c0ensureServer() {
   else 
     decho "INFO: previously resolved server: $server"
   fi
-  c0checkServer
 }
 
 c0resetServer() {
@@ -757,7 +761,8 @@ c0resetServer() {
   c0ensureServer
 }
 
-c0ensureServer
+#c0ensureServer
+#c0checkServer
 
 
 ### java keystore for chronica log4j appender connection
@@ -796,7 +801,7 @@ c0genKeyStore() {
 
 c1curl() {
   tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
-    --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 # > curl.out 2> curl.err
+    --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 -H "orgDomain: $orgDomain" # > curl.out 2> curl.err
 }
 
 c0enroll() {
