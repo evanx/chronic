@@ -58,7 +58,7 @@ public class MetricSeries {
             } else if (minute <= 2) {
                 if (hourTimestamp == 0) {
                     hourly();
-                } else if (timestamp - hourTimestamp > Millis.fromHours(1)) {
+                } else if (timestamp - hourTimestamp > Millis.fromMinutes(62)) {
                     logger.warn("hour elapsed {}", Millis.formatPeriod(timestamp - hourTimestamp));
                     hourly();
                 }

@@ -24,7 +24,7 @@ import vellum.util.Streams;
  */
 public class Post implements PlainHttpxHandler {
 
-    final static int contentLengthLimit = 4000;
+    final static int contentLengthLimit = 8000;
     final static Logger logger = LoggerFactory.getLogger(Post.class);
 
     @Override
