@@ -113,6 +113,11 @@ public class TopicMessageParser {
                 logger.warn("omit not sanitary: {}", line);
                 continue;
             }
+            matcher = TopicMessagePatterns.LOG.matcher(line);
+            if (matcher.find()) {
+                topicMessage.getLineList().add(line);
+                continue;
+            }
             matcher = TopicMessagePatterns.HEADER.matcher(line);
             if (matcher.find()) {
                 if (parseHeader(matcher.group(1), matcher.group(2))) {
