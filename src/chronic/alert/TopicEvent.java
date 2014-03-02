@@ -20,14 +20,15 @@ package chronic.alert;
  specific language governing permissions and limitations
  under the License.  
  */
+import chronic.entity.Event;
 import chronic.type.StatusType;
 import chronic.type.TopicEventType;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.TimeZone;
 import vellum.data.Timestamped;
+import vellum.util.Calendars;
 
 /**
  *
@@ -35,10 +36,8 @@ import vellum.data.Timestamped;
  */
 public class TopicEvent implements Timestamped {
 
-    static Logger logger = LoggerFactory.getLogger(TopicEvent.class);
     TopicMessage message;
     TopicMessage previousMessage;
-    List<String> changedLines;
     List<String> pendingEmails = new LinkedList();
     String htmlContent;
     String preContent;
@@ -48,18 +47,18 @@ public class TopicEvent implements Timestamped {
     long previousTimestamp;
     long timestamp;
     long period;
-
+    
     public TopicEvent(TopicMessage message) {
         this.message = message;
     }
 
     public TopicEvent(TopicMessage message, TopicEventType eventType) {
-        this.message = message;
+        this(message);
         this.eventType = eventType;
     }
 
     public TopicEvent(TopicMessage message, TopicMessage previousMessage) {
-        this.message = message;
+        this(message);
         this.previousMessage = previousMessage;
     }
 

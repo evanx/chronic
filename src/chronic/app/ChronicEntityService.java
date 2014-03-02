@@ -20,8 +20,10 @@
  */
 package chronic.app;
 
+import chronic.alert.TopicEvent;
 import chronic.alert.TopicMessage;
 import chronic.entity.Cert;
+import chronic.entity.Event;
 import chronic.entity.IssuedCert;
 import chronic.entity.Org;
 import chronic.entity.OrgRole;
@@ -38,6 +40,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -51,6 +54,7 @@ import vellum.security.DnameType;
 import vellum.security.X509Certificates;
 import vellum.storage.StorageException;
 import vellum.storage.StorageExceptionType;
+import vellum.util.Calendars;
 
 /**
  *
@@ -99,6 +103,7 @@ public class ChronicEntityService implements AutoCloseable {
         }
     }
 
+    @Override
     public void close() {
         if (em != null) {
             if (em.getTransaction().isActive()) {
@@ -290,7 +295,7 @@ public class ChronicEntityService implements AutoCloseable {
                 getResultList();
     }
 
-    public List<Subscription> listSubcriber() {
+    public List<Subscription> listSubscription() {
         return em.createQuery("select s from Subscription s").
                 getResultList();
     }
@@ -593,4 +598,11 @@ public class ChronicEntityService implements AutoCloseable {
         return subscription;
     }
 
+    public void persistEvent(TopicEvent event) {
+        TopicMessage message = event.getMessage();
+        Event entity = new Event(message.getTopic(), message.getStatusType(), 
+                Calendars.newCalendar(TimeZone.getDefault(), message.getTimestamp()));        
+        logger.info("persistEvent {}", entity);
+        persist(entity);
+    }
 }

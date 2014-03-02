@@ -18,7 +18,5 @@ public enum TopicEventType implements Labelled {
     @Override
     public String getLabel() {
         return Bundle.get(getClass()).getString(name());
-    }
-    
-    
+    }    
 }

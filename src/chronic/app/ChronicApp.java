@@ -29,6 +29,7 @@ import chronic.alert.MetricValue;
 import chronic.alert.TopicEventChecker;
 import chronic.alert.TopicStatus;
 import chronic.entity.Alert;
+import chronic.entity.Subscription;
 import chronic.entitykey.SubscriptionKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
@@ -41,6 +42,7 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -51,6 +53,7 @@ import javax.net.ssl.SSLContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
@@ -86,7 +89,6 @@ public class ChronicApp {
     Map<TopicKey, TopicEvent> eventMap = new ConcurrentHashMap();
     Map<TopicStatusKey, TopicStatus> statusMap = new ConcurrentHashMap();
     LinkedBlockingQueue<TopicEvent> eventQueue = new LinkedBlockingQueue(100);
-    LinkedList<TopicEvent> eventList = new LinkedList();
     Map<SubscriptionKey, Alert> alertMap = new ConcurrentHashMap();
     Map<String, TopicEvent> sentMap = new HashMap();
     EntityManagerFactory emf;
@@ -100,7 +102,7 @@ public class ChronicApp {
     SigningInfo signingInfo;
     SSLContext proxyClientSSLContext;
     TopicEventChecker eventChecker = new TopicEventChecker(this);
-
+    
     public ChronicApp() {
         super();
     }
@@ -305,8 +307,8 @@ public class ChronicApp {
                         if (eventMap.get(topicEvent.getMessage().getTopicKey()) != topicEvent) {
                             logger.warn("event from queue differs to latest event in map");
                         } else {
-                            eventList.add(topicEvent);
-                            new ChronicAlerter().alert(app, topicEvent);
+                            new ChronicAlerter(app, topicEvent).handle();
+                            persistEvent(topicEvent);
                         }
                     }
                 } catch (Throwable t) {
@@ -344,14 +346,15 @@ public class ChronicApp {
             logger.trace("checkElapsed {} {}", elapsed, message);
             if (message.getPeriodMillis() > 0
                     && elapsed > message.getPeriodMillis() + properties.getPeriod()) {
-                TopicEvent previousAlert = eventMap.get(message.getTopicKey());
-                if (previousAlert == null
-                        || previousAlert.getMessage().getStatusType() != StatusType.ELAPSED) {
+                TopicEvent previousEvent = eventMap.get(message.getTopicKey());
+                if (previousEvent == null
+                        || previousEvent.getMessage().getStatusType() != StatusType.ELAPSED) {
                     TopicMessage elapsedMessage = new TopicMessage(message);
                     elapsedMessage.setStatusType(StatusType.ELAPSED);
-                    TopicEvent alert = new TopicEvent(elapsedMessage, message);
-                    eventMap.put(message.getTopicKey(), alert);
-                    eventQueue.add(alert);
+                    TopicEvent topicEvent = new TopicEvent(elapsedMessage, message);
+                    eventMap.put(message.getTopicKey(), topicEvent);
+                    eventQueue.add(topicEvent);
+                    persistEvent(topicEvent);
                 }
             }
             if (!eventThread.isAlive()) {
@@ -373,12 +376,18 @@ public class ChronicApp {
         
         @Override
         public void run() {
+            ChronicEntityService es = new ChronicEntityService(app);
             try {
+                es.begin();
+                es.commit();
             } catch (Exception e) {
                 logger.warn("run", e);
             } catch (Throwable t) {
                 messenger.alert(t);
+            } finally {
+                es.close();
             }
+            
         }
 
         public void handle() {            
@@ -389,6 +398,19 @@ public class ChronicApp {
         return emf.createEntityManager();
     }
 
+    public void persistEvent(TopicEvent event) {
+        ChronicEntityService es = new ChronicEntityService(this);
+        try {
+            es.begin();
+            es.persistEvent(event);            
+            es.commit();
+        } catch (PersistenceException e) {
+            logger.warn("persist {} {}", event, e);
+        } finally {
+            es.close();
+        }
+    }
+    
     public ChronicProperties getProperties() {
         return properties;
     }
@@ -433,7 +455,6 @@ public class ChronicApp {
         map.put("messageMap", messageMap.size());
         map.put("eventMap", eventMap.size());
         map.put("statusMap", statusMap.size());
-        map.put("eventList", eventList.size());
         map.put("alertMap", alertMap.size());
         map.put("sentMap", sentMap.size());
         return map;

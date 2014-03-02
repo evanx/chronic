@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import vellum.entity.ComparableEntity;
+import vellum.util.Args;
 
 /**
  *
@@ -45,8 +46,7 @@ public class Event extends ComparableEntity implements Serializable {
     Calendar occurred;
 
     @ManyToOne()
-    @JoinColumn(name = "topic_id", referencedColumnName = "topic_id",
-            insertable = false, updatable = false)
+    @JoinColumn(name = "topic_id", referencedColumnName = "topic_id")
     Topic topic;
         
     public Event() {
@@ -71,4 +71,10 @@ public class Event extends ComparableEntity implements Serializable {
         return statusType;
     }
 
+    @Override
+    public String toString() {
+        return Args.format(topic, statusType, occurred);
+    }
+
+    
 }

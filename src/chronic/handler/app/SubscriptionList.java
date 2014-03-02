@@ -35,7 +35,7 @@ public class SubscriptionList implements ChronicHttpxHandler {
         logger.info("subscriptions {}", subscriptions);
         List otherSubscriptions = new LinkedList();
         if (app.getProperties().isAdmin(email)) {
-            for (Subscription subscriber : es.listSubcriber()) {
+            for (Subscription subscriber : es.listSubscription()) {
                 logger.info("admin subscriber {}", subscriber);
                 if (!subscriber.getPerson().getEmail().equals(email)) {
                     otherSubscriptions.add(subscriber);

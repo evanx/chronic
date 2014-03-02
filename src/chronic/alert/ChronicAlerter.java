@@ -41,13 +41,16 @@ public class ChronicAlerter {
 
     static Logger logger = LoggerFactory.getLogger(ChronicAlerter.class);
     ChronicApp app;
-    ChronicEntityService es;
     TopicEvent event;
-    
-    public void alert(ChronicApp app, TopicEvent event) {
-        logger.info("alert {}", event);
+    ChronicEntityService es;
+
+    public ChronicAlerter(ChronicApp app, TopicEvent event) {
         this.app = app;
         this.event = event;
+    }
+        
+    public void handle() {
+        logger.info("alert {}", event);
         es = new ChronicEntityService(app);
         try {
             es.begin();
@@ -67,8 +70,6 @@ public class ChronicAlerter {
                     }
                 } catch (IOException | MessagingException e) {
                     logger.warn("{} {}", e.getMessage(), event);
-                } finally {
-                    es.close();
                 }
             }
         } finally {
