@@ -39,6 +39,10 @@ public class Person extends ComparableEntity implements PersonKeyed, Enabled, Se
     @Column(name = "logout_time")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     Date logoutTime;
+
+    @Column(name = "digest_time")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    Date digestTime;
     
     @Column(name = "tz")
     String timeZoneId;

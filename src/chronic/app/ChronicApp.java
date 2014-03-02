@@ -96,6 +96,7 @@ public class ChronicApp {
     Thread messageThread = new MessageThread(this);
     Thread eventThread = new EventThread(this);
     ScheduledExecutorService elapsedExecutorService = Executors.newSingleThreadScheduledExecutor();
+    ScheduledExecutorService digestExecutorService = Executors.newSingleThreadScheduledExecutor();
     SigningInfo signingInfo;
     SSLContext proxyClientSSLContext;
     TopicEventChecker eventChecker = new TopicEventChecker(this);
@@ -143,6 +144,10 @@ public class ChronicApp {
         if (properties.getPeriod() > 0) {
             elapsedExecutorService.scheduleAtFixedRate(new ElapsedRunnable(this), properties.getPeriod(),
                     properties.getPeriod(), TimeUnit.MILLISECONDS);
+        }
+        if (properties.getDigestPeriod() > 0) {
+            digestExecutorService.scheduleAtFixedRate(new DigestRunnable(this), properties.getPeriod(),
+                    properties.getDigestPeriod(), TimeUnit.MILLISECONDS);
         }
         logger.info("started");
     }
@@ -358,6 +363,28 @@ public class ChronicApp {
         }
     }
 
+    class DigestRunnable implements Runnable {
+
+        ChronicApp app;
+
+        public DigestRunnable(ChronicApp app) {
+            this.app = app;
+        }
+        
+        @Override
+        public void run() {
+            try {
+            } catch (Exception e) {
+                logger.warn("run", e);
+            } catch (Throwable t) {
+                messenger.alert(t);
+            }
+        }
+
+        public void handle() {            
+        }
+    }
+    
     public EntityManager createEntityManager() {
         return emf.createEntityManager();
     }
@@ -406,7 +433,7 @@ public class ChronicApp {
         map.put("messageMap", messageMap.size());
         map.put("eventMap", eventMap.size());
         map.put("statusMap", statusMap.size());
-        map.put("eventLit", eventList.size());
+        map.put("eventList", eventList.size());
         map.put("alertMap", alertMap.size());
         map.put("sentMap", sentMap.size());
         return map;

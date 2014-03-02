@@ -505,7 +505,9 @@ public class ChronicEntityService implements AutoCloseable {
             cert.setAddress(remoteHostAddress);
             logger.warn("updated certificate {}", certKey);
         } else if (!cert.isEnabled()) {
-            logger.warn("duplicate cert {}", certKey);
+            if (!certKey.getOrgDomain().equals("chronica.co")) {
+                logger.warn("duplicate cert {}", certKey);
+            }
             if (!cert.getAddress().equals(remoteHostAddress)) {
                 logger.warn("different host address {}", remoteHostAddress);
             }

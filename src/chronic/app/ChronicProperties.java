@@ -53,6 +53,7 @@ public class ChronicProperties {
     private String alertScript = null;
     private long alertPeriod = Millis.fromMinutes(5);
     private long statusPeriod = Millis.fromHours(32);
+    private long digestPeriod = Millis.fromMinutes(1);
     private long period = Millis.fromMinutes(2);
     private boolean testing = false;
     private boolean mockStorage = false;
@@ -78,6 +79,7 @@ public class ChronicProperties {
         mimicEmail = object.getString("mimicEmail", null);
         alertPeriod = object.getMillis("alertPeriod", alertPeriod);
         statusPeriod = object.getMillis("statusPeriod", statusPeriod);
+        digestPeriod = object.getMillis("digestPeriod", digestPeriod);
         period = object.getMillis("period", period);
         testing = object.getBoolean("testing", testing);
         mockStorage = object.getBoolean("mockStorage", false);
@@ -118,6 +120,10 @@ public class ChronicProperties {
         return period;
     }
 
+    public long getDigestPeriod() {
+        return digestPeriod;
+    }
+    
     public long getAlertPeriod() {
         return alertPeriod;
     }
