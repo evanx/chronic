@@ -73,7 +73,6 @@ public class WebHttpService implements HttpHandler {
             e.printStackTrace(System.err);
             new ErrorHttpHandler(app).handle(httpExchange, errorMessage);
         } finally {
-            httpExchange.close();
             requestCompletedCount++;
         }
     }
@@ -112,6 +111,7 @@ public class WebHttpService implements HttpHandler {
             e.printStackTrace(System.out);
         } finally {
             es.close();
+            httpx.close();
         }
     }
 
