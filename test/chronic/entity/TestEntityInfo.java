@@ -48,6 +48,7 @@ public class TestEntityInfo {
     Topic topic;
     TopicMessage message;
     Person person;
+    Event event;
     Alert alert;
 
     public TestEntityInfo(String orgDomain, String commonName, String topicLabel, String email) {

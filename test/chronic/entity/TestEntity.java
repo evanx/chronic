@@ -66,7 +66,11 @@ public class TestEntity {
         Assert.assertNull(p1.topic.getId());
         em.persist(p1.topic);
         Assert.assertNotNull(p1.topic.getId());
-        Assert.assertNotNull(em.find(Topic.class, p1.topic.getId()));
+        Assert.assertNotNull(em.find(Topic.class, p1.topic.getId()));        
+        p1.event = new Event(p1.topic, StatusType.OK, Calendar.getInstance());
+        em.persist(p1.event);
+        p1.event = new Event(p1.topic, StatusType.CRITICAL, Calendar.getInstance());
+        em.persist(p1.event);
         p1.alert = new Alert(p1.topic, StatusType.OK, Calendar.getInstance(), p1.person.getEmail());
         em.persist(p1.alert);
         p2.alert = new Alert(p1.topic, StatusType.OK, Calendar.getInstance(), p2.person.getEmail());
