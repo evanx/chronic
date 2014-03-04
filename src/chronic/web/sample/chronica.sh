@@ -292,8 +292,8 @@ c2nossl() {
 }
 
 c2https() {
-  decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
-  if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
+  decho "curl -1 --connect-timeout $httpTimeout -k -s -I https://$1:$2"
+  if curl -1 --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
     echo "OK: $1 port $2 has HTTPS" `bcat https`
   else 
@@ -302,8 +302,8 @@ c2https() {
 }
 
 c2nohttps() {
-  decho "curl --connect-timeout $httpTimeout -k -s -I https://$1:$2"
-  if curl --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
+  decho "curl -1 --connect-timeout $httpTimeout -k -s -I https://$1:$2"
+  if curl -1 --connect-timeout $httpTimeout -k -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
     echo "CRITICAL: $1 port $2 has HTTPS available" `bcat https`
   else 
@@ -312,8 +312,8 @@ c2nohttps() {
 }
 
 c2httpsa() { # client-authenticated HTTPS
-  decho "curl --connect-timeout $httpTimeout -s -I https://$1:$2"
-  if curl --connect-timeout $httpTimeout -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
+  decho "curl -1 --connect-timeout $httpTimeout -s -I https://$1:$2"
+  if curl -1 --connect-timeout $httpTimeout -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
     echo "CRITICAL: $1 port $2 does not require HTTPS client auth" `bcat https`
   else 
@@ -322,8 +322,8 @@ c2httpsa() { # client-authenticated HTTPS
 }
 
 c2nohttpsa() {
-  decho "curl --connect-timeout $httpTimeout -s -I https://$1:$2"
-  if curl --connect-timeout $httpTimeout -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
+  decho "curl -1 --connect-timeout $httpTimeout -s -I https://$1:$2"
+  if curl -1 --connect-timeout $httpTimeout -s -I https://$1:$2 | grep '^HTTP' | tee https | grep -q OK 
   then
     echo "OK: $1 port $2 is available for HTTPS without client auth" `bcat https`
   else 
@@ -332,8 +332,8 @@ c2nohttpsa() {
 }
 
 c2http() {
-  decho "curl --connect-timeout $httpTimeout -s -I http://$1:$2"
-  if curl --connect-timeout $httpTimeout -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
+  decho "curl -1 --connect-timeout $httpTimeout -s -I http://$1:$2"
+  if curl -1 --connect-timeout $httpTimeout -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
   then
     echo "OK: $1 port $2 has HTTP available" `bcat http`
   else 
@@ -342,8 +342,8 @@ c2http() {
 }
 
 c2nohttp() {
-  decho "curl --connect-timeout $httpTimeout -s -I http://$1:$2"
-  if curl --connect-timeout $httpTimeout -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
+  decho "curl -1 --connect-timeout $httpTimeout -s -I http://$1:$2"
+  if curl -1 --connect-timeout $httpTimeout -s -I http://$1:$2 | grep '^HTTP' | tee http | grep -q OK 
   then
     echo "CRITICAL: $1 port $2 has HTTP available" `bcat http`
   else 
@@ -668,7 +668,7 @@ c0shaAuth() {
 c0ensurePubKey() {
   if [ ! -f etc/chronica.pub.pem ]
   then
-    curl -s https://chronica.co/sample/chronica.pub.pem -o etc/chronica.pub.pem
+    curl -1 -s https://chronica.co/sample/chronica.pub.pem -o etc/chronica.pub.pem
     echo 'Fetched public key: https://chronica.co/sample/chronica.pub.pem'
     cat etc/chronica.pub.pem
     chmod 600 etc/chronica.pub.pem
@@ -712,7 +712,7 @@ c0ensureCert
 ### resolve server
 
 c0resolve() {
-  echo $orgDomain | curl -s -k --cacert etc/server.pem --data-binary @- \
+  echo $orgDomain | curl -1 -s -k --cacert etc/server.pem --data-binary @- \
     -H 'Content-Type: text/plain' -H "Subscribe: $subscribers" -H "Admin: $admins" https://$webServer/resolve
 }
 
@@ -800,7 +800,7 @@ c0genKeyStore() {
 ### standard functionality
 
 c1curl() {
-  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+  tee curl.txt | curl -1 -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
     --data-binary @- -H 'Content-Type: text/plain' https://$server/$1 -H "orgDomain: $orgDomain" # > curl.out 2> curl.err
 }
 
@@ -888,7 +888,7 @@ c0minutelyCron() {
 ### update script
 
 c0checkChronicaPubKey() {
-  ( curl -s https://chronica.co/sample/chronica.pub.pem | sha1sum | cut -f1 -d' ' |
+  ( curl -1 s https://chronica.co/sample/chronica.pub.pem | sha1sum | cut -f1 -d' ' |
     grep -v `cat  ~/.chronica/etc/chronica.pub.pem | sha1sum | cut -f1 -d' '` &&
     echo 'CRITICAL: chronica.pub.key' ) || echo 'OK: chronica.pub.key'
 }
@@ -897,15 +897,15 @@ c0updateInfo() {
   c0ensurePubKey
   echo 'Run the following commands to verify the digest and signature:'
   echo '('
-  echo 'curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
-  echo 'curl -s https://chronica.co/sample/chronica.sh | sha1sum'
-  echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.txt'
-  echo 'curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |'
+  echo 'curl -1 -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum'
+  echo 'curl -1 -s https://chronica.co/sample/chronica.sh | sha1sum'
+  echo 'curl -1 -s https://chronica.co/sample/chronica.sh.sha1.txt'
+  echo 'curl -1 -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |'
   echo '  openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem'
   echo ')'
   echo "Then run the following command to update your script:"
   echo '('
-  echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
+  echo "curl -1 -s https://chronica.co/sample/chronica.sh -o $script"
   echo ')'
 }
 
@@ -913,42 +913,42 @@ c0updateCheck() {
   c0updateInfo
   c0checkChronicaPubKey
   echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using ~/.chronica/etc/chronica.pub.pem:'
-  if curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
+  if curl -1 -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem
   then
     echo 'OK: signature verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
   else
     echo 'CRITICAL: verification failed: https://chronica.co/sample/chronica.sh.sha1.sig.txt'
   fi
-  echo -n `curl -s https://chronica.co/sample/chronica.sh | sha1sum` 
+  echo -n `curl -1 -s https://chronica.co/sample/chronica.sh | sha1sum` 
   echo ' sha1sum https://chronica.co/sample/chronica.sh' 
-  echo -n `curl -s https://chronica.co/sample/chronica.sh.sha1.txt` 
+  echo -n `curl -1 -s https://chronica.co/sample/chronica.sh.sha1.txt` 
   echo ' - https://chronica.co/sample/chronica.sh.sha1.txt'
-  echo -n `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` 
+  echo -n `curl -1 -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh.sha1.txt` 
   echo ' - chronica.sh.sha1.txt on github'
-  echo -n `curl -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum` 
+  echo -n `curl -1 -s https://raw.github.com/evanx/chronic/master/src/chronic/web/sample/chronica.sh | sha1sum` 
   echo ' - chronica.sh on github'
 }
 
 c0update() {
   c0updateInfo
   echo 'Verifying https://chronica.co/sample/chronica.sh.sha1.sig.txt using ~/.chronica/etc/chronica.pub.pem'
-  if ! curl -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
+  if ! curl -1 -s https://chronica.co/sample/chronica.sh.sha1.sig.txt |
     openssl base64 -d | openssl rsautl -verify -pubin -inkey ~/.chronica/etc/chronica.pub.pem |
-    grep `curl -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
+    grep `curl -1 -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
   then
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
   else 
       echo "OK: verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt"
-    if ! curl -s https://chronica.co/sample/chronica.sh | sha1sum |
-      grep `curl -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
+    if ! curl -1 -s https://chronica.co/sample/chronica.sh | sha1sum |
+      grep `curl -1 -s https://chronica.co/sample/chronica.sh.sha1.txt | head -1`
     then
       echo "ERROR: failed check: https://chronica.co/sample/chronica.sh.sha1.txt"
     else 
       echo "OK: matches: https://chronica.co/sample/chronica.sh.sha1.txt"
       echo "Running the following command to update your script:"
-      echo "curl -s https://chronica.co/sample/chronica.sh -o $script"
-      curl -s https://chronica.co/sample/chronica.sh -o $script
+      echo "curl -1 -s https://chronica.co/sample/chronica.sh -o $script"
+      curl -1 -s https://chronica.co/sample/chronica.sh -o $script
       exit $?
     fi
   fi
@@ -958,22 +958,22 @@ c0update() {
 ### post with headers 
 
 c1postheaders() {
-  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+  tee curl.txt | curl -1 -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
     --data-binary @- -H 'Content-Type: text/plain' -H "$1" https://$server/post 
 }
 
 c2postheaders() {
-  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+  tee curl.txt | curl -1 -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
     --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" https://$server/post 
 }
 
 c3postheaders() {
-  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+  tee curl.txt | curl -1 -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
     --data-binary @- -H 'Content-Type: text/plain' -H "$1" -H "$2" -H "$3" https://$server/post 
 }
 
 c2postTopicSub() {
-  tee curl.txt | curl -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
+  tee curl.txt | curl -1 -s -k --cacert etc/server.pem --key etc/key.pem --cert etc/cert.pem \
     --data-binary @- -H 'Content-Type: text/plain' -H "Topic: $1" -H "Subscribe: $2" https://$server/post 
 }
 
