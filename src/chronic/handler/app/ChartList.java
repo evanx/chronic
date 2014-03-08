@@ -64,7 +64,7 @@ public class ChartList implements ChronicHttpxHandler {
             }
             metrics.add(map);
         }
-        logger.info("metrics {}", metrics);
+        logger.trace("metrics {}", metrics);
         return JMaps.mapValue("metrics", metrics);
     }
 }

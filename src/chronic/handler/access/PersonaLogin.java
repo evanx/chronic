@@ -60,7 +60,7 @@ public class PersonaLogin implements ChronicHttpxHandler {
         String server = null;
         if (orgList.isEmpty()) {
             logger.warn("orgList empty");
-            server = "secure.chronica.co";
+            server = app.getProperties().getAllocateServer();
         } else if (orgList.size() == 1) {
             server = orgList.get(0).getServer();
         } else {

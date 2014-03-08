@@ -21,7 +21,7 @@
 package chronic.alert;
 
 import chronic.app.ChronicApp;
-import chronic.type.TopicEventType;
+import chronic.type.SpecialEventType;
 import chronic.type.StatusType;
 import chronic.type.AlertType;
 import org.slf4j.Logger;
@@ -65,7 +65,7 @@ public class TopicEventChecker {
         } else if (message.alertType == AlertType.STATUS_CHANGED) {
             if (message.isStatus() && message.statusType == previousMessage.statusType) {
                 if (previousEvent == null) {
-                    return new TopicEvent(previousMessage, TopicEventType.INITIAL);
+                    return new TopicEvent(previousMessage, SpecialEventType.INITIAL);
                 } else if (message.isStatusChanged(previousEvent.getMessage().getStatusType())) {
                     logger.info("status changed {}", previousMessage);
                     return new TopicEvent(previousMessage, previousEvent.getMessage());

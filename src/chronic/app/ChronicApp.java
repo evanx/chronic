@@ -29,20 +29,19 @@ import chronic.alert.MetricValue;
 import chronic.alert.TopicEventChecker;
 import chronic.alert.TopicStatus;
 import chronic.entity.Alert;
-import chronic.entity.Subscription;
 import chronic.entitykey.SubscriptionKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
 import chronic.entitykey.TopicStatusKey;
+import chronic.type.AlertType;
 import chronic.type.StatusType;
+import chronic.type.SpecialEventType;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -102,7 +101,7 @@ public class ChronicApp {
     SigningInfo signingInfo;
     SSLContext proxyClientSSLContext;
     TopicEventChecker eventChecker = new TopicEventChecker(this);
-    
+
     public ChronicApp() {
         super();
     }
@@ -110,7 +109,7 @@ public class ChronicApp {
     public void initProperties() throws IOException, ParseException, JMapException {
         properties.init();
     }
-    
+
     public void init() throws Exception {
         properties.init();
         proxyClientSSLContext = SSLContexts.create(new OpenTrustManager());
@@ -255,23 +254,12 @@ public class ChronicApp {
                 eventMap.put(message.getTopicKey(), event);
                 if (message.getAlertType() == null) {
                     logger.warn("alertType null {}", message);
+                } else if (!message.getAlertType().isAlertable()) {
+                } else if (!event.getSpecialEventType().isAlertable()) {
                 } else if (message.getStatusType() == null) {
                     logger.warn("statusType null {}", message);
-                } else if (event.isAlertable()) {
-                    if (message.isStatus()) {
-                        TopicStatus status = new TopicStatus(message.getTopic().getId(),
-                                message.getStatusType());
-                        TopicStatus previousStatus = statusMap.put(status.getTopicStatusKey(),
-                                status);
-                        if (previousStatus != null) {
-                            long elapsed = event.getTimestamp() - previousStatus.getTimestamp();
-                            logger.info("previousStatus elapsed {}", Millis.formatPeriod(elapsed));
-                            if (elapsed/1000 < message.getTopic().getStatusPeriodSeconds()) {
-                                logger.warn("previousStatus seconds {}", message.getTopic().getStatusPeriodSeconds());
-                                return;
-                            }
-                        }
-                    }
+                } else if (!message.getStatusType().isKnown()) {
+                } else {
                     eventQueue.add(event);
                 }
             } else {
@@ -305,10 +293,12 @@ public class ChronicApp {
                     TopicEvent topicEvent = eventQueue.poll(60, TimeUnit.SECONDS);
                     if (topicEvent != null) {
                         if (eventMap.get(topicEvent.getMessage().getTopicKey()) != topicEvent) {
-                            logger.warn("event from queue differs to latest event in map");
+                            logger.warn("eventMap");
                         } else {
-                            new ChronicAlerter(app, topicEvent).handle();
                             persistEvent(topicEvent);
+                            if (isAlertable(topicEvent)) {
+                                new ChronicAlerter(app, topicEvent).handle();
+                            }
                         }
                     }
                 } catch (Throwable t) {
@@ -316,8 +306,22 @@ public class ChronicApp {
                 }
             }
         }
+
+        private boolean isAlertable(TopicEvent topicEvent) {
+            TopicMessage message = topicEvent.getMessage();
+            TopicStatus status = new TopicStatus(message.getTopic().getId(), message.getStatusType());
+            TopicStatus previousStatus = statusMap.put(status.getTopicStatusKey(), status);
+            if (previousStatus != null) {
+                long elapsed = topicEvent.getTimestamp() - previousStatus.getTimestamp();
+                if (elapsed < Millis.fromSeconds(message.getTopic().getStatusPeriodSeconds())) {
+                    logger.warn("isAlertable {} {}m", message.getTopic(), Millis.toMinutes(elapsed));
+                    return false;
+                }
+            }
+            return true;
+        }
     }
-    
+
     class ElapsedRunnable implements Runnable {
 
         ChronicApp app;
@@ -373,7 +377,7 @@ public class ChronicApp {
         public DigestRunnable(ChronicApp app) {
             this.app = app;
         }
-        
+
         @Override
         public void run() {
             ChronicEntityService es = new ChronicEntityService(app);
@@ -387,13 +391,13 @@ public class ChronicApp {
             } finally {
                 es.close();
             }
-            
+
         }
 
-        public void handle() {            
+        public void handle() {
         }
     }
-    
+
     public EntityManager createEntityManager() {
         return emf.createEntityManager();
     }
@@ -402,7 +406,7 @@ public class ChronicApp {
         ChronicEntityService es = new ChronicEntityService(this);
         try {
             es.begin();
-            es.persistEvent(event);            
+            es.persistEvent(event);
             es.commit();
         } catch (PersistenceException e) {
             logger.warn("persist {} {}", event, e);
@@ -410,7 +414,7 @@ public class ChronicApp {
             es.close();
         }
     }
-    
+
     public ChronicProperties getProperties() {
         return properties;
     }
@@ -446,7 +450,7 @@ public class ChronicApp {
     public Map<String, TopicEvent> getSentMap() {
         return sentMap;
     }
-    
+
     public JMap getMetrics() {
         JMap map = new JMap();
         map.put("messageQueue", messageQueue.size());

@@ -46,7 +46,7 @@ public class Forward implements HttpHandler {
             String server;
             if (!matcher.find()) {
                 logger.warn("server not found in cookie");
-                server = "secure.chronica.co";
+                server = app.getProperties().getAllocateServer();
             } else {
                 server = matcher.group(1);
             }
@@ -64,7 +64,7 @@ public class Forward implements HttpHandler {
             connection.setRequestProperty("Content-Type", "text/json");
             for (String key : http.getRequestHeaders().keySet()) {
                 for (String value : http.getRequestHeaders().get(key)) {
-                    logger.info("header {} {}", key, value);
+                    logger.trace("header {} {}", key, value);
                     connection.setRequestProperty(key, value);
                     if (key.equals("Subscribe")) {
                         logger.info("Subscribe: {}", value);

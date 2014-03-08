@@ -11,7 +11,7 @@ import vellum.type.Labelled;
  *
  * @author evan.summers
  */
-public enum TopicEventType implements Labelled {
+public enum SpecialEventType implements Labelled {
     ERROR,
     INITIAL;
     
@@ -19,4 +19,9 @@ public enum TopicEventType implements Labelled {
     public String getLabel() {
         return Bundle.get(getClass()).getString(name());
     }    
+
+    public boolean isAlertable() {
+        return false;
+    }
+        
 }

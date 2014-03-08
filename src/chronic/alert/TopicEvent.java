@@ -22,7 +22,7 @@ package chronic.alert;
  */
 import chronic.entity.Event;
 import chronic.type.StatusType;
-import chronic.type.TopicEventType;
+import chronic.type.SpecialEventType;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class TopicEvent implements Timestamped {
     List<String> pendingEmails = new LinkedList();
     String htmlContent;
     String preContent;
-    TopicEventType eventType;
+    SpecialEventType eventType;
     Calendar polled;
     StatusType previousStatusType;
     long previousTimestamp;
@@ -52,7 +52,7 @@ public class TopicEvent implements Timestamped {
         this.message = message;
     }
 
-    public TopicEvent(TopicMessage message, TopicEventType eventType) {
+    public TopicEvent(TopicMessage message, SpecialEventType eventType) {
         this(message);
         this.eventType = eventType;
     }
@@ -67,11 +67,11 @@ public class TopicEvent implements Timestamped {
         return message.getTimestamp();
     }
 
-    public void setAlertEventType(TopicEventType alertEventType) {
+    public void setSpecialEventType(SpecialEventType alertEventType) {
         this.eventType = alertEventType;
     }
 
-    public TopicEventType getAlertEventType() {
+    public SpecialEventType getSpecialEventType() {
         return eventType;
     }
 
@@ -111,17 +111,6 @@ public class TopicEvent implements Timestamped {
         this.previousTimestamp = previousTimestamp;
     }
 
-    public boolean isStatus() {
-        return eventType != TopicEventType.INITIAL 
-                && message.isStatus();
-    }
-
-    public boolean isAlertable() {
-        return eventType != TopicEventType.INITIAL 
-                && message.getAlertType().isAlertable()
-                && message.getStatusType().isKnown();
-    }
-    
     public List<String> getPendingEmails() {
         return pendingEmails;
     }
