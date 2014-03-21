@@ -30,24 +30,25 @@ import org.apache.log4j.PatternLayout;
  * @author evan.summers
  */
 public class ChronicMain {
-    static ChronicAppender appender = new ChronicAppender();
 
     public ChronicMain() {
-        appender.setResolveUrl("https://localhost:8444/resolve");
     }
 
     public void init() throws Exception {
+        ChronicAppender appender = new ChronicAppender();
         Logger.getRootLogger().getLoggerRepository().resetConfiguration();
         Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%d{ISO8601} %p [%c{1}] %m%n")));
         Logger.getRootLogger().addAppender(appender);
+        ChronicApp app = new ChronicApp();
+        appender.setResolveUrl("https://localhost:8444/resolve");
+        appender.setPeriod("60s");
+        app.init();
+        appender.setMonitor(new ChronicAppMonitor(app));
     }
     
     public static void main(String[] args) throws Exception {
         try {
-            appender.setPeriod("60s");
             new ChronicMain().init();
-            ChronicApp app = new ChronicApp();
-            app.init();
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }

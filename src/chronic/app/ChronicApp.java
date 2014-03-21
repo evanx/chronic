@@ -33,9 +33,7 @@ import chronic.entitykey.SubscriptionKey;
 import chronic.entitykey.TopicKey;
 import chronic.entitykey.TopicMetricKey;
 import chronic.entitykey.TopicStatusKey;
-import chronic.type.AlertType;
 import chronic.type.StatusType;
-import chronic.type.SpecialEventType;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -255,7 +253,7 @@ public class ChronicApp {
                 if (message.getAlertType() == null) {
                     logger.warn("alertType null {}", message);
                 } else if (!message.getAlertType().isAlertable()) {
-                } else if (!event.getSpecialEventType().isAlertable()) {
+                } else if (event.getSpecialEventType() != null && event.getSpecialEventType().isAlertable()) {
                 } else if (message.getStatusType() == null) {
                     logger.warn("statusType null {}", message);
                 } else if (!message.getStatusType().isKnown()) {

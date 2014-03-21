@@ -222,7 +222,7 @@ public class TopicMessageParser {
     }
 
     private void parseServiceStatus(String serviceLabel, String status, String info) {
-        logger.debug("parseServiceStatus {} {}", serviceLabel, status);
+        logger.trace("parseServiceStatus {} {}", serviceLabel, status);
         if (topicMessage.getMetricMap().containsKey(serviceLabel)) {
             Matcher metricValueMatcher = TopicMessagePatterns.SERVICE_METRIC_VALUE.matcher(info);
             if (!metricValueMatcher.find()) {
@@ -317,7 +317,7 @@ public class TopicMessageParser {
                 topicMessage.statusType = statusType;
                 serviceLabel = status.getServiceLabel();
             }
-            logger.info("normalize single status {} {}", topicMessage.statusType, status);
+            logger.trace("normalize single status {} {}", topicMessage.statusType, status);
         }
         if (topicMessage.serviceLabel == null && serviceLabel != null) {
             topicMessage.serviceLabel = serviceLabel;
