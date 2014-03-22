@@ -20,15 +20,12 @@ package chronic.alert;
  specific language governing permissions and limitations
  under the License.  
  */
-import chronic.entity.Event;
 import chronic.type.StatusType;
-import chronic.type.SpecialEventType;
+import chronic.type.EventType;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TimeZone;
 import vellum.data.Timestamped;
-import vellum.util.Calendars;
 
 /**
  *
@@ -41,7 +38,7 @@ public class TopicEvent implements Timestamped {
     List<String> pendingEmails = new LinkedList();
     String htmlContent;
     String preContent;
-    SpecialEventType eventType;
+    EventType eventType;
     Calendar polled;
     StatusType previousStatusType;
     long previousTimestamp;
@@ -52,7 +49,7 @@ public class TopicEvent implements Timestamped {
         this.message = message;
     }
 
-    public TopicEvent(TopicMessage message, SpecialEventType eventType) {
+    public TopicEvent(TopicMessage message, EventType eventType) {
         this(message);
         this.eventType = eventType;
     }
@@ -67,11 +64,11 @@ public class TopicEvent implements Timestamped {
         return message.getTimestamp();
     }
 
-    public void setSpecialEventType(SpecialEventType alertEventType) {
-        this.eventType = alertEventType;
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
     }
 
-    public SpecialEventType getSpecialEventType() {
+    public EventType getEventType() {
         return eventType;
     }
 

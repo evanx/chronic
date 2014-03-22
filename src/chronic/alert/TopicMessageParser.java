@@ -156,6 +156,10 @@ public class TopicMessageParser {
 
     private boolean parseHeader(String header, String string) throws ParseException, 
             NumberFormatException {
+        if (string.isEmpty()){
+            logger.warn("empty header {}", header);
+            return true;
+        }
         if (header.equals("Alert")) {
             topicMessage.setAlertType(AlertType.valueOf(string));
         } else if (header.equals("AlertFormat")) {

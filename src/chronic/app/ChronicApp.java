@@ -245,6 +245,7 @@ public class ChronicApp {
             TopicEvent previousEvent = eventMap.get(message.getTopicKey());
             TopicEvent event = eventChecker.check(message, previousMessage, previousEvent);
             if (event != null) {
+                logger.info("event: {}", event);
                 if (previousEvent != null) {
                     event.setPreviousStatusType(previousEvent.getMessage().getStatusType());
                     event.setPreviousTimestamp(previousEvent.getTimestamp());
@@ -253,7 +254,7 @@ public class ChronicApp {
                 if (message.getAlertType() == null) {
                     logger.warn("alertType null {}", message);
                 } else if (!message.getAlertType().isAlertable()) {
-                } else if (event.getSpecialEventType() != null && event.getSpecialEventType().isAlertable()) {
+                } else if (event.getEventType() != null) {
                 } else if (message.getStatusType() == null) {
                     logger.warn("statusType null {}", message);
                 } else if (!message.getStatusType().isKnown()) {

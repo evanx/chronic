@@ -21,7 +21,7 @@
 package chronic.alert;
 
 import chronic.app.ChronicApp;
-import chronic.type.SpecialEventType;
+import chronic.type.EventType;
 import chronic.type.StatusType;
 import chronic.type.AlertType;
 import org.slf4j.Logger;
@@ -42,15 +42,16 @@ public class TopicEventChecker {
     }
 
     public TopicEvent check(TopicMessage message, TopicMessage previousMessage, TopicEvent previousEvent) {
+        assert message.alertType != null;
         assert previousMessage != null;
         logger.info("check: {}", message);
-        if (message.alertType == AlertType.ALWAYS) {
+        if (previousMessage.statusType == StatusType.ELAPSED) {
+            message.statusType = StatusType.RESUMED;
+            return new TopicEvent(message, previousMessage);
+        } else if (message.alertType == AlertType.ALWAYS) {
             return new TopicEvent(message);
         } else if (message.alertType == AlertType.NEVER) {
             return new TopicEvent(message);
-        } else if (previousMessage.statusType == StatusType.ELAPSED) {
-            message.statusType = StatusType.RESUMED;
-            return new TopicEvent(message, previousMessage);
         } else if (message.alertType == AlertType.PATTERN) {
         } else if (message.alertType == AlertType.ERROR) {
         } else if (message.alertType == AlertType.CONTENT_CHANGED) {
@@ -65,14 +66,15 @@ public class TopicEventChecker {
         } else if (message.alertType == AlertType.STATUS_CHANGED) {
             if (message.isStatus() && message.statusType == previousMessage.statusType) {
                 if (previousEvent == null) {
-                    return new TopicEvent(previousMessage, SpecialEventType.INITIAL);
+                    logger.info("initial {}", message);
+                    return new TopicEvent(previousMessage, EventType.INITIAL);
                 } else if (message.isStatusChanged(previousEvent.getMessage().getStatusType())) {
                     logger.info("status changed {}", previousMessage);
                     return new TopicEvent(previousMessage, previousEvent.getMessage());
                 }
             }
         } else {
-            logger.warn("alertType null");
+            logger.warn("alertType {}", message.getAlertType());
         }
         return null;
     }
