@@ -586,24 +586,24 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>What is it for?</b>
-          <br>You can use Chronica to monitor your systems, networks and applications, internally and externally, to ensure performance and security. Add custom checks to monitor your specific infrastructure and applications. When something is wrong, be the first to know :)
+          <br>You can use Chronica to monitor your systems, networks and applications, internally and externally, adding custom checks as required.
         </p>
 
         <p><b>How much does it cost?</b>
           <br>It's free and open. Bits and bytes are priceless ;)
-          <br>When our AWS instance is nearing its capacity, the largest users will be asked to contribute an AWS instance to the project, or to manage their own installation on their own infrastructure.
+          <br>When our instance is nearing its capacity, the largest users will be asked to contribute an cloud instance to the project, or to manage their own installation on their own infrastructure.
           Additional resource-intensive features can be enabled for users who have contributed an instance, e.g. their events and metrics recorded into the database.
         </p>
 
         <p><b>Who should try it?</b>
           <br>Someone who has an unmonitored Linux system, and wants an instant solution, without any server setup.
           <br>Linux admins who want a monitoring solution enabling custom checks using shell commands.
-          <br>Someone who deploys a Java application with log4j they wish to monitor.
-          <br>Organizations who want PCI DSS compliance, or information security, i.e. everyone ;)
+          <br>Someone who deploys a Java application they wish to monitor unobtrusively via log4j.
+          <br>Organizations who want PCI DSS compliance, or information security monitoring.
         </p>
 
         <p><b>How is this different from some other cloud-based monitoring services?</b>
-          <br>It's trivial to add custom checks. It includes infosec. It's free and opensource.
+          <br>It's trivial to add custom checks. It addresses information security. It's free and opensource.
         </p>
 
         <p><b>How is this different from some other opensource monitoring projects?</b>
@@ -611,7 +611,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         </p>
 
         <p><b>What notification mechanisms are supported?</b>
-          <br>Primarily, email. Also "push" notification via HTTPS post to a URL you can register. (Naturally this URL should require client auth and trust our SSL cert, and allow our IP number to connect.) This could provide an SMS gateway on your account. 
+          <br>Primarily, email. Also "push" notification via HTTPS post to a URL you can register. (Naturally this URL should require client auth and trust our SSL cert, and allow our IP number to connect.) This could integrate with an SMS gateway on your account.
         </p>
         <pre>$ sh chronica.sh push https://myserver:8443/myapp</pre>
         <p><b>What about mobile push notifications?</b>
@@ -658,7 +658,7 @@ Subject: root@hostx checksys CRITICAL</pre>
         <pre>$ sh chronica.sh start</pre>
 
         <p><b>How is it updated?</b>
-          <br>The script itself will provide hints, to verify and update.
+          <br>The script itself provides an update function.
         </p>
         <pre>$ sh chronica.sh update
 curl -s https://chronica.co/sample/chronica.sh | sha1sum
@@ -666,15 +666,19 @@ Verifying signature using ~/.chronica/etc/chronica.pub.pem
 OK: verified: https://chronica.co/sample/chronica.sh.sha1.sig.txt</pre>
 
         <p><b>What API does it use?</b>
-        <br>Text document with email-style headers, submitted via HTTPS POST. (HTTP headers are parsed as well). This means we can pipe the output of a shell script to <tt>curl</tt>, to post to <tt>https://secure.chronica.co</tt>. The content typically contains headers such as "Topic" and "Subscribe." Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
+        <br>Text document with email-style headers, submitted via HTTPS POST. (HTTP headers are parsed as well). 
+        This means we can pipe the output of a shell script to <tt>curl</tt>, to post to <tt>https://secure.chronica.co</tt>. 
+        The content typically contains headers such as "Topic" and "Subscribe." 
+        Some basic HTML tags are acceptable to improve rendering e.g. headings, bold, italics. 
         But the text is assumed to be preformatted with line-breaks, and so it is not strictly an HTML document.
         </p>
         <pre>$ echo "CRITICAL: The beast has &lt;i&gt;escaped&lt;/i&gt; from the mold!" | sh chronica.sh postheaders \
   'Topic: Operation Alien Destruction' 'Subscribe: ripley@wycorp.net'</pre>
+
         <p><b>How are checks performed?</b>
           <br>Your scripts can execute Nagios plugins, shell commands, and/or other programs, to produce the output that you wish to monitor. 
         <br>For example, commands might list the hashes of sensitive files, verify installed packages, <tt>grep</tt> log files for failed logins, etc. 
-        <br>So it's totally customisable. For example, we intend our script to address various PCI DSS compliancy requirements, out of the box :)
+        <br>So it's easily customisable. For example, we intend this script to address various PCI DSS compliancy requirements, out of the box :)
         </p>
 
         <p><b>What about checking my site from the outside?</b>
@@ -686,17 +690,19 @@ OK: www.google.com port 443 https: CN=www.google.com,O=Google Inc,L=Mountain Vie
 
         <p><b>How are client certs managed?</b>
           <br>The client shell script automatically generates SSL certs according to your organisation's domain, as configured in your custom script. 
-          By default the user and hostname is used for the cert's common name. 
+          By default the username and hostname is used for the cert's common name e.g. "chronica@hostx."
           It enrolls admins you similarly configure. As the first admin enrolled for your organisation, you are automatically approved. 
           Admins can confirm client certs and approve other admins, via the site.
         </p>
 
-        <p><b>How are subcribers managed?</b>
-          <br>The message content specifies its topic and invitees, via email-style headers. If you have approved the topic's cert, then this topic will be published. However, invitees must themselves subscribe to specific topics. 
+        <p><b>How are subscribers managed?</b>
+          <br>The message content specifies its topic and invitees, via email-style headers. 
+          If you have approved the topic's cert, then this topic will be published. 
+          However, invitees must themselves subscribe to specific topics. 
           This is performed via the site, which validates their email address using Mozilla Persona. 
         </p>
 
-        <p><b>How do subcribers opt-out?</b>
+        <p><b>How do subscribers opt-out?</b>
           <br>Actually they have to opt-in themselves, and can unsubscribe and re-subscribe anytime.
         </p>
 
