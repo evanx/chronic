@@ -767,6 +767,16 @@ c0resetServer() {
 
 ### java keystore for chronica log4j appender connection
 
+c0printKeyStore() {
+  if [ ! -f etc/keystore.jks ]
+  then
+    echo "no keystore"
+  else 
+    keytool -keystore etc/keystore.jks -storepass chronica -keypass chronica -alias chronica4j -exportcert -rfc |
+      openssl x509 -text | grep 'CN='
+  fi
+}
+
 c0ensureKeyStore() {
   if [ ! -f etc/keystore.jks ]
   then
