@@ -97,11 +97,9 @@ public class ChronicProperties {
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
         signing = object.getProperties("signing");
-        if (siteUrl.contains("chronica")) {
-            byte[] bytes = Streams.readBytes(MailerTest.class.getResourceAsStream("app48.png"));
-            mailerProperties.init(bytes, "chronica.co", "alerts@chronica.co");
-            logger.info("mailer {}", mailerProperties);
-        }
+        mailerProperties.init(object.getProperties("mailer"));
+        mailerProperties.setLogoBytes(Streams.readBytes(MailerTest.class.getResourceAsStream("app48.png")));
+        logger.info("mailer {}", mailerProperties);
     }
 
     public String getSiteUrl() {

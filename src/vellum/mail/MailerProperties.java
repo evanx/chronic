@@ -51,6 +51,10 @@ public class MailerProperties {
         this.enabled = true;
     }
 
+    public void setLogoBytes(byte[] logoBytes) {
+        this.logoBytes = logoBytes;
+    }
+    
     public String getHost() {
         return host;
     }
