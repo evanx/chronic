@@ -128,9 +128,11 @@ public class ChronicApp {
     }
 
     public void ensureInitialized() throws InterruptedException {
+        logger.info("ensureInitialized");
         if (initThread.isAlive()) {
             initThread.join();
         }
+        logger.info("ensureInitialized complete");
     }
 
     public void initDeferred() throws Exception {
@@ -177,6 +179,7 @@ public class ChronicApp {
     }
 
     public void shutdown() throws Exception {
+        logger.info("shutdown");
         running = false;
         elapsedExecutorService.shutdown();
         if (webServer != null) {
@@ -192,8 +195,8 @@ public class ChronicApp {
         if (eventThread != null) {
             eventThread.interrupt();
             eventThread.join(2000);
-
         }
+        logger.info("shutdown complete");
     }
 
     class MessageThread extends Thread {

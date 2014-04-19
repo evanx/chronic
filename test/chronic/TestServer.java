@@ -33,9 +33,9 @@ import vellum.security.KeyStores;
  *
  * @author evans
  */
-public class TestEvent {
+public class TestServer {
 
-    static Logger logger = LoggerFactory.getLogger(TestEvent.class);
+    static Logger logger = LoggerFactory.getLogger(TestServer.class);
 
     ChronicApp app = new ChronicApp();
     ChronicPoster poster = new ChronicPoster();
@@ -56,6 +56,7 @@ public class TestEvent {
         Assert.assertEquals("localhost:8444", serverAddress);
         postUrl = String.format("https://%s/post", serverAddress);
         Assert.assertEquals("OK:", poster.post(postUrl, "OK: test"));
+        app.shutdown();
     }
 
 }
