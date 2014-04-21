@@ -561,15 +561,32 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
           <i>2013-11-24</i> &nbsp;
           <b>Project inception</b> 
         </p>
-        <p>Taking the all-important third crack at a monitoring server, following two previous monitoring projects over the past 18 months, namely Bizstat and Croc (on http://github.com/evanx/vellumapp).
-        <p>Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks. This project was abandoned in favour of pursing of multi-tenancy cloud-based approach. 
-        <p>Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica. Bootstrap 2 and jQuery as used for its UI, and JDBC for persistence. Prototyping was tedious, where UI changes required Java servlet changes which required SQL fixes, which diminished the speed and enjoyment of UI prototyping. Clearly a better approach for rapid prototyping was needed e.g. JPA for back-end persistence, and a Javascript data-binding framework for the front-end.
-        <p>The result is Chronica, which will use the AngularJS front-end framework, and JPA.
+        <p>
+          Taking a third crack at a monitoring server, following two previous monitoring projects over the past 18 months, 
+          namely Bizstat and Croc (on http://github.com/evanx/vellumapp). 
+          Bizstat is a single-tenancy internal active server.
+          Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica.
+          Croc used Bootstrap 2 and jQuery as used for its UI, and JDBC for persistence.
+          Chronica will use the AngularJS front-end framework, and JPA.
+        <!--p>
+          Bizstat is a single-tenancy internal active server, geared for custom checks, but with general checks thrown in, 
+          via plugin shell scripts, which would use NRPE (Nagios remote plugin executor) or ssh forced commands for remote active checks. 
+          This project was abandoned in favour of pursing of multi-tenancy cloud-based approach. 
+        <p>
+          Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica. 
+          Bootstrap 2 and jQuery as used for its UI, and JDBC for persistence. Prototyping was tedious, 
+          where UI changes required Java servlet changes which required SQL fixes, 
+          which diminished the speed and enjoyment of UI prototyping. 
+          Clearly a better approach for rapid prototyping was needed e.g. JPA for back-end persistence, 
+          and a Javascript data-binding framework for the front-end.
+        <p>
+          The result is Chronica, which will use the AngularJS front-end framework, and JPA.
+        </p-->
         <hr>
       </div>
     </div>
 
-    <div class="container" ng-show="view === 'about' || view === 'help'">
+    <div class="container" ng-show="false && (view === 'about' || view === 'help')">
       <div class="row well-lg">
         <h3><a name="faq">Frequently asked questions</a></h3>
 
