@@ -18,6 +18,7 @@
  specific language governing permissions and limitations
  under the License.  
  */
+
 var app = angular.module("app", ['ngSanitize', 'angles', 'ui.bootstrap']);
 
 app.factory("personaService", ["$http", "$q", function($http, $q) {
