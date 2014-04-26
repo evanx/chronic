@@ -518,12 +518,11 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
         <p>
           <i>2014-01-18</i> &nbsp;
           <b>Scalability features built-in</b> 
-          <br>Initial support for horizontal scaling of servers has been implemented, namely an HTTP request proxy. 
-          The idea is that each organisation is allocated to a specific (multi-tenancy) cloud server instance with its own database. 
-          The chronica.sh script will be updated to use a "resolve" web query to the central server, to be advised of the server address for a specified organisation, i.e. which host to post to. 
-          Login is handled by central servers (as per DNS for chronica.co) with a shared database describing organisations and users. 
-          If you are monitoring multiple organisations, you choose an organisation upon login.
-          Thereafter, your web app HTTP requests are proxied to the appropriate server i.e. where the data resides for that organisation.
+          <br>Support for horizontal scaling of servers has been implemented. 
+          Each organisation is allocated to a specific (multi-tenancy) cloud server instance with its own database. 
+          The chronica.sh script will be updated to use a "resolve" web query to the central server, to be advised of the allocated server address for a specified organisation. 
+          Login is handled by central servers (as per DNS for chronica.co) with a central database describing organisations and users. 
+          Web app HTTP requests are proxied to the appropriate server i.e. where the data resides for that organisation.
           (See <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/WebHttpService.java">WebHttpService.java</a> and <a href="https://github.com/evanx/chronic/blob/master/src/chronic/handler/access/Forward.java">Forward.java</a>.)
         </p>
 
@@ -565,7 +564,7 @@ su - chronica -c 'scripts/chronica.sh start'</pre>
           namely Bizstat and Croc (on http://github.com/evanx/vellumapp). 
           Bizstat is a single-tenancy internal active server.
           Croc ("Cron Output Collector") is a multi-tenancy passive server, and the inspiration for Chronica.
-          Croc used Bootstrap 2 and jQuery as used for its UI, and JDBC for persistence.
+          Croc used Bootstrap 2 and jQuery for its UI, and JDBC for persistence, whereas 
           Chronica will use the AngularJS front-end framework, and JPA.
         </p>
         <!--p>
