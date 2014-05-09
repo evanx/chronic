@@ -22,7 +22,7 @@ package chronic.app;
 
 import chronic.mail.MailerTest;
 import vellum.mail.MailerProperties;
-import chronic.util.JsonObjectDelegate;
+import vellum.json.JsonObjectDelegate;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;

@@ -6,7 +6,7 @@ package chronic.persona;
 
 import chronic.app.ChronicApp;
 import chronic.app.ChronicCookie;
-import chronic.util.JsonObjectDelegate;
+import vellum.json.JsonObjectDelegate;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
