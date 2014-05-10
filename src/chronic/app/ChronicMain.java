@@ -24,6 +24,7 @@ import chronic4j.ChronicAppender;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import vellum.jx.JMap;
 
 /**
  *
@@ -39,7 +40,7 @@ public class ChronicMain {
         Logger.getRootLogger().getLoggerRepository().resetConfiguration();
         Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%d{ISO8601} %p [%c{1}] %m%n")));
         Logger.getRootLogger().addAppender(appender);
-        ChronicApp app = new ChronicApp();
+        ChronicApp app = new ChronicApp(new ChronicProperties(new JMap(System.getProperties())));
         appender.setResolveUrl("https://localhost:8444/resolve");
         appender.setPeriod("60s");
         app.init();

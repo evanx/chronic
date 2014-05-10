@@ -21,12 +21,15 @@
 package chronic;
 
 import chronic.app.ChronicApp;
+import chronic.app.ChronicProperties;
 import chronic4j.ChronicPoster;
+import java.io.IOException;
 import java.security.KeyStore;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.jx.JMap;
 import vellum.security.KeyStores;
 
 /**
@@ -37,7 +40,7 @@ public class TestServer {
 
     static Logger logger = LoggerFactory.getLogger(TestServer.class);
 
-    ChronicApp app = new ChronicApp();
+    ChronicApp app;
     ChronicPoster poster = new ChronicPoster();
     String keyStoreLocation = System.getProperty("user.home") + "/.chronica/etc/keystore.jks";
     char[] sslPass = "chronica".toCharArray();
@@ -45,6 +48,11 @@ public class TestServer {
     String resolveUrl = "https://localhost:8444/resolve";
     String serverAddress;
     String postUrl; 
+
+    public TestServer() throws Exception {
+        app = new ChronicApp(new ChronicProperties(new JMap()));
+    }
+    
     
     @Test
     public void testResolve() throws Exception {

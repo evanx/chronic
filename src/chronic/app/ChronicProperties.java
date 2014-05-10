@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.exception.ParseException;
 import vellum.httpserver.HttpServerProperties;
+import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.util.Args;
 import vellum.util.ExtendedProperties;
@@ -43,13 +44,13 @@ import vellum.util.Strings;
  *
  * @author evan.summers
  */
-public class ChronicProperties {
+public class ChronicProperties extends JMap {
 
     static Logger logger = LoggerFactory.getLogger(ChronicProperties.class);
 
-    private String siteUrl;
-    private String allocateServer;
-    private String mimicEmail;
+    private final String siteUrl;
+    private final String allocateServer;
+    private final String mimicEmail;
     private String alertScript = null;
     private long alertPeriod = Millis.fromMinutes(5);
     private long statusPeriod = Millis.fromHours(32);
@@ -58,19 +59,19 @@ public class ChronicProperties {
     private boolean testing = false;
     private boolean mockStorage = false;
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
-    private HttpServerProperties insecureServer = new HttpServerProperties(8081);
-    private ExtendedProperties appServer;
-    private ExtendedProperties webServer;
-    private ExtendedProperties signing;
-    private Set<String> adminDomains;
-    private Set<String> adminEmails;
-    private Set<String> allowedOrgDomains;
-    private Set<String> allowedAddresses;
-    private Set<String> subscriberEmails;
-    private final ExtendedProperties properties = new ExtendedProperties(System.getProperties());
+    private final HttpServerProperties insecureServer = new HttpServerProperties(8081);
+    private final ExtendedProperties appServer;
+    private final ExtendedProperties webServer;
+    private final ExtendedProperties signing;
+    private final Set<String> adminDomains;
+    private final Set<String> adminEmails;
+    private final Set<String> allowedOrgDomains;
+    private final Set<String> allowedAddresses;
+    private final Set<String> subscriberEmails;
     private final MailerProperties mailerProperties = new MailerProperties();
 
-    public void init() throws IOException, ParseException, JMapException {
+    public ChronicProperties(JMap properties) throws IOException, ParseException, JMapException {
+        putAll(properties);
         String jsonConfigFileName = properties.getString("config.json", "config.json");
         JsonObjectDelegate object = new JsonObjectDelegate(new File(jsonConfigFileName));
         siteUrl = object.getString("siteUrl");
@@ -97,7 +98,7 @@ public class ChronicProperties {
         appServer = object.getProperties("appServer");
         webServer = object.getProperties("webServer");
         signing = object.getProperties("signing");
-        mailerProperties.init(object.getProperties("mailer"));
+        mailerProperties.init(object.getMap("mailer"));
         mailerProperties.setLogoBytes(Streams.readBytes(MailerTest.class.getResourceAsStream("app48.png")));
         logger.info("mailer {}", mailerProperties);
     }

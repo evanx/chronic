@@ -25,6 +25,7 @@ import chronic.alert.TopicMessage;
 import chronic.alert.TopicMessageParser;
 import chronic.alert.TopicMessagePatterns;
 import chronic.app.ChronicApp;
+import chronic.app.ChronicProperties;
 import chronic.type.StatusType;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -35,6 +36,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.exception.ParseException;
+import vellum.jx.JMap;
 import vellum.util.Strings;
 
 /**
@@ -45,10 +47,10 @@ public class TestTopicMessageParser {
 
     static Logger logger = LoggerFactory.getLogger(TestTopicMessageParser.class);
 
-    ChronicApp app = new ChronicApp(); 
+    ChronicApp app; 
     
     public TestTopicMessageParser() throws Exception {
-        app.initProperties();
+        app = new ChronicApp(new ChronicProperties(new JMap()));
     }
 
     @Test

@@ -73,7 +73,7 @@ import vellum.util.ExtendedProperties;
 public class ChronicApp {
 
     Logger logger = LoggerFactory.getLogger(ChronicApp.class);
-    ChronicProperties properties = new ChronicProperties();
+    ChronicProperties properties;
     Mailer mailer;
     ChronicMessenger messenger = new ChronicMessenger(this);
     VellumHttpsServer webServer = new VellumHttpsServer();
@@ -100,16 +100,11 @@ public class ChronicApp {
     SSLContext proxyClientSSLContext;
     TopicEventChecker eventChecker = new TopicEventChecker(this);
 
-    public ChronicApp() {
-        super();
-    }
-
-    public void initProperties() throws IOException, ParseException, JMapException {
-        properties.init();
+    public ChronicApp(ChronicProperties properties) {
+        this.properties = properties;
     }
 
     public void init() throws Exception {
-        properties.init();
         proxyClientSSLContext = SSLContexts.create(new OpenTrustManager());
         mailer = new Mailer(properties.getMailerProperties());
         initSigning(properties.getSigning());

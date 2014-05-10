@@ -25,6 +25,7 @@ import chronic.TestTimeZone;
 import chronic.alert.TopicMessage;
 import chronic.app.ChronicApp;
 import chronic.app.ChronicEntityService;
+import chronic.app.ChronicProperties;
 import chronic.entitytype.OrgRoleType;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -33,6 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vellum.jx.JMap;
 
 /**
  *
@@ -42,12 +44,13 @@ public class TestEntityService {
 
     static Logger logger = LoggerFactory.getLogger(TestTimeZone.class);
 
-    static ChronicApp app = new ChronicApp();
+    static ChronicApp app;
 
     TestEntityInfo p1 = new TestEntityInfo("chronica.co", "root", "minutely", "evan.summers@gmail.com");
     TestEntityInfo p2 = new TestEntityInfo("test.org", "chronica", "hourly", "evanx@chronica.co");
     
     public TestEntityService() throws Exception {
+        app = new ChronicApp(new ChronicProperties(new JMap()));
     }
 
     @BeforeClass

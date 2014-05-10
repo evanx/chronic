@@ -28,13 +28,14 @@ import vellum.jx.JMap;
 public class WebHttpService implements HttpHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(WebHttpService.class);
-    private final static WebHttpHandler webHandler = new WebHttpHandler("/chronic/web");
+    private final WebHttpHandler webHandler;
     private final ChronicApp app;
     private int requestCount = 0;
     private int requestCompletedCount = 0;
     
     public WebHttpService(ChronicApp app) {
         this.app = app;
+        this.webHandler = new WebHttpHandler("/chronic/web", app.getProperties());
     }
 
     @Override

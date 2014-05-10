@@ -26,12 +26,14 @@ import chronic.alert.TopicEventChecker;
 import chronic.alert.TopicMessage;
 import chronic.alert.TopicMessageParser;
 import chronic.app.ChronicApp;
+import chronic.app.ChronicProperties;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.exception.ParseException;
+import vellum.jx.JMap;
 import vellum.jx.JMapException;
 
 /**
@@ -42,15 +44,15 @@ public class TestTopicEventChecker {
 
     static Logger logger = LoggerFactory.getLogger(TestTopicEventChecker.class);
 
-    ChronicApp app = new ChronicApp();
+    ChronicApp app;
     TopicEventChecker eventChecker = new TopicEventChecker(app);
 
-    public TestTopicEventChecker() {
+    public TestTopicEventChecker() throws Exception {
+        app = new ChronicApp(new ChronicProperties(new JMap()));
     }
 
     @Test
     public void testSingleStatus() throws IOException, ParseException, JMapException {
-        app.initProperties();
         TopicMessage topicMessage1 = newTopicMessage(
                 "Load OK - 10",
                 "Disk OK - 20");

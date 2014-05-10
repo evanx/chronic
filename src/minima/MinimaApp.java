@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.httphandler.WebHttpHandler;
+import vellum.jx.JMap;
 import vellum.ssl.OpenTrustManager;
 import vellum.util.ExtendedProperties;
 
@@ -37,7 +38,7 @@ public class MinimaApp {
 
     Logger logger = LoggerFactory.getLogger(MinimaApp.class);
     VellumHttpsServer webServer = new VellumHttpsServer();
-    WebHttpHandler webHandler = new WebHttpHandler("/chronic/web");
+    WebHttpHandler webHandler = new WebHttpHandler("/chronic/web", new JMap());
     
     public MinimaApp() {
     }
