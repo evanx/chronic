@@ -33,10 +33,12 @@ import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
 import vellum.exception.ParseException;
 import vellum.httpserver.HttpServerProperties;
+import vellum.jx.JConsoleMap;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
+import vellum.system.NullConsole;
 import vellum.util.Args;
-import vellum.util.ExtendedProperties;
+import vellum.util.MockableConsole;
 import vellum.util.Streams;
 import vellum.util.Strings;
 
@@ -59,10 +61,11 @@ public class ChronicProperties extends JMap {
     private boolean testing = false;
     private boolean mockStorage = false;
     private HttpServerProperties httpRedirectServer = new HttpServerProperties(8080);
+    private final MockableConsole console = new NullConsole();
     private final HttpServerProperties insecureServer = new HttpServerProperties(8081);
-    private final ExtendedProperties appServer;
-    private final ExtendedProperties webServer;
-    private final ExtendedProperties signing;
+    private final JConsoleMap appServer;
+    private final JConsoleMap webServer;
+    private final JConsoleMap signing;
     private final Set<String> adminDomains;
     private final Set<String> adminEmails;
     private final Set<String> allowedOrgDomains;
@@ -95,9 +98,9 @@ public class ChronicProperties extends JMap {
             httpRedirectServer = new HttpServerProperties(
                     object.getProperties("httpRedirectServer"));
         }
-        appServer = object.getProperties("appServer");
-        webServer = object.getProperties("webServer");
-        signing = object.getProperties("signing");
+        appServer = new JConsoleMap(console, object.getMap("appServer"));
+        webServer = new JConsoleMap(console, object.getMap("webServer"));
+        signing = new JConsoleMap(console, object.getMap("signing"));
         mailerProperties.init(object.getMap("mailer"));
         mailerProperties.setLogoBytes(Streams.readBytes(MailerTest.class.getResourceAsStream("app48.png")));
         logger.info("mailer {}", mailerProperties);
@@ -139,14 +142,18 @@ public class ChronicProperties extends JMap {
         return false;
     }
 
-    public ExtendedProperties getAppServer() {
+    public JConsoleMap getAppServer() {
         return appServer;
     }
 
-    public ExtendedProperties getWebServer() {
+    public JConsoleMap getWebServer() {
         return webServer;
     }
 
+    public JConsoleMap getSigning() {
+        return signing;
+    }
+    
     public HttpServerProperties getHttpRedirectServer() {
         return httpRedirectServer;
     }
@@ -232,10 +239,5 @@ public class ChronicProperties extends JMap {
 
     public boolean isAllowedAddress(String remoteHostAddress) {
         return true;
-    }
-
-    public ExtendedProperties getSigning() {
-        return signing;
-    }
-       
+    }      
 }

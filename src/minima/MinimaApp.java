@@ -26,9 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.httphandler.WebHttpHandler;
+import vellum.jx.JConsoleMap;
 import vellum.jx.JMap;
 import vellum.ssl.OpenTrustManager;
-import vellum.util.ExtendedProperties;
+import vellum.system.NullConsole;
 
 /**
  *
@@ -45,8 +46,7 @@ public class MinimaApp {
 
     public void start() throws Exception {
         JsonObjectDelegate object = new JsonObjectDelegate(new File("minima.json"));
-        ExtendedProperties webServerProps = object.getProperties("webServer");
-        webServer.start(webServerProps,
+        webServer.start(new JConsoleMap(new NullConsole(), object.getProperties("webServer")),
                 new OpenTrustManager(),
                 webHandler);
     }

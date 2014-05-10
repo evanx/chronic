@@ -54,17 +54,16 @@ import javax.persistence.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.data.Millis;
-import vellum.exception.ParseException;
 import vellum.httpserver.VellumHttpServer;
 import vellum.httpserver.VellumHttpsServer;
 import vellum.httphandler.RedirectHttpsHandler;
+import vellum.jx.JConsoleMap;
 import vellum.jx.JMap;
 import vellum.jx.JMapException;
 import vellum.mail.Mailer;
 import vellum.security.KeyStores;
 import vellum.ssl.OpenTrustManager;
 import vellum.ssl.SSLContexts;
-import vellum.util.ExtendedProperties;
 
 /**
  *
@@ -148,11 +147,10 @@ public class ChronicApp {
         logger.info("started");
     }
 
-    private void initSigning(ExtendedProperties properties)
-            throws GeneralSecurityException, IOException {
+    private void initSigning(JConsoleMap properties) throws Exception {
         String keyStoreLocation = properties.getString("keyStoreLocation");
         logger.info("signing {}", keyStoreLocation);
-        char[] pass = properties.getPassword("pass");
+        char[] pass = properties.getPassword("pass", null);
         KeyStore keyStore = KeyStores.loadKeyStore("JKS", keyStoreLocation, pass);
         PrivateKey privateKey = KeyStores.findPrivateKey(keyStore, pass);
         X509Certificate cert = KeyStores.findPrivateKeyCertificate(keyStore);
