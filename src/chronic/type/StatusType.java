@@ -4,7 +4,7 @@
  */
 package chronic.type;
 
-import chronic.bundle.Bundle;
+import vellum.bundle.Bundle;
 
 /**
  *
