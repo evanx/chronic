@@ -20,7 +20,7 @@
  under the License.  
  */
 package chronic;
-import chronic.bundle.Bundle;
+import vellum.bundle.Bundle;
 import chronic.entitytype.OrgRoleType;
 import chronic.type.AlertType;
 import chronic.type.StatusType;

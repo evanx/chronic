@@ -20,7 +20,7 @@
  */
 package chronic.alert;
 
-import chronic.bundle.Bundle;
+import vellum.bundle.Bundle;
 
 /**
  *

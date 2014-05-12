@@ -22,7 +22,7 @@ package chronic.alert;
 
 import chronic.app.ChronicApp;
 import chronic.check.TcpChecker;
-import chronic.bundle.Bundle;
+import vellum.bundle.Bundle;
 import chronic.check.ClockChecker;
 import chronic.check.HttpChecker;
 import chronic.check.HttpsChecker;
