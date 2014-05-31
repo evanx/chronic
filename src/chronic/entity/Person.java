@@ -15,7 +15,7 @@ import javax.persistence.Temporal;
 import vellum.data.Emails;
 import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
-import vellum.jx.JMapException;
+import vellum.jx.JMapsException;
 import vellum.type.Enabled;
 
 /**
@@ -62,7 +62,7 @@ public class Person extends ComparableEntity implements PersonKeyed, Enabled, Se
         this.label = Emails.getUsername(email);
     }
     
-    public Person(JMap map) throws JMapException {
+    public Person(JMap map) throws JMapsException {
         email = map.getString("email");
         label = map.getString("name");
     }

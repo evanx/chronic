@@ -7,7 +7,7 @@ package chronic.entitykey;
 import java.security.cert.CertificateException;
 import vellum.data.ComparableTuple;
 import vellum.jx.JMap;
-import vellum.jx.JMapException;
+import vellum.jx.JMapsException;
 import vellum.security.Certificates;
 import vellum.security.DnameType;
 
@@ -27,7 +27,7 @@ public final class CertKey extends ComparableTuple {
                 Certificates.get(DnameType.CN, subject));
     }
     
-    public CertKey(JMap map) throws JMapException {
+    public CertKey(JMap map) throws JMapsException {
         this(map.getString("orgDomain"), 
                 map.getString("orgUnit"), 
                 map.getString("commonName"));

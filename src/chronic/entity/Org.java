@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import vellum.data.Patterns;
 import vellum.entity.ComparableEntity;
 import vellum.jx.JMap;
-import vellum.jx.JMapException;
+import vellum.jx.JMapsException;
 import vellum.type.Enabled;
 import vellum.validation.ValidationException;
 import vellum.validation.ValidationExceptionType;
@@ -61,7 +61,7 @@ public class Org extends ComparableEntity implements OrgKeyed, Enabled, Serializ
         this.server = server;
     }
 
-    public Org(JMap map) throws JMapException {
+    public Org(JMap map) throws JMapsException {
         orgDomain = map.getString("org_domain");
         server = map.getString("server");
         label = map.getString("label");

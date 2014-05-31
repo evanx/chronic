@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vellum.exception.ParseException;
 import vellum.jx.JMap;
-import vellum.jx.JMapException;
+import vellum.jx.JMapsException;
 
 /**
  *
@@ -52,7 +52,7 @@ public class TestTopicEventChecker {
     }
 
     @Test
-    public void testSingleStatus() throws IOException, ParseException, JMapException {
+    public void testSingleStatus() throws IOException, ParseException, JMapsException {
         TopicMessage topicMessage1 = newTopicMessage(
                 "Load OK - 10",
                 "Disk OK - 20");

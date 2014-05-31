@@ -13,7 +13,7 @@ import java.net.URLEncoder;
 import javax.net.ssl.HttpsURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vellum.jx.JMapException;
+import vellum.jx.JMapsException;
 
 /**
  *
@@ -36,7 +36,7 @@ public class PersonaVerifier {
     }
         
     public PersonaInfo getPersonaInfo(String serverUrl, String assertion) 
-            throws IOException, JMapException, PersonaException {
+            throws IOException, JMapsException, PersonaException {
         logger.trace("getUserInfo {}", serverUrl);
         URL url = new URL("https://verifier.login.persona.org/verify");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();

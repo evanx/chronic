@@ -35,7 +35,7 @@ import vellum.exception.ParseException;
 import vellum.httpserver.HttpServerProperties;
 import vellum.jx.JConsoleMap;
 import vellum.jx.JMap;
-import vellum.jx.JMapException;
+import vellum.jx.JMapsException;
 import vellum.system.NullConsole;
 import vellum.util.Args;
 import vellum.util.MockableConsole;
@@ -73,7 +73,7 @@ public class ChronicProperties extends JMap {
     private final Set<String> subscriberEmails;
     private final MailerProperties mailerProperties = new MailerProperties();
 
-    public ChronicProperties(JMap properties) throws IOException, ParseException, JMapException {
+    public ChronicProperties(JMap properties) throws IOException, ParseException, JMapsException {
         putAll(properties);
         String jsonConfigFileName = properties.getString("config.json", "config.json");
         JsonObjectDelegate object = new JsonObjectDelegate(new File(jsonConfigFileName));
