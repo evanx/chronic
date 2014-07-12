@@ -104,7 +104,7 @@ public class ChronicCookie {
     public void validateAuthCode(byte[] secret) throws Exception {
         String code = createAuthCode(secret, email, loginMillis);
         if (!code.equals(code)) {
-            throw new Exception("invalid cookied");
+            throw new Exception("invalid cookie");
         }
     }
 
