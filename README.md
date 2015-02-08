@@ -5,7 +5,7 @@ Rather than install an agent, machines use a <a href="https://github.com/evanx/c
 
 There is also a custom <a href="https://github.com/evanx/chronic4j">log4j appender</a> project which can be used relatively unintrusively by Java apps to post status via log4j.
 
-Administrators log into the centralized AngularJS app which uses Mozilla Persona to authenticate them. They are then able to view events on various topics from various participating machines in their organisations, and activate email alerts.
+Administrators log into the centralized AngularJS app which uses Mozilla Persona to authenticate them. They are then able to view events on various topics from participating machines in their organisations, and activate email alerts.
 
 There is a static copy of the site on my github pages <a href="http://evanx.github.io/chronic">(http://evanx.github.io/chronic)</a>, which includes an overview and FAQ. However, "chronica.co" is defunct.
 
