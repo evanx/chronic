@@ -7,7 +7,7 @@ There is also a custom <a href="https://github.com/evanx/chronic4j">log4j append
 
 Administrators log into the centralized AngularJS app which uses Mozilla Persona to authenticate them. They are then able to view events on various topics from various participating machines in their organisations.
 
-There is a static copy of the site on my <a href="http://evanx.github.io/chronic">github pages</a>, which includes an overview and FAQ. However, "chronica.co" is defunct.
+There is a static copy of the site on my github pages <a href="http://evanx.github.io/chronic">(http://evanx.github.io/chronic)</a>, which includes an overview and FAQ. However, "chronica.co" is defunct.
 
 Commmon utilities were copied from <a href="https://github.com/evanx/vellum">github.com/evanx/vellum</a> to <a href="https://github.com/evanx/vellumcore">github.com/evanx/vellumcore</a>, as a dependency for other projects, including this.
 
