@@ -1,4 +1,6 @@
 
+<b>This project is abandoned and defunct!</b>
+
 Prototype cloud-based multi-tenant monitoring system for Linux machines.
 
 This server app's entry point is <a href="https://github.com/evanx/chronic/blob/master/src/chronic/app/ChronicApp.java">ChronicApp</a>. It's a Java server using the JDK's builtin HttpServer and HttpsServer. It uses JPA for persistence. The front-end is AngularJS.
